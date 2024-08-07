@@ -29,9 +29,9 @@ function Footer() {
             </li>
           </ul>
         </div>
-        <div className="w-full lg:w-auto border-t border-gray-300 mt-5 lg:mt-0 lg:border-t-0"></div>
+        <div className="w-full lg:w-auto border-t border-gray-300 mt-5 lg:mt-0 lg:border-t-0 lg:hidden"></div>
       </div>
-      <div className="sm:border-t border-gray-300 mt-2 pt-2 text-center lg:mt-5 lg:pt-5">
+      <div className="sm:border-t border-gray-300 mt-2 pt-2 text-center lg:mt-5 lg:pt-5 ">
         <p>© 2024 DigitechSpace</p>
       </div>
     </footer>
