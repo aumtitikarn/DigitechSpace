@@ -20,7 +20,7 @@ export default function Home() {
           <div className="flex-grow text-center p-10">
             <h3 className="text-5xl">Welcome, {session?.user?.name}</h3>
             <p className="text-2xl mt-3">Your email address: {session?.user?.email}</p>
-            <p className="text-2xl mt-3">Your user role: {session?.user?.role}</p>
+            <p className="text-2xl mt-3">Your role: {session?.user?.role}</p>
           </div>
         <Footer />
       </Container>

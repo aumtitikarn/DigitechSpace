@@ -1,17 +1,28 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+import React, { useState } from "react";
+import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { MdGTranslate, MdAccountCircle } from "react-icons/md";
+import { FaHeart } from "react-icons/fa";
+import { IoIosNotifications } from "react-icons/io";
+import { FaBoxOpen, FaStar } from "react-icons/fa";
+import { BiSolidExit } from "react-icons/bi";
+import { FaWallet } from "react-icons/fa6";
+import { FaMoneyBillTrendUp } from "react-icons/fa6";
 
 function CustomNavbar({ session }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAccountBoxVisible, setAccountBoxVisible] = useState(false);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const toggleAccountBox = () => {
+    setAccountBoxVisible(!isAccountBoxVisible);
+  };
+
   return (
-    <nav className="bg-[#0B1E48] shadow-md p-5">
+    <nav className="bg-[#0B1E48] shadow-md p-5 relative">
       <div className="flex items-center justify-between lg:mx-60">
         {/* ปุ่มเมนูสำหรับหน้าจอมือถือ */}
         <div className="block lg:hidden">
@@ -43,14 +54,85 @@ function CustomNavbar({ session }) {
               alt="Digitech Space logo"
               width={100}
               height={100}
+              className="ml-[19px]"
             />
           </Link>
         </div>
+        {/* ปุ่มบัญชีสำหรับมือถือ */}
+        <div className="relative flex-none flex items-center lg:hidden">
+          <button
+            onClick={toggleAccountBox}
+            className="text-white focus:outline-none"
+          >
+            <MdAccountCircle className="text-white text-4xl mt-3" />
+          </button>
+          {isAccountBoxVisible && (
+            <div className=" px-3 py-3 absolute right-0 mt-[381px]  border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto  flex flex-col items-start shadow-lg ">
+              {/* เนื้อหาภายในกล่องข้อมูลบัญชี */}
+              <div className="">
+                <div className="flex items-center ">
+                  <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                  <span>
+                    <p className="text-[20px] mt-3 text-semibold">
+                      {session?.user?.name}
+                    </p>
+                    <b>
+                      <u className="text-[#0E6FFF]">
+                        <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                          View Profile
+                        </p>
+                      </u>
+                    </b>
+                  </span>
+                </div>
+                <div className="text-left ml-5">
+                  <ul className="list-none mt-3 space-y-2">
+                    {session?.user?.role !== "NormalUser" && (
+                      <>
+                        <li className="flex items-center">
+                          <FaWallet className="mr-5 text-2xl text-gray-600" />
+                          <span className="text-[18px]">Wallet</span>
+                        </li>
+                        <li className="flex items-center">
+                          <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
+                          <span className="text-[18px]">Sell</span>
+                        </li>
+                      </>
+                    )}
+                    <li className="flex items-center">
+                      <FaHeart className="mr-5 text-2xl text-gray-600" />
+                      <span className="text-[18px]">Favorite</span>
+                    </li>
+                    <li className="flex items-center">
+                      <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
+                      <span className="text-[18px]">Notification</span>
+                    </li>
+                    <li className="flex items-center">
+                      <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
+                      <span className="text-[18px]">My Project</span>
+                    </li>
+                    <li className="flex items-center">
+                      <FaStar className="mr-5 text-2xl text-gray-600" />
+                      <span className="text-[18px]">Review</span>
+                    </li>
+                  </ul>
+                  <button
+                    onClick={() => signOut()}
+                    className="flex items-center w-full lg:w-auto border-t border-gray-300 lg:mt-0 lg:border-t-0 mt-3"
+                  >
+                    <BiSolidExit className="mr-5 mt-2 text-2xl text-gray-600" />
+                    <span className="text-[18px] mt-2">Log out</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
-        {/* โลโก้, เมนู, และปุ่มบัญชี */}
+        {/* โลโก้, เมนู, และปุ่มบัญชีสำหรับเดสทอป */}
         <div className="hidden lg:flex flex-1 items-center justify-center space-x-8">
           {/* โลโก้สำหรับเดสทอป */}
-          <div className="flex-none" style={{ marginRight: '50px' }}>
+          <div className="flex-none" style={{ marginRight: "50px" }}>
             <Link href="/">
               <img
                 src="https://m1r.ai/bdebq.png"
@@ -66,26 +148,98 @@ function CustomNavbar({ session }) {
             <ul className="flex space-x-8 items-center">
               <li>
                 <Link href="/home">
-                  <p className="font-semibold text-[20px] text-white mx-16">Home</p>
+                  <p className="font-semibold text-[20px] text-white mx-16">
+                    Home
+                  </p>
                 </Link>
               </li>
               <li>
                 <Link href="/project">
-                  <p className="font-semibold text-[20px] text-white mx-16">Project</p>
+                  <p className="font-semibold text-[20px] text-white mx-16">
+                    Project
+                  </p>
                 </Link>
               </li>
               <li>
                 <Link href="/blog">
-                  <p className="font-semibold text-[20px] text-white mx-16">Blog</p>
+                  <p className="font-semibold text-[20px] text-white mx-16">
+                    Blog
+                  </p>
                 </Link>
               </li>
             </ul>
           </div>
 
           {/* ปุ่มบัญชีและแปลภาษาสำหรับเดสทอป */}
-          <div className="flex-none flex items-center" style={{ marginLeft: '50px' }}>
-            <MdGTranslate className="text-white text-4xl" />
-            <MdAccountCircle className="text-white text-4xl ml-5"/>
+<div
+  className="flex-none flex items-center"
+  style={{ marginLeft: "50px" }}
+>
+  <MdGTranslate className="text-white text-4xl" />
+  <button className="relative" onClick={toggleAccountBox}>
+    <MdAccountCircle className="text-white text-4xl ml-5" />
+    {isAccountBoxVisible && (
+      <div className="px-3 py-3 absolute right-0 mt-[35px] border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg">
+        {/* เนื้อหาภายในกล่องข้อมูลบัญชี */}
+        <div>
+          <div className="flex items-center">
+            <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+            <span>
+              <p className="text-[20px] mt-3 text-semibold">
+                {session?.user?.name}
+              </p>
+              <b>
+                <u className="text-[#0E6FFF]">
+                  <p className="text-[14px] text-left text-[#0E6FFF]">
+                    View Profile
+                  </p>
+                </u>
+              </b>
+            </span>
+          </div>
+          <div className="text-left ml-5">
+            <ul className="list-none mt-3 space-y-2">
+              {session?.user?.role !== "NormalUser" && (
+                <>
+                  <li className="flex items-center">
+                    <FaWallet className="mr-5 text-2xl text-gray-600" />
+                    <span className="text-[18px]">Wallet</span>
+                  </li>
+                  <li className="flex items-center">
+                    <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
+                    <span className="text-[18px]">Sell</span>
+                  </li>
+                </>
+              )}
+              <li className="flex items-center">
+                <FaHeart className="mr-5 text-2xl text-gray-600" />
+                <span className="text-[18px]">Favorite</span>
+              </li>
+              <li className="flex items-center">
+                <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
+                <span className="text-[18px]">Notification</span>
+              </li>
+              <li className="flex items-center">
+                <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
+                <span className="text-[18px]">My Project</span>
+              </li>
+              <li className="flex items-center">
+                <FaStar className="mr-5 text-2xl text-gray-600" />
+                <span className="text-[18px]">Review</span>
+              </li>
+            </ul>
+            <button
+              onClick={() => signOut()}
+              className="flex items-center w-full border-t border-gray-300 pt-3 mt-3"
+            >
+              <BiSolidExit className="mr-5 mt-[-3px] text-2xl text-gray-600" />
+              <span className="text-[18px] mt-[-3px]">Log out</span>
+            </button>
+                </div>
+              </div>
+            </div>
+          )}
+            </button>
           </div>
         </div>
 
@@ -124,17 +278,23 @@ function CustomNavbar({ session }) {
             <ul className="flex flex-col mt-5">
               <li className="border-t border-gray-300">
                 <Link href="/home">
-                  <p className="font-semibold text-base py-4 text-white">Home</p>
+                  <p className="font-semibold text-base py-4 text-white">
+                    Home
+                  </p>
                 </Link>
               </li>
               <li className="border-t border-gray-300">
                 <Link href="/project">
-                  <p className="font-semibold text-base py-4 text-white">Project</p>
+                  <p className="font-semibold text-base py-4 text-white">
+                    Project
+                  </p>
                 </Link>
               </li>
               <li className="border-t border-gray-300 border-b border-gray-300">
                 <Link href="/blog">
-                  <p className="font-semibold text-base py-4 text-white">Blog</p>
+                  <p className="font-semibold text-base py-4 text-white">
+                    Blog
+                  </p>
                 </Link>
               </li>
               <li className="flex justify-center mt-4">
