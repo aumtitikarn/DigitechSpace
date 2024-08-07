@@ -35,6 +35,7 @@ export default function PreAuth() {
       <div className="my-6">
         <button
           type="button" 
+          onClick={() => router.push('/auth/signup')}
           className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           Create Account
