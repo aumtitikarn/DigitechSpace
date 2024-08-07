@@ -7,6 +7,7 @@ import { IoIosNotifications } from "react-icons/io";
 import { FaBoxOpen, FaStar } from "react-icons/fa";
 import { BiSolidExit } from "react-icons/bi";
 import { FaWallet, FaMoneyBillTrendUp } from "react-icons/fa6";
+import { IoMdClose } from 'react-icons/io';
 
 function CustomNavbar({ session }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -278,26 +279,26 @@ function CustomNavbar({ session }) {
             </button>
           </div>
           <ul className="flex-1 px-5 space-y-5 mt-10">
-            <li>
-              <Link href="/home">
-                <p className="font-semibold text-[20px] text-white">Home</p>
-              </Link>
-            </li>
-            <li>
-              <Link href="/project">
-                <p className="font-semibold text-[20px] text-white">Project</p>
-              </Link>
-            </li>
-            <li>
-              <Link href="/blog">
-                <p className="font-semibold text-[20px] text-white">Blog</p>
-              </Link>
-            </li>
-            <li>
-              <MdGTranslate className="text-white text-4xl" />
-            </li>
-          </ul>
-        </div>
+        <li className="border-t border-gray-300 pt-2">
+          <Link href="/home">
+            <p className="font-semibold text-[20px] text-white">Home</p>
+          </Link>
+        </li>
+        <li className="border-t border-gray-300 pt-2">
+          <Link href="/project">
+            <p className="font-semibold text-[20px] text-white">Project</p>
+          </Link>
+        </li>
+        <li className="border-t border-gray-300 pt-2 flex items-center justify-between">
+          <Link href="/blog" className="flex-1">
+            <p className="font-semibold text-[20px] text-white">Blog</p>
+          </Link>
+        </li>
+        <li className="flex justify-center border-t border-gray-300 pt-2 ">
+          <MdGTranslate className="text-white text-4xl mt-3" />
+        </li>
+      </ul>
+    </div>
       )}
     </nav>
   );
