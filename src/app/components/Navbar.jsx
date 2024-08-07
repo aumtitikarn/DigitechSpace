@@ -154,7 +154,7 @@ function CustomNavbar({ session }) {
           <div className="flex-1 flex justify-center">
             <ul className="flex space-x-8 items-center">
               <li>
-                <Link href="/home">
+                <Link href="/Home">
                   <p className="font-semibold text-[20px] text-white mx-16">
                     Home
                   </p>
@@ -285,7 +285,7 @@ function CustomNavbar({ session }) {
           </div>
           <ul className="flex-1 px-5 space-y-5 mt-10">
             <li>
-              <Link href="/home">
+              <Link href="/Home">
                 <p className="font-semibold text-[20px] text-white">Home</p>
               </Link>
             </li>

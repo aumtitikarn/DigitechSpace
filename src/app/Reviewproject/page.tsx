@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import Container from "../../components/Container"
+import Container from "../components/Container"
 
 
 interface ReviewProject {
@@ -45,7 +45,7 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
       <Navbar session={session} />
       <main className="flex-grow px-6 py-12 lg:px-8">
       <div className="container mx-auto mt-5">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8  border-b border-gray-300">Review Project</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-8  border-b border-gray-500">Review Project</h1>
           <p className="text-lg font-medium mb-4">Project: Facebook Website</p>
           <p className="text-lg font-medium mb-2">Point:</p>
           <div className="flex justify-left mb-4">
