@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Container from "../components/Container";
 
+
 interface ReviewCardProps {
   title: string;
   author: string;
@@ -17,7 +18,7 @@ interface ReviewCardProps {
 
 const ReviewCard: React.FC<ReviewCardProps> = ({ title, author, rating, reviews, price }) => {
   return (
-    <Link href="/components">
+    <Link href="/Reviewproject">
       <div className="card flex flex-col md:flex-row border-10 border-gray-300 rounded-lg shadow-md mb-4 p-1">
         <div className="photo mb-4 md:mb-0 md:mr-8">
           <img src="/face.png" className="w-48 h-auto object-cover rounded shadow-sm" />
