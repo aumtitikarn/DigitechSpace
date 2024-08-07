@@ -23,7 +23,7 @@ function CustomNavbar({ session }) {
   const accountBoxMarginTop = session?.user?.role === "StudentUser" ? "mt-[451px]" : "mt-[390px]";
 
   return (
-    <nav className="bg-[#0B1E48] shadow-md p-5 relative">
+    <nav className="bg-[#0B1E48] shadow-md p-5 relative z-1000">
       <div className="flex items-center justify-between lg:mx-60">
         {/* ปุ่มเมนูสำหรับหน้าจอมือถือ */}
         <div className="block lg:hidden">
@@ -68,7 +68,7 @@ function CustomNavbar({ session }) {
             <MdAccountCircle className="text-white text-4xl mt-3" />
           </button>
           {isAccountBoxVisible && (
-            <div className={`px-3 py-3 absolute right-0 ${accountBoxMarginTop} border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg`}>
+            <div className={`px-3 py-3 absolute right-0 ${accountBoxMarginTop} border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg z-2000`}>
               {/* เนื้อหาภายในกล่องข้อมูลบัญชี */}
               <div className="">
                 <div className="flex items-center ">
@@ -180,7 +180,7 @@ function CustomNavbar({ session }) {
             <button className="relative" onClick={toggleAccountBox}>
               <MdAccountCircle className="text-white text-4xl ml-5" />
               {isAccountBoxVisible && (
-                <div className="px-3 py-3 absolute right-0 mt-[35px] border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg">
+                <div className="px-3 py-3 absolute right-0 mt-[35px] border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg z-2000">
                   {/* เนื้อหาภายในกล่องข้อมูลบัญชี */}
                   <div>
                     <div className="flex items-center">
@@ -245,38 +245,39 @@ function CustomNavbar({ session }) {
         </div>
       </div>
 
-      {/* เมนูสำหรับมือถือ */}
+      {/* เมนูมือถือ */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#0B1E48] bg-opacity-100 flex flex-col items-start justify-start p-10">
-          <button
-            onClick={toggleMobileMenu}
-            className="text-white focus:outline-none"
-          >
-            <svg
-              className="w-6 h-6 mb-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+        <div className="lg:hidden bg-[#0B1E48] w-full h-screen z-50 fixed top-0 left-0 flex flex-col">
+          <div className="flex justify-between items-center px-5 py-5">
+            <Link href="/">
+              <img
+                src="https://m1r.ai/bdebq.png"
+                alt="Digitech Space logo"
+                width={100}
+                height={100}
+              />
+            </Link>
+            <button
+              onClick={toggleMobileMenu}
+              className="text-white text-2xl focus:outline-none"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
-          <Link href="/">
-            <img
-              src="https://m1r.ai/bdebq.png"
-              alt="Digitech Space logo"
-              width={120}
-              height={120}
-              className="mb-5"
-            />
-          </Link>
-          <ul className="space-y-5">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <ul className="flex-1 px-5 space-y-5 mt-10">
             <li>
               <Link href="/home">
                 <p className="font-semibold text-[20px] text-white">Home</p>
@@ -292,8 +293,10 @@ function CustomNavbar({ session }) {
                 <p className="font-semibold text-[20px] text-white">Blog</p>
               </Link>
             </li>
+            <li>
+              <MdGTranslate className="text-white text-4xl" />
+            </li>
           </ul>
-          <MdGTranslate className="text-white text-4xl mt-5" />
         </div>
       )}
     </nav>
