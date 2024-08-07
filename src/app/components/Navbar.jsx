@@ -23,7 +23,7 @@ function CustomNavbar({ session }) {
   const accountBoxMarginTop = session?.user?.role === "StudentUser" ? "mt-[451px]" : "mt-[390px]";
 
   return (
-    <nav className="bg-[#0B1E48] shadow-md p-5 relative z-1000">
+    <nav className="bg-[#0B1E48] shadow-md p-5 relative z-50">
       <div className="flex items-center justify-between lg:mx-60">
         {/* ปุ่มเมนูสำหรับหน้าจอมือถือ */}
         <div className="block lg:hidden">
