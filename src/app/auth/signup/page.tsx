@@ -61,7 +61,7 @@ export default function SignUp() {
             });
 
             if (res.ok) {
-                router.push('/Home');
+                router.push('/Ai/role'); //ต้องทำครั้งเดียวเข้าสู่ระบบครั้งแรก
             } else {
                 const data = await res.json();
                 setError(data.message || 'Email has already been used.');

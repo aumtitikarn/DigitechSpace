@@ -28,7 +28,7 @@ export default function SignIn() {
         return;
       }
 
-      router.replace("/Home");
+      router.replace("/Ai/role"); //ต้องทำครั้งเดียวเข้าสู่ระบบครั้งแรก
     } catch (error) {
       console.log(error);
       setError("Something went wrong");
