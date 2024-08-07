@@ -101,20 +101,26 @@ function CustomNavbar({ session }) {
                       </>
                     )}
                     <li className="flex items-center">
+                    <Link href="/favorite">
                       <FaHeart className="mr-5 text-2xl text-gray-600" />
                       <span className="text-[18px]">Favorite</span>
+                      </Link>
                     </li>
                     <li className="flex items-center">
+                    <Link href="/notification">
                       <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
                       <span className="text-[18px]">Notification</span>
+                      </Link>
                     </li>
                     <li className="flex items-center">
                       <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
                       <span className="text-[18px]">My Project</span>
                     </li>
                     <li className="flex items-center">
+                    <Link href="/review">
                       <FaStar className="mr-5 text-2xl text-gray-600" />
                       <span className="text-[18px]">Review</span>
+                      </Link>
                     </li>
                   </ul>
                   <button
