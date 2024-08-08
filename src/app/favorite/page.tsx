@@ -59,8 +59,9 @@ const Favorite: React.FC = () => {
 
   return (
     <Container >
+      <main>
       <Navbar session={session} />
-      <main className="flex-grow px-6 py-12 lg:px-8">
+      <div className="flex-grow px-6 py-12 lg:px-8">
         <div className="container mx-auto mt-5">
           <h1 className="text-3xl md:text-4xl font-bold mb-8">Favorite</h1>
           <div className="review-list flex flex-col space-y-4">
@@ -79,6 +80,7 @@ const Favorite: React.FC = () => {
               price="50,000 THB"
             />
           </div>
+        </div>
         </div>
       </main>
       <Footer />

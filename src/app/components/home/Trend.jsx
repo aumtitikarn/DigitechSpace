@@ -17,10 +17,10 @@ function Trend({ session }) {
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
         <div className='flex items-center space-x-2 mt-10'>
-          <p className='text-lg font-bold text-[24px]'>Trend</p>
+          <p className='font-bold' style={{fontSize:"24px"}}>Trend</p>
           <FaFire className='text-red-500 text-2xl' />
         </div>
-        <div className='mt-3 overflow-x-auto lg:flex lg:flex-col lg:items-center lg:justify-center' style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className='mt-9 overflow-x-auto lg:flex lg:flex-col lg:items-center lg:justify-center' style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
   <div className='flex space-x-4' style={{ overflowY: 'hidden' }}>
     {['เว็บไซต์', 'แอพขายของ', 'เว็บโซเชียล', 'NFT', 'Blockchain', 'แอพขายของ', 'NFT', 'Blockchain', 'แอพขายของ', 'เว็บไซต์'].map((label, index) => (
       <button 

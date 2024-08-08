@@ -88,38 +88,38 @@ function CustomNavbar({ session }) {
                   </span>
                 </div>
                 <div className="text-left ml-5">
-                  <ul className="list-none mt-3 space-y-2">
+                  <ul className="list-none mt-3 ">
                     {session?.user?.role !== "NormalUser" && (
                       <>
-                        <li className="flex items-center">
+                        <li className="flex items-center ">
                           <FaWallet className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Wallet</span>
                         </li>
-                        <li className="flex items-center">
+                        <li className="flex items-center mt-2">
                           <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Sell</span>
                         </li>
                       </>
                     )}
                     <Link href="/favorite">
-                    <li className="flex items-center">
+                    <li className="flex items-center mt-2">
                       <FaHeart className="mr-5 text-2xl text-gray-600" />
                       <span className="text-[18px]">Favorite</span>
                     </li>
                     </Link>
                     <Link href="/notification">
-                    <li className="flex items-center">
+                    <li className="flex items-center mt-2">
                       <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
                       <span className="text-[18px]">Notification</span>
                     </li>
                     </Link>
-                    <li className="flex items-center">
-                      <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
+                    <li className="flex items-center mt-2">
+                      <FaBoxOpen className="mr-5 text-2xl text-gray-600 sm:mt-3" />
                       <span className="text-[18px]">My Project</span>
                     </li>
                     <Link href="/review">
-                    <li className="flex items-center">
-                      <FaStar className="mr-5 text-2xl text-gray-600" />
+                    <li className="flex items-center mt-2 ">
+                      <FaStar className="mr-5  text-2xl text-gray-600" />
                       <span className="text-[18px]">Review</span>
                     </li>
                     </Link>
@@ -206,32 +206,34 @@ function CustomNavbar({ session }) {
                       </span>
                     </div>
                     <div className="text-left ml-5">
-                      <ul className="list-none mt-3 space-y-2">
+                      <ul className="list-none mt-3 ">
                         {session?.user?.role !== "NormalUser" && (
                           <>
                             <li className="flex items-center">
                               <FaWallet className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">Wallet</span>
                             </li>
-                            <li className="flex items-center">
+                            <li className="flex items-center mt-2">
                               <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">Sell</span>
                             </li>
                           </>
                         )}
-                        <li className="flex items-center">
+                         <Link href="/favorite">
+                        <li className="flex items-center mt-2">
                           <FaHeart className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Favorite</span>
                         </li>
-                        <li className="flex items-center">
+                        </Link>
+                        <li className="flex items-center mt-2">
                           <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Notification</span>
                         </li>
-                        <li className="flex items-center">
+                        <li className="flex items-center mt-2">
                           <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">My Project</span>
                         </li>
-                        <li className="flex items-center">
+                        <li className="flex items-center mt-2">
                           <FaStar className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Review</span>
                         </li>
@@ -286,7 +288,7 @@ function CustomNavbar({ session }) {
           </div>
           <ul className="flex-1 px-5 space-y-5 mt-10">
         <li className="border-t border-gray-300 pt-2">
-          <Link href="/home">
+          <Link href="/Home">
             <p className="font-semibold text-[20px] text-white">Home</p>
           </Link>
         </li>

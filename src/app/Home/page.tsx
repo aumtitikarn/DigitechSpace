@@ -7,6 +7,7 @@ import Header from "../components/Header";
 import Service from "../components/home/Service";
 import Catagory from "../components/home/Catagory";
 import Trend from "../components/home/Trend";
+import Product1 from "../components/home/Product1";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
@@ -23,6 +24,7 @@ export default function Home() {
           <Header />
           <Trend session={session}/>
           <Catagory />
+          <Product1 />
           <Service />
           <div className="flex-grow text-center p-10">
             <h3 className="text-5xl">Welcome, {session?.user?.name}</h3>
