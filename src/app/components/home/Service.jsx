@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
+
 function Service() {
   const [showtext, setShowtext] = useState(false);
   const [showtext1, setShowtext1] = useState(false);
@@ -53,7 +54,7 @@ function Service() {
           </div>
         </button>
         {showtext && (
-          <div className="w-full p-2 mt-4 border border-gray-300 rounded">
+          <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
             This is just a dummy text that has been inserted as a placeholder
             for future content. While it may seem insignificant at first glance,
             the use of dummy text is a common practice in the design and
@@ -75,7 +76,7 @@ function Service() {
           </div>
         </button>
         {showtext1 && (
-          <div className="w-full p-2 mt-4 border border-gray-300 rounded">
+          <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
             This is just a dummy text that has been inserted as a placeholder
             for future content. While it may seem insignificant at first glance,
             the use of dummy text is a common practice in the design and
@@ -97,7 +98,7 @@ function Service() {
           </div>
         </button>
         {showtext2 && (
-          <div className="w-full p-2 mt-4 border border-gray-300 rounded">
+          <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
             This is just a dummy text that has been inserted as a placeholder
             for future content. While it may seem insignificant at first glance,
             the use of dummy text is a common practice in the design and
@@ -119,7 +120,7 @@ function Service() {
           </div>
         </button>
         {showtext3 && (
-          <div className="w-full p-2 mt-4 border border-gray-300 rounded">
+          <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
             This is just a dummy text that has been inserted as a placeholder
             for future content. While it may seem insignificant at first glance,
             the use of dummy text is a common practice in the design and
@@ -140,14 +141,14 @@ function Service() {
               type="text"
               value={input1}
               onChange={(e) => setInput1(e.target.value)}
-              placeholder="Problem"
+              placeholder="Enter first message"
               className="w-full p-2 mb-2 border border-gray-300 rounded"
             />
             <input
               type="text"
               value={input2}
               onChange={(e) => setInput2(e.target.value)}
-              placeholder="Email"
+              placeholder="Enter second message"
               className="w-full p-2 mb-2 border border-gray-300 rounded"
             />
             <button
