@@ -35,10 +35,10 @@ function Service() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center p-4 md:flex-row">
-      <div className="flex flex-col w-full max-w-3xl">
-        <div className="flex flex-col justify-center w-full">
-          <h1 className="text-lg font-bold">FAQ</h1>
+    <main className="flex flex-col md:flex-row w-full justify-center p-4">
+      <div className="flex flex-col w-full max-w-auto">
+        <div className="flex flex-col justify-center">
+          <h1 className="text-lg font-bold" style={{fontSize:"24px"}}>FAQ</h1>
         </div>
 
         <button
@@ -130,7 +130,7 @@ function Service() {
         )}
 
         <div className="flex flex-col justify-center w-full mt-6">
-          <h1 className="text-lg font-bold">Service</h1>
+          <h1 className="text-lg font-bold" style={{fontSize:"24px"}}>Service</h1>
           <p className="mt-2 text-lg">
             Please contact us. If you have any problems using this website.
           </p>
@@ -152,7 +152,8 @@ function Service() {
             />
             <button
               onClick={handleSubmit}
-              className="w-full p-2 text-white bg-blue-500 rounded"
+              className="w-full p-2 text-white rounded"
+              style={{backgroundColor:"#0B1E48"}}
             >
               Send
             </button>
