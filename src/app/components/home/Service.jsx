@@ -152,7 +152,8 @@ function Service() {
             />
             <button
               onClick={handleSubmit}
-              className="w-full p-2 text-white bg-blue-500 rounded"
+              className="w-full p-2 text-white rounded"
+              style={{backgroundColor:"#0B1E48"}}
             >
               Send
             </button>
