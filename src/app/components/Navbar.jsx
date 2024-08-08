@@ -225,18 +225,22 @@ function CustomNavbar({ session }) {
                           <span className="text-[18px]">Favorite</span>
                         </li>
                         </Link>
+                        <Link href="/notification">
                         <li className="flex items-center mt-2">
                           <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Notification</span>
                         </li>
+                        </Link>
                         <li className="flex items-center mt-2">
                           <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">My Project</span>
                         </li>
+                        <Link href="/review">
                         <li className="flex items-center mt-2">
                           <FaStar className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Review</span>
                         </li>
+                        </Link>
                       </ul>
                       <button
                         onClick={() => signOut()}
