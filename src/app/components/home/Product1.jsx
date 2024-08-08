@@ -23,15 +23,15 @@ const buttonsData = [
   { type: "Other", icon: <RiMenuSearchLine  size={24} /> }
 ];
 
-function Catagory() {
+function Product1() {
 
   return (
-    <main className='flex flex-col items-center justify-center px-4 w-full'>
+    <main className='flex flex-col items-center justify-center px-4 w-full '>
       <div className='flex flex-col justify-center w-full'>
         <div className='flex items-center space-x-2 mt-3'>
-          <p className=' font-bold 'style={{fontSize:"24px"}}>Catagory</p>
+          <p className=' font-bold 'style={{fontSize:"24px"}}>Website</p>
         </div>
-        <div className='mt-[20px] mt-3'>
+        <div className='mt-10 mt-3'>
           <div className='grid  gap-4 grid-cols-3 lg:grid-cols-4 xl:grid-cols-10'>
             {buttonsData.map((button, index) => (
               <button 
@@ -49,4 +49,4 @@ function Catagory() {
   );
 }
 
-export default Catagory;
+export default Product1;

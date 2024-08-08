@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import Container from "../../components/Container";
@@ -42,7 +42,7 @@ export default function Interest() {
       if (prevSelected.includes(type)) {
         // Remove from selection if already selected
         return prevSelected.filter(item => item !== type);
-      } else if (prevSelected.length < 3) {
+      } else if (prevSelected.length < 15) {
         // Add to selection if not already selected and less than 3 selected
         return [...prevSelected, type];
       }
@@ -62,8 +62,7 @@ export default function Interest() {
         <Navbar session={session} />
         <div className="flex-grow text-center p-10">
           <h2 className="text-3xl mb-10">
-          What type of content are you most 
-          interested in?
+            What type of content are you most interested in?
           </h2>
           <div className="mt-10 grid grid-cols-2 gap-6 mx-auto max-w-7xl sm:grid-cols-2 lg:grid-cols-4">
             {[
@@ -79,11 +78,11 @@ export default function Interest() {
             ].map(({ type, icon }) => (
               <button
                 key={type}
-                className={`hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex flex-row items-center justify-center mx-auto space-x-2 ${
-                  selected.includes(type) ? "border-blue-500" : "border-blue-500"
+                className={`hover:bg-slate-200 rounded-lg border bg-white shadow-xl w-[170px] h-[71px] flex flex-row items-center justify-center mx-auto space-x-2 ${
+                  selected.includes(type) ? "border-blue-500" : "border-gray-300"
                 }`}
                 onClick={() => handleButtonClick(type)}
-                disabled={selected.length >= 7 && !selected.includes(type)} // Disable if limit is reached
+                disabled={selected.length >= 15 && !selected.includes(type)} // Disable if limit is reached
               >
                 {icon}
                 <span className="text-gray-700">{type}</span>
@@ -91,13 +90,12 @@ export default function Interest() {
             ))}
           </div>
           <button
-  className="mt-10 lg:px-[100px] lg:py-3 lg:w-auto lg:ml-auto lg:mr-20 w-full rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#33539B]"
-  onClick={handleNextClick}
-  disabled={selected.length === 0}
->
-  Next
-</button>
-
+            className="mt-10 lg:px-[100px] lg:py-3 lg:w-auto lg:ml-auto lg:mr-20 w-full rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#33539B]"
+            onClick={handleNextClick}
+            disabled={selected.length === 0}
+          >
+            Next
+          </button>
         </div>
         <Footer />
       </Container>
