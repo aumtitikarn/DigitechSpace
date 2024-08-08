@@ -20,18 +20,18 @@ function Trend({ session }) {
           <p className='text-lg font-bold text-[24px]'>Trend</p>
           <FaFire className='text-red-500 text-2xl' />
         </div>
-        <div className='mt-4 overflow-x-auto ' >
-          <div className='flex space-x-4'>
-            {['เว็บไซต์', 'แอพขายของ', 'เว็บโซเชียล', 'NFT', 'Blockchain', 'แอพขายของ', 'NFT', 'Blockchain', 'แอพขายของ', 'เว็บไซต์', 'แอพขายของ', 'เว็บโซเชียล', 'NFT', 'Blockchain', 'แอพขายของ', 'NFT', 'Blockchain', 'แอพขายของ'].map((label, index) => (
-              <button 
-                key={index} 
-                className='w-[112px] h-[35px] flex-shrink-0 rounded-full bg-[#FFC107] text-black font-semibold'
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <div className='mt-3 overflow-x-auto lg:flex lg:flex-col lg:items-center lg:justify-center' style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+  <div className='flex space-x-4' style={{ overflowY: 'hidden' }}>
+    {['เว็บไซต์', 'แอพขายของ', 'เว็บโซเชียล', 'NFT', 'Blockchain', 'แอพขายของ', 'NFT', 'Blockchain', 'แอพขายของ', 'เว็บไซต์'].map((label, index) => (
+      <button 
+        key={index} 
+        className='w-[112px] h-[35px] flex-shrink-0 rounded-full bg-[#FFC107] text-black font-semibold'
+      >
+        {label}
+      </button>
+    ))}
+  </div>
+</div>
       </div>
     </main>
   );

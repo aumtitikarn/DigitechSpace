@@ -80,10 +80,10 @@ export default function Interest() {
               <button
                 key={type}
                 className={`hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex flex-row items-center justify-center mx-auto space-x-2 ${
-                  selected.includes(type) ? "border-blue-500" : ""
+                  selected.includes(type) ? "border-blue-500" : "border-blue-500"
                 }`}
                 onClick={() => handleButtonClick(type)}
-                disabled={selected.length >= 3 && !selected.includes(type)} // Disable if limit is reached
+                disabled={selected.length >= 7 && !selected.includes(type)} // Disable if limit is reached
               >
                 {icon}
                 <span className="text-gray-700">{type}</span>

@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Service from "../components/home/Service";
+import Catagory from "../components/home/Catagory";
 import Trend from "../components/home/Trend";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
@@ -21,6 +22,7 @@ export default function Home() {
         <div className="lg:mx-60  mt-5"> 
           <Header />
           <Trend session={session}/>
+          <Catagory />
           <Service />
           <div className="flex-grow text-center p-10">
             <h3 className="text-5xl">Welcome, {session?.user?.name}</h3>
