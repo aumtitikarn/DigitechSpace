@@ -232,7 +232,7 @@ function CustomNavbar({ session }) {
                       </ul>
                       <button
                         onClick={() => signOut()}
-                        className="flex items-center w-full lg:w-auto border-t border-gray-300 lg:mt-0 lg:border-t-0 mt-3"
+                        className="flex items-center w-full  border-t border-gray-300 lg:mt-3 lg:w-full lg:border-t "
                       >
                         <BiSolidExit className="mr-5 mt-2 text-2xl text-gray-600" />
                         <span className="text-[18px] mt-2">Log out</span>
