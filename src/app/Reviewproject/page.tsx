@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import Container from "../components/Container"
-
+import { useRouter } from 'next/navigation';
+import Container from "../components/Container";
 
 interface ReviewProject {
   project: string;
@@ -24,11 +23,13 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
     setReview(event.target.value);
   };
 
+  const router = useRouter();
+
   const handleSubmit = () => {
-    // Handle submit logic here
-    console.log("Rating:", rating);
-    console.log("Review:", review);
+    // Perform any additional logic before navigation if necessary
+    router.push('/project'); // Use Next.js's router for navigation
   };
+
   const { data: session, status } = useSession();
 
   if (status === "loading") {
@@ -36,7 +37,7 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   }
 
   if (!session) {
-    redirect("/auth/signin");
+    router.push("/auth/signin");
     return null;
   }
 
@@ -44,9 +45,9 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
     <Container>
       <Navbar session={session} />
       <main className="flex-grow px-6 py-12 lg:px-8">
-      <div className="container mx-auto mt-5">
-        <h1 className="text-3xl md:text-4xl font-bold mb-6  ">Review Project</h1>
-        <div className="border-b border-gray-500 my-4"></div>
+        <div className="container mx-auto mt-5">
+          <h1 className="text-3xl md:text-4xl font-bold mb-6">Review Project</h1>
+          <div className="border-b border-gray-500 my-4"></div>
           <p className="text-lg font-medium mb-4">Project: Facebook Website</p>
           <p className="text-lg font-medium mb-2">Point:</p>
           <div className="flex justify-left mb-4">
@@ -62,21 +63,21 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
               </span>
             ))}
           </div>
-          <div className="relative ">
+          <div className="relative">
             <textarea
               placeholder="text"
               value={review}
               onChange={handleReviewChange}
-              className="w-full h-40 p-3 border-2 border-gray-300 rounded-md mb-5 "
+              className="w-full h-40 p-3 border-2 border-gray-300 rounded-md mb-5"
             />
-            <button 
+            <button
               onClick={handleSubmit}
-              className="absolute bottom-10 right-2  bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors text-lg font-medium"
+              className="absolute bottom-10 right-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors text-lg font-medium"
             >
               Review
             </button>
           </div>
-        </div> 
+        </div>
       </main>
       <Footer />
     </Container>
