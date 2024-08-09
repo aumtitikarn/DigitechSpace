@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 // ImageSlider Component
 const ImageSlider = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrevClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + images.length) % images.length
+    );
   };
 
   const handleNextClick = () => {
@@ -23,14 +25,12 @@ const ImageSlider = ({ images }) => {
         style={{ backgroundImage: `url(${images[currentIndex]})` }}
       ></div>
 
-      
-
       {/* Indicators */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {images.map((_, index) => (
           <button
             key={index}
-            className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-[#0B1E48]' : 'bg-gray-500'}`}
+            className={`w-3 h-3 rounded-full ${currentIndex === index ? "bg-[#0B1E48]" : "bg-gray-500"}`}
             onClick={() => handleIndicatorClick(index)}
           ></button>
         ))}
@@ -42,10 +42,10 @@ const ImageSlider = ({ images }) => {
 // Main Component
 const App = () => {
   const images = [
-    '/path-to-image-1.jpg',
-    '/path-to-image-2.jpg',
-    '/path-to-image-3.jpg',
-    '/path-to-image-4.jpg'
+    "/path-to-image-1.jpg",
+    "/path-to-image-2.jpg",
+    "/path-to-image-3.jpg",
+    "/path-to-image-4.jpg",
   ];
 
   return (
