@@ -22,7 +22,7 @@ export default function Home() {
     <main>
       <Navbar session={session} />
       <Container>
-        <div className="lg:mx-60 mt-5 mb-5">
+        <div className="lg:mx-60 mt-10 mb-5">
           <div className="mb-10">
             <Header />
           </div>
