@@ -42,10 +42,10 @@ const ImageSlider = ({ images }) => {
 // Main Component
 const App = () => {
   const images = [
-    "/path-to-image-1.jpg",
-    "/path-to-image-2.jpg",
-    "/path-to-image-3.jpg",
-    "/path-to-image-4.jpg",
+    '/1.png',
+    '/2.png',
+    '/3.png',
+    '/4.png'
   ];
 
   return (
