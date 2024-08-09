@@ -19,8 +19,9 @@ function Blog() {
   return (
     
       <main className='flex flex-row justify-center w-full p-4'>
-      <Navbar/>  
+        <Navbar/>
     <div className='flex flex-col max-w-auto w-full'>
+    
         <div className='bg-[#ffff] w-auto h-96 flex justify-center border-2 border-black-500 rounded-md'>
         {/* <img src={T1} width="100" height="100" /> */}
         </div>
@@ -115,8 +116,9 @@ function Blog() {
               Send
             </button>
           </div>
+          <Footer/>
     </div>
-    <Footer/>
+    
       </main>
   )
 }
