@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Container from "../components/Container";
-
+import { IoIosStar } from 'react-icons/io';
 interface FavoriteCardProps {
   title: string;
   author: string;
@@ -17,34 +17,32 @@ interface FavoriteCardProps {
 
 const ReviewCard: React.FC<FavoriteCardProps> = ({ title, author, rating, reviews, price }) => {
   return (
-    <Link href="/my-project">
-      <div className="card flex flex-col md:flex-row border-2 border-gray-300 rounded-lg shadow-md mb-4 p-4">
-        <div className="photo mb-4 md:mb-0 md:mr-8">
-          <img src="/face.png" className="w-48 h-auto object-cover rounded shadow-sm" alt="Face" />
+    <Link href="/Reviewproject">
+      <div className="flex items-center border-2 border-gray-300 rounded-lg shadow-md mb-2 p-4">
+        <div className="flex-shrink-0 w-40 h-auto mr-4">
+          <img src="/face.png" className="w-full h-auto object-cover rounded shadow-sm" />
         </div>
-        <div className="card-body flex flex-col justify-between flex-1 ml-5 mt-2">
-          <div className="card-header mb-4">
-            <h2 className="text-xl font-bold">{title}</h2>
+        <div className="flex flex-col justify-between flex-1">
+          <div className="card-header mb-2">
+            <h2 className="text-lg font-semibold">{title}</h2>
           </div>
-          <div className="author flex items-center mb-2">
+          <div className="author mb-2 flex items-center">
             <img
               src="https://via.placeholder.com/50"
               className="w-12 h-12 object-cover rounded-full mr-2"
-              alt="Author"
             />
-            <span className="text-lg">{author}</span>
+            <span className="text-base">{author}</span>
           </div>
           <div className="rating flex items-center mb-2">
-            <img src="/star.png" alt="Star" className="w-4 h-4 mr-1" />
-            <span className="text-lg">{rating} ({reviews})</span>
+            <IoIosStar className="text-yellow-500 text-xl mr-1" />
+            <span className="text-base">{rating} ({reviews})</span>
           </div>
-          <div className="price text-lg font-semibold text-green-600">{price}</div>
+          <div className="price text-base font-semibold text-green-600">{price}</div>
         </div>
       </div>
     </Link>
   );
 };
-
 const Favorite: React.FC = () => {
   const { data: session, status } = useSession();
 
