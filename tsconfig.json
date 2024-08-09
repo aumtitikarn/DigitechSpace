@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [".next/types/next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [".next/types/next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/components/home/AiGenProduct2.jsx"],
   "exclude": ["node_modules"]
 }

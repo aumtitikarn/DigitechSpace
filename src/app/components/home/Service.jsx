@@ -130,7 +130,7 @@ function Service() {
           </div>
         )}
 
-        <div className="flex flex-col justify-center w-full mt-6">
+        <div className="flex flex-col justify-center w-full mt-10">
           <h1 className="text-lg font-bold" style={{fontSize:"24px"}}>Service</h1>
           <p className="mt-2 text-lg">
             Please contact us. If you have any problems using this website.
@@ -141,14 +141,14 @@ function Service() {
               type="text"
               value={input1}
               onChange={(e) => setInput1(e.target.value)}
-              placeholder="Enter first message"
+              placeholder="Problem"
               className="w-full p-2 mb-2 border border-gray-300 rounded"
             />
             <input
               type="text"
               value={input2}
               onChange={(e) => setInput2(e.target.value)}
-              placeholder="Enter second message"
+              placeholder="Email"
               className="w-full p-2 mb-2 border border-gray-300 rounded"
             />
             <button
