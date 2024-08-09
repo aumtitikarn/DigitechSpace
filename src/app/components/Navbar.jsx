@@ -7,7 +7,7 @@ import { IoIosNotifications } from "react-icons/io";
 import { FaBoxOpen, FaStar } from "react-icons/fa";
 import { BiSolidExit } from "react-icons/bi";
 import { FaWallet, FaMoneyBillTrendUp } from "react-icons/fa6";
-import { IoMdClose } from 'react-icons/io';
+import { IoMdClose } from "react-icons/io";
 
 function CustomNavbar({ session }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -21,7 +21,8 @@ function CustomNavbar({ session }) {
     setAccountBoxVisible(!isAccountBoxVisible);
   };
 
-  const accountBoxMarginTop = session?.user?.role === "StudentUser" ? "mt-[451px]" : "mt-[390px]";
+  const accountBoxMarginTop =
+    session?.user?.role === "StudentUser" ? "mt-[451px]" : "mt-[390px]";
 
   return (
     <nav className="bg-[#0B1E48] shadow-md p-5 relative z-50">
@@ -69,7 +70,9 @@ function CustomNavbar({ session }) {
             <MdAccountCircle className="text-white text-4xl mt-3" />
           </button>
           {isAccountBoxVisible && (
-            <div className={`px-3 py-3 absolute right-0 ${accountBoxMarginTop} border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg z-2000`}>
+            <div
+              className={`px-3 py-3 absolute right-0 ${accountBoxMarginTop} border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg z-2000`}
+            >
               {/* เนื้อหาภายในกล่องข้อมูลบัญชี */}
               <div className="">
                 <div className="flex items-center ">
@@ -102,26 +105,26 @@ function CustomNavbar({ session }) {
                       </>
                     )}
                     <Link href="/favorite">
-                    <li className="flex items-center mt-2">
-                      <FaHeart className="mr-5 text-2xl text-gray-600" />
-                      <span className="text-[18px]">Favorite</span>
-                    </li>
+                      <li className="flex items-center mt-2">
+                        <FaHeart className="mr-5 text-2xl text-gray-600" />
+                        <span className="text-[18px]">Favorite</span>
+                      </li>
                     </Link>
                     <Link href="/notification">
-                    <li className="flex items-center mt-2">
-                      <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
-                      <span className="text-[18px]">Notification</span>
-                    </li>
+                      <li className="flex items-center mt-2">
+                        <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
+                        <span className="text-[18px]">Notification</span>
+                      </li>
                     </Link>
                     <li className="flex items-center mt-2">
                       <FaBoxOpen className="mr-5 text-2xl text-gray-600 sm:mt-3" />
                       <span className="text-[18px]">My Project</span>
                     </li>
                     <Link href="/review">
-                    <li className="flex items-center mt-2 ">
-                      <FaStar className="mr-5  text-2xl text-gray-600" />
-                      <span className="text-[18px]">Review</span>
-                    </li>
+                      <li className="flex items-center mt-2 ">
+                        <FaStar className="mr-5  text-2xl text-gray-600" />
+                        <span className="text-[18px]">Review</span>
+                      </li>
                     </Link>
                   </ul>
                   <button
@@ -219,11 +222,11 @@ function CustomNavbar({ session }) {
                             </li>
                           </>
                         )}
-                         <Link href="/favorite">
-                        <li className="flex items-center mt-2">
-                          <FaHeart className="mr-5 text-2xl text-gray-600" />
-                          <span className="text-[18px]">Favorite</span>
-                        </li>
+                        <Link href="/favorite">
+                          <li className="flex items-center mt-2">
+                            <FaHeart className="mr-5 text-2xl text-gray-600" />
+                            <span className="text-[18px]">Favorite</span>
+                          </li>
                         </Link>
                         <Link href="/notification">
                         <li className="flex items-center mt-2">
@@ -291,26 +294,26 @@ function CustomNavbar({ session }) {
             </button>
           </div>
           <ul className="flex-1 px-5 space-y-5 mt-10">
-        <li className="border-t border-gray-300 pt-2">
-          <Link href="/Home">
-            <p className="font-semibold text-[20px] text-white">Home</p>
-          </Link>
-        </li>
-        <li className="border-t border-gray-300 pt-2">
-          <Link href="/project">
-            <p className="font-semibold text-[20px] text-white">Project</p>
-          </Link>
-        </li>
-        <li className="border-t border-gray-300 pt-2 flex items-center justify-between">
-          <Link href="/blog" className="flex-1">
-            <p className="font-semibold text-[20px] text-white">Blog</p>
-          </Link>
-        </li>
-        <li className="flex justify-center border-t border-gray-300 pt-2 ">
-          <MdGTranslate className="text-white text-4xl mt-3" />
-        </li>
-      </ul>
-    </div>
+            <li className="border-t border-gray-300 pt-2">
+              <Link href="/Home">
+                <p className="font-semibold text-[20px] text-white">Home</p>
+              </Link>
+            </li>
+            <li className="border-t border-gray-300 pt-2">
+              <Link href="/project">
+                <p className="font-semibold text-[20px] text-white">Project</p>
+              </Link>
+            </li>
+            <li className="border-t border-gray-300 pt-2 flex items-center justify-between">
+              <Link href="/blog" className="flex-1">
+                <p className="font-semibold text-[20px] text-white">Blog</p>
+              </Link>
+            </li>
+            <li className="flex justify-center border-t border-gray-300 pt-2 ">
+              <MdGTranslate className="text-white text-4xl mt-3" />
+            </li>
+          </ul>
+        </div>
       )}
     </nav>
   );

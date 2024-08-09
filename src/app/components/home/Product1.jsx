@@ -1,47 +1,34 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { FaSearch, FaFire } from 'react-icons/fa';
-import { IoDocumentTextOutline, IoTerminalOutline } from 'react-icons/io5';
-import { BsBox } from 'react-icons/bs';
-import { MdWeb, MdOutlineAppShortcut, MdOutlinePhotoFilter } from 'react-icons/md';
-import { GoDependabot } from 'react-icons/go';
-import { AiOutlineDatabase } from 'react-icons/ai';
-import { HiOutlineComputerDesktop } from 'react-icons/hi2';
-import { RiMenuSearchLine } from "react-icons/ri";
-
-const buttonsData = [
-  { type: "Document", icon: <IoDocumentTextOutline size={24} /> },
-  { type: "Model/3D", icon: <BsBox size={24} /> },
-  { type: "Website", icon: <MdWeb size={24} /> },
-  { type: "MobileApp", icon: <MdOutlineAppShortcut size={24} /> },
-  { type: "AI", icon: <GoDependabot size={24} /> },
-  { type: "Datasets", icon: <AiOutlineDatabase size={24} /> },
-  { type: "IOT", icon: <IoTerminalOutline size={24} /> },
-  { type: "Program", icon: <HiOutlineComputerDesktop size={24} /> },
-  { type: "Photo/Art", icon: <MdOutlinePhotoFilter size={24} /> },
-  { type: "Other", icon: <RiMenuSearchLine  size={24} /> }
-];
+import React from "react";
+import { IoIosStar } from "react-icons/io";
 
 function Product1() {
-
   return (
-    <main className='flex flex-col items-center justify-center px-4 w-full '>
-      <div className='flex flex-col justify-center w-full'>
-        <div className='flex items-center space-x-2 mt-3'>
-          <p className=' font-bold 'style={{fontSize:"24px"}}>Website</p>
+    <main className="flex flex-col items-center justify-center px-4 w-full">
+      <div className="flex flex-col justify-center w-full">
+        <div className="flex items-center space-x-2 mt-3">
+          <p className="font-bold" style={{ fontSize: "24px" }}>
+            Website
+          </p>
         </div>
-        <div className='mt-10 mt-3'>
-          <div className='grid  gap-4 grid-cols-3 lg:grid-cols-4 xl:grid-cols-10'>
-            {buttonsData.map((button, index) => (
-              <button 
-                key={index} 
-                className='w-full h-[80px] flex flex-col items-center justify-center rounded-lg  text-black  p-2'
-              >
-                {button.icon}
-                <span className='mt-2'>{button.type}</span>
-              </button>
-            ))}
+        <div className="mt-3">
+          <div className="w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
+            {/* รูปภาพสินค้า */}
+            <img
+              src="https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg"
+              alt="Product Image"
+              className="w-[150px] h-[90px] rounded-md object-cover mr-4"
+            />
+            <div className="flex flex-col justify-between h-full">
+              <p className="text-lg font-semibold">Hi5 Website</p>
+              <p className="text-sm text-gray-600">Titikarn Waitayasuwan</p>
+              <div className="flex items-center">
+                <span className="text-yellow-500 mr-2 text-3xl"><IoIosStar /></span>
+                <span className="text-sm text-gray-600">4.8 (28) | Sold 29</span>
+              </div>
+              <p className="text-lg font-bold text-[#33529B]">50,000 THB</p>
+            </div>
           </div>
         </div>
       </div>
