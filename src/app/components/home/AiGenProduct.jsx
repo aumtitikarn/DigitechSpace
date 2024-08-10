@@ -59,7 +59,6 @@ const ProductList = ({ products }) => {
   );
 };
 
-// Main Component
 const App = () => {
   const products = [
     {
