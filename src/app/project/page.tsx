@@ -8,6 +8,8 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { GoCheck ,GoShare,GoHeartFill } from "react-icons/go";
 import Link from "next/link";
+import Filter from "./filter"
+
 
 const Project = () => {
     const { data: session, status } = useSession();
@@ -25,7 +27,7 @@ const Project = () => {
     <main className="flex-grow ">
      <Navbar session={session} />
      <div className="lg:mx-64 lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5">
-      
+      <Filter/>
       </div>
     </main>
     <Footer />
