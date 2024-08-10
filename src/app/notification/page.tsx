@@ -23,7 +23,7 @@ const Notification = () => {
     return (
         <Container>
             <Navbar session={session} />
-            <main className="flex-grow  lg:mx-40 lg:mt-20 lg:mb-20 mt-10 mb-1">
+            <main className="flex-grow  lg:mx-40 lg:mt-10 lg:mb-20 mt-10 mb-1">
                 <div className="container mx-auto mt-3  lg:ml-10 ">
                     <h1 className="text-3xl md:text-4xl font-bold mb-8 lg:ml-10 ml-8">Notification</h1>
                 </div>
