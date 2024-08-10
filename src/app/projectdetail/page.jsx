@@ -10,11 +10,13 @@ import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
+import { GoHeart } from "react-icons/go";
 import Link from "next/link";
 
 const Project = () => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -35,6 +37,9 @@ const Project = () => {
 
   const handleNextClick = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
+  const handleFavoriteClick = () => {
+    setIsFavorited((prev) => !prev);  // เปลี่ยนสถานะเมื่อคลิก
   };
 
   // ข้อมูลตัวอย่างของสินค้า
@@ -104,7 +109,7 @@ const Project = () => {
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar session={session} />
-      <div className="lg:mx-60 mt-20 mb-20">
+      <div className="lg:mx-60 lg:mt-20 lg:mb-20 mt-10 mb-10 ">
         <div className="flex flex-col min-h-screen">
           {/* Slider Section */}
           <div className="flex flex-col items-center p-4">
@@ -160,9 +165,13 @@ const Project = () => {
                 <div className="flex flex-col items-end">
                   <div className="flex space-x-2">
                     <GoShare className="text-gray-600 cursor-pointer text-2xl" />
-                    <Link href="/favorite">
-                      <GoHeartFill className="text-gray-600 cursor-pointer text-2xl" />
-                    </Link>
+                    <button onClick={handleFavoriteClick} className="cursor-pointer">
+                      {isFavorited ? (
+                        <GoHeartFill className="text-gray-600 text-2xl" />
+                      ) : (
+                        <GoHeart className="text-gray-600 text-2xl" />
+                      )}
+                    </button>
                   </div>
                   <Link href="/projectreceive">
                   <button className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-4">
@@ -252,11 +261,11 @@ const Project = () => {
                     Titikarn Waitayasuwan
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-[17px] mt-10">
+                <div className="flex overflow-x-auto gap-[17px] mt-10">
                   {products.map((product, index) => (
                     <div
                       key={index}
-                      className="rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto flex-shrink-0 p-4"
+                      className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
                     >
                       <div className="w-full h-auto flex flex-col">
                         {/* รูปภาพสินค้า */}
@@ -297,11 +306,11 @@ const Project = () => {
               </div>
               <div className="mt-10">
                 <p className="text-[20px] font-bold">Other Project </p>
-                <div className="flex flex-wrap gap-[17px] mt-10">
+                <div className="flex overflow-x-auto gap-[17px] mt-10">
                   {products.map((product, index) => (
                     <div
                       key={index}
-                      className="rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto flex-shrink-0 p-4"
+                      className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
                     >
                       <div className="w-full h-auto flex flex-col">
                         {/* รูปภาพสินค้า */}

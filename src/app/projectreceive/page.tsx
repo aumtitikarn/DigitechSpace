@@ -11,11 +11,13 @@ import { MdAccountCircle } from "react-icons/md";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 import { AiOutlineNotification } from "react-icons/ai";
+import { GoHeart } from "react-icons/go";
 import Link from "next/link";
 
-const Project = () => {
+const ProjectReceive = () => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -36,6 +38,10 @@ const Project = () => {
 
   const handleNextClick = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
+
+  const handleFavoriteClick = () => {
+    setIsFavorited((prev) => !prev); // เปลี่ยนสถานะเมื่อคลิก
   };
 
   // ข้อมูลตัวอย่างของสินค้า
@@ -105,7 +111,7 @@ const Project = () => {
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar session={session} />
-      <div className="lg:mx-60 mt-20 mb-20">
+      <div className="lg:mx-60 lg:mt-20 lg:mb-20 mt-10 mb-10">
         <div className="flex flex-col min-h-screen">
           {/* Slider Section */}
           <div className="flex flex-col items-center p-4">
@@ -136,7 +142,9 @@ const Project = () => {
             <div className="w-full mt-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-xl font-bold text-[24px]">Facebook Website</p>
+                  <p className="text-xl font-bold text-[24px]">
+                    Facebook Website
+                  </p>
                   <div className="flex items-center">
                     <p className="text-sm text-gray-600 mr-2">by</p>
                     <span className="text-gray-500 mr-2 text-2xl">
@@ -161,10 +169,17 @@ const Project = () => {
                 <div className="flex flex-col items-end">
                   <div className="flex space-x-5">
                     <GoShare className="text-gray-600 cursor-pointer text-2xl" />
-                    <Link href="/favorite">
-                      <GoHeartFill className="text-gray-600 cursor-pointer text-2xl" />
-                    </Link>
-                    < AiOutlineNotification className="text-gray-600 cursor-pointer text-2xl"/>
+                    <button
+                      onClick={handleFavoriteClick}
+                      className="cursor-pointer"
+                    >
+                      {isFavorited ? (
+                        <GoHeartFill className="text-gray-600 text-2xl" />
+                      ) : (
+                        <GoHeart className="text-gray-600 text-2xl" />
+                      )}
+                    </button>
+                    <AiOutlineNotification className="text-gray-600 cursor-pointer text-2xl" />
                   </div>
                 </div>
               </div>
@@ -205,11 +220,11 @@ const Project = () => {
                   </li>
                 </ul>
                 <button
-                type="submit"
-                className="mt-5 flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Download
-              </button>
+                  type="submit"
+                  className="mt-5 flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Download
+                </button>
               </div>
 
               {/* Review Section */}
@@ -255,11 +270,11 @@ const Project = () => {
                     Titikarn Waitayasuwan
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-[17px] mt-10">
+                <div className="flex overflow-x-auto gap-[17px] mt-10">
                   {products.map((product, index) => (
                     <div
                       key={index}
-                      className="rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto flex-shrink-0 p-4"
+                      className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
                     >
                       <div className="w-full h-auto flex flex-col">
                         {/* รูปภาพสินค้า */}
@@ -300,11 +315,11 @@ const Project = () => {
               </div>
               <div className="mt-10">
                 <p className="text-[20px] font-bold">Other Project </p>
-                <div className="flex flex-wrap gap-[17px] mt-10">
+                <div className="flex overflow-x-auto gap-[17px] mt-10">
                   {products.map((product, index) => (
                     <div
                       key={index}
-                      className="rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto flex-shrink-0 p-4"
+                      className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
                     >
                       <div className="w-full h-auto flex flex-col">
                         {/* รูปภาพสินค้า */}
@@ -352,4 +367,4 @@ const Project = () => {
   );
 };
 
-export default Project;
+export default ProjectReceive;
