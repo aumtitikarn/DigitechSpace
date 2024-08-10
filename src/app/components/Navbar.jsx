@@ -118,7 +118,7 @@ function CustomNavbar({ session }) {
                         <span className="text-[18px]">Notification</span>
                       </li>
                     </Link>
-                    <Link href="/project">
+                    <Link href="/myproject">
                     <li className="flex items-center mt-2">
                       <FaBoxOpen className="mr-5 text-2xl text-gray-600 sm:mt-3" />
                       <span className="text-[18px]">My Project</span>
@@ -240,7 +240,7 @@ function CustomNavbar({ session }) {
                           <span className="text-[18px]">Notification</span>
                         </li>
                         </Link>
-                        <Link href="/project">
+                        <Link href="/myproject">
                         <li className="flex items-center mt-2">
                           <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">My Project</span>

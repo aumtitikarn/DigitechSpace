@@ -4,36 +4,34 @@ import React, { useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import { GoCheck, GoShare, GoHeartFill } from "react-icons/go";
+import { useRouter } from "next/navigation";
+import { GoCheck, GoShare, GoHeartFill, GoHeart } from "react-icons/go";
 import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
-import { FaChevronLeft } from "react-icons/fa";
-import { FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { AiOutlineNotification } from "react-icons/ai";
-import { GoHeart } from "react-icons/go";
-import Link from "next/link";
+import Report from "../components/report"; // Use the correct import for the Report component
 
 const ProjectReceive = () => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   if (status === "loading") {
     return <p>Loading...</p>;
   }
 
   if (!session) {
-    redirect("/auth/signin");
+    router.push("/auth/signin");
     return null;
   }
 
   const images = ["/pexample1.png", "/pexample3.png", "/pexample4.png"];
 
   const handlePrevClick = () => {
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + images.length) % images.length
-    );
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
 
   const handleNextClick = () => {
@@ -41,10 +39,17 @@ const ProjectReceive = () => {
   };
 
   const handleFavoriteClick = () => {
-    setIsFavorited((prev) => !prev); // เปลี่ยนสถานะเมื่อคลิก
+    setIsFavorited((prev) => !prev);
   };
 
-  // ข้อมูลตัวอย่างของสินค้า
+  const handleNotificationClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   const products = [
     {
       image:
@@ -122,10 +127,9 @@ const ProjectReceive = () => {
                   alt="Project Image"
                   className="w-full h-[500px] object-cover"
                 />
-                {/* Slider Controls */}
                 <button
                   onClick={handlePrevClick}
-                  className="absolute left-10 top-1/2 transform -translate-y-1/2  text-gray-500 p-2 rounded-full text-4xl bg-gray-100"
+                  className="absolute left-10 top-1/2 transform -translate-y-1/2 text-gray-500 p-2 rounded-full text-4xl bg-gray-100"
                 >
                   <FaChevronLeft />
                 </button>
@@ -142,9 +146,7 @@ const ProjectReceive = () => {
             <div className="w-full mt-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-xl font-bold text-[24px]">
-                    Facebook Website
-                  </p>
+                  <p className="text-xl font-bold text-[24px]">Facebook Website</p>
                   <div className="flex items-center">
                     <p className="text-sm text-gray-600 mr-2">by</p>
                     <span className="text-gray-500 mr-2 text-2xl">
@@ -154,9 +156,7 @@ const ProjectReceive = () => {
                       Titikarn Waitayasuwan
                     </p>
                   </div>
-                  <p className="text-lg font-bold mt-3 text-[#33529B]">
-                    45,000 THB
-                  </p>
+                  <p className="text-lg font-bold mt-3 text-[#33529B]">45,000 THB</p>
                   <div className="flex items-center">
                     <span className="text-yellow-500 mr-2">
                       <IoIosStar />
@@ -169,17 +169,17 @@ const ProjectReceive = () => {
                 <div className="flex flex-col items-end">
                   <div className="flex space-x-5">
                     <GoShare className="text-gray-600 cursor-pointer text-2xl" />
-                    <button
-                      onClick={handleFavoriteClick}
-                      className="cursor-pointer"
-                    >
+                    <button onClick={handleFavoriteClick} className="cursor-pointer">
                       {isFavorited ? (
                         <GoHeartFill className="text-gray-600 text-2xl" />
                       ) : (
                         <GoHeart className="text-gray-600 text-2xl" />
                       )}
                     </button>
-                    <AiOutlineNotification className="text-gray-600 cursor-pointer text-2xl" />
+                    <AiOutlineNotification
+                      onClick={handleNotificationClick}
+                      className="text-gray-600 cursor-pointer text-2xl"
+                    />
                   </div>
                 </div>
               </div>
@@ -362,6 +362,12 @@ const ProjectReceive = () => {
           </div>
         </div>
       </div>
+
+      {/* Report Modal */}
+      {isModalOpen && (
+        <Report project="Facebook Website" onClose={closeModal} />
+      )}
+
       <Footer />
     </main>
   );
