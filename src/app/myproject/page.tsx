@@ -19,7 +19,7 @@ interface ReviewCardProps {
   
   const ReviewCard: React.FC<ReviewCardProps> = ({ title, author, rating, reviews, price, showButton = false }) => {
     return (
-      <Link href="/projectreceive">
+        <Link href="/project/projectreceive">
         <div className="flex items-center border-2 border-gray-300 rounded-lg shadow-md mb-2 p-4 w-full max-w-[90%] lg:max-w-[950px] relative">
           <div className="flex-shrink-0 w-40 h-auto mr-4">
             <img src="/face.png" className="w-full h-auto object-cover rounded shadow-sm" />

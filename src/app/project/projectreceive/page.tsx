@@ -10,7 +10,8 @@ import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { AiOutlineNotification } from "react-icons/ai";
-import Report from "../components/report"; // Use the correct import for the Report component
+import Report from "./report"; // Updated import path for the Report component
+; // Use the correct import for the Report component
 
 const ProjectReceive = () => {
   const { data: session, status } = useSession();
