@@ -1,13 +1,14 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
+import { IoIosStar } from 'react-icons/io';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Container from "../components/Container";
-import { IoIosStar } from 'react-icons/io';
-interface FavoriteCardProps {
+
+interface favoriteCardProps {
   title: string;
   author: string;
   rating: number;
@@ -15,9 +16,9 @@ interface FavoriteCardProps {
   price: string;
 }
 
-const ReviewCard: React.FC<FavoriteCardProps> = ({ title, author, rating, reviews, price }) => {
+const ReviewCard: React.FC<favoriteCardProps> = ({ title, author, rating, reviews, price }) => {
   return (
-    <Link href="/Reviewproject">
+    <Link href="/project">
       <div className="flex items-center border-2 border-gray-300 rounded-lg shadow-md mb-2 p-4">
         <div className="flex-shrink-0 w-40 h-auto mr-4">
           <img src="/face.png" className="w-full h-auto object-cover rounded shadow-sm" />
@@ -43,7 +44,8 @@ const ReviewCard: React.FC<FavoriteCardProps> = ({ title, author, rating, review
     </Link>
   );
 };
-const Favorite: React.FC = () => {
+
+const favorite: React.FC = () => {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
@@ -54,15 +56,14 @@ const Favorite: React.FC = () => {
     redirect("/auth/signin");
     return null;
   }
-
+  
   return (
-    <Container >
-      <main>
+    <Container>
       <Navbar session={session} />
-      <div className="flex-grow px-6 py-12 lg:px-8">
+      <main className="flex-grow px-6 py-12 lg:px-8">
         <div className="container mx-auto mt-5">
           <h1 className="text-3xl md:text-4xl font-bold mb-8">Favorite</h1>
-          <div className="review-list flex flex-col space-y-4">
+          <div className="review-list space-y-4">
             <ReviewCard
               title="Hi5 Website"
               author={session.user?.name || "Anonymous"}
@@ -72,13 +73,12 @@ const Favorite: React.FC = () => {
             />
             <ReviewCard
               title="Hi5 Website"
-              author="Titikarn W..."
+              author={session.user?.name || "Anonymous"}
               rating={4.8}
               reviews={28}
               price="50,000 THB"
             />
           </div>
-        </div>
         </div>
       </main>
       <Footer />
@@ -86,4 +86,4 @@ const Favorite: React.FC = () => {
   );
 };
 
-export default Favorite;
+export default favorite;

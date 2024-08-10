@@ -22,8 +22,8 @@ const Project = () => {
   return (
     <div className="flex flex-col min-h-screen">
      <Navbar session={session} />
-     <div className="flex flex-col items-center p-4 lg:flex-row lg:items-start lg:space-x-8">
-      <div className=" lg:w-2/5">
+     <div className="flex flex-col items-center p-4 lg:flex-col lg:items-start lg:space-x-8">
+      <div className="  lg:w-2/5 flex justify-cente ">
         <img
           src="/face.png"
           alt="Project Image"
@@ -32,14 +32,14 @@ const Project = () => {
       </div>
 
       {/* Information Section */}
-      <div className="w-full lg:w-3/5">
+      <div className="w-full lg:w-3/5] ">
       <div className="flex items-start justify-between mt-4">
-  <div>
+       <div>
     <h1 className="text-xl font-bold mt-4 lg:mt-0">Facebook Website</h1>
     <p className="text-sm text-gray-500">By Titikarn Waitayasuwan</p>
     <p className="text-lg text-blue-600 font-bold mt-2">45,000 THB</p>
     <p className="text-yellow-500 mt-2">4.8 (28) | 1 day ago</p>
-  </div>
+       </div>
 
   <div className="flex flex-col items-end">
     <div className="flex space-x-2 mt-10">
