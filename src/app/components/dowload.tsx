@@ -3,7 +3,7 @@
 import React from 'react';
 import { GoX } from "react-icons/go";
 import { LuRefreshCw } from "react-icons/lu";
-
+import Link from 'next/link';
 interface ReviewProject {
   project: string;
 }
@@ -13,8 +13,9 @@ const Report: React.FC<ReviewProject> = ({ project }) => {
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow px-4 py-8 lg:px-10 bg-gray-100">
         <div className="relative mx-auto mt-1">
+        <Link href="/">
           <GoX className="absolute ml-10 text-black-600 text-4xl cursor-pointer" />
-          
+          </Link>
           <div className="flex flex-col items-center justify-center min-h-[500px] text-center ">
           <LuRefreshCw className="text-8xl mb-10 text-blue-500 animate-slow-spin " />
             <h3>หากค้างอยู่ที่หน้านี้นานโปรดตรวจสอบแถบ</h3>
