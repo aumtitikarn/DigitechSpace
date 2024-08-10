@@ -10,6 +10,7 @@ import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
+import { AiOutlineNotification } from "react-icons/ai";
 import Link from "next/link";
 
 const Project = () => {
@@ -158,17 +159,13 @@ const Project = () => {
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-5">
                     <GoShare className="text-gray-600 cursor-pointer text-2xl" />
                     <Link href="/favorite">
                       <GoHeartFill className="text-gray-600 cursor-pointer text-2xl" />
                     </Link>
+                    < AiOutlineNotification className="text-gray-600 cursor-pointer text-2xl"/>
                   </div>
-                  <Link href="/projectreceive">
-                  <button className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-4">
-                    Buy
-                  </button>
-                  </Link>
                 </div>
               </div>
 
@@ -207,6 +204,12 @@ const Project = () => {
                     ข้อมูล
                   </li>
                 </ul>
+                <button
+                type="submit"
+                className="mt-5 flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Download
+              </button>
               </div>
 
               {/* Review Section */}
