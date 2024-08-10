@@ -21,16 +21,31 @@ const Items_Filter = () => {
   ];
 
   const [showMore, setShowMore] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(["All"]);
   const [selectedRating, setSelectedRating] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleCategoryChange = (e) => {
     const { value, checked } = e.target;
-    const updatedList = checked
-      ? [...selectedCategory, value]
-      : selectedCategory.filter((item) => item !== value);
+    const category = JSON.parse(value).label.split(", ")[1];
 
-    setSelectedCategory(updatedList);
+    if (category === "All") {
+      if (checked) {
+        setSelectedCategory(["All"]);
+      } else {
+        setSelectedCategory([]);
+      }
+    } else {
+      const updatedList = checked
+        ? [...selectedCategory.filter((item) => item !== "All"), category]
+        : selectedCategory.filter((item) => item !== category);
+
+      if (updatedList.length === 0) {
+        setSelectedCategory(["All"]);
+      } else {
+        setSelectedCategory(updatedList);
+      }
+    }
   };
 
   const handleRatingChange = (rating) => {
@@ -109,16 +124,37 @@ const Items_Filter = () => {
       price: "50,000",
     },
     {
-        image:
-          "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-        name: "Hi5 Website",
-        author: "Titikarn Waitayasuwan",
-        rating: "4.8",
-        reviews: 28,
-        sold: 29,
-        price: "50,000",
-      },
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
   ];
+
 
   const Rating = () => {
     const items = [];
@@ -172,9 +208,9 @@ const Items_Filter = () => {
 
   return (
     <>
-      <div className="container flex gap-3">
-        <div className="">
-          <div className="p-4  flex border border-gray-300 rounded-lg shadow-sm w-[300px]">
+     <div className="container flex flex-col md:flex-row gap-3 px-2 md:px-0 ">
+     <div className="w-full md:w-[300px] mb-4 md:mb-0">
+          <div className="p-4  flex border border-gray-300 rounded-lg shadow-sm lg:w-[300px] ">
             <div className="space-y-0">
               <div className="relative mt-4">
                 <input
@@ -200,9 +236,11 @@ const Items_Filter = () => {
                           className={`mr-2 accent-[#33539B]`}
                           value={`{"value":${c.id},"label":"${c.category_th}, ${c.category_en}"}`}
                           onChange={(e) => handleCategoryChange(e)}
-                          checked={selectedCategory.includes(
-                            `{"value":${c.id},"label":"${c.category_th}, ${c.category_en}"}`
-                          )}
+                          checked={
+                            c.category_en === "All"
+                              ? selectedCategory.includes("All")
+                              : selectedCategory.includes(c.category_en)
+                          }
                         />
                         <label htmlFor={`cat-list-${c.id}`}>
                           {c.category_en}
@@ -241,83 +279,89 @@ const Items_Filter = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap gap-x-[40px] ml-[20px] gap-y-[65px]">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 lg:ml-[50px] lg:gap-y-[65px]">
           {products.map((product, index) => (
             <div
-              key={index}
-              className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-[320px] p-4"
-            >
-              <div className="w-full h-auto flex flex-col">
-                {/* รูปภาพสินค้า */}
-                <img
-                  src={product.image}
-                  alt="Product Image"
-                  className="w-full h-[150px] rounded-md object-cover mb-4"
-                />
-                <div className="flex flex-col justify-between h-full">
-                  <p className="text-lg font-semibold mb-2 truncate w-[150px]">
-                    {product.name}
-                  </p>
-                  <div className="flex items-center mb-2">
-                    <span className="text-gray-500 mr-2 text-2xl">
-                      <MdAccountCircle />
-                    </span>
-                    <p className="text-sm text-gray-600 truncate w-[150px]">
-                      {product.author}
-                    </p>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <span className="text-yellow-500 mr-2">
-                      <IoIosStar />
-                    </span>
-                    <span className="text-sm text-gray-600">
-                      {product.rating} ({product.reviews}) | Sold {product.sold}
-                    </span>
-                  </div>
-                  <p className="text-lg font-bold text-[#33529B]">
-                    {product.price} THB
+            key={index}
+            className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white lg:w-[210px] lg:h-[320px] p-4 sm:w-[190px] sm:h-[290px]"
+          >
+            <div className="w-full h-auto flex flex-col">
+              {/* รูปภาพสินค้า */}
+              <img
+                src={product.image}
+                alt="Product Image"
+                className="w-full h-[150px] rounded-md object-cover mb-4"
+              />
+              <div className="flex flex-col justify-between h-full">
+                <p className="text-lg font-semibold mb-2 truncate w-[150px]">
+                  {product.name}
+                </p>
+                <div className="flex items-center mb-2">
+                  <span className="text-gray-500 mr-2 text-2xl">
+                    <MdAccountCircle />
+                  </span>
+                  <p className="text-sm text-gray-600 truncate w-[150px]">
+                    {product.author}
                   </p>
                 </div>
+                <div className="flex items-center mb-2">
+                  <span className="text-yellow-500 mr-2">
+                    <IoIosStar />
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    {product.rating} ({product.reviews}) | Sold {product.sold}
+                  </span>
+                </div>
+                <p className="text-lg font-bold text-[#33529B]">
+                  {product.price} THB
+                </p>
               </div>
             </div>
+          </div>
+          
           ))}
         </div>
       </div>
 
-      {/* Pagination */}
-      <div className="mt-10 flex justify-center items-center ml-[300px]">
-        <nav aria-label="Pagination" className="flex items-center space-x-4">
+      {/* Pagination
+      <div className="mt-10">
+  <nav aria-label="Pagination" className="flex justify-center space-x-4">
+    <button
+      className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
+      aria-label="Previous"
+      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+      disabled={currentPage === 1}
+    >
+      &laquo;
+    </button>
+    <ul className="flex space-x-4">
+      {[...Array(totalPages)].map((_, index) => (
+        <li key={index}>
           <button
-            className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
-            aria-label="Previous"
+            className={`px-3 py-1 rounded-md ${
+              currentPage === index + 1
+                ? "bg-[#33529B] text-white"
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
+            onClick={() => setCurrentPage(index + 1)}
           >
-            &laquo;
+            {index + 1}
           </button>
-          <ul className="flex space-x-4">
-            <li>
-              <button className="px-3 py-1 bg-[#33529B] text-white rounded-md hover:bg-[#4c6fb3]">
-                1
-              </button>
-            </li>
-            <li>
-              <button className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300">
-                2
-              </button>
-            </li>
-            <li>
-              <button className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300">
-                3
-              </button>
-            </li>
-          </ul>
-          <button
-            className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
-            aria-label="Next"
-          >
-            &raquo;
-          </button>
-        </nav>
-      </div>
+        </li>
+      ))}
+    </ul>
+    <button
+      className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
+      aria-label="Next"
+      onClick={() =>
+        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+      }
+      disabled={currentPage === totalPages}
+    >
+      &raquo;
+    </button>
+  </nav>
+</div> */}
     </>
   );
 };
