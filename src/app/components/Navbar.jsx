@@ -98,10 +98,12 @@ function CustomNavbar({ session }) {
                           <FaWallet className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Wallet</span>
                         </li>
+                        <Link href="/Sell">
                         <li className="flex items-center mt-2">
                           <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Sell</span>
                         </li>
+                        </Link>
                       </>
                     )}
                     <Link href="/favorite">
@@ -218,10 +220,12 @@ function CustomNavbar({ session }) {
                               <FaWallet className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">Wallet</span>
                             </li>
+                            <Link href="/Sell">
                             <li className="flex items-center mt-2">
                               <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">Sell</span>
                             </li>
+                            </Link>
                           </>
                         )}
                         <Link href="/favorite">
