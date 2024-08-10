@@ -173,8 +173,8 @@ const Project = () => {
                       )}
                     </button>
                   </div>
-                  <Link href="/projectreceive">
-                  <button className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-4">
+                  <Link href="/OrderItem">
+                  <button className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-11">
                     Buy
                   </button>
                   </Link>

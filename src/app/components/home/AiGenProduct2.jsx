@@ -26,12 +26,12 @@ const ProductList = ({ products }) => {
                   className="w-[150px] h-[90px] rounded-md object-cover mr-4"
                 />
                 <div className="flex flex-col justify-between h-full">
-                  <p className="text-lg font-semibold">{product.name}</p>
+                  <p className="text-lg font-semibold truncate sm:w-[190px] lg:w-[1200px]">{product.name}</p>
                   <div className="flex items-center">
                     <span className="text-gray-500 mr-2 text-2xl">
                       <MdAccountCircle />
                     </span>
-                    <p className="text-sm text-gray-600">{product.author}</p>
+                    <p className="text-sm text-gray-600 truncate sm:w-[190px] lg:w-[1200px]">{product.author}</p>
                   </div>
                   <div className="flex items-center">
                     <span className="text-yellow-500 mr-2">
