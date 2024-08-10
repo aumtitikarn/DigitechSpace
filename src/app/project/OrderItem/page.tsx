@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { useSession } from "next-auth/react";
 import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
@@ -30,7 +30,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
   return (
     <div className="flex-grow">
       <Navbar session={session} />
-      <div className="lg:mx-64 lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5">
+      <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
         <h1 className="text-[24px] font-bold">Ordered items</h1>
         <div>
           {products.map((product, index) => (
