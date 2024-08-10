@@ -19,7 +19,7 @@ export default function Home() {
   console.log(session);
 
   return (
-    <main>
+    <main className="bg-[#FBFBFB]">
       <Navbar session={session} />
       <Container>
         <div className="lg:mx-60 mt-10 mb-5">

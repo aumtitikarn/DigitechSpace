@@ -1,4 +1,4 @@
-import {nextui} from '@nextui-org/theme';
+import { nextui } from '@nextui-org/theme';
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -15,8 +15,12 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      boxShadow: {
+        'custom': '0px 4px 4px 0px rgba(0, 0, 0, 0.25)', // Add your custom shadow here
+      }
     },
   },
   plugins: [nextui()],
 };
+
 export default config;
