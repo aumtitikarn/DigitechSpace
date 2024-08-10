@@ -5,15 +5,35 @@ import { IoIosStar } from "react-icons/io";
 import { CiHeart } from "react-icons/ci";
 import Image from 'next/image'
 import Link from 'next/link';
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import Container from "../components/Container";
+import { useSession } from "next-auth/react";
+import QRshare from "../QRshare/page"
+import Editprofile from "../EditProfile/page"
 
-function pageProfile() {
+function page() {
   const [activeButton, setActiveButton] = useState(null);
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
   };
 
+  const { data: session, status } = useSession();
+    
+  if (status === "loading") {
+      return <p>Loading...</p>;
+    }
+  
+    if (!session) {
+      redirect("/auth/signin");
+      return null;
+    } 
+
+
   return (
+    <Container>
+      <Navbar session={session} />
     <main className="flex flex-col md:flex-row w-full justify-center p-4">
       <div className="flex flex-col w-full max-w-auto">
 
@@ -27,10 +47,10 @@ function pageProfile() {
       </div>
 
       <div className="flex flex-row justify-center mt-10">
-      <Link href="" className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
+      <Link href="/EditProfile" className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
       <p>แก้ไขโปรไฟล์</p>
       </Link>
-      <Link href="" className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
+      <Link href="/QRshare" className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
       แชร์โปรไฟล์
       </Link>
       </div>
@@ -242,7 +262,9 @@ function pageProfile() {
 )}
       </div>
     </main>
+    <Footer />
+    </Container>
   );
 }
 
-export default pageProfile;
+export default page;
