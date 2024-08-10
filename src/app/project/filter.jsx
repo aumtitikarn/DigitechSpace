@@ -323,7 +323,7 @@ const Items_Filter = () => {
         </div>
       </div>
 
-      {/* Pagination
+      Pagination
       <div className="mt-10">
   <nav aria-label="Pagination" className="flex justify-center space-x-4">
     <button
@@ -361,7 +361,7 @@ const Items_Filter = () => {
       &raquo;
     </button>
   </nav>
-</div> */}
+</div>
     </>
   );
 };
