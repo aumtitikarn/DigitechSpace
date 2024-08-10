@@ -19,6 +19,15 @@ const config: Config = {
         'custom': '0px 4px 4px 0px rgba(0, 0, 0, 0.25)', // Add your custom shadow here
       }
     },
+    animation: {
+      'slow-spin': 'slow-spin 2s linear infinite', // Adjust duration as needed
+    },
+    keyframes: {
+      'slow-spin': {
+        '0%': { transform: 'rotate(0deg)' },
+        '100%': { transform: 'rotate(360deg)' },
+      },
+    },
   },
   plugins: [nextui()],
 };
