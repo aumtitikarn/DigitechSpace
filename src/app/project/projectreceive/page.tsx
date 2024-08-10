@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { GoCheck, GoShare, GoHeartFill } from "react-icons/go";
