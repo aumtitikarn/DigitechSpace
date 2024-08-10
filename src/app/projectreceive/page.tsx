@@ -159,7 +159,7 @@ const Project = () => {
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-5">
                     <GoShare className="text-gray-600 cursor-pointer text-2xl" />
                     <Link href="/favorite">
                       <GoHeartFill className="text-gray-600 cursor-pointer text-2xl" />
