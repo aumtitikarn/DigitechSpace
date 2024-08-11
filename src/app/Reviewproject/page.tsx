@@ -42,10 +42,10 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   }
 
   return (
-    <Container>
-      <Navbar session={session} />
-      <main className="lg:mx-60 mt-10 mb-5">
-      <div >
+    <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
+      <main className="flex-grow">
+        <Navbar session={session} />
+        <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h1 className="text-3xl md:text-4xl font-bold mb-6">Review Project</h1>
           <div className="border-b border-gray-500 my-4  lg:max-w-[950px]"></div>
           <p className="text-lg font-medium mb-4">Project: Facebook Website</p>
@@ -64,9 +64,9 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
             ))}
           </div>
           <div className="relative mx-auto w-full lg:max-w-[950px] lg:ml-1">
-  <textarea
-    placeholder="text"
-    value={review}
+            <textarea
+           placeholder="text"
+     value={review}
     onChange={handleReviewChange}
     className="w-full h-40 p-3 border-2 border-gray-300 rounded-md mb-5"
   />
@@ -78,9 +78,9 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
             </button>
           </div>
         </div>
-      </main>
+        </main>
       <Footer />
-    </Container>
+    </div>
   );
 };
 

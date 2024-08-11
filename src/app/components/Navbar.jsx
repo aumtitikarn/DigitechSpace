@@ -96,10 +96,12 @@ function CustomNavbar({ session }) {
                   <ul className="list-none mt-3 ">
                     {session?.user?.role !== "NormalUser" && (
                       <>
+                      <Link href="/Wallet">
                         <li className="flex items-center ">
                           <FaWallet className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Wallet</span>
                         </li>
+                        </Link>
                         <Link href="/Sell">
                         <li className="flex items-center mt-2">
                           <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
@@ -218,10 +220,12 @@ function CustomNavbar({ session }) {
                       <ul className="list-none mt-3 ">
                         {session?.user?.role !== "NormalUser" && (
                           <>
+                          <Link href="/Wallet">
                             <li className="flex items-center">
                               <FaWallet className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">Wallet</span>
                             </li>
+                            </Link>
                             <Link href="/Sell">
                             <li className="flex items-center mt-2">
                               <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
