@@ -173,7 +173,7 @@ const Project = () => {
                       )}
                     </button>
                   </div>
-                  <Link href="/OrderItem">
+                  <Link href="/project/OrderItem">
                   <button className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-11">
                     Buy
                   </button>
@@ -261,6 +261,7 @@ const Project = () => {
                     Titikarn Waitayasuwan
                   </p>
                 </div>
+                <Link href="/project/projectdetail">
                 <div className="flex overflow-x-auto gap-[17px] mt-10">
                   {products.map((product, index) => (
                     <div
@@ -303,9 +304,11 @@ const Project = () => {
                     </div>
                   ))}
                 </div>
+                </Link>
               </div>
               <div className="mt-10">
                 <p className="text-[20px] font-bold">Other Project </p>
+                <Link href="/project/projectdetail">
                 <div className="flex overflow-x-auto gap-[17px] mt-10">
                   {products.map((product, index) => (
                     <div
@@ -348,6 +351,7 @@ const Project = () => {
                     </div>
                   ))}
                 </div>
+                </Link>
               </div>
             </div>
           </div>
