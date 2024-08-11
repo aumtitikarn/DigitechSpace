@@ -113,8 +113,8 @@ const MyProject: React.FC = () => {
   return (
     <Container>
       <Navbar session={session} />
-      <div className="flex-grow lg:mx-40 lg:mt-10 lg:mb-20 mt-10 mb-10 ml-5">
-        <div className="container mx-auto mt-5 lg:ml-20">
+      <main className="lg:mx-60 mt-10 mb-5">
+        <div >
           <h2 className="text-xl font-bold mb-4">Waiting to check</h2>
           <div className="review-list space-y-4 mb-6">
             <ReviewCard products={userProducts} showButton={true} />
@@ -130,7 +130,7 @@ const MyProject: React.FC = () => {
             <ReviewCard products={userProducts} showButton={false} />
           </div>
         </div>
-      </div>
+      </main>
       <Footer />
     </Container>
   );
