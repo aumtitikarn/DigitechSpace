@@ -4,6 +4,7 @@ import { star } from "react-icons-kit/fa";
 import Icon from "react-icons-kit";
 import { MdAccountCircle } from "react-icons/md";
 import { IoIosStar } from "react-icons/io";
+import Link from "next/link";
 
 const Items_Filter = () => {
   const categories = [
@@ -153,17 +154,6 @@ const Items_Filter = () => {
       sold: 29,
       price: "50,000",
     },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    // ... (other product objects)
   ];
 
 
@@ -219,9 +209,9 @@ const Items_Filter = () => {
 
   return (
     <>
-      <div className="container flex flex-col md:flex-row gap-3 px-2 md:px-0">
-        <div className="w-full md:w-[300px] mb-4 md:mb-0">
-          <div className="p-4 flex border border-gray-300 rounded-lg shadow-sm lg:w-[300px]">
+     <div className="container flex flex-col md:flex-row gap-3 px-2 md:px-0 ">
+     <div className="w-full md:w-[300px] mb-4 md:mb-0">
+          <div className="p-4  flex border border-gray-300 rounded-lg shadow-sm lg:w-[300px] ">
             <div className="space-y-0">
               <div className="relative mt-4">
                 <input
@@ -290,48 +280,49 @@ const Items_Filter = () => {
             </div>
           </div>
         </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 lg:ml-[50px] lg:gap-y-[65px]">
-          {products
-            .map((product, index) => (
-              <div
-                key={index}
-                className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white lg:w-[210px] lg:h-[320px] p-4 sm:w-[190px] sm:h-[290px]"
-              >
-                <div className="w-full h-auto flex flex-col">
-                  <img
-                    src={product.image}
-                    alt="Product Image"
-                    className="w-full h-[150px] rounded-md object-cover mb-4"
-                  />
-                  <div className="flex flex-col justify-between h-full">
-                    <p className="text-lg font-semibold mb-2 truncate w-[150px]">
-                      {product.name}
-                    </p>
-                    <div className="flex items-center">
-                      <MdAccountCircle className="text-[#BEBEBE] w-5 h-5 mr-2" />
-                      <span className="text-xs">{product.author}</span>
-                    </div>
-                    <div className="flex items-center mt-2">
-                      <IoIosStar className="text-yellow-500" />
-                      <span className="text-sm ml-2">{product.rating}</span>
-                      <span className="text-sm text-gray-500 ml-2">
-                        ({product.reviews} reviews)
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center mt-2">
-                      <span className="text-xs text-gray-500">
-                        Sold {product.sold} times
-                      </span>
-                      <span className="font-bold text-lg">
-                        ฿{product.price}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+        <Link href="/project/projectdetail">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-3 lg:grid-cols-4 lg:ml-[50px]">
+  {products.map((product, index) => (
+    <div
+      key={index}
+      className="flex-shrink rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-6"
+    >
+      <div className="w-full h-auto flex flex-col">
+        {/* รูปภาพสินค้า */}
+        <img
+          src={product.image}
+          alt="Product Image"
+          className="w-full h-[150px] rounded-md object-cover mb-4"
+        />
+        <div className="flex flex-col justify-between h-full">
+          <p className="text-lg font-semibold mb-2 truncate">
+            {product.name}
+          </p>
+          <div className="flex items-center mb-2">
+            <span className="text-gray-500 mr-2 text-2xl">
+              <MdAccountCircle />
+            </span>
+            <p className="text-sm text-gray-600 truncate">
+              {product.author}
+            </p>
+          </div>
+          <div className="flex items-center mb-2">
+            <span className="text-yellow-500 mr-2">
+              <IoIosStar />
+            </span>
+            <span className="lg:text-sm text-gray-600 text-[12px]">
+              {product.rating} ({product.reviews}) | Sold {product.sold}
+            </span>
+          </div>
+          <p className="text-lg font-bold text-[#33529B]">
+            {product.price} THB
+          </p>
         </div>
+      </div>
+    </div>
+  ))}
+</div>
+        </Link>
       </div>
     </>
   );

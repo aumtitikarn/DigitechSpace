@@ -26,7 +26,7 @@ const Project = () => {
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
     <main className="flex-grow ">
      <Navbar session={session} />
-     <div className="lg:mx-64 lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5">
+     <div className="lg:mx-64 lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5 mx-30">
       <Filter/>
       </div>
     </main>
