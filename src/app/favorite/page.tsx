@@ -1,8 +1,8 @@
-'use client';
-import React from 'react';
-import Link from 'next/link';
-import { IoIosStar } from 'react-icons/io';
-import { MdAccountCircle } from 'react-icons/md';
+"use client";
+import React from "react";
+import Link from "next/link";
+import { IoIosStar } from "react-icons/io";
+import { MdAccountCircle } from "react-icons/md";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
@@ -31,12 +31,16 @@ const ReviewCard: React.FC<{ product: Product }> = ({ product }) => {
         className="w-[150px] h-[90px] rounded-md object-cover mr-4"
       />
       <div className="flex flex-col flex-1 justify-between h-full">
-        <p className="text-lg font-semibold truncate sm:w-[190px] lg:w-[1200px]">{product.name}</p>
+        <p className="text-lg font-semibold truncate sm:w-[190px] lg:w-[1200px]">
+          {product.name}
+        </p>
         <div className="flex items-center">
           <span className="text-gray-500 mr-2 text-2xl">
             <MdAccountCircle />
           </span>
-          <p className="text-sm text-gray-600 truncate sm:w-[190px] lg:w-[1200px]">{product.author}</p>
+          <p className="text-sm text-gray-600 truncate sm:w-[190px] lg:w-[1200px]">
+            {product.author}
+          </p>
         </div>
         <div className="flex items-center">
           <span className="text-yellow-500 mr-2">
@@ -48,7 +52,7 @@ const ReviewCard: React.FC<{ product: Product }> = ({ product }) => {
         </div>
         <p className="text-lg font-bold text-[#33529B] mb-4">
           {product.price} THB
-        </p>  
+        </p>
       </div>
     </div>
   );
@@ -70,7 +74,8 @@ const favorite: React.FC = () => {
   // Products array
   const products: Product[] = [
     {
-      image: "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
       name: "Hi5 Website",
       author: "Titikarn Waitayasuwan",
       rating: "4.8",
@@ -79,22 +84,23 @@ const favorite: React.FC = () => {
       price: "50,000",
     },
     {
-      image: "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
       name: "Another Project",
       author: "Titikarn Waitayasuwan",
       rating: "4.5",
       reviews: 15,
       sold: 20,
       price: "75,000",
-    }
+    },
   ];
 
   return (
-    <Container>
-      <Navbar session={session} />
-      <main className="flex-grow lg:mx-40 lg:mt-10 lg:mb-20 mt-10 mb-10 ml-5">
-        <div className="container mx-auto mt-5 lg:ml-20">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8">Favorite</h1>
+    <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
+      <main className="flex-grow">
+        <Navbar session={session} />
+        <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
+          <h1 className="text-[24px] md:text-4xl font-bold mb-8">Favorite</h1>
           <div className="review-list space-y-4">
             {products.map((product, index) => (
               <Link key={index} href="/project/projectdetail">
@@ -105,7 +111,7 @@ const favorite: React.FC = () => {
         </div>
       </main>
       <Footer />
-    </Container>
+    </div>
   );
 };
 
