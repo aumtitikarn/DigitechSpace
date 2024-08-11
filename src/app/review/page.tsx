@@ -92,8 +92,8 @@ const Review: React.FC = () => {
   return (
     <Container>
       <Navbar session={session} />
-      <main className="flex-grow lg:mx-40 lg:mt-10 lg:mb-20 mt-10 mb-10 ml-5">
-        <div className="container mx-auto mt-5 lg:ml-20">
+      <main className="lg:mx-60 mt-10 mb-5">
+      <div >
           <h1 className="text-3xl md:text-4xl font-bold mb-8">Review</h1>
           <div className="review-list space-y-4">
             {products.map((product, index) => (
