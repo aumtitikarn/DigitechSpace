@@ -15,7 +15,7 @@ const ProductList = ({ products }) => {
             Website
           </p>
         </div>
-        <Link href="/projectdetail">
+        <Link href="/project/projectdetail">
           {products.map((product, index) => (
             <div key={index} className="mt-2">
               <div className="w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
