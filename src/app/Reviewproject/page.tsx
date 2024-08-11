@@ -44,8 +44,8 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   return (
     <Container>
       <Navbar session={session} />
-      <main className="flex-grow lg:mx-60 lg:mt-10 lg:mb-20 mt-20 mb-20 ml-5 ">
-        <div className="container mx-auto mt-5 lg:ml-5">
+      <main className="lg:mx-60 mt-10 mb-5">
+      <div >
           <h1 className="text-3xl md:text-4xl font-bold mb-6">Review Project</h1>
           <div className="border-b border-gray-500 my-4  lg:max-w-[950px]"></div>
           <p className="text-lg font-medium mb-4">Project: Facebook Website</p>
