@@ -77,7 +77,7 @@ const favorite: React.FC = () => {
       image:
         "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
       name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
+      author: "Titikarn Waita",
       rating: "4.8",
       reviews: 28,
       sold: 29,
@@ -87,7 +87,7 @@ const favorite: React.FC = () => {
       image:
         "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
       name: "Another Project",
-      author: "Titikarn Waitayasuwan",
+      author: "Titikarn Waita",
       rating: "4.5",
       reviews: 15,
       sold: 20,
