@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-function ReportBlog() {
+function page() {
 
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");
@@ -79,4 +79,4 @@ function ReportBlog() {
   );
 }
 
-export default ReportBlog;
+export default page;
