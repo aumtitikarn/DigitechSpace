@@ -2,97 +2,97 @@
 import React from 'react';
 import Link from 'next/link';
 import { IoIosStar } from 'react-icons/io';
+import { MdAccountCircle } from 'react-icons/md';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Container from "../components/Container";
 
-const products = [
+// Define the Product type
+interface Product {
+  image: string;
+  name: string;
+  author: string;
+  rating: string;
+  reviews: number;
+  sold: number;
+  price: string;
+}
+
+// Products array
+const products: Product[] = [
   {
-    title: "Hi5 Website",
-    author: "Anonymous",
-    rating: 4.8,
+    image: "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+    name: "Hi5 Website",
+    author: "Titikarn Waitayasuwan",
+    rating: "4.8",
     reviews: 28,
-    price: "50,000 THB",
-    showButton: true, // Add this property to control button visibility
+    sold: 29,
+    price: "50,000",
   },
   {
-    title: "Hi5 Website",
-    author: "Anonymous",
-    rating: 4.8,
-    reviews: 28,
-    price: "50,000 THB",
-    showButton: true, // Add this property to control button visibility
-  },
-  {
-    title: "Another Project",
-    author: "Anonymous",
-    rating: 4.5,
+    image: "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+    name: "Another Project",
+    author: "Titikarn Waitayasuwan",
+    rating: "4.5",
     reviews: 15,
-    price: "75,000 THB",
-    showButton: false, // Add this property to control button visibility
-  },
-  {
-    title: "Another Project",
-    author: "Anonymous",
-    rating: 4.5,
-    reviews: 15,
-    price: "75,000 THB",
-    showButton: false, // Add this property to control button visibility
-  },
-  {
-    title: "Another Project",
-    author: "Anonymous",
-    rating: 4.5,
-    reviews: 15,
-    price: "75,000 THB",
-    showButton: false, // Add this property to control button visibility
-  },
+    sold: 20,
+    price: "75,000",
+  }
 ];
 
-const ReviewCard: React.FC<{
-  title: string;
-  author: string;
-  rating: number;
-  reviews: number;
-  price: string;
-  showButton?: boolean; // Add showButton prop
-}> = ({ title, author, rating, reviews, price, showButton = false }) => {
+// ReviewCard Component
+const ReviewCard: React.FC<{ products: Product[]; showButton: boolean }> = ({ products, showButton }) => {
   return (
-    <Link href="/project/projectreceive">
-      <div className="flex items-center border-2 border-gray-300 rounded-lg shadow-md mb-2 p-4 w-full max-w-[90%] lg:max-w-[950px] relative">
-        <div className="flex-shrink-0 w-40 h-auto mr-4">
-          <img src="/face.png" className="w-full h-auto object-cover rounded shadow-sm" />
-        </div>
-        <div className="flex flex-col justify-between flex-1">
-          <div className="card-header mb-2">
-            <h2 className="text-lg font-semibold">{title}</h2>
-          </div>
-          <div className="author mb-2 flex items-center">
-            <img
-              src="https://via.placeholder.com/50"
-              className="w-12 h-12 object-cover rounded-full mr-2"
-            />
-            <span className="text-base">{author}</span>
-          </div>
-          <div className="rating flex items-center mb-2">
-            <IoIosStar className="text-yellow-500 text-xl mr-1" />
-            <span className="text-base">{rating} ({reviews})</span>
-          </div>
-          <div className="price text-base font-semibold text-green-600">{price}</div>
-        </div>
-        {showButton && (
-          <button className="bg-blue-600 text-white px-4 py-1 md:px-6 md:py-2 rounded-lg text-xs md:text-sm absolute right-4 bottom-4">
-            Check the project
-          </button>
-        )}
+    <div className="flex flex-col items-center justify-center px-4 w-full">
+      <div className="flex flex-col justify-center w-full">
+      <Link href="/project/projectreceive">
+        {products.map((product) => (
+            <div className="relative mt-2 w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
+              {/* Product Image */}
+              <img
+                src={product.image}
+                alt="Product Image"
+                className="w-[150px] h-[90px] rounded-md object-cover mr-4"
+              />
+              <div className="flex flex-col flex-1 justify-between h-full">
+                <p className="text-lg font-semibold truncate sm:w-[190px] lg:w-[1200px]">{product.name}</p>
+                <div className="flex items-center">
+                  <span className="text-gray-500 mr-2 text-2xl">
+                    <MdAccountCircle />
+                  </span>
+                  <p className="text-sm text-gray-600 truncate sm:w-[190px] lg:w-[1200px]">{product.author}</p>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-yellow-500 mr-2">
+                    <IoIosStar />
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    {product.rating} ({product.reviews}) | Sold {product.sold}
+                  </span>
+                </div>
+                <p className="text-lg font-bold text-[#33529B] mb-4">
+                  {product.price} THB
+                </p>
+                {showButton && (
+                  <div className="absolute bottom-4 lg:right-4 right-2">
+                    <button className="bg-blue-600 text-white px-4 py-1 md:px-6 md:py-2 rounded-lg text-xs md:text-sm">
+                      Check the project
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+        ))}
+         </Link>
       </div>
-    </Link>
+    </div>
   );
 };
 
-const myproject: React.FC = () => {
+// MyProject Component
+const MyProject: React.FC = () => {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
@@ -117,19 +117,7 @@ const myproject: React.FC = () => {
         <div className="container mx-auto mt-5 lg:ml-20">
           <h2 className="text-xl font-bold mb-4">Waiting to check</h2>
           <div className="review-list space-y-4 mb-6">
-            {userProducts
-              .filter(product => product.showButton) // Show only products with a button
-              .map((product, index) => (
-                <ReviewCard
-                  key={index}
-                  title={product.title}
-                  author={product.author}
-                  rating={product.rating}
-                  reviews={product.reviews}
-                  price={product.price}
-                  showButton={product.showButton} // Pass the showButton value
-                />
-              ))}
+            <ReviewCard products={userProducts} showButton={true} />
           </div>
 
           <p className="text-sm text-gray-500 mb-8">
@@ -139,19 +127,7 @@ const myproject: React.FC = () => {
 
           <h2 className="text-xl font-bold mb-4">My project</h2>
           <div className="review-list space-y-4">
-            {userProducts
-              .filter(product => !product.showButton) // Show only products without a button
-              .map((product, index) => (
-                <ReviewCard
-                  key={index}
-                  title={product.title}
-                  author={product.author}
-                  rating={product.rating}
-                  reviews={product.reviews}
-                  price={product.price}
-                  showButton={product.showButton} // Pass the showButton value
-                />
-              ))}
+            <ReviewCard products={userProducts} showButton={false} />
           </div>
         </div>
       </div>
@@ -160,6 +136,4 @@ const myproject: React.FC = () => {
   );
 };
 
-  
-  export default myproject;
-  
+export default MyProject;

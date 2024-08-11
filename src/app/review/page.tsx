@@ -2,39 +2,55 @@
 import React from 'react';
 import Link from 'next/link';
 import { IoIosStar } from 'react-icons/io';
+import { MdAccountCircle } from 'react-icons/md';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Container from "../components/Container";
 
+// Define the Product type
+interface Product {
+  image: string;
+  name: string;
+  author: string;
+  rating: string;
+  reviews: number;
+  sold: number;
+  price: string;
+}
+
 // ReviewCard Component
-const ReviewCard: React.FC<{ product: { title: string, author: string, rating: number, reviews: number, price: string } }> = ({ product }) => {
+const ReviewCard: React.FC<{ product: Product }> = ({ product }) => {
   return (
-    <Link href="/Reviewproject">
-      <div className="flex items-center border-2 border-gray-300 rounded-lg shadow-md mb-2 p-4 w-full max-w-[90%] lg:max-w-[950px]">
-        <div className="flex-shrink-0 w-40 h-auto mr-4">
-          <img src="/face.png" className="w-full h-auto object-cover rounded shadow-sm" />
+    <div className="relative mt-2 w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
+      {/* Product Image */}
+      <img
+        src={product.image}
+        alt="Product Image"
+        className="w-[150px] h-[90px] rounded-md object-cover mr-4"
+      />
+      <div className="flex flex-col flex-1 justify-between h-full">
+        <p className="text-lg font-semibold truncate sm:w-[190px] lg:w-[1200px]">{product.name}</p>
+        <div className="flex items-center">
+          <span className="text-gray-500 mr-2 text-2xl">
+            <MdAccountCircle />
+          </span>
+          <p className="text-sm text-gray-600 truncate sm:w-[190px] lg:w-[1200px]">{product.author}</p>
         </div>
-        <div className="flex flex-col justify-between flex-1">
-          <div className="card-header mb-2">
-            <h2 className="text-lg font-semibold">{product.title}</h2>
-          </div>
-          <div className="author mb-2 flex items-center">
-            <img
-              src="https://via.placeholder.com/50"
-              className="w-12 h-12 object-cover rounded-full mr-2"
-            />
-            <span className="text-base">{product.author}</span>
-          </div>
-          <div className="rating flex items-center mb-2">
-            <IoIosStar className="text-yellow-500 text-xl mr-1" />
-            <span className="text-base">{product.rating} ({product.reviews})</span>
-          </div>
-          <div className="price text-base font-semibold text-green-600">{product.price}</div>
+        <div className="flex items-center">
+          <span className="text-yellow-500 mr-2">
+            <IoIosStar />
+          </span>
+          <span className="text-sm text-gray-600">
+            {product.rating} ({product.reviews}) | Sold {product.sold}
+          </span>
         </div>
+        <p className="text-lg font-bold text-[#33529B] mb-4">
+          {product.price} THB
+        </p>  
       </div>
-    </Link>
+    </div>
   );
 };
 
@@ -52,20 +68,24 @@ const Review: React.FC = () => {
   }
 
   // Products array
-  const products = [
+  const products: Product[] = [
     {
-      title: "Hi5 Website",
-      author: session.user?.name || "Anonymous",
-      rating: 4.8,
+      image: "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
       reviews: 28,
-      price: "50,000 THB"
+      sold: 29,
+      price: "50,000",
     },
     {
-      title: "Another Project",
-      author: session.user?.name || "Anonymous",
-      rating: 4.5,
+      image: "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Another Project",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.5",
       reviews: 15,
-      price: "75,000 THB"
+      sold: 20,
+      price: "75,000",
     }
   ];
 
@@ -77,7 +97,9 @@ const Review: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-bold mb-8">Review</h1>
           <div className="review-list space-y-4">
             {products.map((product, index) => (
-              <ReviewCard key={index} product={product} />
+              <Link key={index} href="/Reviewproject">
+                <ReviewCard product={product} />
+              </Link>
             ))}
           </div>
         </div>
