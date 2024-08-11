@@ -44,10 +44,10 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   return (
     <Container>
       <Navbar session={session} />
-      <main className="flex-grow px-6 py-12 lg:px-8">
-        <div className="container mx-auto mt-5">
+      <main className="flex-grow lg:mx-60 lg:mt-10 lg:mb-20 mt-20 mb-20 ml-5 ">
+        <div className="container mx-auto mt-5 lg:ml-5">
           <h1 className="text-3xl md:text-4xl font-bold mb-6">Review Project</h1>
-          <div className="border-b border-gray-500 my-4"></div>
+          <div className="border-b border-gray-500 my-4  lg:max-w-[950px]"></div>
           <p className="text-lg font-medium mb-4">Project: Facebook Website</p>
           <p className="text-lg font-medium mb-2">Point:</p>
           <div className="flex justify-left mb-4">
@@ -63,13 +63,13 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
               </span>
             ))}
           </div>
-          <div className="relative">
-            <textarea
-              placeholder="text"
-              value={review}
-              onChange={handleReviewChange}
-              className="w-full h-40 p-3 border-2 border-gray-300 rounded-md mb-5"
-            />
+          <div className="relative mx-auto w-full lg:max-w-[950px] lg:ml-1">
+  <textarea
+    placeholder="text"
+    value={review}
+    onChange={handleReviewChange}
+    className="w-full h-40 p-3 border-2 border-gray-300 rounded-md mb-5"
+  />
             <button
               onClick={handleSubmit}
               className="absolute bottom-10 right-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors text-lg font-medium"
