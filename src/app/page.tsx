@@ -71,8 +71,8 @@ export default function PreAuth() {
     className="my-6 text-black flex w-full justify-center items-center rounded-full border-2 border-gray-400 bg-[#FFFFFF] px-3 py-3 text-sm font-semibold leading-6 text-black shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
   >
     <img
-      className="w-8 h-6 flex-shrink-0 mr-4"
-      src="https://s3-alpha-sig.figma.com/img/ebb6/9ba4/c7a30d590f27c263d7fa57c2c10ac6f4?Expires=1723420800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=X3IAGkJN2FRNNtswaiW5wGcmto8BZ~ERopqyQCofNfKTmeMybrl5B1ACTF1Y9JgTyLPRLqLSLrF1kxPDJh1WeToo1fpNxVBgtLmNixNehbMmQ2mXNuFVOlgOBZrq-2z5qe7CTfp4hFHQsZaATfsS~o2G8XAd2rO8ROM6faPnOqCTZanA9pXShBmv5HLalqNhZC7LTy9c9DZ4iUfb7unG6R36TM7i4g0N4BF6D2cVowQo8d1B~Xic4QGKvtCkAInnmT6vuYct1KmwugSIeI2Qim5HhVEm7NMZ3IwnYfNsQR8VI9FGSAuEMwCxYkBk7SZof0djM4VoeRpa8csU1UAZug__"
+      className="w-6 h-6 flex-shrink-0 mr-4"
+      src="/github.png"
       alt="Github"
     />
     Continue with Github

@@ -281,7 +281,7 @@ const Items_Filter = () => {
           </div>
         </div>
         <Link href="/project/projectdetail">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-3 lg:grid-cols-4 lg:ml-[50px]">
+        <div className="grid grid-cols-3 lg:ml-[30px]">
   {products.map((product, index) => (
     <div
       key={index}

@@ -122,8 +122,8 @@ export default function SignIn() {
             </button>
             <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
             <img
-              className="w-8 h-6 flex-shrink-0 mr-4 ml-5"
-              src="https://s3-alpha-sig.figma.com/img/ebb6/9ba4/c7a30d590f27c263d7fa57c2c10ac6f4?Expires=1723420800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=X3IAGkJN2FRNNtswaiW5wGcmto8BZ~ERopqyQCofNfKTmeMybrl5B1ACTF1Y9JgTyLPRLqLSLrF1kxPDJh1WeToo1fpNxVBgtLmNixNehbMmQ2mXNuFVOlgOBZrq-2z5qe7CTfp4hFHQsZaATfsS~o2G8XAd2rO8ROM6faPnOqCTZanA9pXShBmv5HLalqNhZC7LTy9c9DZ4iUfb7unG6R36TM7i4g0N4BF6D2cVowQo8d1B~Xic4QGKvtCkAInnmT6vuYct1KmwugSIeI2Qim5HhVEm7NMZ3IwnYfNsQR8VI9FGSAuEMwCxYkBk7SZof0djM4VoeRpa8csU1UAZug__"
+              className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
+              src="/github.png"
               alt="Github"
             />
             </button>

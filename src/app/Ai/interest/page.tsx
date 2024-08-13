@@ -60,8 +60,8 @@ export default function Interest() {
     <main>
       <Container>
         <Navbar session={session} />
-        <div className="flex-grow text-center p-10">
-          <h2 className="text-3xl mb-10">
+        <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
+          <h2 className="text-center text-3xl mb-10">
             What type of content are you most interested in?
           </h2>
           <div className="mt-10 grid grid-cols-2 gap-6 mx-auto max-w-7xl sm:grid-cols-2 lg:grid-cols-4">
@@ -89,13 +89,15 @@ export default function Interest() {
               </button>
             ))}
           </div>
-          <button
-            className="mt-10 lg:px-[100px] lg:py-3 lg:w-auto lg:ml-auto lg:mr-20 w-full rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#33539B]"
-            onClick={handleNextClick}
-            disabled={selected.length === 0}
-          >
-            Next
-          </button>
+          <div className="flex justify-center">
+    <button
+        className="mt-10 lg:px-[100px] lg:py-3 lg:w-auto w-full mx-auto md:px-[100px] md:py-3 md:w-auto rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#33539B]"
+        onClick={handleNextClick}
+        disabled={selected.length === 0}
+    >
+        Next
+    </button>
+</div>
         </div>
         <Footer />
       </Container>
