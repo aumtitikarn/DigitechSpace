@@ -64,7 +64,7 @@ function page () {
         <IoIosSearch className="absolute left-3 top-3 text-gray-400" />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
         {Array(5).fill("").map((_, index) => (
           <Link href="/blog">
           <div key={index} className="rounded border-2 w-[180px] h-[260px] flex flex-col">
@@ -161,11 +161,13 @@ function page () {
       </div>
 
       <div className="mt-6 w-full flex justify-end">
+      {session?.user?.role !== "NormalUser" && (
         <Link href="">
           <div className="w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
           <FaPlus size={24}/>
           </div>
         </Link>
+      )}
       </div>
     </div>
   </div>
