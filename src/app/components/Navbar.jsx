@@ -180,7 +180,7 @@ function CustomNavbar({ session }) {
                 </Link>
               </li>
               <li>
-                <Link href="/blog">
+                <Link href="/listblog">
                   <p className="font-semibold text-[20px] text-white mx-16">
                     Blog
                   </p>

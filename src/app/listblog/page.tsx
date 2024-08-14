@@ -65,6 +65,7 @@ function page () {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
         {Array(5).fill("").map((_, index) => (
+          <Link href="/blog">
           <div key={index} className="rounded border-2 w-[180px] h-[260px] flex flex-col">
             <div className="rounded w-full h-40 relative">
               <img
@@ -91,9 +92,11 @@ function page () {
               </div>
             </div>
           </div>
+          </Link>
         ))}
 
 {Array(5).fill("").map((_, index) => (
+        <Link href="/blog">
           <div key={index} className="rounded border-2 w-[180px] h-[260px] flex flex-col">
             <div className="rounded w-full h-40 relative">
               <img
@@ -120,9 +123,11 @@ function page () {
               </div>
             </div>
           </div>
+          </Link>
         ))}
 
 {Array(5).fill("").map((_, index) => (
+        <Link href="/blog">
           <div key={index} className="rounded border-2 w-[180px] h-[260px] flex flex-col">
             <div className="rounded w-full h-40 relative">
               <img
@@ -149,6 +154,7 @@ function page () {
               </div>
             </div>
           </div>
+          </Link>
         ))}
 
       </div>
