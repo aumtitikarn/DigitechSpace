@@ -26,8 +26,10 @@ const Project = () => {
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
     <main className="flex-grow ">
      <Navbar session={session} />
-     <div className="lg:mx-64 lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5 mx-30">
+     <div className='lg:flex lg:justify-center'>
+     <div className="lg:mr-[50px] lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5 mx-30">
       <Filter/>
+      </div>
       </div>
     </main>
     <Footer />
