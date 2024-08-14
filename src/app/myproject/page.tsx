@@ -121,9 +121,10 @@ const MyProject: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
-      <main className="flex-grow">
-        <Navbar session={session} />
-        <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-1">
+      <Navbar session={session} />
+      <main className="flex-grow ">
+        
+        <div className=" lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <div>
             <h2 className="font-bold mb-4 text-[24px]">Waiting to check</h2>
             <div className="review-list space-y-4 mb-6">

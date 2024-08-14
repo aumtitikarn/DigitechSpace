@@ -7,7 +7,6 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import Container from "../components/Container";
 
 // Define the Product type
 interface Product {
@@ -31,26 +30,26 @@ const ReviewCard: React.FC<{ product: Product }> = ({ product }) => {
         className="w-[150px] h-[90px] rounded-md object-cover mr-4"
       />
       <div className="flex flex-col flex-1 justify-between h-full">
-        <p className="text-lg font-semibold truncate sm:w-[190px] lg:w-[1200px]">
+        <p className="text-lg font-semibold truncate sm:text-md md:text-lg lg:text-xl">
           {product.name}
         </p>
         <div className="flex items-center">
-          <span className="text-gray-500 mr-2 text-2xl">
+          <span className="text-gray-500 mr-2 text-xl sm:text-lg md:text-xl">
             <MdAccountCircle />
           </span>
-          <p className="text-sm text-gray-600 truncate sm:w-[190px] lg:w-[1200px]">
+          <p className="text-sm text-gray-600 truncate sm:text-xs md:text-sm lg:text-base">
             {product.author}
           </p>
         </div>
         <div className="flex items-center">
-          <span className="text-yellow-500 mr-2">
+          <span className="text-yellow-500 mr-2 text-lg sm:text-base md:text-lg">
             <IoIosStar />
           </span>
-          <span className="text-sm text-gray-600">
+          <span className="text-xs sm:text-xs md:text-sm lg:text-base">
             {product.rating} ({product.reviews}) | Sold {product.sold}
           </span>
         </div>
-        <p className="text-lg font-bold text-[#33529B] mb-4">
+        <p className="text-base sm:text-sm md:text-lg lg:text-lg font-bold text-[#33529B] mb-4">
           {product.price} THB
         </p>
       </div>
@@ -59,7 +58,7 @@ const ReviewCard: React.FC<{ product: Product }> = ({ product }) => {
 };
 
 // Main Review Component
-const favorite: React.FC = () => {
+const Favorite: React.FC = () => {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
@@ -70,7 +69,7 @@ const favorite: React.FC = () => {
     redirect("/auth/signin");
     return null;
   }
-
+ 
   // Products array
   const products: Product[] = [
     {
@@ -96,17 +95,19 @@ const favorite: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
+    <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">
+      <Navbar session={session} />
       <main className="flex-grow">
-        <Navbar session={session} />
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <h1 className="text-[24px] md:text-4xl font-bold mb-8">Favorite</h1>
-          <div className="review-list space-y-4">
-            {products.map((product, index) => (
-              <Link key={index} href="/project/projectdetail">
-                <ReviewCard product={product} />
-              </Link>
-            ))}
+          <div>
+            <h1 className="font-bold mb-4 text-[24px]">Favorite</h1>
+            <div className="review-list">
+              {products.map((product, index) => (
+                <Link key={index} href="/project/projectdetail">
+                  <ReviewCard product={product} />
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </main>
@@ -115,4 +116,4 @@ const favorite: React.FC = () => {
   );
 };
 
-export default favorite;
+export default Favorite;

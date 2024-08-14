@@ -16,49 +16,38 @@ const ProductList = ({ products }) => {
           </p>
         </div>
         <Link href="/project/projectdetail">
-          <div className="flex overflow-x-auto gap-[30px]">
-            {products.map((product, index) => (
-              <div
-                key={index}
-                className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-6 mt-5"
-                style={{ width: "203px", height: "275px" }}
-              >
-                <div className="w-full h-full flex flex-col">
-                  {/* รูปภาพสินค้า */}
-                  <img
-                    src={product.image}
-                    alt="Product Image"
-                    className="w-full h-[150px] rounded-md object-cover mb-4"
-                  />
-                  <div className="flex flex-col justify-between h-full">
-                    <p className="text-lg font-semibold mb-2 truncate">
-                      {product.name}
-                    </p>
-                    <div className="flex items-center mb-2">
-                      <span className="text-gray-500 mr-2 text-2xl">
-                        <MdAccountCircle />
-                      </span>
-                      <p className="text-sm text-gray-600 truncate">
-                        {product.author}
-                      </p>
-                    </div>
-                    <div className="flex items-center mb-2">
-                      <span className="text-yellow-500 mr-2">
-                        <IoIosStar />
-                      </span>
-                      <span className="lg:text-sm text-gray-600 text-[12px]">
-                        {product.rating} ({product.reviews}) | Sold{" "}
-                        {product.sold}
-                      </span>
-                    </div>
-                    <p className="text-lg font-bold text-[#33529B]">
-                      {product.price} THB
-                    </p>
+          {products.map((product, index) => (
+            <div key={index} className="mt-2">
+              <div className="w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
+                {/* รูปภาพสินค้า */}
+                <img
+                  src={product.image}
+                  alt="Product Image"
+                  className="w-[150px] h-[90px] rounded-md object-cover mr-4"
+                />
+                <div className="flex flex-col justify-between h-full">
+                  <p className="text-lg font-semibold truncate sm:w-[190px] lg:w-[1200px] ">{product.name}</p>
+                  <div className="flex items-center">
+                    <span className="text-gray-500 mr-2 text-2xl">
+                      <MdAccountCircle />
+                    </span>
+                    <p className="text-sm text-gray-600 truncate sm:w-[190px] lg:w-[1200px]">{product.author}</p>
                   </div>
+                  <div className="flex items-center">
+                    <span className="text-yellow-500 mr-2">
+                      <IoIosStar />
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      {product.rating} ({product.reviews}) | Sold {product.sold}
+                    </span>
+                  </div>
+                  <p className="text-lg font-bold text-[#33529B]">
+                    {product.price} THB
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </Link>
         <div className="flex-grow text-center">
           <p className="text-[#33529B] font-bold mt-7 text-[18px]">

@@ -180,7 +180,7 @@ function CustomNavbar({ session }) {
                 </Link>
               </li>
               <li>
-                <Link href="/blog">
+                <Link href="/listblog">
                   <p className="font-semibold text-[20px] text-white mx-16">
                     Blog
                   </p>
@@ -319,7 +319,7 @@ function CustomNavbar({ session }) {
               </Link>
             </li>
             <li className="border-t border-gray-300 pt-2 flex items-center justify-between">
-              <Link href="/blog" className="flex-1">
+              <Link href="/listblog" className="flex-1">
                 <p className="font-semibold text-[20px] text-white">Blog</p>
               </Link>
             </li>
