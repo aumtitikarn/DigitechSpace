@@ -9,14 +9,19 @@ import { GoCheck, GoShare, GoHeartFill } from "react-icons/go";
 import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import { FaChevronLeft } from "react-icons/fa";
-import { FaChevronRight } from "react-icons/fa";
+import { FaChevronRight, FaFacebook } from "react-icons/fa";
 import { GoHeart } from "react-icons/go";
+import { MdClose } from "react-icons/md";
+import { RiTwitterXLine } from "react-icons/ri";
+import { FaLink, FaFacebookF, FaTwitter } from "react-icons/fa";
 import Link from "next/link";
 
 const Project = () => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -39,7 +44,23 @@ const Project = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
   const handleFavoriteClick = () => {
-    setIsFavorited((prev) => !prev);  // เปลี่ยนสถานะเมื่อคลิก
+    setIsFavorited((prev) => !prev); // เปลี่ยนสถานะเมื่อคลิก
+  };
+
+  const handleBuyClick = () => {
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
+
+  const handleShareClick = () => {
+    setIsSharePopupOpen(!isSharePopupOpen); // Toggle popup open/close
+  };
+
+  const handleShareClosePopup = () => {
+    setIsSharePopupOpen(false); // Close popup
   };
 
   // ข้อมูลตัวอย่างของสินค้า
@@ -140,7 +161,9 @@ const Project = () => {
             <div className="w-full mt-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-xl font-bold text-[24px]">Facebook Website</p>
+                  <p className="text-xl font-bold text-[24px]">
+                    Facebook Website
+                  </p>
                   <div className="flex items-center">
                     <p className="text-sm text-gray-600 mr-2">by</p>
                     <span className="text-gray-500 mr-2 text-2xl">
@@ -164,8 +187,24 @@ const Project = () => {
                 </div>
                 <div className="flex flex-col items-end">
                   <div className="flex space-x-2">
-                    <GoShare className="text-gray-600 cursor-pointer text-2xl" />
-                    <button onClick={handleFavoriteClick} className="cursor-pointer">
+                    <div className="relative flex justify-center">
+                      <GoShare
+                        className="text-gray-600 cursor-pointer text-2xl"
+                        onClick={handleShareClick}
+                      />
+                      {/* Share Popup */}
+                      {isSharePopupOpen && (
+                        <div className="absolute bottom-full mb-[10px] w-[121px] h-[46px] flex-shrink-0 rounded-[30px] border border-gray-300 bg-white flex items-center justify-center space-x-4 shadow-lg">
+                          <FaLink className="text-gray-600 cursor-pointer" />
+                          <FaFacebook className="text-gray-600 cursor-pointer" />
+                          <RiTwitterXLine className="text-gray-600 cursor-pointer" />
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={handleFavoriteClick}
+                      className="cursor-pointer"
+                    >
                       {isFavorited ? (
                         <GoHeartFill className="text-gray-600 text-2xl" />
                       ) : (
@@ -173,11 +212,12 @@ const Project = () => {
                       )}
                     </button>
                   </div>
-                  <Link href="/project/OrderItem">
-                  <button className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-11">
+                  <button
+                    className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-11"
+                    onClick={handleBuyClick}
+                  >
                     Buy
                   </button>
-                  </Link>
                 </div>
               </div>
 
@@ -226,9 +266,9 @@ const Project = () => {
                   <div className="flex items-center">
                     <MdAccountCircle className="text-gray-600 text-3xl mr-3" />
                     <p className="flex items-center font-bold">
-                      Phornthiwa <IoIosStar className="mx-2 text-yellow-500" />{" "}
-                      5.0
+                      Phornthiwa <IoIosStar className="mx-2 text-yellow-500" />
                     </p>
+                    <p className="text-gray-500">5.0</p>
                   </div>
                   <p className="text-sm text-gray-600 ml-10">
                     ดีมาก ประทับใจมากค่ะ
@@ -238,8 +278,10 @@ const Project = () => {
                   <div className="flex items-center">
                     <MdAccountCircle className="text-gray-600 text-3xl mr-3" />
                     <p className="flex items-center font-bold">
-                      Stamp <IoIosStar className="mx-2 text-yellow-500" /> 5.0
+                      Stamp
+                      <IoIosStar className="mx-2 text-yellow-500" />
                     </p>
+                    <p className="text-gray-500">5.0</p>
                   </div>
                   <p className="text-sm text-gray-600 ml-10">
                     ดีมาก ประทับใจมากครับ
@@ -262,97 +304,148 @@ const Project = () => {
                   </p>
                 </div>
                 <Link href="/project/projectdetail">
-                <div className="flex overflow-x-auto gap-[17px] mt-10">
-                  {products.map((product, index) => (
-                    <div
-                      key={index}
-                      className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
-                    >
-                      <div className="w-full h-auto flex flex-col">
-                        {/* รูปภาพสินค้า */}
-                        <img
-                          src={product.image}
-                          alt="Product Image"
-                          className="w-full h-[150px] rounded-md object-cover mb-4"
-                        />
-                        <div className="flex flex-col justify-between h-full">
-                          <p className="text-lg font-semibold mb-2 truncate w-[150px]">
-                            {product.name}
-                          </p>
-                          <div className="flex items-center mb-2">
-                            <span className="text-gray-500 mr-2 text-2xl">
-                              <MdAccountCircle />
-                            </span>
-                            <p className="text-sm text-gray-600 truncate w-[150px]">
-                              {product.author}
+                  <div className="flex overflow-x-auto gap-[17px] mt-10">
+                    {products.map((product, index) => (
+                      <div
+                        key={index}
+                        className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
+                      >
+                        <div className="w-full h-auto flex flex-col">
+                          {/* รูปภาพสินค้า */}
+                          <img
+                            src={product.image}
+                            alt="Product Image"
+                            className="w-full h-[150px] rounded-md object-cover mb-4"
+                          />
+                          <div className="flex flex-col justify-between h-full">
+                            <p className="text-lg font-semibold mb-2 truncate w-[150px]">
+                              {product.name}
+                            </p>
+                            <div className="flex items-center mb-2">
+                              <span className="text-gray-500 mr-2 text-2xl">
+                                <MdAccountCircle />
+                              </span>
+                              <p className="text-sm text-gray-600 truncate w-[150px]">
+                                {product.author}
+                              </p>
+                            </div>
+                            <div className="flex items-center mb-2">
+                              <span className="text-yellow-500 mr-2">
+                                <IoIosStar />
+                              </span>
+                              <span className="text-sm text-gray-600">
+                                {product.rating} ({product.reviews}) | Sold{" "}
+                                {product.sold}
+                              </span>
+                            </div>
+                            <p className="text-lg font-bold text-[#33529B]">
+                              {product.price} THB
                             </p>
                           </div>
-                          <div className="flex items-center mb-2">
-                            <span className="text-yellow-500 mr-2">
-                              <IoIosStar />
-                            </span>
-                            <span className="text-sm text-gray-600">
-                              {product.rating} ({product.reviews}) | Sold{" "}
-                              {product.sold}
-                            </span>
-                          </div>
-                          <p className="text-lg font-bold text-[#33529B]">
-                            {product.price} THB
-                          </p>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
                 </Link>
               </div>
               <div className="mt-10">
                 <p className="text-[20px] font-bold">Other Project </p>
                 <Link href="/project/projectdetail">
-                <div className="flex overflow-x-auto gap-[17px] mt-10">
-                  {products.map((product, index) => (
-                    <div
-                      key={index}
-                      className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
-                    >
-                      <div className="w-full h-auto flex flex-col">
-                        {/* รูปภาพสินค้า */}
-                        <img
-                          src={product.image}
-                          alt="Product Image"
-                          className="w-full h-[150px] rounded-md object-cover mb-4"
-                        />
-                        <div className="flex flex-col justify-between h-full">
-                          <p className="text-lg font-semibold mb-2 truncate w-[150px]">
-                            {product.name}
-                          </p>
-                          <div className="flex items-center mb-2">
-                            <span className="text-gray-500 mr-2 text-2xl">
-                              <MdAccountCircle />
-                            </span>
-                            <p className="text-sm text-gray-600 truncate w-[150px]">
-                              {product.author}
+                  <div className="flex overflow-x-auto gap-[17px] mt-10">
+                    {products.map((product, index) => (
+                      <div
+                        key={index}
+                        className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
+                      >
+                        <div className="w-full h-auto flex flex-col">
+                          {/* รูปภาพสินค้า */}
+                          <img
+                            src={product.image}
+                            alt="Product Image"
+                            className="w-full h-[150px] rounded-md object-cover mb-4"
+                          />
+                          <div className="flex flex-col justify-between h-full">
+                            <p className="text-lg font-semibold mb-2 truncate w-[150px]">
+                              {product.name}
+                            </p>
+                            <div className="flex items-center mb-2">
+                              <span className="text-gray-500 mr-2 text-2xl">
+                                <MdAccountCircle />
+                              </span>
+                              <p className="text-sm text-gray-600 truncate w-[150px]">
+                                {product.author}
+                              </p>
+                            </div>
+                            <div className="flex items-center mb-2">
+                              <span className="text-yellow-500 mr-2">
+                                <IoIosStar />
+                              </span>
+                              <span className="text-sm text-gray-600">
+                                {product.rating} ({product.reviews}) | Sold{" "}
+                                {product.sold}
+                              </span>
+                            </div>
+                            <p className="text-lg font-bold text-[#33529B]">
+                              {product.price} THB
                             </p>
                           </div>
-                          <div className="flex items-center mb-2">
-                            <span className="text-yellow-500 mr-2">
-                              <IoIosStar />
-                            </span>
-                            <span className="text-sm text-gray-600">
-                              {product.rating} ({product.reviews}) | Sold{" "}
-                              {product.sold}
-                            </span>
-                          </div>
-                          <p className="text-lg font-bold text-[#33529B]">
-                            {product.price} THB
-                          </p>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
                 </Link>
               </div>
+              {/* Popup */}
+              {isPopupOpen && (
+                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                  <div className="bg-white p-6 rounded-lg shadow-lg lg:w-[1079px] relative">
+                    {/* หัวข้อและปุ่ม Close */}
+                    <div className="relative mb-4">
+                      <h2 className="text-xl font-bold text-center">
+                        Transaction
+                      </h2>
+                      {/* ปุ่ม Close */}
+                      <button
+                        onClick={handleClosePopup}
+                        className="absolute top-1 right-4 text-gray-500 hover:text-gray-900"
+                      >
+                        <MdClose size={24} />
+                      </button>
+                    </div>
+                    <div className="border-t border-gray-300 mb-3"></div>
+                    <p className="font-semibold">Project: Facebook Website</p>
+                    <div className="flex items-center">
+                      <p className="text-sm text-gray-600 mr-2">by</p>
+                      <span className="text-gray-500 mr-2 text-2xl">
+                        <MdAccountCircle />
+                      </span>
+                      <p className="text-sm text-gray-600 truncate w-[150px]">
+                        Titikarn Waitayasuwan
+                      </p>
+                    </div>
+                    <div className="flex items-center">
+                      <p className="font-semibold">Price:</p>
+                      <p className="text-[#33529B] ml-2 font-bold">
+                        45,000 THB
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-col md:flex-row items-center space-y-5 md:space-y-0 md:space-x-5 mt-4">
+                      <button
+                        type="submit"
+                        className="flex-grow flex justify-center rounded-md bg-[#33539B] px-3 py-3 w-full text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 md:w-1/2"
+                      >
+                        Payment with debit/credit card
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex-grow flex justify-center rounded-md bg-[#33539B] px-3 py-3 w-full text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 md:w-1/2"
+                      >
+                        Payment with mobile banking
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
