@@ -22,36 +22,41 @@ interface Product {
 // ReviewCard Component
 const ReviewCard: React.FC<{ product: Product }> = ({ product }) => {
   return (
-    <div className="relative mt-2 w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
-      {/* Product Image */}
-      <img
-        src={product.image}
-        alt="Product Image"
-        className="w-[150px] h-[90px] rounded-md object-cover mr-4"
-      />
-      <div className="flex flex-col flex-1 justify-between h-full">
-        <p className="text-lg font-semibold truncate sm:text-md md:text-lg lg:text-xl">
-          {product.name}
-        </p>
-        <div className="flex items-center">
-          <span className="text-gray-500 mr-2 text-xl sm:text-lg md:text-xl">
-            <MdAccountCircle />
-          </span>
-          <p className="text-sm text-gray-600 truncate sm:text-xs md:text-sm lg:text-base">
-            {product.author}
+    <div
+      className="rounded-[10px] border border-[#BEBEBE] bg-white p-4"
+      style={{ width: "100%", height: "275px" }} // Ensuring consistent height
+    >
+      <div className="w-full h-full flex flex-col ">
+        {/* Product Image */}
+        <img
+          src={product.image}
+          alt="Product Image"
+          className="w-full h-[150px] rounded-md object-cover mb-4"
+        />
+        <div className="flex flex-col h-full w- ">
+          <p className="text-lg font-semibold mb-2 truncate ">
+            {product.name}
+          </p>
+          <div className="flex  mb-2">
+            <span className="text-gray-500 mr-2 text-2xl">
+              <MdAccountCircle />
+            </span>
+            <p className="text-sm text-gray-600 truncate">
+              {product.author}
+            </p>
+          </div>
+          <div className="flex   mb-2">
+            <span className="text-yellow-500 mr-2">
+              <IoIosStar />
+            </span>
+            <span className="lg:text-sm text-gray-600 text-[12px]">
+              {product.rating} ({product.reviews}) | Sold {product.sold}
+            </span>
+          </div>
+          <p className="text-lg font-bold text-[#33529B] ">
+            {product.price} THB
           </p>
         </div>
-        <div className="flex items-center">
-          <span className="text-yellow-500 mr-2 text-lg sm:text-base md:text-lg">
-            <IoIosStar />
-          </span>
-          <span className="text-xs sm:text-xs md:text-sm lg:text-base">
-            {product.rating} ({product.reviews}) | Sold {product.sold}
-          </span>
-        </div>
-        <p className="text-base sm:text-sm md:text-lg lg:text-lg font-bold text-[#33529B] mb-4">
-          {product.price} THB
-        </p>
       </div>
     </div>
   );
@@ -69,7 +74,7 @@ const Review: React.FC = () => {
     redirect("/auth/signin");
     return null;
   }
- 
+
   // Products array
   const products: Product[] = [
     {
@@ -92,6 +97,26 @@ const Review: React.FC = () => {
       sold: 20,
       price: "75,000",
     },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waita",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Another Project",
+      author: "Titikarn Waitattttt",
+      rating: "4.5",
+      reviews: 15,
+      sold: 20,
+      price: "75,000",
+    },
   ];
 
   return (
@@ -99,15 +124,13 @@ const Review: React.FC = () => {
       <Navbar session={session} />
       <main className="flex-grow">
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <div>
-            <h1 className="font-bold mb-4 text-[24px]">Review</h1>
-            <div className="review-list">
-              {products.map((product, index) => (
-                <Link key={index} href="/Reviewproject">
-                  <ReviewCard product={product} />
-                </Link>
-              ))}
-            </div>
+          <h1 className="font-bold mb-4 text-[24px]">Review</h1>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {products.map((product, index) => (
+              <Link key={index} href="/Reviewproject">
+                <ReviewCard product={product} />
+              </Link>
+            ))}
           </div>
         </div>
       </main>

@@ -57,11 +57,10 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
           onChange={handleReasonChange}
           className="w-full p-2 border rounded-md mb-5"
         >
-          <option value="">Select a reason</option>
-          <option value="received_incomplete_files">Received incomplete files</option>
-          <option value="file_not_working">File not working properly</option>
-          <option value="hard_to_understand">Hard to understand, no manual</option>
-          <option value="copyright_violation">Copyright violation</option>
+        <option value="profanity">ได้รับไฟล์ไม่ครบตามที่แจ้ง</option>
+    <option value="off-topic">ไฟล์ไม่ทำงานตามที่ควรจะเป็น</option>
+    <option value="illegal-ads">เข้าใจยาก ไม่มีคู่มือการใช้</option>
+    <option value="unrelated">โครงงานมีการละเมิดลิขสิทธิ์</option>
         </select>
         <p className="text-lg font-medium mb-2">Additional message (200 Characters)</p>
         <div className="relative mb-5">

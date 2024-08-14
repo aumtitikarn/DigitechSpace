@@ -45,60 +45,60 @@ const products: Product[] = [
 ];
 
 // ReviewCard Component
-const ReviewCard: React.FC<{ products: Product[]; showButton: boolean }> = ({
-  products,
+const ReviewCard: React.FC<{ product: Product; showButton?: boolean }> = ({
+  product,
   showButton,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center px-4 w-full">
-      <div className="flex flex-col justify-center w-full">
-        <Link href="/project/projectreceive">
-          {products.map((product) => (
-            <div className="relative mt-2 w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
-              {/* Product Image */}
-              <img
-                src={product.image}
-                alt="Product Image"
-                className="w-[150px] h-[90px] rounded-md object-cover mr-4"
-              />
-              <div className="flex flex-col flex-1 justify-between h-full">
-                <p className="text-lg font-semibold truncate sm:text-md md:text-lg lg:text-xl">
-                  {product.name}
-                </p>
-                <div className="flex items-center">
-                  <span className="text-gray-500 mr-2 text-xl sm:text-lg md:text-xl">
-                    <MdAccountCircle />
-                  </span>
-                  <p className="text-sm text-gray-600 truncate sm:text-xs md:text-sm lg:text-base">
-                    {product.author}
-                  </p>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-yellow-500 mr-2 text-lg sm:text-base md:text-lg">
-                    <IoIosStar />
-                  </span>
-                  <span className="text-xs sm:text-xs md:text-sm lg:text-base">
-                    {product.rating} ({product.reviews}) | Sold {product.sold}
-                  </span>
-                </div>
-                <p className="text-base sm:text-sm md:text-lg lg:text-lg font-bold text-[#33529B] mb-4">
-                  {product.price} THB
-                </p>
-                {showButton && (
-                  <div className="absolute bottom-2 lg:right-4 right-4 md:bottom-2">
-                    <button className="bg-blue-600 text-white px-4 py-1 md:px-6 md:py-2 rounded-lg text-xs md:text-sm">
-                      Check the project
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </Link>
+    <div
+      className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4"
+      style={{ width: "100%", height: "300px" }} // Ensuring consistent height
+    >
+      <div className="w-full h-full flex flex-col">
+        {/* Product Image */}
+        <img
+          src={product.image}
+          alt="Product Image"
+          className="w-full h-[150px] rounded-md object-cover mb-4"
+        />
+        <div className="flex flex-col h-full">
+          <p className="text-lg font-semibold mb-2 truncate">
+            {product.name}
+          </p>
+          <div className="flex items-center mb-2">
+            <span className="text-gray-500 mr-2 text-2xl">
+              <MdAccountCircle />
+            </span>
+            <p className="text-sm text-gray-600 truncate">
+              {product.author}
+            </p>
+          </div>
+          <div className="flex items-center mb-2">
+            <span className="text-yellow-500 mr-2 text-lg">
+              <IoIosStar />
+            </span>
+            <span className="text-gray-600 text-xs lg:text-sm">
+              {product.rating} ({product.reviews}) | Sold {product.sold}
+            </span>
+          </div>
+          <p className="text-lg font-bold text-[#33529B]">
+            {product.price} THB
+          </p>
+          <Link href="/project/projectreceive">
+          {showButton && (
+           <div className="flex flex-col items-center mt-auto">
+              <button className="bg-blue-600 text-white px-4 py-1 rounded-lg text-xs  mt-1">
+                Check the project
+              </button>
+         </div>
+          )}
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
+
 
 // MyProject Component
 const MyProject: React.FC = () => {
@@ -112,35 +112,34 @@ const MyProject: React.FC = () => {
     redirect("/auth/signin");
     return null;
   }
-
-  // Update products array with session data
   const userProducts = products.map((product) => ({
     ...product,
     author: session.user?.name || product.author,
   }));
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
+    <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">
       <Navbar session={session} />
-      <main className="flex-grow ">
-        
-        <div className=" lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <div>
-            <h2 className="font-bold mb-4 text-[24px]">Waiting to check</h2>
-            <div className="review-list space-y-4 mb-6">
-              <ReviewCard products={userProducts} showButton={true} />
-            </div>
+      <main className="flex-grow">
+        <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
+          <h2 className="font-bold mb-4 text-[24px]">Waiting to check</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+            {userProducts.map((product, index) => (
+              <ReviewCard key={index} product={product} showButton={true} />
+            ))}
+          </div>
 
-            <p className="text-sm text-gray-500 mb-8">
-              *Please inspect the product and press the "Check the project" button before 7 days.
-              If you do not press the button, you will not be able to file a
-              complaint and refund.
-            </p>
+          <p className="text-sm text-gray-500 mb-8">
+            *Please inspect the product and press the "Check the project" button before 7 days.
+            If you do not press the button, you will not be able to file a
+            complaint and refund.
+          </p>
 
-            <h2 className="font-bold mb-4 text-[24px]">My project</h2>
-            <div className="review-list space-y-4">
-              <ReviewCard products={userProducts} showButton={false} />
-            </div>
+          <h2 className="font-bold mb-4 text-[24px]">My project</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {userProducts.map((product, index) => (
+              <ReviewCard key={index} product={product} showButton={false} />
+            ))}
           </div>
         </div>
       </main>

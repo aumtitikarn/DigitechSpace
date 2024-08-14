@@ -10,6 +10,7 @@ import Container from "../components/Container";
 import Link from 'next/link';
 import { FaPlus } from "react-icons/fa6";
 import { IoIosSearch } from "react-icons/io";
+import { MdAccountCircle } from "react-icons/md";
 
 function page () {
 
@@ -63,7 +64,7 @@ function page () {
         <IoIosSearch className="absolute left-3 top-3 text-gray-400" />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
         {Array(5).fill("").map((_, index) => (
           <Link href="/blog">
           <div key={index} className="rounded border-2 w-[180px] h-[260px] flex flex-col">
@@ -77,7 +78,7 @@ function page () {
             <div className="ml-2 mt-2">
               <div className="flex flex-col mt-1 justify-center">
                 <div className="flex flex-row">
-                  <p style={{ fontSize: "14px", fontWeight: "bold" }}>แนะนำ Study With</p>
+                  <p className="truncate mt-1" style={{ fontSize: "14px", fontWeight: "bold" }}>แนะนำ Study With</p>
                   <p className="w-6 h-6 ml-1 mt-1">
                     <CiHeart style={{ fontSize: "20px" }} />
                   </p> 
@@ -87,8 +88,8 @@ function page () {
                 </div>
               </div>
               <div className="flex flex-row mb-3">
-                <div className="w-5 h-5 bg-slate-400 rounded-full mr-2 mt-2"></div>
-                <p className="mt-2" style={{ fontSize: "12px" }}>Titikarn Waitayasuwan</p>
+                <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1"/>
+                <p className="mt-2 truncate" style={{ fontSize: "12px" }}>Titikarn Waitayasuwan</p>
               </div>
             </div>
           </div>
@@ -108,18 +109,18 @@ function page () {
             <div className="ml-2 mt-2">
               <div className="flex flex-col mt-1 justify-center">
                 <div className="flex flex-row">
-                  <p style={{ fontSize: "14px", fontWeight: "bold" }}>แนะนำ Study With</p>
+                  <p className="truncate mt-1" style={{ fontSize: "14px", fontWeight: "bold" }}>แนะนำ Study With</p>
                   <p className="w-6 h-6 ml-1 mt-1">
                     <CiHeart style={{ fontSize: "20px" }} />
-                  </p>
+                  </p> 
                   <p className="mx-1 mt-1" style={{ fontSize: "16px" }}>
                     500
                   </p>
                 </div>
               </div>
               <div className="flex flex-row mb-3">
-                <div className="w-5 h-5 bg-slate-400 rounded-full mr-2 mt-2"></div>
-                <p className="mt-2" style={{ fontSize: "12px" }}>Titikarn Waitayasuwan</p>
+                <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1"/>
+                <p className="mt-2 truncate" style={{ fontSize: "12px" }}>Titikarn Waitayasuwan</p>
               </div>
             </div>
           </div>
@@ -139,7 +140,7 @@ function page () {
             <div className="ml-2 mt-2">
               <div className="flex flex-col mt-1 justify-center">
                 <div className="flex flex-row">
-                  <p style={{ fontSize: "14px", fontWeight: "bold" }}>แนะนำ Study With</p>
+                  <p className="truncate mt-1" style={{ fontSize: "14px", fontWeight: "bold" }}>แนะนำ Study With</p>
                   <p className="w-6 h-6 ml-1 mt-1">
                     <CiHeart style={{ fontSize: "20px" }} />
                   </p> 
@@ -149,8 +150,8 @@ function page () {
                 </div>
               </div>
               <div className="flex flex-row mb-3">
-                <div className="w-5 h-5 bg-slate-400 rounded-full mr-2 mt-2"></div>
-                <p className="mt-2" style={{ fontSize: "12px" }}>Titikarn Waitayasuwan</p>
+                <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1"/>
+                <p className="mt-2 truncate" style={{ fontSize: "12px" }}>Titikarn Waitayasuwan</p>
               </div>
             </div>
           </div>
@@ -160,11 +161,13 @@ function page () {
       </div>
 
       <div className="mt-6 w-full flex justify-end">
+      {session?.user?.role !== "NormalUser" && (
         <Link href="">
           <div className="w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
           <FaPlus size={24}/>
           </div>
         </Link>
+      )}
       </div>
     </div>
   </div>

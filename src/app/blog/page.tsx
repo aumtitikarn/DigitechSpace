@@ -11,6 +11,7 @@ import Footer from "../components/Footer";
 import Image from "next/image";
 import Container from "../components/Container";
 import Link from 'next/link';
+import { MdAccountCircle } from "react-icons/md";
 
 const Blog =()=> {
 
@@ -74,7 +75,7 @@ const Blog =()=> {
 </div>
 
           <div className="flex flex-row mt-5 mb-5 items-center">
-            <div className="bg-gray-300 w-9 h-9 flex justify-center items-center rounded-full mr-4"></div>
+            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
             </div>
@@ -129,7 +130,7 @@ const Blog =()=> {
           </div>
 
           <div className="flex flex-row mt-5 items-start">
-            <div className="bg-gray-300 w-9 h-9 flex justify-center items-center rounded-full mr-4"></div>
+            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
               <p className="font-thin text-sm">8/6/2024</p>
@@ -138,7 +139,7 @@ const Blog =()=> {
           </div>
           <hr className="border-t border-gray-300 w-full m-2" /> 
           <div className="flex flex-row ml-5 items-start">
-            <div className="bg-gray-300 w-9 h-9 flex justify-center items-center rounded-full mr-4"></div>
+            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
               <p className="font-thin text-sm">8/6/2024</p>
@@ -147,7 +148,7 @@ const Blog =()=> {
           </div>
 
           <div className="flex flex-row mt-5 items-start">
-            <div className="bg-gray-300 w-9 h-9 flex justify-center items-center rounded-full mr-4"></div>
+          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
               <p className="font-thin text-sm">8/6/2024</p>
@@ -156,7 +157,7 @@ const Blog =()=> {
           </div>
           <hr className="border-t border-gray-300 w-full m-2" /> 
           <div className="flex flex-row ml-5 items-start">
-            <div className="bg-gray-300 w-9 h-9 flex justify-center items-center rounded-full mr-4"></div>
+          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
               <p className="font-thin text-sm">8/6/2024</p>

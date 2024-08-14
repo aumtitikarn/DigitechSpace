@@ -209,9 +209,11 @@ function CustomNavbar({ session }) {
                         </p>
                         <b>
                           <u className="text-[#0E6FFF]">
+                            <Link href="/Profile">
                             <p className="text-[14px] text-left text-[#0E6FFF]">
                               View Profile
                             </p>
+                            </Link>
                           </u>
                         </b>
                       </span>
