@@ -11,6 +11,7 @@ import Container from "../components/Container";
 import { useSession } from "next-auth/react";
 import QRshare from "../QRshare/page"
 import Editprofile from "../EditProfile/page"
+import { MdAccountCircle } from "react-icons/md";
 
 function page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -38,8 +39,7 @@ function page() {
       <div className="flex flex-col w-full max-w-auto">
 
       <div className="flex flex-row justify-center">
-      <div className="bg-gray-300 w-40 h-40 rounded-full">
-      </div>
+      <MdAccountCircle className="w-40 h-40 rounded-full"/>
       </div>
 
       <div className="flex flex-row justify-center">
@@ -92,23 +92,28 @@ function page() {
           </div>
         </div>
         {activeButton === "button1" && (
-  <div className="flex flex-col mt-10 w-full">
-    <div className="rounded border-2 w-full flex flex-col sm:flex-row h-auto sm:h-40 mt-5">
-      <div className="rounded w-full sm:w-64 h-64 sm:h-40 relative">
-        <Image src="/pexample4.png" layout="fill" objectFit="cover" className="rounded"/>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center mt-10 w-full">
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
       </div>
-      <div className="p-5">
+      <div className="p-4">
         <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
 
         <div className="flex items-center mt-2">
-          <div className="w-7 h-7 bg-slate-400 rounded-full mr-2"></div>
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
           <p className="text-sm">Titikarn Waitayasuwan</p>
         </div>
 
         <div className="flex items-center mt-2">
           <IoIosStar className="text-xl mr-1"/>
           <p className="text-sm mr-2">4.8</p>
-          <p className="text-lg">╵</p>
+          <p className="text-lg mt-1">╵</p>
           <p className="text-sm ml-2">ขายได้ 28</p>
         </div>
 
@@ -116,28 +121,114 @@ function page() {
       </div>
     </div>
 
-    <div className="rounded border-2 w-full flex flex-col sm:flex-row h-auto sm:h-40 mt-5">
-      <div className="rounded w-full sm:w-64 h-64 sm:h-40 relative">
-        <Image src="/pexample3.png" layout="fill" objectFit="cover" className="rounded"/>
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
       </div>
-      <div className="p-5">
+      <div className="p-4">
         <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
 
         <div className="flex items-center mt-2">
-          <div className="w-7 h-7 bg-slate-400 rounded-full mr-2"></div>
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
           <p className="text-sm">Titikarn Waitayasuwan</p>
         </div>
 
         <div className="flex items-center mt-2">
           <IoIosStar className="text-xl mr-1"/>
           <p className="text-sm mr-2">4.8</p>
-          <p className="text-lg">╵</p>
+          <p className="text-lg mt-1">╵</p>
           <p className="text-sm ml-2">ขายได้ 28</p>
         </div>
 
         <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
       </div>
     </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
+
   </div>
 )}
 
