@@ -83,9 +83,11 @@ function CustomNavbar({ session }) {
                     </p>
                     <b>
                       <u className="text-[#0E6FFF]">
+                        <Link href="/Profile">
                         <p className="text-[14px] ml-1 text-[#0E6FFF] ">
                           View Profile
                         </p>
+                        </Link>
                       </u>
                     </b>
                   </span>
@@ -94,10 +96,12 @@ function CustomNavbar({ session }) {
                   <ul className="list-none mt-3 ">
                     {session?.user?.role !== "NormalUser" && (
                       <>
+                      <Link href="/Wallet">
                         <li className="flex items-center ">
                           <FaWallet className="mr-5 text-2xl text-gray-600" />
                           <span className="text-[18px]">Wallet</span>
                         </li>
+                        </Link>
                         <Link href="/Sell">
                         <li className="flex items-center mt-2">
                           <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
@@ -176,7 +180,7 @@ function CustomNavbar({ session }) {
                 </Link>
               </li>
               <li>
-                <Link href="/blog">
+                <Link href="/listblog">
                   <p className="font-semibold text-[20px] text-white mx-16">
                     Blog
                   </p>
@@ -216,10 +220,12 @@ function CustomNavbar({ session }) {
                       <ul className="list-none mt-3 ">
                         {session?.user?.role !== "NormalUser" && (
                           <>
+                          <Link href="/Wallet">
                             <li className="flex items-center">
                               <FaWallet className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">Wallet</span>
                             </li>
+                            </Link>
                             <Link href="/Sell">
                             <li className="flex items-center mt-2">
                               <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
@@ -313,7 +319,7 @@ function CustomNavbar({ session }) {
               </Link>
             </li>
             <li className="border-t border-gray-300 pt-2 flex items-center justify-between">
-              <Link href="/blog" className="flex-1">
+              <Link href="/listblog" className="flex-1">
                 <p className="font-semibold text-[20px] text-white">Blog</p>
               </Link>
             </li>

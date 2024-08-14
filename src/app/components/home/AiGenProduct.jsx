@@ -15,7 +15,7 @@ const ProductList = ({ products }) => {
             Website
           </p>
         </div>
-        <Link href="/project/projectdetail">
+        <Link href="/projectdetail">
           {products.map((product, index) => (
             <div key={index} className="mt-2">
               <div className="w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
@@ -61,6 +61,26 @@ const ProductList = ({ products }) => {
 
 const App = () => {
   const products = [
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
     {
       image:
         "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",

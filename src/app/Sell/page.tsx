@@ -95,7 +95,6 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
           ))}
           <h1 className="text-[24px] font-bold mt-10">Published Project</h1>
           {products.map((product, index) => (
-            <Link key={index} href="/projectdetail" passHref>
               <div className="relative mt-2">
                 <div className="w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
                   {/* Product Image */}
@@ -133,16 +132,15 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                   <div className="absolute top-5 right-9 flex flex-col space-y-[50px]">
                     <VscEdit
                       size={20}
-                      className="text-gray-500 hover:text-[#33539B]"
+                      className="reletive text-gray-500 hover:text-[#33539B]"
                     />
                     <MdDeleteOutline
                       size={20}
-                      className="text-gray-500 hover:text-red-500"
+                      className="reletive text-gray-500 hover:text-red-500"
                     />
                   </div>
                 </div>
               </div>
-            </Link>
           ))}
         </div>
       </div>

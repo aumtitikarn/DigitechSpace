@@ -156,7 +156,6 @@ const Items_Filter = () => {
     },
   ];
 
-
   const Rating = () => {
     const items = [];
     for (let index = 5; index >= 0; index--) {
@@ -166,14 +165,15 @@ const Items_Filter = () => {
             id={`cat-radio-${index}`}
             type="radio"
             name="rbt-radio"
-            className={`mr-2 appearance-none border-2 border-gray-300 rounded-full w-4 h-4 checked:bg-[#33539B]`}
+            className={`mr-2 accent-[#33539B]`}
             checked={selectedRating === index}
             onChange={() => {
               handleRatingChange(index);
             }}
           />
-          <label htmlFor={`cat-radio-${index}`}>
-            <span className="flex ">{getStarIcons(index)}</span>
+          <label htmlFor={`cat-radio-${index}`} className="flex items-center space-x-2">
+            <span className="flex">{getStarIcons(index)}</span>
+            <p className="text-gray-400">(20)</p>
           </label>
         </li>
       );
@@ -209,8 +209,8 @@ const Items_Filter = () => {
 
   return (
     <>
-     <div className="container flex flex-col md:flex-row gap-3 px-2 md:px-0 ">
-     <div className="w-full md:w-[300px] mb-4 md:mb-0">
+      <div className="container flex flex-col md:flex-row gap-3 px-2 md:px-0 ">
+        <div className="w-full md:w-[300px] mb-4 md:mb-0">
           <div className="p-4  flex border border-gray-300 rounded-lg shadow-sm lg:w-[300px] ">
             <div className="space-y-0">
               <div className="relative mt-4">
@@ -260,7 +260,7 @@ const Items_Filter = () => {
 
               <div className="p-4">
                 <h4 className="text-xl font-semibold mb-4">Ratings</h4>
-                <ul className="space-y-2">
+                <ul className="space-y-2 ">
                   <li className="flex items-center">
                     <input
                       id="cat-radio-All"
@@ -272,7 +272,10 @@ const Items_Filter = () => {
                         handleRatingChange(null);
                       }}
                     />
-                    <label htmlFor="cat-radio-All">All</label>
+                    <label htmlFor="cat-radio-All" className="flex items-center space-x-2">
+                      <span>All</span>
+                      <p className="text-gray-400">(20)</p>
+                      </label>
                   </li>
                   {Rating()}
                 </ul>
@@ -281,47 +284,48 @@ const Items_Filter = () => {
           </div>
         </div>
         <Link href="/project/projectdetail">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-3 lg:grid-cols-4 lg:ml-[50px]">
-  {products.map((product, index) => (
-    <div
-      key={index}
-      className="flex-shrink rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-6"
-    >
-      <div className="w-full h-auto flex flex-col">
-        {/* รูปภาพสินค้า */}
-        <img
-          src={product.image}
-          alt="Product Image"
-          className="w-full h-[150px] rounded-md object-cover mb-4"
-        />
-        <div className="flex flex-col justify-between h-full">
-          <p className="text-lg font-semibold mb-2 truncate">
-            {product.name}
-          </p>
-          <div className="flex items-center mb-2">
-            <span className="text-gray-500 mr-2 text-2xl">
-              <MdAccountCircle />
-            </span>
-            <p className="text-sm text-gray-600 truncate">
-              {product.author}
-            </p>
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-[30px] sm:gap-[10px]">
+            {products.map((product, index) => (
+              <div
+                key={index}
+                className="lg:w-[203px] lg:h-[275px] w-[163px] h-[233px] md:w-[193px] md:h-[263px] rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-6"
+              >
+                <div className="w-full h-full flex flex-col">
+                  {/* รูปภาพสินค้า */}
+                  <img
+                    src={product.image}
+                    alt="Product Image"
+                    className="w-full h-[150px] rounded-md object-cover mb-4"
+                  />
+                  <div className="flex flex-col justify-between h-full">
+                    <p className="text-lg font-semibold mb-2 truncate">
+                      {product.name}
+                    </p>
+                    <div className="flex items-center mb-2">
+                      <span className="text-gray-500 mr-2 text-2xl">
+                        <MdAccountCircle />
+                      </span>
+                      <p className="text-sm text-gray-600 truncate">
+                        {product.author}
+                      </p>
+                    </div>
+                    <div className="flex items-center mb-2">
+                      <span className="text-yellow-500 mr-2">
+                        <IoIosStar />
+                      </span>
+                      <span className="lg:text-sm text-gray-600 text-[12px]">
+                        {product.rating} ({product.reviews}) | Sold{" "}
+                        {product.sold}
+                      </span>
+                    </div>
+                    <p className="text-lg font-bold text-[#33529B]">
+                      {product.price} THB
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="flex items-center mb-2">
-            <span className="text-yellow-500 mr-2">
-              <IoIosStar />
-            </span>
-            <span className="lg:text-sm text-gray-600 text-[12px]">
-              {product.rating} ({product.reviews}) | Sold {product.sold}
-            </span>
-          </div>
-          <p className="text-lg font-bold text-[#33529B]">
-            {product.price} THB
-          </p>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
         </Link>
       </div>
     </>

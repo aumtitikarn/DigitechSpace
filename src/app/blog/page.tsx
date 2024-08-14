@@ -47,6 +47,11 @@ const Blog =()=> {
         return null;
       } 
 
+      // const [currentIndex, setCurrentIndex] = useState(0);
+
+      // const handleIndicatorClick = () => {
+      //   setCurrentIndex();
+      // };
 
   return (
     <Container>
@@ -60,6 +65,12 @@ const Blog =()=> {
     className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-xl"
     alt="Blog Image"
   />
+  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          <button
+            className={`w-3 h-3 rounded-full`}
+            // onClick={() => handleIndicatorClick()}
+          ></button>
+      </div>
 </div>
 
           <div className="flex flex-row mt-5 mb-5 items-center">

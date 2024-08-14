@@ -32,12 +32,8 @@ export default function Home() {
           <div className="mb-10">
             <Catagory />
           </div>
-          <div className="mb-10">
             <AiGenProduct />
-          </div>
-          <div className="mb-10">
             <AiGenProduct2 />
-          </div>
           <div className="mb-10">
             <Blog />
           </div>
