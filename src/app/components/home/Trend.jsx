@@ -22,10 +22,10 @@ function Trend({ session }) {
           <FaFire className="text-red-500 text-2xl" />
         </div>
         <div
-          className="mt-9 overflow-x-auto lg:flex lg:flex-col lg:items-center lg:justify-center"
+          className="mt-9 overflow-x-auto  lg:flex lg:pl-[360px] lg:flex-col lg:items-center"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          <div className="flex space-x-4" style={{ overflowY: "hidden" }}>
+          <div className="flex space-x-4 lg:flex-start">
             {[
               "เว็บไซต์",
               "แอพขายของ",

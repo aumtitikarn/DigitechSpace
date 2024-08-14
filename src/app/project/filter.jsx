@@ -171,7 +171,10 @@ const Items_Filter = () => {
               handleRatingChange(index);
             }}
           />
-          <label htmlFor={`cat-radio-${index}`} className="flex items-center space-x-2">
+          <label
+            htmlFor={`cat-radio-${index}`}
+            className="flex items-center space-x-2"
+          >
             <span className="flex">{getStarIcons(index)}</span>
             <p className="text-gray-400">(20)</p>
           </label>
@@ -209,8 +212,8 @@ const Items_Filter = () => {
 
   return (
     <>
-      <div className="container flex flex-col md:flex-row gap-3 px-2 md:px-0 ">
-        <div className="w-full md:w-[300px] mb-4 md:mb-0">
+      <div className=" flex flex-col md:flex-row gap-5 ">
+        <div className="md:w-[300px] mb-4 ">
           <div className="p-4  flex border border-gray-300 rounded-lg shadow-sm lg:w-[300px] ">
             <div className="space-y-0">
               <div className="relative mt-4">
@@ -272,10 +275,13 @@ const Items_Filter = () => {
                         handleRatingChange(null);
                       }}
                     />
-                    <label htmlFor="cat-radio-All" className="flex items-center space-x-2">
+                    <label
+                      htmlFor="cat-radio-All"
+                      className="flex items-center space-x-2"
+                    >
                       <span>All</span>
                       <p className="text-gray-400">(20)</p>
-                      </label>
+                    </label>
                   </li>
                   {Rating()}
                 </ul>
@@ -284,14 +290,13 @@ const Items_Filter = () => {
           </div>
         </div>
         <Link href="/project/projectdetail">
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-[30px] sm:gap-[10px]">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-[5px]">
             {products.map((product, index) => (
               <div
                 key={index}
-                className="lg:w-[203px] lg:h-[275px] w-[163px] h-[233px] md:w-[193px] md:h-[263px] rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-6"
+                className="lg:w-[203px] lg:h-[275px] w-[163px] h-[233px] md:w-[193px] md:h-[263px] rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-5"
               >
                 <div className="w-full h-full flex flex-col">
-                  {/* รูปภาพสินค้า */}
                   <img
                     src={product.image}
                     alt="Product Image"
