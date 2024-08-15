@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import { redirect } from "next/navigation";
 import Footer from "../components/Footer";
 import Container from "../components/Container";
+import { FaPlus } from "react-icons/fa6";
 
 function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -68,7 +69,7 @@ function Page() {
               }`}
             >
               <div className="flex items-center justify-center w-10 h-10">
-                <p>Project</p>
+              <FaPlus size={24} />
               </div>
               <input
                 id="file-upload"
@@ -81,27 +82,27 @@ function Page() {
 
             <input
               type="text"
-              placeholder="Enter name"
+              placeholder="Topic"
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
 
             <div className="flex flex-row w-full">
             <input
               type="text"
-              placeholder="Enter name"
+              placeholder="Course ID"
               className="w-full p-2 mb-4 mr-5 border border-gray-300 rounded"
             />
 
             <input
               type="text"
-              placeholder="Enter name"
+              placeholder="Catagory"
               className="w-full p-2 mb-4 ml-5 border border-gray-300 rounded"
             />
             </div>
 
             <input
               type="text"
-              placeholder="Enter name"
+              placeholder="Description"
               className="w-full h-60 p-2 mb-4 border border-gray-300 rounded"
             />
 
@@ -110,7 +111,7 @@ function Page() {
               className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
               style={{backgroundColor:"#33539B"}}
             >
-              Save
+              Post
             </button>
           </div>
         </div>

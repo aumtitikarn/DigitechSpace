@@ -74,58 +74,7 @@ function page() {
                       key={index}
                       className=" w-[180px] h-[260px] flex flex-col"
                     >
-                      <div className="rounded w-full h-40 relative">
-                        <img
-                          src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
-                          className="object-cover w-full"
-                          alt="Blog Image"
-                        />
-                      </div>
-                      <div className="ml-2 mt-2">
-                        <div className="flex flex-col mt-1 justify-center">
-                          <div className="flex flex-row">
-                            <p
-                              className="truncate mt-1"
-                              style={{ fontSize: "14px", fontWeight: "bold" }}
-                            >
-                              แนะนำ Study With
-                            </p>
-                            <div className="flex items-center">
-                              <div className="w-6 h-6 ml-1 mt-1 text-gray-500">
-                                <CiHeart style={{ fontSize: "20px" }} />
-                              </div>
-                              <p
-                                className="text-gray-500"
-                                style={{ fontSize: "16px" }}
-                              >
-                                500
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-row mb-3">
-                          <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
-                          <p
-                            className="mt-2 truncate text-gray-500"
-                            style={{ fontSize: "12px" }}
-                          >
-                            Titikarn Waitayasuwan
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-
-              {Array(5)
-                .fill("")
-                .map((_, index) => (
-                  <Link href="/blog">
-                    <div
-                      key={index}
-                      className=" w-[180px] h-[260px] flex flex-col"
-                    >
-                      <div className="rounded w-full h-40 relative">
+                      <div className="rounded w-full relative" style={{height:"250px"}}>
                         <img
                           src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
                           className="object-cover w-full h-full"
@@ -176,7 +125,58 @@ function page() {
                       key={index}
                       className=" w-[180px] h-[260px] flex flex-col"
                     >
-                      <div className="rounded w-full h-40 relative">
+                      <div className="rounded w-full relative" style={{height:"250px"}}>
+                        <img
+                          src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
+                          className="object-cover w-full h-full"
+                          alt="Blog Image"
+                        />
+                      </div>
+                      <div className="ml-2 mt-2">
+                        <div className="flex flex-col mt-1 justify-center">
+                          <div className="flex flex-row">
+                            <p
+                              className="truncate mt-1"
+                              style={{ fontSize: "14px", fontWeight: "bold" }}
+                            >
+                              แนะนำ Study With
+                            </p>
+                            <div className="flex items-center">
+                              <div className="w-6 h-6 ml-1 mt-1 text-gray-500">
+                                <CiHeart style={{ fontSize: "20px" }} />
+                              </div>
+                              <p
+                                className="text-gray-500"
+                                style={{ fontSize: "16px" }}
+                              >
+                                500
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-row mb-3">
+                          <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
+                          <p
+                            className="mt-2 truncate text-gray-500"
+                            style={{ fontSize: "12px" }}
+                          >
+                            Titikarn Waitayasuwan
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+
+              {Array(5)
+                .fill("")
+                .map((_, index) => (
+                  <Link href="/blog">
+                    <div
+                      key={index}
+                      className=" w-[180px] h-[260px] flex flex-col"
+                    >
+                      <div className="rounded w-full relative" style={{height:"250px"}}>
                         <img
                           src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
                           className="object-cover w-full h-full"
@@ -222,7 +222,7 @@ function page() {
 
             <div className="mt-6 w-full flex justify-end">
               {session?.user?.role !== "NormalUser" && (
-                <Link href="">
+                <Link href="/Addblog">
                   <div className="w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                     <FaPlus size={24} />
                   </div>
