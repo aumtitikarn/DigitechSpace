@@ -10,6 +10,7 @@ import Footer from "../components/Footer";
 import Container from "../components/Container";
 import { useSession } from "next-auth/react";
 import { FaLink } from "react-icons/fa";
+import Box from "next-auth/providers/box";
 
 function page() {
   const { data: session, status } = useSession();
@@ -39,10 +40,10 @@ function page() {
 
           <div className="flex flex-row justify-center">
             <p style={{ fontSize: "24px", fontWeight: "bold" }} className="mt-6">
-              Titikarn Waitayasuwan
+            {session?.user?.name}
             </p>
           </div>
-
+          {session?.user?.role == "NormalUser" && (
           <div className="flex flex-col items-center w-full mt-4">
             <div className="flex flex-row items-center w-full mt-4">
             <p>Name</p>
@@ -68,7 +69,31 @@ function page() {
               Save
             </button>
           </div>
+          )}
 
+        {session?.user?.role !== "NormalUser" && (
+          <div className="flex flex-col items-center w-full mt-4">
+            <div className="flex flex-row items-center w-full mt-4">
+            <p>Name</p>
+            </div>
+            <input
+              type="text"
+              placeholder="Enter name"
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+            />
+            <div className="flex flex-row items-center w-full mt-4">
+            <p>Email</p>
+            </div>
+            <div className="w-full p-2 mb-4 border border-gray-300 rounded text-zinc-400">{session?.user?.email}</div>
+            <button
+              onClick={handleSave}
+              className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
+              style={{backgroundColor:"#33539B"}}
+            >
+              Save
+            </button>
+          </div>
+          )}
         </div>
       </main>
       <Footer />

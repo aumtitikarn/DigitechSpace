@@ -54,7 +54,7 @@ function page() {
       className="text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center my-10"
       style={{backgroundColor:"#33539B"}}
     >
-      <FaLink />
+      <FaLink className="mr-2"/>
       Copy Link
     </button>
     
