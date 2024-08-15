@@ -76,11 +76,11 @@ const FileUploadWithLimitedSize = () => {
   return (
     <div id="hs-file-upload-with-limited-file-size">
       <div
-        className="cursor-pointer p-12 flex justify-center bg-white border border-dashed border-gray-300 rounded-xl dark:bg-neutral-800 dark:border-neutral-600"
+        className="cursor-pointer p-12 flex justify-center bg-white border border-dashed border-gray-300 rounded-xl "
         onClick={() => fileInputRef.current?.click()}
       >
         <div className="text-center">
-          <span className="inline-flex justify-center items-center size-16 bg-gray-100 text-gray-800 rounded-full dark:bg-neutral-700 dark:text-neutral-200">
+          <span className="inline-flex justify-center items-center size-16 bg-gray-100 text-gray-800 rounded-full ">
             <svg
               className="shrink-0 size-6"
               xmlns="http://www.w3.org/2000/svg"
@@ -99,14 +99,14 @@ const FileUploadWithLimitedSize = () => {
             </svg>
           </span>
           <div className="mt-4 flex flex-wrap justify-center text-sm leading-6 text-gray-600">
-            <span className="pe-1 font-medium text-gray-800 dark:text-neutral-200">
+            <span className="pe-1 font-medium text-gray-800 ">
               Drop your files here or
             </span>
-            <span className="bg-white font-semibold text-blue-600 hover:text-blue-700 rounded-lg decoration-2 hover:underline focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 dark:bg-neutral-800 dark:text-blue-500 dark:hover:text-blue-600">
+            <span className="bg-white font-semibold text-blue-600 hover:text-blue-700 rounded-lg decoration-2 hover:underline focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2">
               browse
             </span>
           </div>
-          <p className="mt-1 text-xs text-gray-400 dark:text-neutral-400">
+          <p className="mt-1 text-xs text-gray-400 ">
             Pick files up to {maxFilesize}MB total.
           </p>
           <input
@@ -123,20 +123,20 @@ const FileUploadWithLimitedSize = () => {
         {files.map((file, index) => (
           <div
             key={index}
-            className="p-3 bg-white border border-solid border-gray-300 rounded-xl dark:bg-neutral-800 dark:border-neutral-600"
+            className="p-3 bg-white border border-solid border-gray-300 rounded-xl "
           >
             <div className="mb-1 flex justify-between items-center">
               <div className="flex items-center gap-x-3">
-                <span className="size-10 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg dark:border-neutral-700 dark:text-neutral-500">
+                <span className="size-10 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg ">
                 <GoFile />
                 </span>
                 <div>
-                  <p className="text-sm font-medium text-gray-800 dark:text-white">
+                  <p className="text-sm font-medium text-gray-800 ">
                     <span className="truncate inline-block max-w-[300px] align-bottom">
                       {file.name}
                     </span>
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-neutral-500">
+                  <p className="text-xs text-gray-500 ">
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
@@ -144,7 +144,7 @@ const FileUploadWithLimitedSize = () => {
               <div className="flex items-center gap-x-2">
                 <button
                   type="button"
-                  className="text-gray-500 hover:text-gray-800 focus:outline-none focus:text-gray-800 dark:text-neutral-500 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
+                  className="text-gray-500 hover:text-gray-800 focus:outline-none focus:text-gray-800 "
                   onClick={() => handleRemoveFile(index)}
                 >
                   <svg
@@ -171,7 +171,7 @@ const FileUploadWithLimitedSize = () => {
 
             <div className="flex items-center gap-x-3 whitespace-nowrap">
               <div
-                className="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700"
+                className="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden "
                 role="progressbar"
                 aria-valuenow={progress[index] || 0}
                 aria-valuemin={0}
@@ -183,7 +183,7 @@ const FileUploadWithLimitedSize = () => {
                 ></div>
               </div>
               <div className="w-10 text-end">
-                <span className="text-sm text-gray-800 dark:text-white">
+                <span className="text-sm text-gray-800 ">
                   {progress[index] || 0}%
                 </span>
               </div>

@@ -52,9 +52,8 @@ const ReviewCard: React.FC<{ product: Product; showButton?: boolean }> = ({
   return (
     <div
       className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4"
-      style={{ width: "100%", height: "300px" }} // Ensuring consistent height
     >
-      <div className="w-full h-full flex flex-col">
+      <div className="w-auto h-auto flex flex-col">
         {/* Product Image */}
         <img
           src={product.image}
@@ -86,9 +85,9 @@ const ReviewCard: React.FC<{ product: Product; showButton?: boolean }> = ({
           </p>
           <Link href="/project/projectreceive">
           {showButton && (
-           <div className="flex flex-col items-center mt-auto">
-              <button className="bg-blue-600 text-white px-4 py-1 rounded-lg text-xs  mt-1">
-                Check the project
+           <div className="flex flex-col items-center my-2">
+              <button className="bg-[#33539B] text-white px-11 py-2 rounded-lg text-xs  mt-1">
+                <p className="font-bold">Check the project</p>
               </button>
          </div>
           )}
