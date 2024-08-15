@@ -45,7 +45,7 @@ function page() {
       <div className="flex flex-row justify-center">
         <p style={{fontSize:"24px",fontWeight:"bold"}} className="mt-6">Titikarn Waitayasuwan</p>
       </div>
-      {session?.user?.role == "NormalUser" && (
+      
       <div className="flex flex-row justify-center mt-10">
       <Link href="/EditProfile" className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
       <p>แก้ไขโปรไฟล์</p>
@@ -54,7 +54,7 @@ function page() {
       แชร์โปรไฟล์
       </Link>
       </div>
-      )}
+     
 
         <div className="flex flex-row justify-center space-x-4 mt-4 w-full">
           <div className="flex flex-row" style={{ width: "100%" }}>
