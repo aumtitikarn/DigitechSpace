@@ -19,10 +19,30 @@
     "home": {
       "title": "Home",
       "trend": "Trend",
-      "seemore" : "See more"
+      "seemore" : "See more",
+      "search" : "Search",
+      "service": {
+        "title": "Service",
+        "des": "Please contact us. If you have any problems using this website.",
+        "email" : "Email",
+        "problem": "Problem",
+        "send" : "Send"
+      },
+      "faq": {
+        "title": "FAQ",
+        "q1": "How can I contact the seller?",
+        "q2": "Who can sell projects?",
+        "q3": "Can I read or write a blog?",
+        "q4": "What should I do if I encounter a problem?",
+        "a1": "You can contact the seller by submitting a request to the service department.",
+        "a2": "You must be a student from Suranaree University of Technology to be able to sell the project.",
+        "a3": "You can read blogs, but if you want to write your own blog, you have to be a student from suranaree university of technology",
+        "a4": "If you encounter a problem with our website, you can report it by going to Service to report the problem, and if you encounter a problem with the content of the project or blog, you can press Report and report those problems."
+      }
     },
     "project": {
       "title": "Project",
+      "all" : "All",
       "catagory": "Catagory",
       "document": "Document",
       "model": "Model/3D",
@@ -33,7 +53,8 @@
       "iot": "IOT",
       "program": "Program",
       "photo": "Photo/Art",
-      "other": "Other"
+      "other": "Other",
+      "rating": "Rating"
     },
     "blog": {
       "title": "Blog",

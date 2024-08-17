@@ -5,24 +5,27 @@ import Icon from "react-icons-kit";
 import { MdAccountCircle } from "react-icons/md";
 import { IoIosStar } from "react-icons/io";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 const Items_Filter = () => {
+  const { t, i18n } = useTranslation("translation");
+
   const categories = [
-    { id: 1, category_th: "หมวดหมู่ 3", category_en: "All" },
-    { id: 2, category_th: "หมวดหมู่ 1", category_en: "Document" },
-    { id: 3, category_th: "หมวดหมู่ 2", category_en: "Model/3D" },
-    { id: 4, category_th: "หมวดหมู่ 3", category_en: "Website" },
-    { id: 5, category_th: "หมวดหมู่ 1", category_en: "MobileApp" },
-    { id: 6, category_th: "หมวดหมู่ 2", category_en: "Datasets" },
-    { id: 7, category_th: "หมวดหมู่ 3", category_en: "AI" },
-    { id: 8, category_th: "หมวดหมู่ 1", category_en: "IOT" },
-    { id: 9, category_th: "หมวดหมู่ 2", category_en: "Program" },
-    { id: 10, category_th: "หมวดหมู่ 3", category_en: "Photo/Art" },
-    { id: 11, category_th: "หมวดหมู่ 3", category_en: "Other" },
+    { id: 1, category: t("nav.project.all") },
+    { id: 2, category: t("nav.project.document") },
+    { id: 3, category: t("nav.project.model") },
+    { id: 4, category: t("nav.project.website") },
+    { id: 5, category: t("nav.project.mobileapp") },
+    { id: 6, category: t("nav.project.ai") },
+    { id: 7, category: t("nav.project.datasets") },
+    { id: 8, category: t("nav.project.iot") },
+    { id: 9, category: t("nav.project.program") },
+    { id: 10, category: t("nav.project.photo") },
+    { id: 11, category: t("nav.project.other") },
   ];
 
   const [showMore, setShowMore] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(["All"]);
+  const [selectedCategory, setSelectedCategory] = useState([t("nav.project.all")]);
   const [selectedRating, setSelectedRating] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -219,14 +222,14 @@ const Items_Filter = () => {
               <div className="relative mt-4">
                 <input
                   type="text"
-                  placeholder="Search"
+                  placeholder={t("nav.home.search")}
                   className="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                 />
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
 
               <div className={`p-4 ${showMore ? "bg-gray-50" : ""}`}>
-                <h4 className="text-xl font-semibold mt-5">Category</h4>
+                <h4 className="text-xl font-semibold mt-5">{t("nav.project.catagory")}</h4>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul className="space-y-2">
                   {categories
@@ -238,17 +241,15 @@ const Items_Filter = () => {
                           type="checkbox"
                           name="cat-list"
                           className={`mr-2 accent-[#33539B]`}
-                          value={`{"value":${c.id},"label":"${c.category_th}, ${c.category_en}"}`}
+                          value={`{"value":${c.id},"label":"${c.category_th}, ${c.category}"}`}
                           onChange={(e) => handleCategoryChange(e)}
                           checked={
-                            c.category_en === "All"
+                            c.category === "All"
                               ? selectedCategory.includes("All")
-                              : selectedCategory.includes(c.category_en)
+                              : selectedCategory.includes(c.category)
                           }
                         />
-                        <label htmlFor={`cat-list-${c.id}`}>
-                          {c.category_en}
-                        </label>
+                        <label htmlFor={`cat-list-${c.id}`}>{c.category}</label>
                       </li>
                     ))}
                 </ul>
@@ -262,7 +263,7 @@ const Items_Filter = () => {
               </div>
 
               <div className="p-4">
-                <h4 className="text-xl font-semibold mb-4">Ratings</h4>
+                <h4 className="text-xl font-semibold mb-4">{t("nav.project.rating")}</h4>
                 <ul className="space-y-2 ">
                   <li className="flex items-center">
                     <input
@@ -279,7 +280,7 @@ const Items_Filter = () => {
                       htmlFor="cat-radio-All"
                       className="flex items-center space-x-2"
                     >
-                      <span>All</span>
+                      <span>{t("nav.project.all")}</span>
                       <p className="text-gray-400">(20)</p>
                     </label>
                   </li>

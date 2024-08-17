@@ -11,11 +11,13 @@ import Link from "next/link";
 import { FaPlus } from "react-icons/fa6";
 import { IoIosSearch } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
+import { useTranslation } from 'react-i18next';
+import { FaSearch, FaFire } from "react-icons/fa";
 
 function page() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupInput, setPopupInput] = useState("");
-
+  const { t, i18n } = useTranslation('translation');
   const [input1, setInput1] = useState("");
 
   const togglePopup = () => {
@@ -54,15 +56,15 @@ function page() {
               className="mt-3"
               style={{ fontSize: "24px", fontWeight: "bold" }}
             >
-              Blog
+              {t("nav.blog.title")}
             </p>
             <div className="mt-4 w-full max-w-screen-lg flex justify-center relative">
-              <input
-                type="text"
-                placeholder="ค้นหาสินค้า..."
-                className="w-full p-2 pl-10 border border-gray-300 rounded"
-              />
-              <IoIosSearch className="absolute left-3 top-3 text-gray-400" />
+            <input
+            type="text"
+            placeholder={t("nav.home.search")}
+            className="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          />
+          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
@@ -72,7 +74,7 @@ function page() {
                   <Link href="/blog">
                     <div
                       key={index}
-                      className=" w-[180px] h-[260px] flex flex-col"
+                      className=" w-[180px] h-[300px] flex flex-col"
                     >
                       <div className="rounded w-full relative" style={{height:"250px"}}>
                         <img
@@ -123,7 +125,7 @@ function page() {
                   <Link href="/blog">
                     <div
                       key={index}
-                      className=" w-[180px] h-[260px] flex flex-col"
+                      className=" w-[180px] h-[300px] flex flex-col"
                     >
                       <div className="rounded w-full relative" style={{height:"250px"}}>
                         <img
@@ -174,7 +176,7 @@ function page() {
                   <Link href="/blog">
                     <div
                       key={index}
-                      className=" w-[180px] h-[260px] flex flex-col"
+                      className=" w-[180px] h-[300px] flex flex-col"
                     >
                       <div className="rounded w-full relative" style={{height:"250px"}}>
                         <img
@@ -223,7 +225,7 @@ function page() {
             <div className="mt-6 w-full flex justify-end">
               {session?.user?.role !== "NormalUser" && (
                 <Link href="/Addblog">
-                  <div className="w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
+                  <div className=" w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                     <FaPlus size={24} />
                   </div>
                 </Link>

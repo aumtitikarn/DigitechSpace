@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-
+import { useTranslation } from 'react-i18next';
 
 function Service() {
   const [showtext, setShowtext] = useState(false);
   const [showtext1, setShowtext1] = useState(false);
   const [showtext2, setShowtext2] = useState(false);
   const [showtext3, setShowtext3] = useState(false);
+  const { t, i18n } = useTranslation('translation');
 
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");
@@ -39,7 +40,7 @@ function Service() {
     <main className="flex flex-col md:flex-row w-full justify-center p-4">
       <div className="flex flex-col w-full max-w-auto">
         <div className="flex flex-col justify-center">
-          <h1 className="text-lg font-bold" style={{fontSize:"24px"}}>FAQ</h1>
+          <h1 className="text-lg font-bold" style={{fontSize:"24px"}}>{t("nav.home.faq.title")}</h1>
         </div>
 
         <button
@@ -47,7 +48,7 @@ function Service() {
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
           <div className="flex flex-col justify-center w-auto h-10">
-            {"How can I contact the seller?"}
+            {t("nav.home.faq.q1")}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
             {showtext ? <FaChevronUp /> : <FaChevronDown />}
@@ -55,7 +56,7 @@ function Service() {
         </button>
         {showtext && (
           <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
-            You can contact the seller by leaving a comment under the seller's post.
+           {t("nav.home.faq.a1")}
           </div>
         )}
 
@@ -64,7 +65,7 @@ function Service() {
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
           <div className="flex flex-col justify-center w-auto h-10">
-            {"Who can sell projects?"}
+          {t("nav.home.faq.q2")}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
             {showtext1 ? <FaChevronUp /> : <FaChevronDown />}
@@ -72,7 +73,7 @@ function Service() {
         </button>
         {showtext1 && (
           <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
-            You must be a student from Suranaree University of Technology to be able to sell the project.
+            {t("nav.home.faq.a2")}
           </div>
         )}
 
@@ -81,7 +82,7 @@ function Service() {
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
           <div className="flex flex-col justify-center w-auto h-10">
-            {"Can I read or write a blog?"}
+          {t("nav.home.faq.q3")}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
             {showtext2 ? <FaChevronUp /> : <FaChevronDown />}
@@ -89,7 +90,7 @@ function Service() {
         </button>
         {showtext2 && (
           <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
-            You can read blogs, but if you want to write your own blog, you have to be a student from suranaree university of technology
+            {t("nav.home.faq.a3")}
           </div>
         )}
 
@@ -98,7 +99,7 @@ function Service() {
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
           <div className="flex flex-col justify-center w-auto h-10">
-            {"What should I do if I encounter a problem?"}
+          {t("nav.home.faq.q4")}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
             {showtext3 ? <FaChevronUp /> : <FaChevronDown />}
@@ -106,14 +107,14 @@ function Service() {
         </button>
         {showtext3 && (
           <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
-            If you encounter a problem with our website, you can report it by going to Service to report the problem, and if you encounter a problem with the content of the project or blog, you can press Report and report those problems.
+            {t("nav.home.faq.a4")}
           </div>
         )}
 
         <div className="flex flex-col justify-center w-full mt-10">
           <h1 className="text-lg font-bold" style={{fontSize:"24px"}}>Service</h1>
           <p className="mt-2 text-lg">
-            Please contact us. If you have any problems using this website.
+          {t("nav.home.service.des")}
           </p>
 
           <div className="mt-4">
@@ -121,14 +122,14 @@ function Service() {
               type="text"
               value={input1}
               onChange={(e) => setInput1(e.target.value)}
-              placeholder="Problem"
+              placeholder={t("nav.home.service.problem")}
               className="w-full p-2 mb-2 border border-gray-300 rounded"
             />
             <input
               type="text"
               value={input2}
               onChange={(e) => setInput2(e.target.value)}
-              placeholder="Email"
+              placeholder={t("nav.home.service.email")}
               className="w-full p-2 mb-2 border border-gray-300 rounded"
             />
             <button
@@ -136,7 +137,7 @@ function Service() {
               className="w-full p-2 text-white rounded"
               style={{backgroundColor:"#33539B"}}
             >
-              Send
+              {t("nav.home.service.send")}
             </button>
           </div>
         </div>

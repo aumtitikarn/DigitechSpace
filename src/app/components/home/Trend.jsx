@@ -12,7 +12,7 @@ function Trend({ session }) {
         <div className="relative mt-4">
           <input
             type="text"
-            placeholder="Search"
+            placeholder={t("nav.home.search")}
             className="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
           />
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

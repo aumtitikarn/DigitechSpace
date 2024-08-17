@@ -39,7 +39,7 @@ function page() {
       <div className="flex flex-col w-full max-w-auto">
 
       <div className="flex flex-row justify-center">
-      <MdAccountCircle className="w-40 h-40 rounded-full"/>
+      <MdAccountCircle className=" rounded-full text-gray-600" style={{ width:"100px" , height:"100px"}}/>
       </div>
 
       <div className="flex flex-row justify-center">
@@ -69,7 +69,7 @@ function page() {
                   }`}
                 >
                   <div className="flex flex-col justify-center w-auto h-10">
-                    <p>Project</p>
+                    <p className="font-bold text-[20px]">Project</p>
                   </div>
                 </button>
               </div>
@@ -85,7 +85,7 @@ function page() {
                   }`}
                 >
                   <div className="flex flex-col justify-center w-auto h-10">
-                    <p>Blog</p>
+                    <p className="font-bold text-[20px]">Blog</p>
                   </div>
                 </button>
               </div>
