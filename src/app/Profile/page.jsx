@@ -35,8 +35,8 @@ function page() {
   return (
     <Container>
       <Navbar session={session} />
-    <main className="flex flex-col md:flex-row w-full justify-center p-4">
-      <div className="flex flex-col w-full max-w-auto">
+    <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20">
+      <div className="flex flex-col w-full max-w-auto mb-20">
 
       <div className="flex flex-row justify-center">
       <MdAccountCircle className=" rounded-full text-gray-600" style={{ width:"100px" , height:"100px"}}/>
@@ -46,7 +46,7 @@ function page() {
         <p style={{fontSize:"24px",fontWeight:"bold"}} className="mt-6">Titikarn Waitayasuwan</p>
       </div>
       
-      <div className="flex flex-row justify-center mt-10">
+      <div className="flex flex-row justify-center mt-10 mb-10">
       <Link href="/EditProfile" className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
       <p>แก้ไขโปรไฟล์</p>
       </Link>
@@ -94,6 +94,195 @@ function page() {
         </div>
         {activeButton === "button1" && (
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center mt-10 w-full">
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="/pexample3.png"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="p-4">
+        <p className="text-lg sm:text-xl font-bold">Hi5 Website</p>
+
+        <div className="flex items-center mt-2">
+        <MdAccountCircle className="w-7 h-7 rounded-full mr-2"/>
+          <p className="text-sm">Titikarn Waitayasuwan</p>
+        </div>
+
+        <div className="flex items-center mt-2">
+          <IoIosStar className="text-xl mr-1"/>
+          <p className="text-sm mr-2">4.8</p>
+          <p className="text-lg mt-1">╵</p>
+          <p className="text-sm ml-2">ขายได้ 28</p>
+        </div>
+
+        <p className="text-xl sm:text-2xl font-bold text-[#33529B] mt-2">25,000</p>
+      </div>
+    </div>
 
     <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
       <div className="rounded w-full h-96 relative">
@@ -311,6 +500,195 @@ function page() {
         </div>
         <div className="flex flex-row mb-3">
         <MdAccountCircle className="w-7 h-7 rounded-full mr-2 mt-2"/>
+          <p className="mt-3" style={{fontSize:"14px"}}>Titikarn Waitayasuwan</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="ml-5 mt-2">
+        <div className="flex flex-col mt-1 justify-center">
+          <div className="flex flex-row">
+            <p style={{fontSize:"20px",fontWeight:"bold"}}>แนะนำ Study With</p>
+            <p className="w-10 h-10 ml-1">
+              <CiHeart style={{ fontSize: "32px" }} />
+            </p>
+            <p className="mt-1">
+              500
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-row mb-3">
+          <MdAccountCircle className="w-7 h-7 rounded-full mr-2 mt-2"/>
+          <p className="mt-3" style={{fontSize:"14px"}}>Titikarn Waitayasuwan</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="ml-5 mt-2">
+        <div className="flex flex-col mt-1 justify-center">
+          <div className="flex flex-row">
+            <p style={{fontSize:"20px",fontWeight:"bold"}}>แนะนำ Study With</p>
+            <p className="w-10 h-10 ml-1">
+              <CiHeart style={{ fontSize: "32px" }} />
+            </p>
+            <p className="mt-1">
+              500
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-row mb-3">
+          <MdAccountCircle className="w-7 h-7 rounded-full mr-2 mt-2"/>
+          <p className="mt-3" style={{fontSize:"14px"}}>Titikarn Waitayasuwan</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="ml-5 mt-2">
+        <div className="flex flex-col mt-1 justify-center">
+          <div className="flex flex-row">
+            <p style={{fontSize:"20px",fontWeight:"bold"}}>แนะนำ Study With</p>
+            <p className="w-10 h-10 ml-1">
+              <CiHeart style={{ fontSize: "32px" }} />
+            </p>
+            <p className="mt-1">
+              500
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-row mb-3">
+          <MdAccountCircle className="w-7 h-7 rounded-full mr-2 mt-2"/>
+          <p className="mt-3" style={{fontSize:"14px"}}>Titikarn Waitayasuwan</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="ml-5 mt-2">
+        <div className="flex flex-col mt-1 justify-center">
+          <div className="flex flex-row">
+            <p style={{fontSize:"20px",fontWeight:"bold"}}>แนะนำ Study With</p>
+            <p className="w-10 h-10 ml-1">
+              <CiHeart style={{ fontSize: "32px" }} />
+            </p>
+            <p className="mt-1">
+              500
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-row mb-3">
+          <MdAccountCircle className="w-7 h-7 rounded-full mr-2 mt-2"/>
+          <p className="mt-3" style={{fontSize:"14px"}}>Titikarn Waitayasuwan</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="ml-5 mt-2">
+        <div className="flex flex-col mt-1 justify-center">
+          <div className="flex flex-row">
+            <p style={{fontSize:"20px",fontWeight:"bold"}}>แนะนำ Study With</p>
+            <p className="w-10 h-10 ml-1">
+              <CiHeart style={{ fontSize: "32px" }} />
+            </p>
+            <p className="mt-1">
+              500
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-row mb-3">
+          <MdAccountCircle className="w-7 h-7 rounded-full mr-2 mt-2"/>
+          <p className="mt-3" style={{fontSize:"14px"}}>Titikarn Waitayasuwan</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="ml-5 mt-2">
+        <div className="flex flex-col mt-1 justify-center">
+          <div className="flex flex-row">
+            <p style={{fontSize:"20px",fontWeight:"bold"}}>แนะนำ Study With</p>
+            <p className="w-10 h-10 ml-1">
+              <CiHeart style={{ fontSize: "32px" }} />
+            </p>
+            <p className="mt-1">
+              500
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-row mb-3">
+          <MdAccountCircle className="w-7 h-7 rounded-full mr-2 mt-2"/>
+          <p className="mt-3" style={{fontSize:"14px"}}>Titikarn Waitayasuwan</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded border-2 w-full max-w-xs flex flex-col m-5">
+      <div className="rounded w-full h-96 relative">
+      <img
+    src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
+    className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-mb"
+    alt="Blog Image"
+  />
+      </div>
+      <div className="ml-5 mt-2">
+        <div className="flex flex-col mt-1 justify-center">
+          <div className="flex flex-row">
+            <p style={{fontSize:"20px",fontWeight:"bold"}}>แนะนำ Study With</p>
+            <p className="w-10 h-10 ml-1">
+              <CiHeart style={{ fontSize: "32px" }} />
+            </p>
+            <p className="mt-1">
+              500
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-row mb-3">
+          <MdAccountCircle className="w-7 h-7 rounded-full mr-2 mt-2"/>
           <p className="mt-3" style={{fontSize:"14px"}}>Titikarn Waitayasuwan</p>
         </div>
       </div>
