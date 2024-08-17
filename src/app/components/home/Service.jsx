@@ -55,12 +55,7 @@ function Service() {
         </button>
         {showtext && (
           <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
-            This is just a dummy text that has been inserted as a placeholder
-            for future content. While it may seem insignificant at first glance,
-            the use of dummy text is a common practice in the design and
-            publishing industry, as it allows designers and developers to
-            visualize the layout and overall aesthetic of a project without
-            being distracted by the actual content.
+            You can contact the seller by leaving a comment under the seller's post.
           </div>
         )}
 
@@ -69,7 +64,7 @@ function Service() {
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
           <div className="flex flex-col justify-center w-auto h-10">
-            {"How can I contact the seller?"}
+            {"Who can sell projects?"}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
             {showtext1 ? <FaChevronUp /> : <FaChevronDown />}
@@ -77,12 +72,7 @@ function Service() {
         </button>
         {showtext1 && (
           <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
-            This is just a dummy text that has been inserted as a placeholder
-            for future content. While it may seem insignificant at first glance,
-            the use of dummy text is a common practice in the design and
-            publishing industry, as it allows designers and developers to
-            visualize the layout and overall aesthetic of a project without
-            being distracted by the actual content.
+            You must be a student from Suranaree University of Technology to be able to sell the project.
           </div>
         )}
 
@@ -91,7 +81,7 @@ function Service() {
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
           <div className="flex flex-col justify-center w-auto h-10">
-            {"How can I contact the seller?"}
+            {"Can I read or write a blog?"}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
             {showtext2 ? <FaChevronUp /> : <FaChevronDown />}
@@ -99,12 +89,7 @@ function Service() {
         </button>
         {showtext2 && (
           <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
-            This is just a dummy text that has been inserted as a placeholder
-            for future content. While it may seem insignificant at first glance,
-            the use of dummy text is a common practice in the design and
-            publishing industry, as it allows designers and developers to
-            visualize the layout and overall aesthetic of a project without
-            being distracted by the actual content.
+            You can read blogs, but if you want to write your own blog, you have to be a student from suranaree university of technology
           </div>
         )}
 
@@ -113,7 +98,7 @@ function Service() {
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
           <div className="flex flex-col justify-center w-auto h-10">
-            {"How can I contact the seller?"}
+            {"What should I do if I encounter a problem?"}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
             {showtext3 ? <FaChevronUp /> : <FaChevronDown />}
@@ -121,12 +106,7 @@ function Service() {
         </button>
         {showtext3 && (
           <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
-            This is just a dummy text that has been inserted as a placeholder
-            for future content. While it may seem insignificant at first glance,
-            the use of dummy text is a common practice in the design and
-            publishing industry, as it allows designers and developers to
-            visualize the layout and overall aesthetic of a project without
-            being distracted by the actual content.
+            If you encounter a problem with our website, you can report it by going to Service to report the problem, and if you encounter a problem with the content of the project or blog, you can press Report and report those problems.
           </div>
         )}
 
@@ -154,7 +134,7 @@ function Service() {
             <button
               onClick={handleSubmit}
               className="w-full p-2 text-white rounded"
-              style={{backgroundColor:"#0B1E48"}}
+              style={{backgroundColor:"#33539B"}}
             >
               Send
             </button>
