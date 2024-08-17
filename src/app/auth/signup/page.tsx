@@ -1,25 +1,31 @@
-'use client';
-import { useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+//./auth/signup
+"use client";
+import React, { Suspense } from 'react';
+import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Translation, useTranslation } from 'react-i18next';
 
-export default function SignUp() {
+function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
-    firstname: '',
-    lastname: '',
-    phonenumber: '',
-    username: '',
-    email: '',
-    password: '',
-    confirmpassword: '',
+    firstname: "",
+    lastname: "",
+    phonenumber: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmpassword: "",
   });
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  const { t, i18n } = useTranslation('translation');
+
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
+  const toggleConfirmPasswordVisibility = () =>
+    setShowConfirmPassword(!showConfirmPassword);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,57 +36,57 @@ export default function SignUp() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmpassword) {
-        setError('Passwords do not match');
-        return;
+      setError("Passwords do not match");
+      return;
     }
 
     try {
-        // Check if email exists in the system
-        const resCheckUser = await fetch("/api/usercheck", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email: formData.email })
+      // Check if email exists in the system
+      const resCheckUser = await fetch("/api/usercheck", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      if (resCheckUser.ok) {
+        const data = await resCheckUser.json();
+        if (data.message === "Email has already been used.") {
+          setError("Email has already been used.");
+          return;
+        }
+
+        // If email is available, proceed with signup
+        const res = await fetch("/api/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         });
 
-        if (resCheckUser.ok) {
-            const data = await resCheckUser.json();
-            if (data.message === 'Email has already been used.') {
-                setError('Email has already been used.');
-                return;
-            }
-
-            // If email is available, proceed with signup
-            const res = await fetch('/api/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (res.ok) {
-                router.push('/Ai/role'); //ต้องทำครั้งเดียวเข้าสู่ระบบครั้งแรก
-            } else {
-                const data = await res.json();
-                setError(data.message || 'Email has already been used.');
-            }
+        if (res.ok) {
+          router.push("/Ai/role"); //ต้องทำครั้งเดียวเข้าสู่ระบบครั้งแรก
         } else {
-            setError('An error occurred while checking the email');
+          const data = await res.json();
+          setError(data.message || "Email has already been used.");
         }
+      } else {
+        setError("An error occurred while checking the email");
+      }
     } catch (error) {
-        console.error('Error:', error);
-        setError('Something went wrong');
+      console.error("Error:", error);
+      setError("Something went wrong");
     }
-};
+  };
 
-  
+
 
   return (
     <div
-      style={{ backgroundColor: "#FBFBFB", height: '100vh' }}
-      className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
+      style={{ backgroundColor: "#FBFBFB" }}
+      className="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 overflow-y-auto"
     >
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
@@ -89,10 +95,10 @@ export default function SignUp() {
           alt="Digitech Space"
         />
         <h2
-          style={{ color: '#33539B', fontSize: '29px' }}
+          style={{ color: "#33539B", fontSize: "29px" }}
           className="mt-7 text-center text-2xl font-bold leading-9 tracking-tight"
         >
-          Sign Up
+          {t("Sign Up")}
         </h2>
       </div>
 
@@ -104,7 +110,7 @@ export default function SignUp() {
             type="text"
             value={formData.firstname}
             onChange={handleChange}
-            placeholder="First name"
+            placeholder={t("First name")}
             required
             className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 mt-3"
           />
@@ -200,50 +206,64 @@ export default function SignUp() {
             type="submit"
             className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#33539B]"
           >
-            Sign Up
+            {t("Sign Up")}
           </button>
           {error && <p className="text-red-500">{error}</p>}
         </form>
         <div className="flex items-center my-3">
-            <div className="flex-grow border-t border-gray-300"></div>
-            <span className="mx-4 text-gray-500">Or continue with</span>
-            <div className="flex-grow border-t border-gray-300"></div>
-          </div>
-          <div className="flex flex-row space-x-4">
-            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
-              <Image
-                width={20}
-                height={20}
-                src="/google.png"
-                alt="Google"
-                className="flex-shrink-0 mr-4 ml-5"
-              />
-            </button>
-            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
-              <img
-                className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
-                alt="Facebook"
-              />
-            </button>
-            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
-              <img
-                className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
-                src="/github.png"
-                alt="Github"
-              />
-            </button>
-          </div>
-          <div>
-            <p className="text-center mt-20">By signing up, you agree to the
-              <u><b>Terms of Service </b></u>
-              and
-              <u><b>Privacy Policy</b></u>
-              , including
-              <u><b>Cookie Use.</b></u>
-            </p>
-          </div>
+          <div className="flex-grow border-t border-gray-300"></div>
+          <span className="mx-4 text-gray-500">Or continue with</span>
+          <div className="flex-grow border-t border-gray-300"></div>
+        </div>
+        <div className="flex flex-row space-x-4">
+          <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
+            <Image
+              width={20}
+              height={20}
+              src="/google.png"
+              alt="Google"
+              className="flex-shrink-0 mr-4 ml-5"
+            />
+          </button>
+          <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
+            <img
+              className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
+              alt="Facebook"
+            />
+          </button>
+          <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
+            <img
+              className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
+              src="/github.png"
+              alt="Github"
+            />
+          </button>
+        </div>
+        <div>
+          <p className="text-center mt-20">
+            By signing up, you agree to the
+            <u>
+              <b>Terms of Service </b>
+            </u>
+            and
+            <u>
+              <b>Privacy Policy</b>
+            </u>
+            , including
+            <u>
+              <b>Cookie Use.</b>
+            </u>
+          </p>
+        </div>
       </div>
     </div>
+  );
+}
+export default function App() {
+  return (
+    <Suspense fallback="loading">
+      <SignUp />
+    </Suspense>
   );
 }

@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "ai": {
+      "role": {
+        "title": "What is your role?",
+        "student": "Student",
+        "professor": "Professor",
+        "developer": "Developer",
+        "designer": "Designer",
+        "executive": "Executive",
+        "teacher": "Teacher",
+        "researcher": "Researcher",
+        "other": "Other"
+      },
+      "interest": {
+        "des": "What type of content are you most interested in?"
+      }
+    },
+    "home": {
+      "title": "Home",
+      "trend": "Trend",
+      "seemore" : "See more"
+    },
+    "project": {
+      "title": "Project",
+      "catagory": "Catagory",
+      "document": "Document",
+      "model": "Model/3D",
+      "website": "Website",
+      "mobileapp": "MobileApp",
+      "ai": "Ai",
+      "datasets": "Datasets",
+      "iot": "IOT",
+      "program": "Program",
+      "photo": "Photo/Art",
+      "other": "Other"
+    },
+    "blog": {
+      "title": "Blog",
+      "catagory": "Catagory"
+    },
+    "viewprofile": "View Profile",
+    "wallet": "Wallet",
+    "sell": "Sell",
+    "favorite": "Favorite",
+    "signin": "Sign In",
+    "signup": "Create Account",
+    "notification": "Notification",
+    "myproject": "My Project",
+    "review": "Review",
+    "logout": "Log out"
+  },
+  "footer": {
+    "contact": "Contact"
+  }
+}

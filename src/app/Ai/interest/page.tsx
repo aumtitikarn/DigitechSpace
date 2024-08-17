@@ -1,3 +1,4 @@
+// ./interest
 'use client';
 
 import { useState, useEffect } from "react";
@@ -6,7 +7,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { BsBox } from "react-icons/bs";
 import { MdWeb } from "react-icons/md";
@@ -16,11 +17,13 @@ import { AiOutlineDatabase } from "react-icons/ai";
 import { IoTerminalOutline } from "react-icons/io5";
 import { HiOutlineComputerDesktop } from "react-icons/hi2";
 import { MdOutlinePhotoFilter } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 export default function Interest() {
   const router = useRouter();
   const { data: session } = useSession();
   const [selected, setSelected] = useState<string[]>([]);
+  const { t, i18n } = useTranslation("translation");
 
   useEffect(() => {
     const storedTypes = JSON.parse(localStorage.getItem('selectedInterests') || "[]");
@@ -43,7 +46,7 @@ export default function Interest() {
         // Remove from selection if already selected
         return prevSelected.filter(item => item !== type);
       } else if (prevSelected.length < 15) {
-        // Add to selection if not already selected and less than 3 selected
+        // Add to selection if not already selected and less than 15 selected
         return [...prevSelected, type];
       }
       return prevSelected;
@@ -52,7 +55,10 @@ export default function Interest() {
 
   const handleNextClick = () => {
     if (selected.length > 0) {
-      router.push("/Home");
+      router.push({
+        pathname: "/Home",
+        query: { selected: JSON.stringify(selected) }, // Pass selected interests as query parameter
+      });
     }
   };
 
@@ -61,20 +67,20 @@ export default function Interest() {
       <Container>
         <Navbar session={session} />
         <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <h2 className="text-center text-3xl mb-10">
-            What type of content are you most interested in?
-          </h2>
+          <h3 className="text-center text-3xl mb-10">
+            {t("nav.ai.interest.des")}
+          </h3>
           <div className="mt-10 grid grid-cols-2 gap-6 mx-auto max-w-7xl sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { type: "Document", icon: <IoDocumentTextOutline size={24} /> },
-              { type: "Model/3D", icon: <BsBox size={24} /> },
-              { type: "Website", icon: <MdWeb size={24} /> },
-              { type: "MobileApp", icon: <MdOutlineAppShortcut size={24} /> },
-              { type: "AI", icon: <GoDependabot size={24} /> },
-              { type: "Datasets", icon: <AiOutlineDatabase size={24} /> },
-              { type: "IOT", icon: <IoTerminalOutline size={24} /> },
-              { type: "Program", icon: <HiOutlineComputerDesktop size={24} /> },
-              { type: "Photo/Art", icon: <MdOutlinePhotoFilter size={24} /> },
+              { type: t("nav.project.document"), icon: <IoDocumentTextOutline size={24} /> },
+              { type: t("nav.project.model"), icon: <BsBox size={24} /> },
+              { type: t("nav.project.website"), icon: <MdWeb size={24} /> },
+              { type: t("nav.project.mobileapp"), icon: <MdOutlineAppShortcut size={24} /> },
+              { type: t("nav.project.ai"), icon: <GoDependabot size={24} /> },
+              { type: t("nav.project.datasets"), icon: <AiOutlineDatabase size={24} /> },
+              { type: t("nav.project.iot"), icon: <IoTerminalOutline size={24} /> },
+              { type: t("nav.project.program"), icon: <HiOutlineComputerDesktop size={24} /> },
+              { type: t("nav.project.photo"), icon: <MdOutlinePhotoFilter size={24} /> }
             ].map(({ type, icon }) => (
               <button
                 key={type}
@@ -90,14 +96,14 @@ export default function Interest() {
             ))}
           </div>
           <div className="flex justify-center">
-    <button
-        className="mt-10 lg:px-[100px] lg:py-3 lg:w-auto w-full mx-auto md:px-[100px] md:py-3 md:w-auto rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#33539B]"
-        onClick={handleNextClick}
-        disabled={selected.length === 0}
-    >
-        Next
-    </button>
-</div>
+            <button
+              className="mt-10 lg:px-[100px] lg:py-3 lg:w-auto w-full mx-auto md:px-[100px] md:py-3 md:w-auto rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#33539B]"
+              onClick={handleNextClick}
+              disabled={selected.length === 0}
+            >
+              Next
+            </button>
+          </div>
         </div>
         <Footer />
       </Container>

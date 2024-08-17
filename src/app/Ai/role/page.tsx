@@ -7,9 +7,11 @@ import Footer from "../../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export default function Role() {
   const router = useRouter();
+  const { t, i18n } = useTranslation("translation");
 
   const { data: session } = useSession();
   if (!session) redirect("/auth/signin");
@@ -26,7 +28,7 @@ export default function Role() {
         <Navbar session={session} />
         <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <div className="text-center">
-            <h2 className="text-3xl ">What is your role?</h2>
+            <h3 className="text-3xl">{t("nav.ai.role.title")}</h3>
           </div>
           <div className="">
             <div className="mt-10 grid grid-cols-2 md:grid-cols-2  md:gap-[30px]  lg:grid-cols-4 ">
@@ -35,49 +37,49 @@ export default function Role() {
                 onClick={handleButtonClick}
                 className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
               >
-                <span className="text-gray-700">Student</span>
+                <span className="text-gray-700">{t("nav.ai.role.student")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
                 className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
               >
-                <span className="text-gray-700">Professor</span>
+                <span className="text-gray-700">{t("nav.ai.role.professor")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
                 className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
               >
-                <span className="text-gray-700">Developer</span>
+                <span className="text-gray-700">{t("nav.ai.role.developer")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
                 className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
               >
-                <span className="text-gray-700">Designer</span>
+                <span className="text-gray-700">{t("nav.ai.role.designer")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
                 className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
               >
-                <span className="text-gray-700">Executive</span>
+                <span className="text-gray-700">{t("nav.ai.role.executive")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
                 className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
               >
-                <span className="text-gray-700">Teacher</span>
+                <span className="text-gray-700">{t("nav.ai.role.teacher")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
                 className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
               >
-                <span className="text-gray-700">Researcher</span>
+                <span className="text-gray-700">{t("nav.ai.role.researcher")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
                 className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
               >
-                <span className="text-gray-700">Other</span>
+                <span className="text-gray-700">{t("nav.ai.role.other")}</span>
               </button>
             </div>
           </div>

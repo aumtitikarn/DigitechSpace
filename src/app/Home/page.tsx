@@ -1,22 +1,25 @@
 "use client";
-
-import Container from "../components/Container";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-import Service from "../components/home/Service";
-import Catagory from "../components/home/Catagory";
-import Trend from "../components/home/Trend";
-import AiGenProduct from "../components/home/AiGenProduct";
-import AiGenProduct2 from "../components/home/AiGenProduct2";
-import Blog from "../components/home/Blog";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import Navbar from '../components/Navbar';
+import Container from '../components/Container';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+import Service from '../components/home/Service';
+import Catagory from '../components/home/Catagory';
+import Trend from '../components/home/Trend';
+import Blog from '../components/home/Blog';
+import AiGenProduct from '../components/home/AiGenProduct';
+import { redirect } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 
 export default function Home() {
   const { data: session } = useSession();
-  if (!session) redirect("/auth/signin");
-  console.log(session);
+  const { t, i18n } = useTranslation('translation');
+
+
+  if (!session) redirect('/auth/signin');
 
   return (
     <main className="bg-[#FBFBFB]">
@@ -32,8 +35,7 @@ export default function Home() {
           <div className="mb-10">
             <Catagory />
           </div>
-            <AiGenProduct />
-            <AiGenProduct2 />
+          <AiGenProduct />
           <div className="mb-10">
             <Blog />
           </div>

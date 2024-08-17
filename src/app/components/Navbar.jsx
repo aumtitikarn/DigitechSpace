@@ -8,10 +8,13 @@ import { FaBoxOpen, FaStar } from "react-icons/fa";
 import { BiSolidExit } from "react-icons/bi";
 import { FaWallet, FaMoneyBillTrendUp } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
+import { useTranslation } from "react-i18next";
+import i18n from "./../i18n";
 
 function CustomNavbar({ session }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAccountBoxVisible, setAccountBoxVisible] = useState(false);
+  const { t, i18n } = useTranslation("translation");
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -23,6 +26,11 @@ function CustomNavbar({ session }) {
 
   const accountBoxMarginTop =
     session?.user?.role === "StudentUser" ? "mt-[451px]" : "mt-[390px]";
+
+  const toggleLanguage = () => {
+    const newLanguage = i18n.language === "en" ? "th" : "en";
+    i18n.changeLanguage(newLanguage);
+  };
 
   return (
     <nav className="bg-[#0B1E48] shadow-md p-5 relative z-50">
@@ -84,9 +92,9 @@ function CustomNavbar({ session }) {
                     <b>
                       <u className="text-[#0E6FFF]">
                         <Link href="/Profile">
-                        <p className="text-[14px] ml-1 text-[#0E6FFF] ">
-                          View Profile
-                        </p>
+                          <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                            {t("nav.viewprofile")}
+                          </p>
                         </Link>
                       </u>
                     </b>
@@ -96,42 +104,42 @@ function CustomNavbar({ session }) {
                   <ul className="list-none mt-3 ">
                     {session?.user?.role !== "NormalUser" && (
                       <>
-                      <Link href="/Wallet">
-                        <li className="flex items-center ">
-                          <FaWallet className="mr-5 text-2xl text-gray-600" />
-                          <span className="text-[18px]">Wallet</span>
-                        </li>
+                        <Link href="/Wallet">
+                          <li className="flex items-center ">
+                            <FaWallet className="mr-5 text-2xl text-gray-600" />
+                            <span className="text-[18px]">{t("nav.wallet")}</span>
+                          </li>
                         </Link>
                         <Link href="/Sell">
-                        <li className="flex items-center mt-2">
-                          <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
-                          <span className="text-[18px]">Sell</span>
-                        </li>
+                          <li className="flex items-center mt-2">
+                            <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
+                            <span className="text-[18px]">{t("nav.sell")}</span>
+                          </li>
                         </Link>
                       </>
                     )}
                     <Link href="/favorite">
                       <li className="flex items-center mt-2">
                         <FaHeart className="mr-5 text-2xl text-gray-600" />
-                        <span className="text-[18px]">Favorite</span>
+                        <span className="text-[18px]">{t("nav.favorite")}</span>
                       </li>
                     </Link>
                     <Link href="/notification">
                       <li className="flex items-center mt-2">
                         <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
-                        <span className="text-[18px]">Notification</span>
+                        <span className="text-[18px]">{t("nav.notification")}</span>
                       </li>
                     </Link>
                     <Link href="/myproject">
-                    <li className="flex items-center mt-2">
-                      <FaBoxOpen className="mr-5 text-2xl text-gray-600 sm:mt-3" />
-                      <span className="text-[18px]">My Project</span>
-                    </li>
+                      <li className="flex items-center mt-2">
+                        <FaBoxOpen className="mr-5 text-2xl text-gray-600 sm:mt-3" />
+                        <span className="text-[18px]">{t("nav.myproject")}</span>
+                      </li>
                     </Link>
                     <Link href="/review">
                       <li className="flex items-center mt-2 ">
                         <FaStar className="mr-5  text-2xl text-gray-600" />
-                        <span className="text-[18px]">Review</span>
+                        <span className="text-[18px]">{t("nav.review")}</span>
                       </li>
                     </Link>
                   </ul>
@@ -140,7 +148,7 @@ function CustomNavbar({ session }) {
                     className="flex items-center w-full lg:w-auto border-t border-gray-300 lg:mt-0 lg:border-t-0 mt-3"
                   >
                     <BiSolidExit className="mr-5 mt-2 text-2xl text-gray-600" />
-                    <span className="text-[18px] mt-2">Log out</span>
+                    <span className="text-[18px] mt-2">{t("nav.logout")}</span>
                   </button>
                 </div>
               </div>
@@ -151,7 +159,7 @@ function CustomNavbar({ session }) {
         {/* โลโก้, เมนู, และปุ่มบัญชีสำหรับเดสทอป */}
         <div className="hidden lg:flex flex-1 items-center justify-center space-x-8">
           {/* โลโก้สำหรับเดสทอป */}
-          <div className="flex-none" style={{ marginRight: "50px" }}>
+          <div className="flex-none" >
             <Link href="/">
               <img
                 src="https://m1r.ai/bdebq.png"
@@ -167,22 +175,22 @@ function CustomNavbar({ session }) {
             <ul className="flex space-x-8 items-center">
               <li>
                 <Link href="/Home">
-                  <p className="font-semibold text-[20px] text-white mx-16">
-                    Home
+                  <p className="font-semibold text-[20px] text-white px-10">
+                    {t("nav.home.title")}
                   </p>
                 </Link>
               </li>
               <li>
                 <Link href="/project">
-                  <p className="font-semibold text-[20px] text-white mx-16">
-                    Project
+                  <p className="font-semibold text-[20px] text-white px-10">
+                    {t("nav.project.title")}
                   </p>
                 </Link>
               </li>
               <li>
                 <Link href="/listblog">
-                  <p className="font-semibold text-[20px] text-white mx-16">
-                    Blog
+                  <p className="font-semibold text-[20px] text-white px-10">
+                    {t("nav.blog.title")}
                   </p>
                 </Link>
               </li>
@@ -194,7 +202,10 @@ function CustomNavbar({ session }) {
             className="flex-none flex items-center"
             style={{ marginLeft: "50px" }}
           >
-            <MdGTranslate className="text-white text-4xl" />
+            <MdGTranslate
+              className="text-white text-4xl"
+              onClick={toggleLanguage}
+            />
             <button className="relative" onClick={toggleAccountBox}>
               <MdAccountCircle className="text-white text-4xl ml-5" />
               {isAccountBoxVisible && (
@@ -210,9 +221,9 @@ function CustomNavbar({ session }) {
                         <b>
                           <u className="text-[#0E6FFF]">
                             <Link href="/Profile">
-                            <p className="text-[14px] text-left text-[#0E6FFF]">
-                              View Profile
-                            </p>
+                              <p className="text-[14px] text-left text-[#0E6FFF]">
+                                {t("nav.viewprofile")}
+                              </p>
                             </Link>
                           </u>
                         </b>
@@ -222,43 +233,43 @@ function CustomNavbar({ session }) {
                       <ul className="list-none mt-3 ">
                         {session?.user?.role !== "NormalUser" && (
                           <>
-                          <Link href="/Wallet">
-                            <li className="flex items-center">
-                              <FaWallet className="mr-5 text-2xl text-gray-600" />
-                              <span className="text-[18px]">Wallet</span>
-                            </li>
+                            <Link href="/Wallet">
+                              <li className="flex items-center">
+                                <FaWallet className="mr-5 text-2xl text-gray-600" />
+                                <span className="text-[18px]">{t("nav.wallet")}</span>
+                              </li>
                             </Link>
                             <Link href="/Sell">
-                            <li className="flex items-center mt-2">
-                              <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
-                              <span className="text-[18px]">Sell</span>
-                            </li>
+                              <li className="flex items-center mt-2">
+                                <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
+                                <span className="text-[18px]">{t("nav.sell")}</span>
+                              </li>
                             </Link>
                           </>
                         )}
                         <Link href="/favorite">
                           <li className="flex items-center mt-2">
                             <FaHeart className="mr-5 text-2xl text-gray-600" />
-                            <span className="text-[18px]">Favorite</span>
+                            <span className="text-[18px]">{t("nav.favorite")}</span>
                           </li>
                         </Link>
                         <Link href="/notification">
-                        <li className="flex items-center mt-2">
-                          <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
-                          <span className="text-[18px]">Notification</span>
-                        </li>
+                          <li className="flex items-center mt-2">
+                            <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
+                            <span className="text-[18px]">{t("nav.notification")}</span>
+                          </li>
                         </Link>
                         <Link href="/myproject">
-                        <li className="flex items-center mt-2">
-                          <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
-                          <span className="text-[18px]">My Project</span>
-                        </li>
+                          <li className="flex items-center mt-2">
+                            <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
+                            <span className="text-[18px]">{t("nav.myproject")}</span>
+                          </li>
                         </Link>
                         <Link href="/review">
-                        <li className="flex items-center mt-2">
-                          <FaStar className="mr-5 text-2xl text-gray-600" />
-                          <span className="text-[18px]">Review</span>
-                        </li>
+                          <li className="flex items-center mt-2">
+                            <FaStar className="mr-5 text-2xl text-gray-600" />
+                            <span className="text-[18px]">{t("nav.review")}</span>
+                          </li>
                         </Link>
                       </ul>
                       <button
@@ -266,7 +277,7 @@ function CustomNavbar({ session }) {
                         className="flex items-center w-full  border-t border-gray-300 lg:mt-3 lg:w-full lg:border-t "
                       >
                         <BiSolidExit className="mr-5 mt-2 text-2xl text-gray-600" />
-                        <span className="text-[18px] mt-2">Log out</span>
+                        <span className="text-[18px] mt-2">{t("nav.logout")}</span>
                       </button>
                     </div>
                   </div>
@@ -312,21 +323,30 @@ function CustomNavbar({ session }) {
           <ul className="flex-1 px-5 space-y-5 mt-10">
             <li className="border-t border-gray-300 pt-2">
               <Link href="/Home">
-                <p className="font-semibold text-[20px] text-white">Home</p>
+                <p className="font-semibold text-[20px] text-white">
+                  {t("nav.home.title")}
+                </p>
               </Link>
             </li>
             <li className="border-t border-gray-300 pt-2">
               <Link href="/project">
-                <p className="font-semibold text-[20px] text-white">Project</p>
+                <p className="font-semibold text-[20px] text-white">
+                  {t("nav.project.title")}
+                </p>
               </Link>
             </li>
             <li className="border-t border-gray-300 pt-2 flex items-center justify-between">
               <Link href="/listblog" className="flex-1">
-                <p className="font-semibold text-[20px] text-white">Blog</p>
+                <p className="font-semibold text-[20px] text-white">
+                  {t("nav.blog.title")}
+                </p>
               </Link>
             </li>
-            <li className="flex justify-center border-t border-gray-300 pt-2 ">
-              <MdGTranslate className="text-white text-4xl mt-3" />
+            <li className="flex justify-center border-t border-gray-300 pt-5 ">
+              <MdGTranslate
+                className="text-white text-4xl"
+                onClick={toggleLanguage}
+              />
             </li>
           </ul>
         </div>

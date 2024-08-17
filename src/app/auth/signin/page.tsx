@@ -49,7 +49,7 @@ export default function SignIn() {
             style={{ color: '#33539B', fontSize: '29px' }}
             className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight"
           >
-            Sign in
+            Sign In
           </h2>
         </div>
   
@@ -93,7 +93,7 @@ export default function SignIn() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign in
+                Sign In
               </button>
               {error && <p className="text-red-500">{error}</p>}
             </div>

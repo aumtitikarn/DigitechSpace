@@ -1,30 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import Link from "next/link";
+import { useTranslation } from 'react-i18next';
 
 // ProductList Component
 const ProductList = ({ products }) => {
+  const { t, i18n } = useTranslation('translation');
   return (
-    <div className="flex flex-col items-center justify-center px-4 w-full">
+    <div className="flex flex-col items-center justify-center  w-full">
       <div className="flex flex-col justify-center w-full">
         <div className="flex items-center space-x-2 mt-3">
           <p className="font-bold" style={{ fontSize: "24px" }}>
-            Website
+          {t("nav.project.website")}
           </p>
         </div>
-        <Link href="/project/projectdetail">
-          <div className="flex overflow-x-auto gap-[30px]">
-            {products.map((product, index) => (
+        <div className="flex overflow-x-auto gap-[30px]">
+          {products.map((product, index) => (
+            <Link key={index} href="/project/projectdetail">
               <div
-                key={index}
                 className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-6 mt-5"
                 style={{ width: "203px", height: "275px" }}
               >
                 <div className="w-full h-full flex flex-col">
-                  {/* รูปภาพสินค้า */}
+                  {/* Product Image */}
                   <img
                     src={product.image}
                     alt="Product Image"
@@ -57,12 +58,12 @@ const ProductList = ({ products }) => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </Link>
+            </Link>
+          ))}
+        </div>
         <div className="flex-grow text-center">
           <p className="text-[#33529B] font-bold mt-7 text-[18px]">
-            See more (128)
+          {t("nav.home.seemore")} (128)
           </p>
         </div>
       </div>
@@ -83,72 +84,13 @@ const App = () => {
       sold: 29,
       price: "50,000",
     },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
+    // Add more product objects here
   ];
 
   return (
     <main className="bg-[#FBFBFB]">
       <div className="p-4">
-        <ProductList products={products} />
+        <ProductList products={products} title="Featured Products" />
       </div>
     </main>
   );

@@ -3,9 +3,9 @@
 import React from "react";
 import { CiHeart } from "react-icons/ci";
 import { MdAccountCircle } from "react-icons/md";
+import { useTranslation } from 'react-i18next';
 
 function BlogPost({ image, title, author }) {
-  // Truncate the title if it exceeds 23 characters
   const truncatedTitle = title.length > 23 ? `${title.slice(0, 23)}...` : title;
 
   return (
@@ -39,6 +39,7 @@ function BlogPost({ image, title, author }) {
 }
 
 export default function Blog() {
+  const { t, i18n } = useTranslation('translation');
   const posts = [
     {
       image: "https://shovelapp.io/wp-content/uploads/2021/03/Student-Studying-This-Is-How-To-Study-1080x648.png",
@@ -89,7 +90,7 @@ export default function Blog() {
       <div className="flex flex-col justify-center w-full">
         <div className="flex items-center space-x-2 mt-3">
           <p className="font-bold" style={{ fontSize: "24px" }}>
-            Blog
+          {t("nav.blog.title")}
           </p>
         </div>
         <div className="mt-5 flex overflow-x-auto space-x-5">
@@ -99,7 +100,7 @@ export default function Blog() {
         </div>
         <div className="flex-grow text-center mt-3">
           <p className="text-[#33529B] font-bold text-[18px]">
-            See more (128)
+          {t("nav.home.seemore")} (20)
           </p>
         </div>
       </div>

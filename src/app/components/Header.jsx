@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 // ImageSlider Component
 const ImageSlider = ({ images }) => {
@@ -17,6 +18,8 @@ const ImageSlider = ({ images }) => {
   const handleIndicatorClick = (index) => {
     setCurrentIndex(index);
   };
+
+  const { t, i18n } = useTranslation("translation");
 
   return (
     <div className="relative w-auto h-[300px] lg:h-[500px] overflow-hidden rounded-[15px] bg-gray-300">

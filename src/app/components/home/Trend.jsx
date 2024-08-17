@@ -2,8 +2,10 @@
 
 import React, { useEffect, useRef } from "react";
 import { FaSearch, FaFire } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 function Trend({ session }) {
+  const { t, i18n } = useTranslation("translation");
   return (
     <main className="flex flex-col items-center justify-center p-4 w-full">
       <div className="flex flex-col justify-center w-full">
@@ -17,7 +19,7 @@ function Trend({ session }) {
         </div>
         <div className="flex items-center space-x-2 mt-10">
           <p className="font-bold" style={{ fontSize: "24px" }}>
-            Trend
+            {t("nav.home.trend")}
           </p>
           <FaFire className="text-red-500 text-2xl" />
         </div>

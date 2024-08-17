@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React from "react";
 import Link from "next/link";
 import { IoIosStar } from "react-icons/io";
@@ -42,6 +42,46 @@ const products: Product[] = [
     sold: 20,
     price: "75,000",
   },
+  {
+    image:
+      "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+    name: "Another Project",
+    author: "Titikarn Waitayasuwan",
+    rating: "4.5",
+    reviews: 15,
+    sold: 20,
+    price: "75,000",
+  },
+  {
+    image:
+      "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+    name: "Another Project",
+    author: "Titikarn Waitayasuwan",
+    rating: "4.5",
+    reviews: 15,
+    sold: 20,
+    price: "75,000",
+  },
+  {
+    image:
+      "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+    name: "Another Project",
+    author: "Titikarn Waitayasuwan",
+    rating: "4.5",
+    reviews: 15,
+    sold: 20,
+    price: "75,000",
+  },
+  {
+    image:
+      "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+    name: "Another Project",
+    author: "Titikarn Waitayasuwan",
+    rating: "4.5",
+    reviews: 15,
+    sold: 20,
+    price: "75,000",
+  },
 ];
 
 // ReviewCard Component
@@ -50,54 +90,49 @@ const ReviewCard: React.FC<{ product: Product; showButton?: boolean }> = ({
   showButton,
 }) => {
   return (
-    <div
-      className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4"
-    >
-      <div className="w-auto h-auto flex flex-col">
-        {/* Product Image */}
-        <img
-          src={product.image}
-          alt="Product Image"
-          className="w-full h-[150px] rounded-md object-cover mb-4"
-        />
-        <div className="flex flex-col h-full">
-          <p className="text-lg font-semibold mb-2 truncate">
-            {product.name}
-          </p>
-          <div className="flex items-center mb-2">
-            <span className="text-gray-500 mr-2 text-2xl">
-              <MdAccountCircle />
-            </span>
-            <p className="text-sm text-gray-600 truncate">
-              {product.author}
+    <Link href="/project/projectreceive">
+      <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
+        <div className="w-auto h-auto flex flex-col">
+          {/* Product Image */}
+          <img
+            src={product.image}
+            alt="Product Image"
+            className="w-full h-[150px] rounded-md object-cover mb-4"
+          />
+          <div className="flex flex-col h-full">
+            <p className="text-lg font-semibold mb-2 truncate">
+              {product.name}
             </p>
+            <div className="flex items-center mb-2">
+              <span className="text-gray-500 mr-2 text-2xl">
+                <MdAccountCircle />
+              </span>
+              <p className="text-sm text-gray-600 truncate">{product.author}</p>
+            </div>
+            <div className="flex items-center mb-2">
+              <span className="text-yellow-500 mr-2 text-lg">
+                <IoIosStar />
+              </span>
+              <span className="text-gray-600 text-xs lg:text-sm">
+                {product.rating} ({product.reviews}) | Sold {product.sold}
+              </span>
+            </div>
+            <p className="text-lg font-bold text-[#33529B]">
+              {product.price} THB
+            </p>
+            {showButton && (
+              <div className="flex flex-col items-center my-2">
+                <button className="bg-[#33539B] text-white px-11 py-2 rounded-lg text-xs  mt-1">
+                  <p className="font-bold">Check the project</p>
+                </button>
+              </div>
+            )}
           </div>
-          <div className="flex items-center mb-2">
-            <span className="text-yellow-500 mr-2 text-lg">
-              <IoIosStar />
-            </span>
-            <span className="text-gray-600 text-xs lg:text-sm">
-              {product.rating} ({product.reviews}) | Sold {product.sold}
-            </span>
-          </div>
-          <p className="text-lg font-bold text-[#33529B]">
-            {product.price} THB
-          </p>
-          <Link href="/project/projectreceive">
-          {showButton && (
-           <div className="flex flex-col items-center my-2">
-              <button className="bg-[#33539B] text-white px-11 py-2 rounded-lg text-xs  mt-1">
-                <p className="font-bold">Check the project</p>
-              </button>
-         </div>
-          )}
-          </Link>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
-
 
 // MyProject Component
 const MyProject: React.FC = () => {
@@ -129,9 +164,9 @@ const MyProject: React.FC = () => {
           </div>
 
           <p className="text-sm text-gray-500 mb-8">
-            *Please inspect the product and press the "Check the project" button before 7 days.
-            If you do not press the button, you will not be able to file a
-            complaint and refund.
+            *Please inspect the product and press the "Check the project" button
+            before 7 days. If you do not press the button, you will not be able
+            to file a complaint and refund.
           </p>
 
           <h2 className="font-bold mb-4 text-[24px]">My project</h2>

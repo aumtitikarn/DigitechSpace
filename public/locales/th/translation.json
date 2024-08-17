@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "ai": {
+      "role": {
+        "title": "บทบาทของคุณคืออะไร?",
+        "student": "นักเรียน",
+        "professor": "ศาสตราจารย์",
+        "developer": "นักพัฒนา",
+        "designer": "นักออกแบบ",
+        "executive": "ผู้บริหาร",
+        "teacher": "ครู",
+        "researcher": "นักวิจัย",
+        "other": "อื่นๆ"
+      },
+      "interest": {
+        "des": "เนื้อหาประเภทใดที่คุณสนใจมากที่สุด?"
+      }
+    },
+    "home": {
+      "title": "หน้าแรก",
+      "trend": "เทรนด์",
+      "seemore" : "ดูเพิ่มเติม"
+    },
+    "project": {
+      "title": "โครงงาน",
+      "catagory": "หมวดหมู่",
+      "document": "เอกสาร",
+      "model": "โมเดล",
+      "website": "เว็บไซต์",
+      "mobileapp": "แอพพลิเคชัน",
+      "ai": "เอไอ",
+      "datasets": "ชุดข้อมูล",
+      "iot": "ไอโอที",
+      "program": "โปรแกรม",
+      "photo": "ศิลปะ",
+      "other": "อื่นๆ"
+    },
+    "blog": {
+      "title": "บล็อก",
+      "catagory": "หมวดหมู่"
+    },
+    "viewprofile": "ดูโปรไฟล์",
+    "wallet": "กระเป๋าเงิน",
+    "sell": "ขาย",
+    "favorite": "โครงงานที่บันทึก",
+    "signin": "เข้าสู่ระบบ",
+    "signup": "สมัครสมาชิก",
+    "notification": "แจ้งเตือน",
+    "myproject": "โครงงานของฉัน",
+    "review": "รีวิว",
+    "logout": "ออกจากระบบ"
+  },
+ "footer" : {
+    "contact" : "ติดต่อ"
+  }
+}
+

@@ -27,17 +27,19 @@ interface ProductListProps {
 }
 
 // Modal Component for confirmation
-const ConfirmDeleteModal: React.FC<{ 
-  isOpen: boolean; 
-  onClose: () => void; 
-  onConfirm: () => void; 
+const ConfirmDeleteModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
 }> = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-[300px]">
-        <p className="mt-4 text-center font-bold">Want to delete your project?</p>
+        <p className="mt-4 text-center font-bold">
+          Want to delete your project?
+        </p>
         <div className="mt-6 flex justify-center space-x-3">
           <button
             className="bg-gray-200 px-4 py-2 rounded-md"
@@ -108,103 +110,114 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
             </Link>
           </div>
           <h1 className="text-[24px] font-bold mt-10">Waiting for approval</h1>
-          {products.map((product, index) => (
-            <Link key={index} href="/projectdetail" passHref>
-              <div className="relative mt-2">
-                <div className="w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
-                  {/* Product Image */}
-                  <img
-                    src={product.image}
-                    alt="Product Image"
-                    className="w-[150px] h-[90px] rounded-md object-cover mr-4"
-                  />
-                  <div className="flex flex-col justify-between h-full">
-                    <p className="text-lg font-semibold truncate w-[150px] lg:w-[1000px]">
-                      {product.name}
-                    </p>
-                    <div className="flex items-center">
-                      <span className="text-gray-500 mr-2 text-2xl">
-                        <MdAccountCircle />
-                      </span>
-                      <p className="text-sm text-gray-600 truncate w-[150px] lg:w-[500px]">
-                        {product.author}
-                      </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+            {products.map((product, index) => (
+              <Link key={index} href="/project/projectdetail" passHref>
+                <div className="relative mt-2">
+                  <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
+                    {/* Product Image */}
+                    <div className="w-auto h-auto flex flex-col">
+                      <img
+                        src={product.image}
+                        alt="Product Image"
+                        className="w-full h-[150px] rounded-md object-cover mb-4"
+                      />
+                      <div className="flex flex-col h-full">
+                        <p className="text-lg font-semibold mb-2 truncate">
+                          {product.name}
+                        </p>
+                        <div className="flex items-center mb-2">
+                          <span className="text-gray-500 mr-2 text-2xl">
+                            <MdAccountCircle />
+                          </span>
+                          <p className="text-sm text-gray-600 truncate">
+                            {product.author}
+                          </p>
+                        </div>
+                        <div className="flex items-center mb-2">
+                          <span className="text-yellow-500 mr-2 text-lg">
+                            <IoIosStar />
+                          </span>
+                          <span className="text-gray-600 text-xs lg:text-sm">
+                            {product.rating} ({product.reviews}) | Sold{" "}
+                            {product.sold}
+                          </span>
+                        </div>
+                        <p className="text-lg font-bold text-[#33529B]">
+                          {product.price} THB
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <span className="text-yellow-500 mr-2">
-                        <IoIosStar />
-                      </span>
-                      <span className="text-sm text-gray-600">
-                        {product.rating} ({product.reviews}) | Sold{" "}
-                        {product.sold}
-                      </span>
-                    </div>
-                    <p className="text-lg font-bold text-[#33529B]">
-                      {product.price} THB
-                    </p>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+          </div>
           <h1 className="text-[24px] font-bold mt-10">Published Project</h1>
-          {products.map((product, index) => (
-            <div className="relative mt-2" key={index}>
-              <div className="w-full h-auto flex-shrink-0 rounded-[5px] border-[0.5px] border-gray-400 bg-white shadow-sm mt-5 flex items-center p-4">
-                {/* Product Image */}
-                <img
-                  src={product.image}
-                  alt="Product Image"
-                  className="w-[150px] h-[90px] rounded-md object-cover mr-4"
-                />
-                <div className="flex flex-col justify-between h-full flex-grow">
-                  <p className="text-lg font-semibold truncate w-[150px] lg:w-[1000px]">
-                    {product.name}
-                  </p>
-                  <div className="flex items-center">
-                    <span className="text-gray-500 mr-2 text-2xl">
-                      <MdAccountCircle />
-                    </span>
-                    <p className="text-sm text-gray-600 truncate w-[150px] lg:w-[500px]">
-                      {product.author}
-                    </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+            {products.map((product, index) => (
+              <div key={index} className="relative mt-2">
+                <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
+                  <Link href="/project/projectdetail" passHref>
+                    <div className="w-auto h-auto flex flex-col cursor-pointer">
+                      {/* Product Image */}
+                      <img
+                        src={product.image}
+                        alt="Product Image"
+                        className="w-full h-[150px] rounded-md object-cover mb-4"
+                      />
+                      <div className="flex flex-col h-full">
+                        <p className="text-lg font-semibold mb-2 truncate">
+                          {product.name}
+                        </p>
+                        <div className="flex items-center mb-2">
+                          <span className="text-gray-500 mr-2 text-2xl">
+                            <MdAccountCircle />
+                          </span>
+                          <p className="text-sm text-gray-600 truncate">
+                            {product.author}
+                          </p>
+                        </div>
+                        <div className="flex items-center mb-2">
+                          <span className="text-yellow-500 mr-2 text-lg">
+                            <IoIosStar />
+                          </span>
+                          <span className="text-gray-600 text-xs lg:text-sm">
+                            {product.rating} ({product.reviews}) | Sold{" "}
+                            {product.sold}
+                          </span>
+                        </div>
+                        <p className="text-lg font-bold text-[#33529B]">
+                          {product.price} THB
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                  {/* Icons */}
+                  <div className="reletive flex justify-between lg:px-10 md:px-[50px] px-5 my-2">
+                    <Link href="/Sell/AddProject">
+                      <VscEdit
+                        size={20}
+                        className="text-gray-500 hover:text-[#33539B]"
+                      />
+                    </Link>
+                    <MdDeleteOutline
+                      size={20}
+                      className="text-gray-500 hover:text-red-500 cursor-pointer"
+                      onClick={() => handleDeleteClick(product)}
+                    />
                   </div>
-                  <div className="flex items-center">
-                    <span className="text-yellow-500 mr-2">
-                      <IoIosStar />
-                    </span>
-                    <span className="text-sm text-gray-600">
-                      {product.rating} ({product.reviews}) | Sold {product.sold}
-                    </span>
-                  </div>
-                  <p className="text-lg font-bold text-[#33529B]">
-                    {product.price} THB
-                  </p>
-                </div>
-                {/* Icons */}
-                <div className="absolute top-5 right-9 flex flex-col space-y-[50px]">
-                <Link href="">
-                  <VscEdit
-                    size={20}
-                    className="relative text-gray-500 hover:text-[#33539B]"
-                  />
-                </Link>
-                  <MdDeleteOutline
-                    size={20}
-                    className="relative text-gray-500 hover:text-red-500 cursor-pointer"
-                    onClick={() => handleDeleteClick(product)}
-                  />
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
       {/* Confirm Delete Modal */}
-      <ConfirmDeleteModal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal} 
-        onConfirm={handleConfirmDelete} 
+      <ConfirmDeleteModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   );
@@ -221,6 +234,66 @@ const App: React.FC = () => {
       reviews: 28,
       sold: 29,
       price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Flutter Developer",
+      author: "Seksit Panyapat",
+      rating: "4.9",
+      reviews: 37,
+      sold: 42,
+      price: "100,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Flutter Developer",
+      author: "Seksit Panyapat",
+      rating: "4.9",
+      reviews: 37,
+      sold: 42,
+      price: "100,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Flutter Developer",
+      author: "Seksit Panyapat",
+      rating: "4.9",
+      reviews: 37,
+      sold: 42,
+      price: "100,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Flutter Developer",
+      author: "Seksit Panyapat",
+      rating: "4.9",
+      reviews: 37,
+      sold: 42,
+      price: "100,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Flutter Developer",
+      author: "Seksit Panyapat",
+      rating: "4.9",
+      reviews: 37,
+      sold: 42,
+      price: "100,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Flutter Developer",
+      author: "Seksit Panyapat",
+      rating: "4.9",
+      reviews: 37,
+      sold: 42,
+      price: "100,000",
     },
     {
       image:
