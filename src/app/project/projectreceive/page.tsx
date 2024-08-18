@@ -8,16 +8,18 @@ import { useRouter } from "next/navigation";
 import { GoCheck, GoShare, GoHeartFill, GoHeart } from "react-icons/go";
 import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaFacebook } from "react-icons/fa";
 import { AiOutlineNotification } from "react-icons/ai";
-import Report from "./report"; // Updated import path for the Report component
-; // Use the correct import for the Report component
+import Report from "./report";
+import { RiTwitterXLine } from "react-icons/ri";
+import { FaLink, FaFacebookF, FaTwitter } from "react-icons/fa";
 
 const ProjectReceive = () => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
   const router = useRouter();
 
   if (status === "loading") {
@@ -50,6 +52,15 @@ const ProjectReceive = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  const handleShareClick = () => {
+    setIsSharePopupOpen(!isSharePopupOpen); // Toggle popup open/close
+  };
+
+  const handleShareClosePopup = () => {
+    setIsSharePopupOpen(false); // Close popup
+  };
+
 
   const products = [
     {
@@ -169,7 +180,20 @@ const ProjectReceive = () => {
                 </div>
                 <div className="flex flex-col items-end">
                   <div className="flex space-x-5">
-                    <GoShare className="text-gray-600 cursor-pointer text-2xl" />
+                  <div className="relative flex justify-center">
+                      <GoShare
+                        className="text-gray-600 cursor-pointer text-2xl"
+                        onClick={handleShareClick}
+                      />
+                      {/* Share Popup */}
+                      {isSharePopupOpen && (
+                        <div className="absolute bottom-full mb-[10px] w-[121px] h-[46px] flex-shrink-0 rounded-[30px] border border-gray-300 bg-white flex items-center justify-center space-x-4 shadow-lg">
+                          <FaLink className="text-gray-600 cursor-pointer" />
+                          <FaFacebook className="text-gray-600 cursor-pointer" />
+                          <RiTwitterXLine className="text-gray-600 cursor-pointer" />
+                        </div>
+                      )}
+                    </div>
                     <button onClick={handleFavoriteClick} className="cursor-pointer">
                       {isFavorited ? (
                         <GoHeartFill className="text-gray-600 text-2xl" />

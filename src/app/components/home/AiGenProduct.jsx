@@ -84,7 +84,56 @@ const App = () => {
       sold: 29,
       price: "50,000",
     },
-    // Add more product objects here
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
   ];
 
   return (
