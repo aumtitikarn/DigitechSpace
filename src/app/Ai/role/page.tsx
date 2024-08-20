@@ -35,49 +35,49 @@ export default function Role() {
               {/* สร้างกล่อง 8 กล่อง */}
               <button
                 onClick={handleButtonClick}
-                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
+                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto mb-5"
               >
                 <span className="text-gray-700">{t("nav.ai.role.student")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
-                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
+                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto mb-5"
               >
                 <span className="text-gray-700">{t("nav.ai.role.professor")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
-                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
+                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto mb-5"
               >
                 <span className="text-gray-700">{t("nav.ai.role.developer")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
-                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
+                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto mb-5"
               >
                 <span className="text-gray-700">{t("nav.ai.role.designer")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
-                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
+                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto mb-5"
               >
                 <span className="text-gray-700">{t("nav.ai.role.executive")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
-                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
+                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto mb-5"
               >
                 <span className="text-gray-700">{t("nav.ai.role.teacher")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
-                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
+                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto mb-5"
               >
                 <span className="text-gray-700">{t("nav.ai.role.researcher")}</span>
               </button>
               <button
                 onClick={handleButtonClick}
-                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto"
+                className="hover:bg-slate-200 rounded-lg border border-gray-300 bg-white shadow-xl w-[170px] h-[71px] flex-shrink-0 mx-auto mb-5"
               >
                 <span className="text-gray-700">{t("nav.ai.role.other")}</span>
               </button>
