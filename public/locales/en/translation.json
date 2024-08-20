@@ -74,7 +74,19 @@
     },
     "blog": {
       "title": "Blog",
-      "catagory": "Catagory"
+      "catagory": "Catagory",
+      "comment" : "Comment",
+      "send" : "Send",
+      "reason" : "Reason",
+      "message" : "Additional message (200 Characters)",
+      "enter" : "message",
+      "sendre" : "Send Report",
+      "r1" : "Contains impolite or vulgar words",
+      "r2" : "The content doesn't match the topic.",
+      "r3" : "There is advertising of illegal things.",
+      "r4" : "The article is not related to the subject studied.",
+      "r5" : "Other",
+      "report" : "Report"
     },
     "viewprofile": "View Profile",
     "wallet": "Wallet",

@@ -163,7 +163,7 @@ const Blog = () => {
             </div>
 
             <div className="mt-5">
-              <h1 className="font-bold text-2xl">Comment</h1>
+              <h1 className="font-bold text-2xl">{t("nav.blog.comment")}</h1>
             </div>
 
             <div className="flex flex-row mt-5 items-start">
@@ -207,7 +207,7 @@ const Blog = () => {
                 type="text"
                 value={input1}
                 onChange={(e) => setInput1(e.target.value)}
-                placeholder="Comment"
+                placeholder={t("nav.blog.comment")}
                 className="w-full p-2 mb-2 border border-gray-300 rounded h-36"
                 style={{ flexDirection: "column", textAlign: "start" }}
               />
@@ -216,7 +216,7 @@ const Blog = () => {
                 className="absolute bottom-2 right-2 w-36 p-2 text-white rounded bg-blue-500 mb-3 mr-1"
                 style={{ backgroundColor: "#33539B" }}
               >
-                Send
+                {t("nav.blog.send")}
               </button>
             </div>
 
@@ -234,7 +234,7 @@ const Blog = () => {
                       className="text-lg font-bold mb-4"
                       style={{ fontWeight: "bold", fontSize: "26px" }}
                     >
-                      Report
+                      {t("nav.blog.report")}
                     </h2>
                   </div>
                   <div className="flex flex-col mb-4">
@@ -242,16 +242,16 @@ const Blog = () => {
                       className="mb-4"
                       style={{ fontWeight: "bold", fontSize: "20px" }}
                     >
-                      Blog : แนะนำ Study With Me ฉบับเด็กมทส.
+                      {t("nav.blog.title")} : แนะนำ Study With Me ฉบับเด็กมทส.
                     </p>
                     <hr className="border-t border-gray-300 w-full" />
                   </div>
                   <div className="flex flex-row">
                     <p
-                      className="mb-4"
+                      className=""
                       style={{ fontWeight: "bold", fontSize: "20px" }}
                     >
-                      Reason
+                      {t("nav.blog.reason")}
                     </p>
                   </div>
                   <div className="flex flex-row">
@@ -260,22 +260,25 @@ const Blog = () => {
                       className="block w-full p-3 border border-gray-300 rounded my-1 mb-2"
                     >
                       <option value="profanity">
-                        มีคำไม่สุภาพ หรือ คำหยาบคาย
+                      {t("nav.blog.r1")}
                       </option>
-                      <option value="off-topic">เนื้อหาไม่ตรงกับหัวข้อ</option>
+                      <option value="off-topic">{t("nav.blog.r2")}</option>
                       <option value="illegal-ads">
-                        มีการโฆษณาสิ่งผิดกฎหมาย
+                      {t("nav.blog.r3")}
                       </option>
                       <option value="unrelated">
-                        บทความไม่เกี่ยวข้องกับวิชาเรียน
+                      {t("nav.blog.r4")}
+                      </option>
+                      <option value="other">
+                      {t("nav.blog.r5")}
                       </option>
                     </select>
                   </div>
                   <p
-                    className="mb-4"
+                    className=""
                     style={{ fontWeight: "bold", fontSize: "20px" }}
                   >
-                    Additional message (200 Characters)
+                    {t("nav.blog.message")}
                   </p>
                   <input
                     type="text"
@@ -290,7 +293,7 @@ const Blog = () => {
                       className="p-2 text-white rounded w-full"
                       style={{ backgroundColor: "#FF2727" }}
                     >
-                      Send Report
+                      {t("nav.blog.sendre")}
                     </button>
                   </div>
                 </div>
