@@ -54,7 +54,23 @@
       "program": "Program",
       "photo": "Photo/Art",
       "other": "Other",
-      "rating": "Rating"
+      "rating": "Rating",
+      "projectdetail" : {
+        "buy" : "Buy",
+        "description" : "Description",
+        "receive" : "Receive",
+        "review" : "Review",
+        "projectby" : "Project by" ,
+        "otherproject" : "Other Project",
+        "sold" : "Sold",
+        "transaction" : "Transaction", 
+        "project" : "Project",
+        "price" : "Price",
+        "paymentde" : "Payment with debit/credit card",
+        "paymentmobile" : "Payment with mobile banking",
+        "by" : "By",
+        "hidden" : "Hide review"
+      }
     },
     "blog": {
       "title": "Blog",

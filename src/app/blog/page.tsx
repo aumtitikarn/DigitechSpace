@@ -75,13 +75,13 @@ const Blog =()=> {
 </div>
 
           <div className="flex flex-row mt-5 mb-5 items-center">
-            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
             </div>
           </div>
 
-          <div className="flex flex-wrap my-2">
+          <div className="flex flex-wrap">
             <Link href="" className="text-white rounded-md p-2 m-1" style={{backgroundColor:"#33529B"}}>
               รหัสวิชา 11010203
             </Link>
@@ -130,38 +130,38 @@ const Blog =()=> {
           </div>
 
           <div className="flex flex-row mt-5 items-start">
-            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
-              <h1 className="font-bold">Titikarn Waitayasuwan</h1>
-              <p className="font-thin text-sm">8/6/2024</p>
-              <p>แจ่มแมวเลยครับพรี่</p>
+              <h1 className="">Titikarn Waitayasuwan</h1>
+              <p className="font-thin text-sm">8/6/2024 1:15:15</p>
+              <p className="text-gray-500 mt-1">แจ่มแมวเลยครับพรี่</p>
             </div>
           </div>
           <hr className="border-t border-gray-300 w-full m-2" /> 
           <div className="flex flex-row ml-5 items-start">
-            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
-              <h1 className="font-bold">Titikarn Waitayasuwan</h1>
-              <p className="font-thin text-sm">8/6/2024</p>
-              <p>ดีงาม</p>
+              <h1 className="">Titikarn Waitayasuwan</h1>
+              <p className="font-thin text-sm">8/6/2024 1:15:15</p>
+              <p className="text-gray-500 mt-1">ดีงาม</p>
             </div>
           </div>
 
           <div className="flex flex-row mt-5 items-start">
-          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
-              <h1 className="font-bold">Titikarn Waitayasuwan</h1>
-              <p className="font-thin text-sm">8/6/2024</p>
-              <p>แจ่มแมวเลยครับพรี่</p>
+              <h1 className="">Titikarn Waitayasuwan</h1>
+              <p className="font-thin text-sm">8/6/2024 1:15:15</p>
+              <p className="text-gray-500 mt-1">แจ่มแมวเลยครับพรี่</p>
             </div>
           </div>
           <hr className="border-t border-gray-300 w-full m-2" /> 
           <div className="flex flex-row ml-5 items-start">
-          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
-              <h1 className="font-bold">Titikarn Waitayasuwan</h1>
-              <p className="font-thin text-sm">8/6/2024</p>
-              <p>ดีงาม</p>
+              <h1 className="">Titikarn Waitayasuwan</h1>
+              <p className="font-thin text-sm">8/6/2024 1:15:15</p>
+              <p className="text-gray-500 mt-1">ดีงาม</p>
             </div>
           </div>
 
@@ -170,14 +170,14 @@ const Blog =()=> {
     type="text"
     value={input1}
     onChange={(e) => setInput1(e.target.value)}
-    placeholder="Enter first message"
+    placeholder="Comment"
     className="w-full p-2 mb-2 border border-gray-300 rounded h-36"
     style={{flexDirection:"column", textAlign:"start"}}
   />
   <button
     onClick={handleSubmit}
     className="absolute bottom-2 right-2 w-36 p-2 text-white rounded bg-blue-500 mb-3 mr-1"
-    style={{ backgroundColor: "#0B1E48" }}
+    style={{ backgroundColor: "#33539B" }}
   >
     Send
   </button>

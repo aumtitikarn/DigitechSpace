@@ -48,7 +48,7 @@ const ProductList = ({ products }) => {
                         <IoIosStar />
                       </span>
                       <span className="lg:text-sm text-gray-600 text-[12px]">
-                        {product.rating} ({product.reviews}) | Sold{" "}
+                        {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
                         {product.sold}
                       </span>
                     </div>

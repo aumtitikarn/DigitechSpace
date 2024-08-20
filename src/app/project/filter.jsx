@@ -319,8 +319,8 @@ const Items_Filter = () => {
                       <span className="text-yellow-500 mr-2">
                         <IoIosStar />
                       </span>
-                      <span className="lg:text-sm text-gray-600 text-[12px]">
-                        {product.rating} ({product.reviews}) | Sold{" "}
+                      <span className="lg:text-sm text-gray-600 text-[12px] truncate">
+                        {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
                         {product.sold}
                       </span>
                     </div>

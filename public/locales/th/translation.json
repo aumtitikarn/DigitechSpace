@@ -54,7 +54,23 @@
       "program": "โปรแกรม",
       "photo": "ศิลปะ",
       "other": "อื่นๆ",
-      "rating": "เรตติง"
+      "rating": "เรตติง",
+      "projectdetail" : {
+        "buy" : "ซื้อ",
+        "description" : "คำอธิบาย",
+        "receive" : "สิ่งที่จะได้รับ",
+        "review" : "รีวิว",
+        "projectby" : "โครงงานโดย" ,
+        "otherproject" : "โครงงานอื่นๆ",
+        "sold" : "ขายไปแล้ว",
+        "transaction" : "ธุรกรรม", 
+        "project" : "โครงงาน",
+        "price" : "ราคา",
+        "paymentde" : "ชำระเงินผ่านบัตร เดบิต/เครดิต",
+        "paymentmobile" : "ชำระเงินผ่านโมบายแบงค์กิ้ง",
+        "by" : "โดย",
+        "hidden" : "ซ่อนรีวิว"
+      }
     },
     "blog": {
       "title": "บล็อก",
