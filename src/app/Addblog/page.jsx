@@ -7,11 +7,16 @@ import { redirect } from "next/navigation";
 import Footer from "../components/Footer";
 import Container from "../components/Container";
 import { FaPlus } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
-function Page() {
+export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [topic, setTopic] = useState("");
+  const [course, setCourse] = useState("");
+  const [description, setDescription] = useState("");
+  
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
@@ -37,6 +42,37 @@ function Page() {
   const handleSave = () => {
     console.log("Profile saved");
   };
+
+  const router = useRouter();
+
+  const handleSudmit = async (e) => {
+    e.preventDefault();
+
+    if (!topic || !course || !description) {
+      alert("Please complete all inputs")
+      return;
+    }
+
+    try  {
+
+      const res = await fetch("http://localhost:3000/api/posts",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({topic,course,description})
+      })
+
+      if (res.ok) {
+        // Optionally redirect or show a success message
+        router.push("/");
+      }
+
+    } catch(error){
+      console.log(error);
+    }
+
+  }
 
   return (
     <Container>
@@ -71,6 +107,7 @@ function Page() {
               <div className="flex items-center justify-center w-10 h-10">
                 <FaPlus size={24} />
               </div>
+              
               <input
                 id="file-upload"
                 type="file"
@@ -79,9 +116,10 @@ function Page() {
                 onChange={handleFileUpload}
               />
             </button>
-
+            <form onSubmit={handleSudmit}>
             <input
               type="text"
+              onChange={(e) => setTopic(e.target.value)}
               placeholder="Topic"
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
@@ -89,6 +127,7 @@ function Page() {
             <div className="flex flex-row w-full">
               <input
                 type="text"
+                onChange={(e) => setCourse(e.target.value)}
                 placeholder="Course ID"
                 className="w-full p-2 mb-4 mr-5 border border-gray-300 rounded"
               />
@@ -116,16 +155,26 @@ function Page() {
             <input
               type="text"
               placeholder="Description"
+              onChange={(e) => setDescription(e.target.value)}
               className="w-full h-60 p-2 mb-4 border border-gray-300 rounded"
             />
 
-            <button
+              <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
+              style={{ backgroundColor: "#33539B" }}
+            >
+              Postt1
+            </button>
+
+            {/* <button
               onClick={handleSave}
               className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
               style={{ backgroundColor: "#33539B" }}
             >
               Post
-            </button>
+            </button> */}
+            </form>
           </div>
         </div>
       </main>
@@ -134,4 +183,3 @@ function Page() {
   );
 }
 
-export default Page;
