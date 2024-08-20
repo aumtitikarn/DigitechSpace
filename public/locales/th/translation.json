@@ -74,7 +74,9 @@
     },
     "blog": {
       "title": "บล็อก",
-      "catagory": "หมวดหมู่"
+      "catagory": "หมวดหมู่",
+      "comment" : "คอมเมนต์",
+      "Send" : "ส่ง"
     },
     "viewprofile": "ดูโปรไฟล์",
     "wallet": "กระเป๋าเงิน",
