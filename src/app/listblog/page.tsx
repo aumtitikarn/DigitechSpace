@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { CiHeart } from "react-icons/ci";
 import Navbar from "../components/Navbar";
@@ -14,11 +14,41 @@ import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from 'react-i18next';
 import { FaSearch, FaFire } from "react-icons/fa";
 
-function page() {
+export default function page() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupInput, setPopupInput] = useState("");
   const { t, i18n } = useTranslation('translation');
   const [input1, setInput1] = useState("");
+
+  const [postData,setPostData] = useState([]);
+  
+  console.log(postData);
+
+  const getPosts = async ()=> {
+
+    try{
+      const res = await fetch("http://lacalhost:3000/api/posts",{
+        cache:"no-store"
+      })
+
+      if(!res.ok){
+        throw new Error("Failed of fetch posts")
+      }
+
+      const data = await res.json();
+      console.log("Fetched Data: ", data); // Log the data to inspect its structure
+      setPostData(data.posts);
+      console.log(data); // Check the structure here
+      setPostData(data.posts); // Make sure data.posts exists
+
+    } catch(error) {
+      console.log("Error loading posts: ",error);
+    }
+  }
+
+  useEffect(()=>{
+    getPosts();
+  },[]);
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -68,7 +98,61 @@ function page() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
-              {Array(5)
+            
+                  <Link href="/blog">
+                  {postData && postData.length > 0 ? (
+                    postData.map(val => (
+                    <div
+                      key={val._id}
+                      className=" w-[180px] h-[300px] flex flex-col"
+                    >
+                      <div className="rounded w-full relative" style={{height:"250px"}}>
+                        <img
+                          src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
+                          className="object-cover w-full h-full"
+                          alt="Blog Image"
+                        />
+                      </div>
+                      <div className="ml-2 mt-2">
+                        <div className="flex flex-col mt-1 justify-center">
+                          <div className="flex flex-row">
+                            <p
+                              className="truncate mt-1"
+                              style={{ fontSize: "14px", fontWeight: "bold" }}
+                            >
+                              
+                            </p>
+                            <div className="flex items-center">
+                              <div className="w-6 h-6 ml-1 mt-1 text-gray-500">
+                                <CiHeart style={{ fontSize: "20px" }} />
+                              </div>
+                              <p
+                                className="text-gray-500"
+                                style={{ fontSize: "16px" }}
+                              >
+                                
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-row mb-3">
+                          <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
+                          <p
+                            className="mt-2 truncate text-gray-500"
+                            style={{ fontSize: "12px" }}
+                          >
+                            Titikarn Waitayasuwan
+                            
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    ))):(<p>you don't have</p>)}
+                  </Link>
+                  
+                
+
+              {/* {Array(5)
                 .fill("")
                 .map((_, index) => (
                   <Link href="/blog">
@@ -168,58 +252,7 @@ function page() {
                       </div>
                     </div>
                   </Link>
-                ))}
-
-              {Array(5)
-                .fill("")
-                .map((_, index) => (
-                  <Link href="/blog">
-                    <div
-                      key={index}
-                      className=" w-[180px] h-[300px] flex flex-col"
-                    >
-                      <div className="rounded w-full relative" style={{height:"250px"}}>
-                        <img
-                          src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
-                          className="object-cover w-full h-full"
-                          alt="Blog Image"
-                        />
-                      </div>
-                      <div className="ml-2 mt-2">
-                        <div className="flex flex-col mt-1 justify-center">
-                          <div className="flex flex-row">
-                            <p
-                              className="truncate mt-1"
-                              style={{ fontSize: "14px", fontWeight: "bold" }}
-                            >
-                              แนะนำ Study With
-                            </p>
-                            <div className="flex items-center">
-                              <div className="w-6 h-6 ml-1 mt-1 text-gray-500">
-                                <CiHeart style={{ fontSize: "20px" }} />
-                              </div>
-                              <p
-                                className="text-gray-500"
-                                style={{ fontSize: "16px" }}
-                              >
-                                500
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-row mb-3">
-                          <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
-                          <p
-                            className="mt-2 truncate text-gray-500"
-                            style={{ fontSize: "12px" }}
-                          >
-                            Titikarn Waitayasuwan
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+                ))} */}
             </div>
 
             <div className="mt-6 w-full flex justify-end">
@@ -240,4 +273,3 @@ function page() {
   );
 }
 
-export default page;

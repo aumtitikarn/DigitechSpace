@@ -11,6 +11,7 @@ import Container from "../components/Container";
 import { useSession } from "next-auth/react";
 import { FaLink } from "react-icons/fa";
 import Box from "next-auth/providers/box";
+import { MdAccountCircle } from "react-icons/md";
 
 function page() {
   const { data: session, status } = useSession();
@@ -35,7 +36,7 @@ function page() {
         <div className="flex flex-col items-center w-full max-w-lg">
           
           <div className="flex flex-row justify-center">
-            <div className="bg-gray-300 w-40 h-40 rounded-full"></div>
+            <MdAccountCircle className="w-40 h-40 rounded-full"/>
           </div>
 
           <div className="flex flex-row justify-center">
@@ -43,7 +44,7 @@ function page() {
             {session?.user?.name}
             </p>
           </div>
-          {session?.user?.role == "NormalUser" && (
+          {session?.user?.role !== "NormalUser" && (
           <div className="flex flex-col items-center w-full mt-4">
             <div className="flex flex-row items-center w-full mt-4">
             <p>Name</p>
@@ -71,7 +72,7 @@ function page() {
           </div>
           )}
 
-        {session?.user?.role !== "NormalUser" && (
+        {session?.user?.role == "NormalUser" && (
           <div className="flex flex-col items-center w-full mt-4">
             <div className="flex flex-row items-center w-full mt-4">
             <p>Name</p>
@@ -84,7 +85,7 @@ function page() {
             <div className="flex flex-row items-center w-full mt-4">
             <p>Email</p>
             </div>
-            <div className="w-full p-2 mb-4 border border-gray-300 rounded text-zinc-400">{session?.user?.email}</div>
+            <div className="w-full p-2 mb-4 text-zinc-400">{session?.user?.email}</div>
             <button
               onClick={handleSave}
               className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"

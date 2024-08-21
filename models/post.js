@@ -2,11 +2,9 @@ import mongoose,{ Schema } from "mongoose";
 
 const postSchema = new Schema(
     {
-
         topic: String,
         course: String,
         description: String
-
     },
     {
 
