@@ -9,7 +9,6 @@ import { BiSolidExit } from "react-icons/bi";
 import { FaWallet, FaMoneyBillTrendUp } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import { useTranslation } from "react-i18next";
-import i18n from "./../i18n";
 
 function CustomNavbar({ session }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);

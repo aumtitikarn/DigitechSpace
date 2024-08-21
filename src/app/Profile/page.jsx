@@ -12,9 +12,11 @@ import { useSession } from "next-auth/react";
 import QRshare from "../QRshare/page"
 import Editprofile from "../EditProfile/page"
 import { MdAccountCircle } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 function page() {
   const [activeButton, setActiveButton] = useState(null);
+  const { t, i18n } = useTranslation("translation");
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
@@ -48,10 +50,10 @@ function page() {
       
       <div className="flex flex-row justify-center mt-10 mb-10">
       <Link href="/EditProfile" className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
-      <p>แก้ไขโปรไฟล์</p>
+      <p>{t("nav.profile.edit")}</p>
       </Link>
       <Link href="/QRshare" className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
-      แชร์โปรไฟล์
+      {t("nav.profile.share")}
       </Link>
       </div>
      
@@ -69,7 +71,7 @@ function page() {
                   }`}
                 >
                   <div className="flex flex-col justify-center w-auto h-10">
-                    <p className="font-bold text-[20px]">Project</p>
+                    <p className="font-bold text-[20px]">{t("nav.profile.project")}</p>
                   </div>
                 </button>
               </div>
@@ -85,7 +87,7 @@ function page() {
                   }`}
                 >
                   <div className="flex flex-col justify-center w-auto h-10">
-                    <p className="font-bold text-[20px]">Blog</p>
+                    <p className="font-bold text-[20px]">{t("nav.profile.blog")}</p>
                   </div>
                 </button>
               </div>

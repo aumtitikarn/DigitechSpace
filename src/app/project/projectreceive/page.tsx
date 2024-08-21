@@ -13,6 +13,7 @@ import { AiOutlineNotification } from "react-icons/ai";
 import Report from "./report";
 import { RiTwitterXLine } from "react-icons/ri";
 import { FaLink, FaFacebookF, FaTwitter } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const ProjectReceive = () => {
   const { data: session, status } = useSession();
@@ -20,6 +21,7 @@ const ProjectReceive = () => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
+  const { t, i18n } = useTranslation("translation");
   const router = useRouter();
 
   if (status === "loading") {

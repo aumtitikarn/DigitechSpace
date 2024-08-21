@@ -155,7 +155,16 @@
       "desCheck" : "* Please inspect the product and press the 'Check the project' button before 7 days. If you do not press the button, you will not be able to file a complaint and refund."
     },
     "review": "Review",
-    "logout": "Log out"
+    "logout": "Log out",
+    "profile" : {
+      "project" : "Project",
+      "blog" : "Blog",
+      "edit" : "Edit your profile",
+      "share" : "Share your profile",
+      "name" : "Name",
+      "email" : "Email",
+      "save" : "Save"
+    }
   },
   "footer": {
     "contact": "Contact"
