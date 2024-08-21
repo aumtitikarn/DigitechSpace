@@ -22,6 +22,7 @@ const ProjectReceive = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
   const { t, i18n } = useTranslation("translation");
+  const [visibleReviewsCount, setVisibleReviewsCount] = useState(3);
   const router = useRouter();
 
   if (status === "loading") {
@@ -63,6 +64,16 @@ const ProjectReceive = () => {
     setIsSharePopupOpen(false); // Close popup
   };
 
+  const handleShowLessClick = () => {
+    setVisibleReviewsCount(3); // กลับไปแสดงผลรีวิว 5 รีวิวแรก
+  };
+  const handleSeeMoreClick = () => {
+    if (visibleReviewsCount + 3 >= reviews.length) {
+      setVisibleReviewsCount(reviews.length); // แสดงผลรีวิวทั้งหมด
+    } else {
+      setVisibleReviewsCount(visibleReviewsCount + 3); // แสดงผลเพิ่ม 3 รีวิว
+    }
+  };
 
   const products = [
     {
@@ -127,6 +138,60 @@ const ProjectReceive = () => {
     },
   ];
 
+  const reviews = [
+    {
+      name: "Phornthi",
+      rating: "4.5",
+      comment: "ดีมากๆเลยค่ะ",
+    },
+    {
+      name: "Aumti",
+      rating: "5.0",
+      comment: "ช่วยเรื่องโปรเจกต์ได้ดีมากเลยค่ะ",
+    },
+    {
+      name: "Stamp",
+      rating: "3.5",
+      comment: "ไฟล์แอบไม่เป็นระเบียนนิดนึง",
+    },
+    {
+      name: "สมชาย",
+      rating: "1.0",
+      comment: "ไม่ค่อยตรงปก",
+    },
+    {
+      name: "Phornthi",
+      rating: "4.5",
+      comment: "ดีมากๆเลยค่ะ",
+    },
+    {
+      name: "Phornthi",
+      rating: "4.5",
+      comment: "ดีมากๆเลยค่ะ",
+    },
+    {
+      name: "สมชาย",
+      rating: "1.0",
+      comment: "ไม่ค่อยตรงปก",
+    },
+    {
+      name: "Phornthi",
+      rating: "4.5",
+      comment: "ดีมากๆเลยค่ะ",
+    },
+    {
+      name: "Phornthi",
+      rating: "4.5",
+      comment: "ดีมากๆเลยค่ะ",
+    },
+    {
+      name: "Phornthi",
+      rating: "4.5",
+      comment: "ดีมากๆเลยค่ะ",
+    },
+  ];
+
+
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar session={session} />
@@ -162,7 +227,7 @@ const ProjectReceive = () => {
                 <div>
                   <p className="text-xl font-bold text-[24px]">Facebook Website</p>
                   <div className="flex items-center">
-                    <p className="text-sm text-gray-600 mr-2">by</p>
+                    <p className="text-sm text-gray-600 mr-2">{t("nav.project.projectdetail.by")}</p>
                     <span className="text-gray-500 mr-2 text-2xl">
                       <MdAccountCircle />
                     </span>
@@ -176,7 +241,7 @@ const ProjectReceive = () => {
                       <IoIosStar />
                     </span>
                     <span className="text-sm text-gray-600">
-                      4.8 (28) | Sold 28
+                      4.8 (28) | {t("nav.project.projectdetail.sold")} 28
                     </span>
                   </div>
                 </div>
@@ -214,7 +279,7 @@ const ProjectReceive = () => {
               {/* Description Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
                 <h2 className="text-lg font-bold text-[#33529B]">
-                  Description
+                {t("nav.project.projectdetail.description")}
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <p className="text-sm text-gray-600 mt-2">
@@ -230,7 +295,7 @@ const ProjectReceive = () => {
 
               {/* Receive Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
-                <h2 className="text-lg font-bold text-[#33529B]">Receive</h2>
+                <h2 className="text-lg font-bold text-[#33529B]">{t("nav.project.projectdetail.receive")}</h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul className="list-none text-sm text-gray-600 mt-2">
                   <li className="flex items-center">
@@ -250,49 +315,62 @@ const ProjectReceive = () => {
                   type="submit"
                   className="mt-5 flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
-                  Download
+                  {t("nav.project.projectdetail.download")}
                 </button>
               </div>
 
-              {/* Review Section */}
-              <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
-                <h2 className="text-lg font-bold text-[#33529B]">Review</h2>
+               {/* Reviews Section */}
+               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
+                <h2 className="text-lg font-bold text-[#33529B]">
+                  {t("nav.project.projectdetail.review")}
+                </h2>
                 <div className="border-t border-gray-300 my-4"></div>
-                <div className="mt-2">
-                  <div className="flex items-center">
-                    <MdAccountCircle className="text-gray-600 text-3xl mr-3" />
-                    <p className="flex items-center font-bold">
-                      Phornthiwa <IoIosStar className="mx-2 text-yellow-500" />{" "}
-                      5.0
-                    </p>
-                  </div>
-                  <p className="text-sm text-gray-600 ml-10">
-                    ดีมาก ประทับใจมากค่ะ
-                  </p>
+                <ul>
+                  {reviews
+                    .slice(0, visibleReviewsCount)
+                    .map((review, index) => (
+                      <li key={index} className="mb-4">
+                        <div className="flex items-center">
+                          <p className="text-sm font-bold">{review.name}</p>
+                          <div className="flex items-center">
+                            <span className="text-yellow-500 mr-2">
+                              <IoIosStar />
+                            </span>
+                            <span className="text-sm">{review.rating}</span>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {review.comment}
+                        </p>
+                      </li>
+                    ))}
+                </ul>
+                <div className="flex justify-center">
+                  {visibleReviewsCount < reviews.length && (
+                    <button
+                      onClick={handleSeeMoreClick}
+                      className="text-[#33529B] mt-2 font-bold"
+                    >
+                      <p className="text-center">{t("nav.home.seemore")}</p>
+                    </button>
+                  )}
+                  {visibleReviewsCount >= reviews.length && (
+                    <button
+                      onClick={handleShowLessClick}
+                      className="text-[#33529B] mt-2 font-bold"
+                    >
+                      <p className="text-center">
+                        {t("nav.project.projectdetail.hidden")}
+                      </p>
+                    </button>
+                  )}
                 </div>
-                <div className="mt-2">
-                  <div className="flex items-center">
-                    <MdAccountCircle className="text-gray-600 text-3xl mr-3" />
-                    <p className="flex items-center font-bold">
-                      Stamp <IoIosStar className="mx-2 text-yellow-500" /> 5.0
-                    </p>
-                  </div>
-                  <p className="text-sm text-gray-600 ml-10">
-                    ดีมาก ประทับใจมากครับ
-                  </p>
-                </div>
-                <a
-                  href="#"
-                  className="flex justify-center items-center text-[#33529B] mt-2 inline-block font-bold"
-                >
-                  <p className="text-center">See more (168)</p>
-                </a>
               </div>
 
               {/* Product List Section */}
               <div className="mt-10">
                 <div className="flex items-center">
-                  <p className="text-[20px] font-bold">Project by </p>
+                  <p className="text-[20px] font-bold">{t("nav.project.projectdetail.projectby")}{" "}</p>
                   <p className="text-[#33529B] ml-1 text-[20px] font-bold">
                     Titikarn Waitayasuwan
                   </p>
@@ -327,7 +405,7 @@ const ProjectReceive = () => {
                               <IoIosStar />
                             </span>
                             <span className="text-sm text-gray-600">
-                              {product.rating} ({product.reviews}) | Sold{" "}
+                              {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
                               {product.sold}
                             </span>
                           </div>
@@ -341,7 +419,7 @@ const ProjectReceive = () => {
                 </div>
               </div>
               <div className="mt-10">
-                <p className="text-[20px] font-bold">Other Project </p>
+                <p className="text-[20px] font-bold">{t("nav.project.projectdetail.otherproject")} </p>
                 <div className="flex overflow-x-auto gap-[17px] mt-10">
                   {products.map((product, index) => (
                     <div
@@ -372,7 +450,7 @@ const ProjectReceive = () => {
                               <IoIosStar />
                             </span>
                             <span className="text-sm text-gray-600">
-                              {product.rating} ({product.reviews}) | Sold{" "}
+                              {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
                               {product.sold}
                             </span>
                           </div>

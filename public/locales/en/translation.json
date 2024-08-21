@@ -69,7 +69,8 @@
         "paymentde" : "Payment with debit/credit card",
         "paymentmobile" : "Payment with mobile banking",
         "by" : "By",
-        "hidden" : "Hide review"
+        "hidden" : "Hide review",
+        "download" : "Download All"
       }
     },
     "blog": {

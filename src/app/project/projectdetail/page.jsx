@@ -247,7 +247,7 @@ const Project = () => {
                     <span className="text-yellow-500 mr-2">
                       <IoIosStar />
                     </span>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-gray-600 ">
                       4.8 (28) | {t("nav.project.projectdetail.sold")} 28
                     </span>
                   </div>
@@ -307,7 +307,7 @@ const Project = () => {
 
               {/* Receive Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
-                <h2 className="text-lg font-bold text-[#33529B]">Receive</h2>
+                <h2 className="text-lg font-bold text-[#33529B]">{t("nav.project.projectdetail.receive")}</h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul className="list-none text-sm text-gray-600 mt-2">
                   <li className="flex items-center">
