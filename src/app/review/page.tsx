@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 // Define the Product type
 interface Product {
@@ -21,6 +22,7 @@ interface Product {
 
 // ReviewCard Component
 const ReviewCard: React.FC<{ product: Product }> = ({ product }) => {
+  const { t, i18n } = useTranslation("translation");
   return (
     <div
       className="rounded-[10px] border border-[#BEBEBE] bg-white p-4"
@@ -49,8 +51,8 @@ const ReviewCard: React.FC<{ product: Product }> = ({ product }) => {
             <span className="text-yellow-500 mr-2">
               <IoIosStar />
             </span>
-            <span className="lg:text-sm text-gray-600 text-[12px]">
-              {product.rating} ({product.reviews}) | Sold {product.sold}
+            <span className="lg:text-sm text-gray-600 text-[12px] truncate">
+              {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")} {product.sold}
             </span>
           </div>
           <p className="text-lg font-bold text-[#33529B] ">
@@ -65,6 +67,7 @@ const ReviewCard: React.FC<{ product: Product }> = ({ product }) => {
 // Main Review Component
 const Review: React.FC = () => {
   const { data: session, status } = useSession();
+  const { t, i18n } = useTranslation("translation");
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -124,7 +127,7 @@ const Review: React.FC = () => {
       <Navbar session={session} />
       <main className="flex-grow">
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <h1 className="font-bold mb-4 text-[24px]">Review</h1>
+          <h1 className="font-bold mb-4 text-[24px]">{t("nav.review")}</h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {products.map((product, index) => (
               <Link key={index} href="/Reviewproject">

@@ -89,13 +89,71 @@
       "report" : "Report"
     },
     "viewprofile": "View Profile",
-    "wallet": "Wallet",
-    "sell": "Sell",
+    "wallet": {
+      "title" : "Wallet",
+      "balance" : "Balance",
+      "fee" : "Service fee 20%",
+      "service" : "Service fee",
+      "desser" : "is the collection of system service fees that are deducted from the price of the  work per job sold.",
+      "des" : "We will transfer money to you via seller information within 1-3 days.",
+      "withdrawn" : "Withdraw",
+      "bill" : {
+        "title" : "Withdraw",
+        "fullname" : "Full name",
+        "date" : "Transaction Date",
+        "success" : "Success"
+      }
+    },
+    "sell": {
+      "title" : "Sell",
+      "buttAdd" : "Add a project",
+      "buttSell" : "Seller information",
+      "wait" : "Waiting for approval",
+      "publish" : "Published Project",
+      "want" : "Want to delete your project?",
+      "no" : "No",
+      "yes" : "Yes",
+      "addP" : {
+        "proname" : "Project name",
+        "des" : "Description",
+        "receive" : "Receive",
+        "desre" : "What customers will receive",
+        "buttre" : "Add Receive",
+        "select" : "Select Category"
+      },
+      "upload" : {
+        "error" : "Total file size exceeds 50MB limit.",
+        "p1" : "Drop your files here or",
+        "p2" : "browse",
+        "p3" : "Pick files up to ",
+        "p4" : "MB total."
+      },
+      "sellinfo" : {
+        "title" : "Seller Information",
+        "fullname" : "Full Name (Enter the title)",
+        "phonenum" : "Phone number",
+        "id" : "NationalID",
+        "namebank" : "Bank used to receive income",
+        "numbankacc" : "Bank account number (numbers only)",
+        "address" : "Address",
+        "housenum" : "House number, street, alley/alley, village",
+        "subdistrict" : "Subdistrict",
+        "district" : "District" ,
+        "province" : "Province",
+        "postalnumber" : "Postal number",
+        "save" : "Save"
+      }
+    },
     "favorite": "Favorite",
     "signin": "Sign In",
     "signup": "Create Account",
     "notification": "Notification",
-    "myproject": "My Project",
+    "myproject": {
+      "title" : "My Project",
+      "wait" : "Waiting to check the project",
+      "check" : "Check the project",
+      "desCheck" : "* Please inspect the product and press the 'Check the project' button before 7 days. If you do not press the button, you will not be able to file a complaint and refund."
+    },
     "review": "Review",
     "logout": "Log out"
   },

@@ -107,13 +107,13 @@ function CustomNavbar({ session }) {
                         <Link href="/Wallet">
                           <li className="flex items-center ">
                             <FaWallet className="mr-5 text-2xl text-gray-600" />
-                            <span className="text-[18px]">{t("nav.wallet")}</span>
+                            <span className="text-[18px]">{t("nav.wallet.title")}</span>
                           </li>
                         </Link>
                         <Link href="/Sell">
                           <li className="flex items-center mt-2">
                             <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
-                            <span className="text-[18px]">{t("nav.sell")}</span>
+                            <span className="text-[18px]">{t("nav.sell.title")}</span>
                           </li>
                         </Link>
                       </>
@@ -133,7 +133,7 @@ function CustomNavbar({ session }) {
                     <Link href="/myproject">
                       <li className="flex items-center mt-2">
                         <FaBoxOpen className="mr-5 text-2xl text-gray-600 sm:mt-3" />
-                        <span className="text-[18px]">{t("nav.myproject")}</span>
+                        <span className="text-[18px]">{t("nav.myproject.title")}</span>
                       </li>
                     </Link>
                     <Link href="/review">
@@ -236,13 +236,13 @@ function CustomNavbar({ session }) {
                             <Link href="/Wallet">
                               <li className="flex items-center">
                                 <FaWallet className="mr-5 text-2xl text-gray-600" />
-                                <span className="text-[18px]">{t("nav.wallet")}</span>
+                                <span className="text-[18px]">{t("nav.wallet.title")}</span>
                               </li>
                             </Link>
                             <Link href="/Sell">
                               <li className="flex items-center mt-2">
                                 <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
-                                <span className="text-[18px]">{t("nav.sell")}</span>
+                                <span className="text-[18px]">{t("nav.sell.title")}</span>
                               </li>
                             </Link>
                           </>
@@ -262,7 +262,7 @@ function CustomNavbar({ session }) {
                         <Link href="/myproject">
                           <li className="flex items-center mt-2">
                             <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
-                            <span className="text-[18px]">{t("nav.myproject")}</span>
+                            <span className="text-[18px]">{t("nav.myproject.title")}</span>
                           </li>
                         </Link>
                         <Link href="/review">

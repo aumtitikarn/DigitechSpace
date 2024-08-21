@@ -6,12 +6,14 @@ import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { MdClose } from "react-icons/md";
-import Bill from "./bill"; // ใช้ชื่อไฟล์ให้ถูกต้อง
+import Bill from "./bill"; 
+import { useTranslation } from "react-i18next";
 
 const Wallet = () => {
   const { data: session, status } = useSession();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isBillVisible, setIsBillVisible] = useState(false);
+  const { t, i18n } = useTranslation("translation");
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -41,15 +43,15 @@ const Wallet = () => {
           <div className="flex items-center justify-center">
             <div className="flex flex-col items-center w-full">
               <div className="px-4 w-full lg:w-[500px] md:w-[450px] h-auto flex-shrink-0 rounded-t-[20px] border border-white bg-[#E3F8FF6B] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] py-5">
-                <p className="text-[#0E6FFF] font-bold text-[24px]"> Balance </p>
-                <p className="mt-5 font-bold text-[20px]">0.00 ฿</p>
+                <p className="text-[#0E6FFF] font-bold text-[24px]"> {t("nav.wallet.balance")} </p>
+                <p className="mt-5 font-bold text-[20px]">0.00 THB</p>
               </div>
               <div
                 className="px-4 lg:p-2 lg:px-4 w-full lg:w-[500px] md:w-[450px] lg:h-auto flex-shrink-0 rounded-b-[20px] border border-r-[#F4F4F4] border-b-[#F4F4F4] border-l-[#F4F4F4] bg-[#BFEDFF] flex items-center justify-end cursor-pointer"
                 onClick={() => setIsPopupVisible(true)}
               >
                 <p className="text-[#0E6FFF] font-bold text-[16px]">
-                  Service fee 20%
+                {t("nav.wallet.fee")}
                 </p>
               </div>
             </div>
@@ -61,10 +63,10 @@ const Wallet = () => {
               className="w-full md:w-[450px] lg:w-[500px] flex justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={handleWithdraw}
             >
-              Withdraw
+               <p className="text-[18px]">{t("nav.wallet.withdrawn")}</p>
             </button>
             <p className="mt-4 text-gray-500">
-              * We will transfer money to you via seller information within 1-3 days.
+            {t("nav.wallet.des")}
             </p>
           </div>
         </div>
@@ -81,8 +83,7 @@ const Wallet = () => {
               onClick={() => setIsPopupVisible(false)}
             />
             <p className="text-gray-600">
-              <b>Service fee</b> is the collection of system service fees that are deducted
-              from the price of the freelancer's work per job sold.
+              <b>{t("nav.wallet.service")}</b> {t("nav.wallet.desser")}
             </p>
           </div>
         </div>

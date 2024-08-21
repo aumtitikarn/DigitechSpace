@@ -9,6 +9,7 @@ import { MdAccountCircle } from "react-icons/md";
 import Link from "next/link";
 import { VscEdit } from "react-icons/vsc";
 import { MdDeleteOutline } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 // Define the Product type
 type Product = {
@@ -33,25 +34,25 @@ const ConfirmDeleteModal: React.FC<{
   onConfirm: () => void;
 }> = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
-
+  const { t, i18n } = useTranslation("translation");
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-[300px]">
         <p className="mt-4 text-center font-bold">
-          Want to delete your project?
+        {t("nav.sell.want")}
         </p>
         <div className="mt-6 flex justify-center space-x-3">
           <button
             className="bg-gray-200 px-4 py-2 rounded-md"
             onClick={onClose}
           >
-            No
+            {t("nav.sell.no")}
           </button>
           <button
             className="bg-[#9B3933] text-white px-4 py-2 rounded-md"
             onClick={onConfirm}
           >
-            Yes
+            {t("nav.sell.yes")}
           </button>
         </div>
       </div>
@@ -64,6 +65,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
   const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const { t, i18n } = useTranslation("translation");
 
   const handleDeleteClick = (product: Product) => {
     setProductToDelete(product);
@@ -89,7 +91,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
     <div className="flex-grow">
       <Navbar session={session} />
       <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-        <h1 className="text-[24px] font-bold">Sell</h1>
+        <h1 className="text-[24px] font-bold">{t("nav.sell.title")}</h1>
         <div>
           <div className="mt-5">
             <Link href="/Sell/AddProject">
@@ -97,7 +99,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Add a project
+                <p className="text-[18px]">{t("nav.sell.buttAdd")}</p>
               </button>
             </Link>
             <Link href="/Sell/SellerInfo">
@@ -105,11 +107,11 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                 type="submit"
                 className="mt-5 flex w-full justify-center rounded-md bg-[#38B6FF] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Seller information
+                <p className="text-[18px]">{t("nav.sell.buttSell")}</p>
               </button>
             </Link>
           </div>
-          <h1 className="text-[24px] font-bold mt-10">Waiting for approval</h1>
+          <h1 className="text-[24px] font-bold mt-10">{t("nav.sell.wait")}</h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
             {products.map((product, index) => (
               <Link key={index} href="/project/projectdetail" passHref>
@@ -139,7 +141,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                             <IoIosStar />
                           </span>
                           <span className="text-gray-600 text-xs lg:text-sm">
-                            {product.rating} ({product.reviews}) | Sold{" "}
+                            {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
                             {product.sold}
                           </span>
                         </div>
@@ -153,7 +155,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
               </Link>
             ))}
           </div>
-          <h1 className="text-[24px] font-bold mt-10">Published Project</h1>
+          <h1 className="text-[24px] font-bold mt-10">{t("nav.sell.publish")}</h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
             {products.map((product, index) => (
               <div key={index} className="relative mt-2">
@@ -182,8 +184,8 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                           <span className="text-yellow-500 mr-2 text-lg">
                             <IoIosStar />
                           </span>
-                          <span className="text-gray-600 text-xs lg:text-sm">
-                            {product.rating} ({product.reviews}) | Sold{" "}
+                          <span className="text-gray-600 text-xs lg:text-sm truncate">
+                            {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
                             {product.sold}
                           </span>
                         </div>

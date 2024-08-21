@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import { GoFile } from "react-icons/go";
+import { useTranslation } from "react-i18next";
 
 const FileUploadWithLimitedSize = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -8,6 +9,7 @@ const FileUploadWithLimitedSize = () => {
   const [progress, setProgress] = useState<number[]>([]); // Track progress of each file
   const maxFilesize = 50; // Maximum total file size in MB
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t, i18n } = useTranslation("translation");
 
   useEffect(() => {
     // Simulate file upload progress
@@ -45,7 +47,7 @@ const FileUploadWithLimitedSize = () => {
     let totalSize = selectedFiles.reduce((acc, file) => acc + file.size, 0) + currentFiles.reduce((acc, file) => acc + file.size, 0);
 
     if (totalSize > maxFilesize * 1024 * 1024) {
-      setError('Total file size exceeds 50MB limit.');
+      setError(t("nav.sell.upload.error"));
       return;
     }
 
@@ -100,14 +102,14 @@ const FileUploadWithLimitedSize = () => {
           </span>
           <div className="mt-4 flex flex-wrap justify-center text-sm leading-6 text-gray-600">
             <span className="pe-1 font-medium text-gray-800 ">
-              Drop your files here or
+            {t("nav.sell.upload.p1")}
             </span>
             <span className="bg-white font-semibold text-blue-600 hover:text-blue-700 rounded-lg decoration-2 hover:underline focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2">
-              browse
+            {t("nav.sell.upload.p2")}
             </span>
           </div>
           <p className="mt-1 text-xs text-gray-400 ">
-            Pick files up to {maxFilesize}MB total.
+          {t("nav.sell.upload.p3")} {maxFilesize}{t("nav.sell.upload.p4")}
           </p>
           <input
             type="file"

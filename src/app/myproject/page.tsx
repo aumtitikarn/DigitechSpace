@@ -8,6 +8,7 @@ import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Container from "../components/Container";
+import { useTranslation } from "react-i18next";
 
 // Define the Product type
 interface Product {
@@ -89,6 +90,7 @@ const ReviewCard: React.FC<{ product: Product; showButton?: boolean }> = ({
   product,
   showButton,
 }) => {
+  const { t, i18n } = useTranslation("translation");
   return (
     <Link href="/project/projectreceive">
       <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
@@ -113,8 +115,8 @@ const ReviewCard: React.FC<{ product: Product; showButton?: boolean }> = ({
               <span className="text-yellow-500 mr-2 text-lg">
                 <IoIosStar />
               </span>
-              <span className="text-gray-600 text-xs lg:text-sm">
-                {product.rating} ({product.reviews}) | Sold {product.sold}
+              <span className="text-gray-600 text-xs lg:text-sm truncate">
+                {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")} {product.sold}
               </span>
             </div>
             <p className="text-lg font-bold text-[#33529B]">
@@ -123,7 +125,7 @@ const ReviewCard: React.FC<{ product: Product; showButton?: boolean }> = ({
             {showButton && (
               <div className="flex flex-col items-center my-2">
                 <button className="bg-[#33539B] text-white px-11 py-2 rounded-lg text-xs  mt-1">
-                  <p className="font-bold">Check the project</p>
+                  <p className="font-bold">{t("nav.myproject.check")}</p>
                 </button>
               </div>
             )}
@@ -137,6 +139,7 @@ const ReviewCard: React.FC<{ product: Product; showButton?: boolean }> = ({
 // MyProject Component
 const MyProject: React.FC = () => {
   const { data: session, status } = useSession();
+  const { t, i18n } = useTranslation("translation");
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -156,7 +159,7 @@ const MyProject: React.FC = () => {
       <Navbar session={session} />
       <main className="flex-grow">
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <h2 className="font-bold mb-4 text-[24px]">Waiting to check</h2>
+          <h2 className="font-bold mb-4 text-[24px]">{t("nav.myproject.wait")}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
             {userProducts.map((product, index) => (
               <ReviewCard key={index} product={product} showButton={true} />
@@ -164,12 +167,10 @@ const MyProject: React.FC = () => {
           </div>
 
           <p className="text-sm text-gray-500 mb-8">
-            *Please inspect the product and press the "Check the project" button
-            before 7 days. If you do not press the button, you will not be able
-            to file a complaint and refund.
+          {t("nav.myproject.desCheck")}
           </p>
 
-          <h2 className="font-bold mb-4 text-[24px]">My project</h2>
+          <h2 className="font-bold mb-4 text-[24px]">{t("nav.myproject.title")}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {userProducts.map((product, index) => (
               <ReviewCard key={index} product={product} showButton={false} />
