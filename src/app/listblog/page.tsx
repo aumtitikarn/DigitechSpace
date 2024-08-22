@@ -20,14 +20,17 @@ export default function page() {
   const { t, i18n } = useTranslation('translation');
   const [input1, setInput1] = useState("");
 
-  const [postData,setPostData] = useState([]);
+  const [postData,setPostData] = useState<PostData[]>([]);
   
   console.log(postData);
+
+  const _id = useState(null);
+  const topic = useState(null);
 
   const getPosts = async ()=> {
 
     try{
-      const res = await fetch("http://lacalhost:3000/api/posts",{
+      const res = await fetch("http://localhost:3000/api/posts",{
         cache:"no-store"
       })
 
@@ -49,6 +52,13 @@ export default function page() {
   useEffect(()=>{
     getPosts();
   },[]);
+
+  interface PostData {
+    _id: string;
+    topic: string;
+    course: string;
+    // Add any other properties that are in your post data
+  }
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -99,13 +109,11 @@ export default function page() {
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
             
-                  <Link href="/blog">
+                 
                   {postData && postData.length > 0 ? (
                     postData.map(val => (
-                    <div
-                      key={val._id}
-                      className=" w-[180px] h-[300px] flex flex-col"
-                    >
+                      <Link href={`/blog/${val._id}`}>
+                    <div key = {val._id} className=" w-[180px] h-[300px] flex flex-col">
                       <div className="rounded w-full relative" style={{height:"250px"}}>
                         <img
                           src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
@@ -120,7 +128,7 @@ export default function page() {
                               className="truncate mt-1"
                               style={{ fontSize: "14px", fontWeight: "bold" }}
                             >
-                              
+                              {val.topic}
                             </p>
                             <div className="flex items-center">
                               <div className="w-6 h-6 ml-1 mt-1 text-gray-500">
@@ -130,7 +138,7 @@ export default function page() {
                                 className="text-gray-500"
                                 style={{ fontSize: "16px" }}
                               >
-                                
+                                500
                               </p>
                             </div>
                           </div>
@@ -142,17 +150,17 @@ export default function page() {
                             style={{ fontSize: "12px" }}
                           >
                             Titikarn Waitayasuwan
-                            
                           </p>
                         </div>
                       </div>
                     </div>
+                    </Link>
                     ))):(<p>you don't have</p>)}
-                  </Link>
+                  
                   
                 
 
-              {/* {Array(5)
+              {Array(5)
                 .fill("")
                 .map((_, index) => (
                   <Link href="/blog">
@@ -252,11 +260,11 @@ export default function page() {
                       </div>
                     </div>
                   </Link>
-                ))} */}
+                ))}
             </div>
 
             <div className="mt-6 w-full flex justify-end">
-              {session?.user?.role !== "NormalUser" && (
+              {session?.user?.role == "NormalUser" && (
                 <Link href="/Addblog">
                   <div className=" w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                     <FaPlus size={24} />
