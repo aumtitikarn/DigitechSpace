@@ -13,5 +13,5 @@ const postSchema = new Schema(
 
 )
 
-const Post = mongoose.models.Postss || mongoose.model("Postss",postSchema);
+const Post = mongoose.models.PostSer || mongoose.model("PostSer",postSchema);
 export default Post;
