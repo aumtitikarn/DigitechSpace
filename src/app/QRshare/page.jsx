@@ -10,8 +10,10 @@ import Footer from "../components/Footer";
 import Container from "../components/Container";
 import { useSession } from "next-auth/react";
 import { FaLink } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 function page() {
+  const { t, i18n } = useTranslation("translation");
 
   const handleSubmit = () => {
     alert(`Input 1: ${input1}`);
@@ -38,7 +40,7 @@ function page() {
   <div className="flex flex-col items-center w-full max-w-lg">
     
     <p style={{ fontSize: "24px", fontWeight: "bold" }} className="mt-6 text-center my-10">
-      Share your profile!
+      {t("nav.profile.share")}!
     </p>
 
     <div className="w-64 h-64 relative flex items-center justify-center my-4">
@@ -55,7 +57,7 @@ function page() {
       style={{backgroundColor:"#33539B"}}
     >
       <FaLink className="mr-2"/>
-      Copy Link
+      {t("nav.profile.copy")}
     </button>
     
   </div>

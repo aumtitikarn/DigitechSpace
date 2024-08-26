@@ -162,6 +162,7 @@
       "blog" : "Blog",
       "edit" : "Edit your profile",
       "share" : "Share your profile",
+      "copy" : "Copy Link",
       "name" : "Name",
       "email" : "Email",
       "save" : "Save"
