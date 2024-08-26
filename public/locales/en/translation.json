@@ -185,17 +185,22 @@
     "p4" : "Privacy Policy, ",
     "p5" : "including ",
     "p6" : "Cookie Use.",
+    "con1" : "Continue with Google",
+    "con2" : "Continue with Facebook",
+    "con3" : "Continue with Github",
     "signin" : {
       "title" : "Sign In",
       "email" : "Email",
       "password" : "Password",
-      "forgot" : "Forgot Passsword?"
+      "forgot" : "Forgot Passsword?",
+      "error" : "Something went wrong"
     },
     "signup" : {
       "title" : "Sign Up",
+      "creat" : "Create Account" ,
       "fname" : "First name",
       "lname" : "Last name",
-      "pnnumber" : "Phone number",
+      "pnumber" : "Phone number",
       "username" : "Username",
       "email" : "Email",
       "password" : "Password",

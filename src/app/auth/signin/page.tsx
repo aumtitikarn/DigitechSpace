@@ -4,6 +4,9 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useTranslation } from "react-i18next";
+import Navbar from "./../../components/Navbar";
+import Footer from "./../../components/Footer";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -11,6 +14,7 @@ export default function SignIn() {
   const [error, setError] = useState("");
   const router = useRouter()
   const { data: session } = useSession();
+  const { t, i18n } = useTranslation('translation');
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,10 +35,12 @@ export default function SignIn() {
       router.replace("/Ai/role"); //ต้องทำครั้งเดียวเข้าสู่ระบบครั้งแรก
     } catch (error) {
       console.log(error);
-      setError("Something went wrong");
+      setError(t("authen.signin.error"));
     }
   };
     return (
+      <div>
+        <Navbar/>
       <div 
         style={{ backgroundColor: "#FBFBFB", height: '100vh' }}
         className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
@@ -49,7 +55,7 @@ export default function SignIn() {
             style={{ color: '#33539B', fontSize: '29px' }}
             className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight"
           >
-            Sign In
+            {t("authen.signin.title")}
           </h2>
         </div>
   
@@ -63,7 +69,7 @@ export default function SignIn() {
                   type="email"
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
-                  placeholder="Email"
+                  placeholder={t("authen.signin.email")}
                   required
                   className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                 />
@@ -73,7 +79,7 @@ export default function SignIn() {
                   type="password"
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
-                  placeholder="Password"
+                  placeholder={t("authen.signin.password")}
                   required
                   className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm mt-3 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                 />
@@ -83,7 +89,7 @@ export default function SignIn() {
                     style={{ color: '#33539B' }}
                     className="font-semibold text-indigo-600 hover:text-indigo-500"
                   >
-                    Forgot password?
+                    {t("authen.signin.forgot")}
                   </Link>
                 </div>
               </div>
@@ -93,14 +99,14 @@ export default function SignIn() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign In
+                {t("authen.signin.title")}
               </button>
               {error && <p className="text-red-500">{error}</p>}
             </div>
           </form>
           <div className="flex items-center my-3">
             <div className="flex-grow border-t border-gray-300"></div>
-            <span className="mx-4 text-gray-500">Or continue with</span>
+            <span className="mx-4 text-gray-500">{t("authen.or")}</span>
             <div className="flex-grow border-t border-gray-300"></div>
           </div>
           <div className="flex flex-row space-x-4">
@@ -129,14 +135,16 @@ export default function SignIn() {
             </button>
           </div>
           <div>
-          <p className="text-center mt-20">By signing up, you agree to the 
-            <u><b>Terms of Service </b></u>
-            and 
-            <u><b>Privacy Policy</b></u>
-            , including 
-            <u><b>Cookie Use.</b></u></p>
+          <p className="text-center mt-20">{t("authen.p1")}
+            <u><b>{t("authen.p2")}</b></u>
+            {t("authen.p3")}
+            <u><b>{t("authen.p4")}</b></u>
+            {t("authen.p5")}
+            <u><b>{t("authen.p6")}</b></u></p>
           </div>
         </div>
+      </div>
+      <Footer />
       </div>
     );
 }

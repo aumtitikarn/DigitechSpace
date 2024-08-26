@@ -4,7 +4,9 @@ import React, { Suspense } from 'react';
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Translation, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import Navbar from "./../../components/Navbar";
+import Footer from "./../../components/Footer";
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +22,6 @@ function SignUp() {
   });
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
   const { t, i18n } = useTranslation('translation');
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -84,6 +85,8 @@ function SignUp() {
 
 
   return (
+    <div>
+    <Navbar/>
     <div
       style={{ backgroundColor: "#FBFBFB" }}
       className="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 overflow-y-auto"
@@ -98,7 +101,7 @@ function SignUp() {
           style={{ color: "#33539B", fontSize: "29px" }}
           className="mt-7 text-center text-2xl font-bold leading-9 tracking-tight"
         >
-          {t("Sign Up")}
+          {t("authen.signup.title")}
         </h2>
       </div>
 
@@ -110,7 +113,7 @@ function SignUp() {
             type="text"
             value={formData.firstname}
             onChange={handleChange}
-            placeholder={t("First name")}
+            placeholder={t("authen.signup.fname")}
             required
             className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 mt-3"
           />
@@ -120,7 +123,7 @@ function SignUp() {
             type="text"
             value={formData.lastname}
             onChange={handleChange}
-            placeholder="Last name"
+            placeholder={t("authen.signup.lname")}
             required
             className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm mt-3 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
           />
@@ -130,7 +133,7 @@ function SignUp() {
             type="text"
             value={formData.phonenumber}
             onChange={handleChange}
-            placeholder="Phone number"
+            placeholder={t("authen.signup.pnumber")}
             required
             className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm mt-3 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
           />
@@ -140,7 +143,7 @@ function SignUp() {
             type="text"
             value={formData.username}
             onChange={handleChange}
-            placeholder="Username"
+            placeholder={t("authen.signup.username")}
             required
             className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm mt-3 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
           />
@@ -150,7 +153,7 @@ function SignUp() {
             type="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Email"
+            placeholder={t("authen.signup.email")}
             required
             className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm mt-3 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
           />
@@ -161,7 +164,7 @@ function SignUp() {
               type={showPassword ? "text" : "password"}
               value={formData.password}
               onChange={handleChange}
-              placeholder="Password"
+              placeholder={t("authen.signup.password")}
               required
               className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
             />
@@ -185,7 +188,7 @@ function SignUp() {
               type={showConfirmPassword ? "text" : "password"}
               value={formData.confirmpassword}
               onChange={handleChange}
-              placeholder="Confirm Password"
+              placeholder={t("authen.signup.confirm")}
               required
               className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
             />
@@ -212,7 +215,7 @@ function SignUp() {
         </form>
         <div className="flex items-center my-3">
           <div className="flex-grow border-t border-gray-300"></div>
-          <span className="mx-4 text-gray-500">Or continue with</span>
+          <span className="mx-4 text-gray-500">{t("authen.or")}</span>
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
         <div className="flex flex-row space-x-4">
@@ -242,28 +245,24 @@ function SignUp() {
         </div>
         <div>
           <p className="text-center mt-20">
-            By signing up, you agree to the
+          {t("authen.p1")}
             <u>
-              <b>Terms of Service </b>
+              <b>{t("authen.p2")}</b>
             </u>
-            and
+            {t("authen.p3")}
             <u>
-              <b>Privacy Policy</b>
+              <b>{t("authen.p4")}</b>
             </u>
-            , including
+            {t("authen.p5")}
             <u>
-              <b>Cookie Use.</b>
+              <b>{t("authen.p6")}</b>
             </u>
           </p>
         </div>
       </div>
     </div>
+    <Footer />
+    </div>
   );
 }
-export default function App() {
-  return (
-    <Suspense fallback="loading">
-      <SignUp />
-    </Suspense>
-  );
-}
+export default SignUp

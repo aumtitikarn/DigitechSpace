@@ -2,16 +2,21 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
+import Navbar from "./../../components/Navbar";
+import Footer from "./../../components/Footer";
 
 export default function PreAuth() {
   const router = useRouter()
+  const { t, i18n } = useTranslation("translation");
   return (
+    <div className='bg-[#FBFBFB]'>
+     <Navbar />
     <div
-      style={{ backgroundColor: "#FBFBFB", height: "100vh" }}
-      className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
+      style={{ height: "100vh" }}
+      className="flex min-h-full flex-col justify-center lg:mx-[500px] mx-10 my-[120px] "
     >
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="mx-auto w-full max-w-sm ">
         <img
           className="mx-auto h-116 w-244 mb-20" 
           src="https://m1r.ai/bdebq.png"
@@ -24,7 +29,7 @@ export default function PreAuth() {
           onClick={() => router.push('/auth/signin')}
           className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Sign in
+          {t("authen.signin.title")}
         </button>
       </div>
       <div className="flex items-center my-3">
@@ -38,7 +43,7 @@ export default function PreAuth() {
           onClick={() => router.push('/auth/signup')}
           className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Create Account
+          {t("authen.signup.creat")}
         </button>
       </div>
       <div className="my-6">
@@ -53,7 +58,7 @@ export default function PreAuth() {
       alt="Google"
       className="flex-shrink-0 mr-4" 
     />
-    Continue with Google
+    {t("authen.con1")}
   </button>
   <button
     type="button"
@@ -64,7 +69,7 @@ export default function PreAuth() {
       src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
       alt="Facebook"
     />
-    Continue with Facebook
+    {t("authen.con2")}
   </button>
   <button
     type="button"
@@ -75,11 +80,11 @@ export default function PreAuth() {
       src="/github.png"
       alt="Github"
     />
-    Continue with Github
+    {t("authen.con3")}
   </button>
-</div>
-
       </div>
+    </div>
+    <Footer />
     </div>
   );
 }

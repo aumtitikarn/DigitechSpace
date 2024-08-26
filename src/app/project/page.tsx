@@ -18,14 +18,10 @@ const Project = () => {
     return <p>Loading...</p>;
   }
 
-  if (!session) {
-    redirect("/auth/signin");
-    return null;
-  }
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
     <main className="flex-grow ">
-     <Navbar session={session} />
+     <Navbar  />
      <div className='lg:flex lg:justify-center'>
      <div className="lg:mr-[50px] lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5 mx-30">
       <Filter/>

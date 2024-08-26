@@ -179,27 +179,32 @@
   },
   "authen" : {
     "or" : "หรือดำเนินการต่อด้วย",
-    "p1" : "By signing up, you agree to the ",
-    "p2" : "Terms of Service ",
-    "p3" : "and ",
-    "p4" : "Privacy Policy, ",
-    "p5" : "including ",
-    "p6" : "Cookie Use.",
+    "p1" : "การสมัครแสดงว่าคุณยอมรับ ",
+    "p2" : "ข้อกำหนดในการให้บริการ ",
+    "p3" : "และ ",
+    "p4" : "นโยบายส่วนบุคคล ",
+    "p5" : "รวมไปถึง ",
+    "p6" : "การใช้คุ้กกี้",
+    "con1" : "ดำเนินการต่อโดย Google",
+    "con2" : "ดำเนินการต่อโดย Facebook",
+    "con3" : "ดำเนินการต่อโดย Github",
     "signin" : {
-      "title" : "Sign In",
-      "email" : "Email",
-      "password" : "Password",
-      "forgot" : "Forgot Passsword?"
+      "title" : "เข้าสู่ระบบ",
+      "email" : "อีเมล",
+      "password" : "รหัสผ่าน",
+      "forgot" : "ลืมรหัสผ่าน?",
+      "error" : "มีบางอย่างผิดพลาด"
     },
     "signup" : {
-      "title" : "Sign Up",
-      "fname" : "First name",
-      "lname" : "Last name",
-      "pnnumber" : "Phone number",
-      "username" : "Username",
-      "email" : "Email",
-      "password" : "Password",
-      "confirm" : "Confirm Password"
+      "title" : "ลงทะเบียน",
+      "creat" : "สร้างบัญชี" ,
+      "fname" : "ชื่อ",
+      "lname" : "นามสกุล",
+      "pnumber" : "หมายเลขโทรศัพท์",
+      "username" : "ชื่อบัญชี",
+      "email" : "อีเมล",
+      "password" : "รหัสผ่าน",
+      "confirm" : "ยืนยันรหัสผ่าน"
 
     }
   }

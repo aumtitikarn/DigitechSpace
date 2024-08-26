@@ -29,15 +29,12 @@ const ProjectReceive = () => {
     return <p>Loading...</p>;
   }
 
-  if (!session) {
-    router.push("/auth/signin");
-    return null;
-  }
-
   const images = ["/pexample1.png", "/pexample3.png", "/pexample4.png"];
 
   const handlePrevClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + images.length) % images.length
+    );
   };
 
   const handleNextClick = () => {
@@ -191,10 +188,9 @@ const ProjectReceive = () => {
     },
   ];
 
-
   return (
     <main className="bg-[#FBFBFB]">
-      <Navbar session={session} />
+      <Navbar />
       <div className="lg:mx-60 lg:mt-20 lg:mb-20 mt-10 mb-10">
         <div className="flex flex-col min-h-screen">
           {/* Slider Section */}
@@ -225,9 +221,13 @@ const ProjectReceive = () => {
             <div className="w-full mt-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-xl font-bold text-[24px]">Facebook Website</p>
+                  <p className="text-xl font-bold text-[24px]">
+                    Facebook Website
+                  </p>
                   <div className="flex items-center">
-                    <p className="text-sm text-gray-600 mr-2">{t("nav.project.projectdetail.by")}</p>
+                    <p className="text-sm text-gray-600 mr-2">
+                      {t("nav.project.projectdetail.by")}
+                    </p>
                     <span className="text-gray-500 mr-2 text-2xl">
                       <MdAccountCircle />
                     </span>
@@ -235,7 +235,9 @@ const ProjectReceive = () => {
                       Titikarn Waitayasuwan
                     </p>
                   </div>
-                  <p className="text-lg font-bold mt-3 text-[#33529B]">45,000 THB</p>
+                  <p className="text-lg font-bold mt-3 text-[#33529B]">
+                    45,000 THB
+                  </p>
                   <div className="flex items-center">
                     <span className="text-yellow-500 mr-2">
                       <IoIosStar />
@@ -247,7 +249,7 @@ const ProjectReceive = () => {
                 </div>
                 <div className="flex flex-col items-end">
                   <div className="flex space-x-5">
-                  <div className="relative flex justify-center">
+                    <div className="relative flex justify-center">
                       <GoShare
                         className="text-gray-600 cursor-pointer text-2xl"
                         onClick={handleShareClick}
@@ -261,7 +263,10 @@ const ProjectReceive = () => {
                         </div>
                       )}
                     </div>
-                    <button onClick={handleFavoriteClick} className="cursor-pointer">
+                    <button
+                      onClick={handleFavoriteClick}
+                      className="cursor-pointer"
+                    >
                       {isFavorited ? (
                         <GoHeartFill className="text-gray-600 text-2xl" />
                       ) : (
@@ -279,7 +284,7 @@ const ProjectReceive = () => {
               {/* Description Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
                 <h2 className="text-lg font-bold text-[#33529B]">
-                {t("nav.project.projectdetail.description")}
+                  {t("nav.project.projectdetail.description")}
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <p className="text-sm text-gray-600 mt-2">
@@ -295,7 +300,9 @@ const ProjectReceive = () => {
 
               {/* Receive Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
-                <h2 className="text-lg font-bold text-[#33529B]">{t("nav.project.projectdetail.receive")}</h2>
+                <h2 className="text-lg font-bold text-[#33529B]">
+                  {t("nav.project.projectdetail.receive")}
+                </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul className="list-none text-sm text-gray-600 mt-2">
                   <li className="flex items-center">
@@ -319,8 +326,8 @@ const ProjectReceive = () => {
                 </button>
               </div>
 
-               {/* Reviews Section */}
-               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
+              {/* Reviews Section */}
+              <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
                 <h2 className="text-lg font-bold text-[#33529B]">
                   {t("nav.project.projectdetail.review")}
                 </h2>
@@ -331,17 +338,22 @@ const ProjectReceive = () => {
                     .map((review, index) => (
                       <li key={index} className="mb-4">
                         <div className="flex items-center">
-                          <p className="text-sm font-bold">{review.name}</p>
-                          <div className="flex items-center">
-                            <span className="text-yellow-500 mr-2">
-                              <IoIosStar />
-                            </span>
-                            <span className="text-sm">{review.rating}</span>
+                          <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
+                          <div className="flex flex-col">
+                            <div className="flex items-center">
+                              <p className="text-sm font-bold mr-2">
+                                {review.name}
+                              </p>
+                              <span className="flex items-center">
+                                <IoIosStar className="text-yellow-500 mr-1" />
+                                <span className="text-sm">{review.rating}</span>
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {review.comment}
+                            </p>
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600">
-                          {review.comment}
-                        </p>
                       </li>
                     ))}
                 </ul>
@@ -370,7 +382,9 @@ const ProjectReceive = () => {
               {/* Product List Section */}
               <div className="mt-10">
                 <div className="flex items-center">
-                  <p className="text-[20px] font-bold">{t("nav.project.projectdetail.projectby")}{" "}</p>
+                  <p className="text-[20px] font-bold">
+                    {t("nav.project.projectdetail.projectby")}{" "}
+                  </p>
                   <p className="text-[#33529B] ml-1 text-[20px] font-bold">
                     Titikarn Waitayasuwan
                   </p>
@@ -405,7 +419,8 @@ const ProjectReceive = () => {
                               <IoIosStar />
                             </span>
                             <span className="text-sm text-gray-600">
-                              {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
+                              {product.rating} ({product.reviews}) |{" "}
+                              {t("nav.project.projectdetail.sold")}{" "}
                               {product.sold}
                             </span>
                           </div>
@@ -419,7 +434,9 @@ const ProjectReceive = () => {
                 </div>
               </div>
               <div className="mt-10">
-                <p className="text-[20px] font-bold">{t("nav.project.projectdetail.otherproject")} </p>
+                <p className="text-[20px] font-bold">
+                  {t("nav.project.projectdetail.otherproject")}{" "}
+                </p>
                 <div className="flex overflow-x-auto gap-[17px] mt-10">
                   {products.map((product, index) => (
                     <div
@@ -450,7 +467,8 @@ const ProjectReceive = () => {
                               <IoIosStar />
                             </span>
                             <span className="text-sm text-gray-600">
-                              {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
+                              {product.rating} ({product.reviews}) |{" "}
+                              {t("nav.project.projectdetail.sold")}{" "}
                               {product.sold}
                             </span>
                           </div>

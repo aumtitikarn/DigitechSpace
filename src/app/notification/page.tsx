@@ -16,15 +16,11 @@ const Notification = () => {
         return <p>Loading...</p>;
     }
 
-    if (!session) {
-        redirect("/auth/signin");
-        return null;
-    }
 
     return (
         <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
             <main className="flex-grow">
-                <Navbar session={session} />
+                <Navbar  />
                 <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
                     <div className="container mt-3 ">
                         <h1 className="text-[24px] font-bold">{t("nav.notification")}</h1>

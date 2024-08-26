@@ -36,11 +36,6 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
     return <p>Loading...</p>;
   }
   
-  if (!session) {
-    redirect("/auth/signin");
-    return null;
-  }
-
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
       <div className="relative max-w-lg w-full p-8 bg-white shadow-md rounded-lg">
@@ -48,8 +43,9 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
           onClick={onClose} // Use the onClose prop to close the modal
           className="absolute top-4 right-4 text-red-600 text-3xl cursor-pointer" 
         />
-        <h2 className="text-2xl font-bold mb-4 text-center">Report</h2>  
-        <p className="text-lg font-medium mb-4 border-b border-gray-300">Project: {project}</p>
+        <h2 className="text-2xl font-bold mb-4 text-center">Report</h2> 
+        <p className="text-lg font-medium mb-4 ">Project: {project}</p>
+        <div className="border-b border-gray-300 my-3"></div> 
 
         <p className="text-lg font-medium mb-2">Reason</p>
         <select
@@ -79,7 +75,7 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
           onClick={handleSubmit}
           className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition-colors duration-200"
         >
-          Report
+          Send Report
         </button>
       </div>
     </div>

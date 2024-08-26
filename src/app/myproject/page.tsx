@@ -145,18 +145,15 @@ const MyProject: React.FC = () => {
     return <p>Loading...</p>;
   }
 
-  if (!session) {
-    redirect("/auth/signin");
-    return null;
-  }
   const userProducts = products.map((product) => ({
     ...product,
-    author: session.user?.name || product.author,
+    author: session?.user?.name || product.author,
   }));
+  
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">
-      <Navbar session={session} />
+      <Navbar  />
       <main className="flex-grow">
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h2 className="font-bold mb-4 text-[24px]">{t("nav.myproject.wait")}</h2>

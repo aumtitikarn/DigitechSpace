@@ -30,11 +30,6 @@ const Project = () => {
     return <p>Loading...</p>;
   }
 
-  if (!session) {
-    redirect("/auth/signin");
-    return null;
-  }
-
   const images = ["/pexample1.png", "/pexample3.png", "/pexample4.png"];
 
   const handlePrevClick = () => {
@@ -196,7 +191,7 @@ const Project = () => {
 
   return (
     <main className="bg-[#FBFBFB]">
-      <Navbar session={session} />
+      <Navbar />
       <div className="lg:mx-60 lg:mt-20 lg:mb-20 mt-10 mb-10 ">
         <div className="flex flex-col min-h-screen">
           {/* Slider Section */}
@@ -232,7 +227,9 @@ const Project = () => {
                     Facebook Website
                   </p>
                   <div className="flex items-center">
-                    <p className="text-sm text-gray-600 mr-2">{t("nav.project.projectdetail.by")}</p>
+                    <p className="text-sm text-gray-600 mr-2">
+                      {t("nav.project.projectdetail.by")}
+                    </p>
                     <span className="text-gray-500 mr-2 text-2xl">
                       <MdAccountCircle />
                     </span>
@@ -268,23 +265,41 @@ const Project = () => {
                         </div>
                       )}
                     </div>
-                    <button
-                      onClick={handleFavoriteClick}
-                      className="cursor-pointer"
-                    >
-                      {isFavorited ? (
-                        <GoHeartFill className="text-gray-600 text-2xl" />
-                      ) : (
-                        <GoHeart className="text-gray-600 text-2xl" />
-                      )}
-                    </button>
+                    {session ? (
+                      <button
+                        onClick={handleFavoriteClick}
+                        className="cursor-pointer"
+                      >
+                        {isFavorited ? (
+                          <GoHeartFill className="text-gray-600 text-2xl" />
+                        ) : (
+                          <GoHeart className="text-gray-600 text-2xl" />
+                        )}
+                      </button>
+                    ) : (
+                      <>
+                        <Link href="/auth/preauth">
+                          <button className="cursor-pointer">
+                            <GoHeart className="text-gray-600 text-2xl" />
+                          </button>
+                        </Link>
+                      </>
+                    )}
                   </div>
-                  <button
-                    className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-11"
-                    onClick={handleBuyClick}
-                  >
-                    {t("nav.project.projectdetail.buy")}
-                  </button>
+                  {session ? (
+                    <button
+                      className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-11"
+                      onClick={handleBuyClick}
+                    >
+                      {t("nav.project.projectdetail.buy")}
+                    </button>
+                  ) : (
+                    <Link href="/auth/preauth">
+                      <button className="bg-[#33529B] text-white px-5  py-2 lg:px-10 lg:py-2 rounded-lg mt-11">
+                        {t("authen.signin.title")}
+                      </button>
+                    </Link>
+                  )}
                 </div>
               </div>
 
@@ -307,7 +322,9 @@ const Project = () => {
 
               {/* Receive Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
-                <h2 className="text-lg font-bold text-[#33529B]">{t("nav.project.projectdetail.receive")}</h2>
+                <h2 className="text-lg font-bold text-[#33529B]">
+                  {t("nav.project.projectdetail.receive")}
+                </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul className="list-none text-sm text-gray-600 mt-2">
                   <li className="flex items-center">
@@ -337,17 +354,22 @@ const Project = () => {
                     .map((review, index) => (
                       <li key={index} className="mb-4">
                         <div className="flex items-center">
-                          <p className="text-sm font-bold">{review.name}</p>
-                          <div className="flex items-center">
-                            <span className="text-yellow-500 mr-2">
-                              <IoIosStar />
-                            </span>
-                            <span className="text-sm">{review.rating}</span>
+                          <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
+                          <div className="flex flex-col">
+                            <div className="flex items-center">
+                              <p className="text-sm font-bold mr-2">
+                                {review.name}
+                              </p>
+                              <span className="flex items-center">
+                                <IoIosStar className="text-yellow-500 mr-1" />
+                                <span className="text-sm">{review.rating}</span>
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {review.comment}
+                            </p>
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600">
-                          {review.comment}
-                        </p>
                       </li>
                     ))}
                 </ul>

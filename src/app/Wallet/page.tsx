@@ -19,10 +19,6 @@ const Wallet = () => {
     return <p>Loading...</p>;
   }
 
-  if (!session) {
-    redirect("/auth/signin");
-    return null;
-  }
 
   const handleWithdraw = () => {
     setIsBillVisible(true);
@@ -38,7 +34,7 @@ const Wallet = () => {
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
       <main className="flex-grow">
-        <Navbar session={session} />
+        <Navbar  />
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5 sm:mx-2">
           <div className="flex items-center justify-center">
             <div className="flex flex-col items-center w-full">

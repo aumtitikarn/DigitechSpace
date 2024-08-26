@@ -20,10 +20,7 @@ function page() {
     return <p>Loading...</p>;
   }
 
-  if (!session) {
-    redirect("/auth/signin");
-    return null;
-  }
+
 
   const handleSave = () => {
     console.log("Profile saved");
@@ -31,7 +28,7 @@ function page() {
 
   return (
     <Container>
-      <Navbar session={session} />
+      <Navbar />
       <main className="flex flex-col md:flex-row w-full justify-center p-4">
         <div className="flex flex-col items-center w-full max-w-lg">
           

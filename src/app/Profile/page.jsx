@@ -29,11 +29,7 @@ function page() {
   if (status === "loading") {
       return <p>Loading...</p>;
     }
-  
-    if (!session) {
-      redirect("/auth/signin");
-      return null;
-    } 
+
 
     const products = [
       {

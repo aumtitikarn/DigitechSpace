@@ -38,10 +38,6 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
     return <p>Loading...</p>;
   }
 
-  if (!session) {
-    router.push("/auth/signin");
-    return null;
-  }
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">

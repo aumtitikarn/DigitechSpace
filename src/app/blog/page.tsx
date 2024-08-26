@@ -57,7 +57,7 @@ const Blog =()=> {
 
   return (
     <Container>
-    <Navbar session={session} />
+    <Navbar  />
     <main className="flex flex-col items-center w-full">
       <div className="w-full max-w-screen-lg p-4">
         <div className="flex flex-col">
