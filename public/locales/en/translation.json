@@ -155,7 +155,13 @@
       "check" : "Check the project",
       "desCheck" : "* Please inspect the product and press the 'Check the project' button before 7 days. If you do not press the button, you will not be able to file a complaint and refund."
     },
-    "review": "Review",
+    "review": {
+      "title" : "Review",
+      "topic" : "Review Project",
+      "project" : "Project",
+      "point" : "Point",
+      "text" : "Text"
+    },
     "logout": "Log out",
     "profile" : {
       "project" : "Project",
@@ -170,5 +176,31 @@
   },
   "footer": {
     "contact": "Contact"
+  },
+  "authen" : {
+    "or" : "Or continue with",
+    "p1" : "By signing up, you agree to the ",
+    "p2" : "Terms of Service ",
+    "p3" : "and ",
+    "p4" : "Privacy Policy, ",
+    "p5" : "including ",
+    "p6" : "Cookie Use.",
+    "signin" : {
+      "title" : "Sign In",
+      "email" : "Email",
+      "password" : "Password",
+      "forgot" : "Forgot Passsword?"
+    },
+    "signup" : {
+      "title" : "Sign Up",
+      "fname" : "First name",
+      "lname" : "Last name",
+      "pnnumber" : "Phone number",
+      "username" : "Username",
+      "email" : "Email",
+      "password" : "Password",
+      "confirm" : "Confirm Password"
+
+    }
   }
 }

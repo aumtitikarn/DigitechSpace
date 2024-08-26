@@ -19,11 +19,9 @@ export default function Home() {
   const { t, i18n } = useTranslation('translation');
 
 
-  if (!session) redirect('/auth/signin');
-
   return (
     <main className="bg-[#FBFBFB]">
-      <Navbar session={session} />
+      <Navbar />
       <Container>
         <div className="lg:mx-60 mt-10 mb-5">
           <div className="mb-10">

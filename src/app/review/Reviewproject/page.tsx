@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation';
-import Container from "../components/Container";
+import Container from "../../components/Container";
+import { useTranslation } from "react-i18next";
 
 interface ReviewProject {
   project: string;
@@ -14,6 +15,7 @@ interface ReviewProject {
 const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState("");
+  const { t, i18n } = useTranslation("translation");
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
@@ -44,12 +46,12 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
       <main className="flex-grow">
-        <Navbar session={session} />
+        <Navbar />
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <h1 className="text-3xl md:text-4xl font-bold mb-6">Review Project</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-6">{t("nav.review.topic")}</h1>
           <div className="border-b border-gray-500 my-4  lg:max-w-[950px]"></div>
-          <p className="text-lg font-medium mb-4">Project: Facebook Website</p>
-          <p className="text-lg font-medium mb-2">Point:</p>
+          <p className="text-lg font-medium mb-4">{t("nav.review.project")} : Facebook Website</p>
+          <p className="text-lg font-medium mb-2">{t("nav.review.point")}:</p>
           <div className="flex justify-left mb-4">
             {[...Array(5)].map((_, i) => (
               <span
@@ -72,9 +74,9 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   />
             <button
               onClick={handleSubmit}
-              className="absolute bottom-10 right-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors text-lg font-medium"
+              className="absolute bottom-10 right-2 bg-[#33539B] text-white py-2 px-4 rounded-md hover:bg-slate-200 transition-colors text-lg font-medium"
             >
-              Review
+              {t("nav.review.title")}
             </button>
           </div>
         </div>
