@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import Photo from "../components/Photo";
 import ButtonSubmit from "../components/ButtonSubmit"
 import { set } from "mongoose";
+import uploadAction from "../actions/uploadAction";
 
 export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -97,6 +98,19 @@ export default function Page() {
     const newFiles = files.filter((_,i) => i !== index)
     console.log(newFiles)
     setFiles(newFiles)
+  }
+
+  async function handleUpload() {
+    if(!files.length) return alert('No image files are selected')
+
+    const formData = new FormData();
+    
+    files.forEach(file => {
+      formData.append('files',file)
+    })
+
+    const res = await uploadAction(formData)
+    console.log(formData)
   }
 
   return (
@@ -194,7 +208,7 @@ export default function Page() {
             </form>
           </div>
 
-          <form ref={formRef}>
+          <form ref={formRef} action={handleUpload}>
             <div>
               <input type="file" accept="image/*" multiple onChange={handleInputFiles} />
             </div>

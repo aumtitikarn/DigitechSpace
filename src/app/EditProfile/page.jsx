@@ -44,7 +44,7 @@ function page() {
             {session?.user?.name}
             </p>
           </div>
-          {session?.user?.role !== "NormalUser" && (
+          {session?.user?.role == "NormalUser" && (
           <div className="flex flex-col items-center w-full mt-4">
             <div className="flex flex-row items-center w-full mt-4">
             <p>Name</p>
@@ -72,7 +72,7 @@ function page() {
           </div>
           )}
 
-        {session?.user?.role == "NormalUser" && (
+        {session?.user?.role !== "NormalUser" && (
           <div className="flex flex-col items-center w-full mt-4">
             <div className="flex flex-row items-center w-full mt-4">
             <p>Name</p>

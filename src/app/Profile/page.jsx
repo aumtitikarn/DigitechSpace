@@ -13,6 +13,7 @@ import QRshare from "../QRshare/page"
 import Editprofile from "../EditProfile/page"
 import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import { FaPlus } from "react-icons/fa6";
 
 function page() {
   const [activeButton, setActiveButton] = useState("button1");  // Set initial state to "button1"
@@ -163,9 +164,20 @@ function page() {
       <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20">
         <div className="flex flex-col w-full max-w-auto mb-20">
   
-        <div className="flex flex-row justify-center">
-        <MdAccountCircle className=" rounded-full text-gray-600" style={{ width:"100px" , height:"100px"}}/>
+      <div className="flex flex-row justify-center">
+        <div className="relative">
+            <MdAccountCircle 
+            className="rounded-full text-gray-500" 
+            style={{ width: "95px", height: "95px" }} 
+            />
+        <div 
+          className="absolute right-0 bottom-0 bg-gray-500 rounded-full p-1" 
+          style={{ transform: "translate(25%, 25%)" }}
+          >
+        <FaPlus size={18} className="text-white" />
         </div>
+        </div>
+      </div>
   
         <div className="flex flex-row justify-center">
           <p style={{fontSize:"24px",fontWeight:"bold"}} className="mt-6">{session?.user?.name}</p>
@@ -280,7 +292,7 @@ function page() {
                       <div className="ml-2 mt-2">
                         <div className="flex flex-col mt-1 justify-center">
                           <div className="flex flex-row">
-                            <p className="truncate mt-1 text-sm font-bold">
+                            <p className="truncate mt-1 text-sm font-bold w-full">
                               แนะนำ Study With
                             </p>
                             <div className="flex items-center">
