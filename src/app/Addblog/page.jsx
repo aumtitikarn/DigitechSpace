@@ -23,7 +23,7 @@ export default function Page() {
   
   const { data: session, status } = useSession();
   const router = useRouter();
-
+  const maxLength = 200;
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
   };
@@ -133,7 +133,7 @@ export default function Page() {
               type="text"
               onChange={(e) => setTopic(e.target.value)}
               placeholder="Topic"
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              className="w-full p-2 mb-4 border border-gray-300 rounded mt-5"
             />
 
             <div className="flex flex-row w-full">
@@ -162,8 +162,7 @@ export default function Page() {
                 <option value="Other">Other</option>
               </select>
             </div>
-
-            <input
+            <textarea
               type="text"
               placeholder="Description"
               onChange={(e) => setDescription(e.target.value)}

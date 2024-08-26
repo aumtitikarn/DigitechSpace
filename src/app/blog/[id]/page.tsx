@@ -17,8 +17,7 @@ import { MdOutlineCancel } from "react-icons/md";
 import { set } from "mongoose";
 import { GoX } from "react-icons/go";
 
-
-function Blog ({ params }) {
+function Blog({ params }) {
   const [review, setReview] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
   const maxLength = 200;
@@ -107,7 +106,7 @@ function Blog ({ params }) {
     onClose: () => void;
     // Add any other properties that are in your post data
   }
-  
+
   return (
     <Container>
       <Navbar />
@@ -129,7 +128,7 @@ function Blog ({ params }) {
             </div>
 
             <div className="flex flex-row mt-5 mb-5 items-center">
-              <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4" />
+              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
               <div className="flex flex-col justify-center">
                 <h1 className="font-bold">T</h1>
               </div>
@@ -185,7 +184,7 @@ function Blog ({ params }) {
             </div>
 
             <div className="flex flex-row mt-5 items-start">
-              <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4" />
+              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
               <div className="flex flex-col justify-center">
                 <h1 className="font-bold">Titikarn Waitayasuwan</h1>
                 <div className="flex flex-row">
@@ -201,7 +200,7 @@ function Blog ({ params }) {
             </div>
             <hr className="border-t border-gray-300 w-full m-2" />
             <div className="flex flex-row ml-5 items-start">
-              <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4" />
+              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
               <div className="flex flex-col justify-center">
                 <h1 className="font-bold">Titikarn Waitayasuwan</h1>
                 <p className="font-thin text-sm">8/6/2024</p>
@@ -210,7 +209,7 @@ function Blog ({ params }) {
             </div>
 
             <div className="flex flex-row mt-5 items-start">
-              <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4" />
+              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
               <div className="flex flex-col justify-center">
                 <h1 className="font-bold">Titikarn Waitayasuwan</h1>
                 <div className="flex flex-row">
@@ -226,7 +225,7 @@ function Blog ({ params }) {
             </div>
             <hr className="border-t border-gray-300 w-full m-2" />
             <div className="flex flex-row ml-5 items-start">
-              <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4" />
+              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
               <div className="flex flex-col justify-center">
                 <h1 className="font-bold">Titikarn Waitayasuwan</h1>
                 <p className="font-thin text-sm">8/6/2024</p>
@@ -245,7 +244,7 @@ function Blog ({ params }) {
               />
               <button
                 onClick={handleSubmit}
-                className="absolute bottom-2 right-s2 w-36 p-2 text-white rounded bg-blue-500 mb-3 mr-1"
+                className="absolute bottom-2 right-2 w-36 p-2 text-white rounded bg-blue-500 mb-3 mr-1"
                 style={{ backgroundColor: "#33529B" }}
               >
                 Send
@@ -274,7 +273,7 @@ function Blog ({ params }) {
                     className="w-full p-2 border rounded-md mb-5"
                   >
                     <option value="profanity">
-                      ได้รับไฟล์ไม่ครบตามที่แจ้ง
+                    มีคำไม่สุภาพ หรือ คำหยาบคาย
                     </option>
                     <option value="off-topic">
                       ไฟล์ไม่ทำงานตามที่ควรจะเป็น
@@ -305,7 +304,7 @@ function Blog ({ params }) {
                     onClick={handlePopupSubmit}
                     className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition-colors duration-200"
                   >
-                   Send Report
+                    Send Report
                   </button>
                 </div>
               </div>
@@ -316,6 +315,6 @@ function Blog ({ params }) {
       <Footer />
     </Container>
   );
-};
+}
 
 export default Blog;
