@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { CiHeart } from "react-icons/ci";
 import Navbar from "../components/Navbar";
@@ -14,11 +14,51 @@ import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from 'react-i18next';
 import { FaSearch, FaFire } from "react-icons/fa";
 
-function page() {
+export default function page() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupInput, setPopupInput] = useState("");
   const { t, i18n } = useTranslation('translation');
   const [input1, setInput1] = useState("");
+
+  const [postData,setPostData] = useState<PostData[]>([]);
+  
+  console.log(postData);
+
+  const _id = useState(null);
+  const topic = useState(null);
+
+  const getPosts = async ()=> {
+
+    try{
+      const res = await fetch("http://localhost:3000/api/posts",{
+        cache:"no-store"
+      })
+
+      if(!res.ok){
+        throw new Error("Failed of fetch posts")
+      }
+
+      const data = await res.json();
+      console.log("Fetched Data: ", data); // Log the data to inspect its structure
+      setPostData(data.posts);
+      console.log(data); // Check the structure here
+      setPostData(data.posts); // Make sure data.posts exists
+
+    } catch(error) {
+      console.log("Error loading posts: ",error);
+    }
+  }
+
+  useEffect(()=>{
+    getPosts();
+  },[]);
+
+  interface PostData {
+    _id: string;
+    topic: string;
+    course: string;
+    // Add any other properties that are in your post data
+  }
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -68,14 +108,12 @@ function page() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
-              {Array(5)
-                .fill("")
-                .map((_, index) => (
-                  <Link href="/blog">
-                    <div
-                      key={index}
-                      className=" w-[180px] h-[300px] flex flex-col"
-                    >
+            
+                 
+                  {postData && postData.length > 0 ? (
+                    postData.map(val => (
+                      <Link href={`/blog/${val._id}`}>
+                    <div key = {val._id} className=" w-[180px] h-[300px] flex flex-col">
                       <div className="rounded w-full relative" style={{height:"250px"}}>
                         <img
                           src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
@@ -90,7 +128,7 @@ function page() {
                               className="truncate mt-1"
                               style={{ fontSize: "14px", fontWeight: "bold" }}
                             >
-                              แนะนำ Study With
+                              {val.topic}
                             </p>
                             <div className="flex items-center">
                               <div className="w-6 h-6 ml-1 mt-1 text-gray-500">
@@ -116,8 +154,11 @@ function page() {
                         </div>
                       </div>
                     </div>
-                  </Link>
-                ))}
+                    </Link>
+                    ))):(<p>you don't have</p>)}
+                  
+                  
+                
 
               {Array(5)
                 .fill("")
@@ -223,7 +264,7 @@ function page() {
             </div>
 
             <div className="mt-6 w-full flex justify-end">
-              {session?.user?.role !== "NormalUser" && (
+              {session?.user?.role == "NormalUser" && (
                 <Link href="/Addblog">
                   <div className=" w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                     <FaPlus size={24} />
@@ -240,4 +281,3 @@ function page() {
   );
 }
 
-export default page;
