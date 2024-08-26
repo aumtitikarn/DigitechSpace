@@ -264,7 +264,7 @@ export default function page() {
             </div>
 
             <div className="mt-6 w-full flex justify-end">
-              {session?.user?.role == "NormalUser" && (
+              {session?.user?.role !== "NormalUser" && (
                 <Link href="/Addblog">
                   <div className=" w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                     <FaPlus size={24} />

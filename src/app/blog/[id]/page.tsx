@@ -124,7 +124,7 @@ useEffect(() => {
 
           
           <div className="flex flex-row mt-5 mb-5 items-center">
-            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">T</h1>
             </div>
@@ -177,7 +177,7 @@ useEffect(() => {
           </div>
 
           <div className="flex flex-row mt-5 items-start">
-            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
               <div className="flex flex-row">
@@ -191,7 +191,7 @@ useEffect(() => {
           </div>
           <hr className="border-t border-gray-300 w-full m-2" /> 
           <div className="flex flex-row ml-5 items-start">
-            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+            <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
               <p className="font-thin text-sm">8/6/2024</p>
@@ -200,7 +200,7 @@ useEffect(() => {
           </div>
 
           <div className="flex flex-row mt-5 items-start">
-          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
               <div className="flex flex-row">
@@ -214,7 +214,7 @@ useEffect(() => {
           </div>
           <hr className="border-t border-gray-300 w-full m-2" /> 
           <div className="flex flex-row ml-5 items-start">
-          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4"/>
+          <MdAccountCircle className="w-9 h-9 flex justify-center items-center rounded-full mr-4 text-gray-500"/>
             <div className="flex flex-col justify-center">
               <h1 className="font-bold">Titikarn Waitayasuwan</h1>
               <p className="font-thin text-sm">8/6/2024</p>
