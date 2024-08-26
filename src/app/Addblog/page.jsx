@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import Photo from "../components/Photo";
 import ButtonSubmit from "../components/ButtonSubmit"
 import { set } from "mongoose";
+import uploadAction from "../actions/uploadAction";
 
 export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -108,7 +109,8 @@ export default function Page() {
       formData.append('files',file)
     })
 
-    const res = await uploadPhoto(formData)
+    const res = await uploadAction(formData)
+    console.log(formData)
   }
 
   return (
@@ -206,7 +208,7 @@ export default function Page() {
             </form>
           </div>
 
-          <form ref={formRef}>
+          <form ref={formRef} action={handleUpload}>
             <div>
               <input type="file" accept="image/*" multiple onChange={handleInputFiles} />
             </div>

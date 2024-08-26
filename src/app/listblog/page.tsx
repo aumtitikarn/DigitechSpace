@@ -125,7 +125,7 @@ export default function page() {
                         <div className="flex flex-col mt-1 justify-center">
                           <div className="flex flex-row">
                             <p
-                              className="truncate mt-1"
+                              className="truncate mt-1 w-full"
                               style={{ fontSize: "14px", fontWeight: "bold" }}
                             >
                               {val.topic}
