@@ -9,7 +9,7 @@ function BlogPost({ image, title, author }) {
   const truncatedTitle = title.length > 23 ? `${title.slice(0, 23)}...` : title;
 
   return (
-    <div className="mb-7 w-[280px] flex-shrink-0">
+    <div className="mb-7 w-[280px] flex-shrink-0 ">
       {/* Blog post image */}
       <img
         src={image}
