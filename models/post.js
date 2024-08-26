@@ -2,9 +2,12 @@ import mongoose,{ Schema } from "mongoose";
 
 const postSchema = new Schema(
     {
-        report: String,
-        email: String,
-        description: String
+        topic: String,
+        course: String,
+        description: String,
+        file: Object,
+        heart: Number,
+        comment: Object,
     },
     {
 
