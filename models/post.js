@@ -5,7 +5,7 @@ const postSchema = new Schema(
         topic: String,
         course: String,
         description: String,
-        file: Object,
+        file: String,
         heart: Number,
         comment: Object,
     },

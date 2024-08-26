@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 import Photo from "../components/Photo";
 import ButtonSubmit from "../components/ButtonSubmit"
 import { set } from "mongoose";
-import uploadAction from "../actions/uploadAction";
 
 export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -21,12 +20,9 @@ export default function Page() {
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState("");
-  const [newImages, setNewImages] = useState("");
-  const [files, setFiles] = useState([]);
   
   const { data: session, status } = useSession();
   const router = useRouter();
-  const formRef = useRef();
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
@@ -51,9 +47,14 @@ export default function Page() {
     console.log("Profile saved");
   };
 
+  const handleCombinedChange = (e) => {
+    handleFileUpload(e); // Call handleFileUpload first
+    setFile(e.target.files[0]); // Then set the first file to state
+  };
+
   const handleSudmit = async (e) => {
     e.preventDefault();
-
+    console.log(file)
     if (!topic || !course || !description || !file) {
       alert("Please complete all inputs");
       return;
@@ -69,7 +70,7 @@ export default function Page() {
           topic,
           course,
           description,
-          file: typeof file === "string" ? file : JSON.stringify(file),
+          file: typeof file === "String" ? file : JSON.stringify(file),
         }),
       });
 
@@ -81,37 +82,6 @@ export default function Page() {
       console.log(error);
     }
   };
-
-  async function handleInputFiles (e) {
-    const files = e.target.files;
-    const newFiles = [...files].filter((file) => {
-      return file.size < 1024 * 1024 && file.type.startsWith("image/");
-    });
-
-    setFiles((prev) => [...newFiles, ...prev]);
-    formRef.current.reset();
-  };
-
-  async function handleDeleteFile (index){
-    console.log(index)
-
-    const newFiles = files.filter((_,i) => i !== index)
-    console.log(newFiles)
-    setFiles(newFiles)
-  }
-
-  async function handleUpload() {
-    if(!files.length) return alert('No image files are selected')
-
-    const formData = new FormData();
-    
-    files.forEach(file => {
-      formData.append('files',file)
-    })
-
-    const res = await uploadAction(formData)
-    console.log(formData)
-  }
 
   return (
     <Container>
@@ -136,7 +106,7 @@ export default function Page() {
                 className="w-40 h-40 object-cover rounded-md"
               />
             ))}
-            
+
             <button
               onClick={() => document.getElementById("file-upload").click()}
               className={`flex items-center justify-center w-40 h-40 rounded-md p-2 bg-white border-2 ${
@@ -147,78 +117,66 @@ export default function Page() {
                 <FaPlus size={24} />
               </div>
             </button>
-
-            <form onSubmit={handleSudmit}>
-              <input
-                id="file-upload"
-                type="file"
-                multiple
-                className="hidden"
-                onChange={(e) => setFile(e.target.files[0])}
-              />
-
-              <input
-                type="text"
-                onChange={(e) => setTopic(e.target.value)}
-                placeholder="Topic"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
-              />
-
-              <div className="flex flex-row w-full">
-                <input
-                  type="text"
-                  onChange={(e) => setCourse(e.target.value)}
-                  placeholder="Course ID"
-                  className="w-full p-2 mb-4 mr-5 border border-gray-300 rounded"
-                />
-
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full p-2 mb-4 ml-5 border border-gray-300 rounded"
-                >
-                  <option value="" disabled>Select Category</option>
-                  <option value="Document">Document</option>
-                  <option value="Model/3D">Model/3D</option>
-                  <option value="Website">Website</option>
-                  <option value="MobileApp">MobileApp</option>
-                  <option value="Datasets">Datasets</option>
-                  <option value="AI">AI</option>
-                  <option value="IOT">IOT</option>
-                  <option value="Program">Program</option>
-                  <option value="Photo/Art">Photo/Art</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              <input
-                type="text"
-                placeholder="Description"
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full h-60 p-2 mb-4 border border-gray-300 rounded"
-              />
-
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
-                style={{ backgroundColor: "#33539B" }}
-              >
-                Post
-              </button>
-            </form>
           </div>
 
-          <form ref={formRef} action={handleUpload}>
-            <div>
-              <input type="file" accept="image/*" multiple onChange={handleInputFiles} />
+          <form onSubmit={handleSudmit}>
+            <input
+              id="file-upload"
+              type="file"
+              multiple
+              className="hidden"
+              onChange={handleCombinedChange}
+              
+            />
+
+            <input
+              type="text"
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="Topic"
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+            />
+
+            <div className="flex flex-row w-full">
+              <input
+                type="text"
+                onChange={(e) => setCourse(e.target.value)}
+                placeholder="Course ID"
+                className="w-full p-2 mb-4 mr-5 border border-gray-300 rounded"
+              />
+
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full p-2 mb-4 ml-5 border border-gray-300 rounded"
+              >
+                <option value="" disabled>Select Category</option>
+                <option value="Document">Document</option>
+                <option value="Model/3D">Model/3D</option>
+                <option value="Website">Website</option>
+                <option value="MobileApp">MobileApp</option>
+                <option value="Datasets">Datasets</option>
+                <option value="AI">AI</option>
+                <option value="IOT">IOT</option>
+                <option value="Program">Program</option>
+                <option value="Photo/Art">Photo/Art</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
-            <div>
-              {files.map((file, index) => (
-                <Photo key={index} url={URL.createObjectURL(file)} 
-                onClick={() => handleDeleteFile(index)}/>
-              ))}
-            </div>
-            <ButtonSubmit value="Upload to Cloudinary"/>
+
+            <input
+              type="text"
+              placeholder="Description"
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full h-60 p-2 mb-4 border border-gray-300 rounded"
+            />
+
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
+              style={{ backgroundColor: "#33539B" }}
+            >
+              Post
+            </button>
           </form>
         </div>
       </main>
