@@ -99,6 +99,18 @@ export default function Page() {
     setFiles(newFiles)
   }
 
+  async function handleUpload() {
+    if(!files.length) return alert('No image files are selected')
+
+    const formData = new FormData();
+    
+    files.forEach(file => {
+      formData.append('files',file)
+    })
+
+    const res = await uploadPhoto(formData)
+  }
+
   return (
     <Container>
       <Navbar session={session} />
