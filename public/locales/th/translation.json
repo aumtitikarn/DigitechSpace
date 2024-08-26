@@ -155,7 +155,13 @@
       "check" : "เช็กโครงงาน",
       "desCheck" : "*กรุณาตรวจสอบสินค้าแล้วกดปุ่ม 'ตรวจสอบโครงการ' ก่อน 7 วัน ถ้าไม่กดปุ่มก็จะไม่สามารถเพื่อยื่นเรื่องร้องเรียนและคืนเงิน"
     },
-    "review": "รีวิว",
+    "review": {
+      "title" : "รีวิว",
+      "topic" : "รีวิวโครงงาน",
+      "project" : "โครงงาน",
+      "point" : "คะแนน",
+      "text" : "ข้อความ"
+    },
     "logout": "ออกจากระบบ",
     "profile" : {
       "project" : "โครงงาน",
@@ -170,5 +176,31 @@
   },
   "footer": {
     "contact": "ติดต่อ"
+  },
+  "authen" : {
+    "or" : "หรือดำเนินการต่อด้วย",
+    "p1" : "By signing up, you agree to the ",
+    "p2" : "Terms of Service ",
+    "p3" : "and ",
+    "p4" : "Privacy Policy, ",
+    "p5" : "including ",
+    "p6" : "Cookie Use.",
+    "signin" : {
+      "title" : "Sign In",
+      "email" : "Email",
+      "password" : "Password",
+      "forgot" : "Forgot Passsword?"
+    },
+    "signup" : {
+      "title" : "Sign Up",
+      "fname" : "First name",
+      "lname" : "Last name",
+      "pnnumber" : "Phone number",
+      "username" : "Username",
+      "email" : "Email",
+      "password" : "Password",
+      "confirm" : "Confirm Password"
+
+    }
   }
 }
