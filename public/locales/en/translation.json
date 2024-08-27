@@ -171,7 +171,15 @@
       "copy" : "Copy Link",
       "name" : "Name",
       "email" : "Email",
-      "save" : "Save"
+      "save" : "Save",
+      "editprofile" : {
+        "name" : "Name",
+        "email" : "Email",
+        "pnum" : "Phone Number",
+        "facebook" : "Facebook",
+        "line" : "Line",
+        "save" : "Save"
+      }
     }
   },
   "footer": {

@@ -5,9 +5,9 @@ import { IoIosStar } from "react-icons/io";
 import { CiHeart } from "react-icons/ci";
 import Image from 'next/image'
 import Link from 'next/link';
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import Container from "../components/Container";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import Container from "../../components/Container";
 import { useSession } from "next-auth/react";
 import { FaLink } from "react-icons/fa";
 import { useTranslation } from "react-i18next";

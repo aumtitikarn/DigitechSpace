@@ -9,8 +9,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Container from "../components/Container";
 import { useSession } from "next-auth/react";
-import QRshare from "../QRshare/page"
-import Editprofile from "../EditProfile/page"
+import QRshare from "./QRshare/page"
+import Editprofile from "./EditProfile/page"
 import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { FaPlus } from "react-icons/fa6";
@@ -174,10 +174,10 @@ function page() {
         </div>
         
         <div className="flex flex-row justify-center mt-10 mb-10">
-        <Link href="/EditProfile" className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
+        <Link href="/Profile/EditProfile" className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
         <p>{t("nav.profile.edit")}</p>
         </Link>
-        <Link href="/QRshare" className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
+        <Link href="/Profile/QRshare" className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
         {t("nav.profile.share")}
         </Link>
         </div>
