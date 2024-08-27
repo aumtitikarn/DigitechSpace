@@ -166,12 +166,6 @@ function page() {
             className="rounded-full text-gray-500" 
             style={{ width: "95px", height: "95px" }} 
             />
-        <div 
-          className="absolute right-0 bottom-0 bg-gray-500 rounded-full p-1" 
-          style={{ transform: "translate(25%, 25%)" }}
-          >
-        <FaPlus size={18} className="text-white" />
-        </div>
         </div>
       </div>
   

@@ -33,20 +33,21 @@ function page() {
       <main className="flex flex-col md:flex-row w-full justify-center p-4">
         <div className="flex flex-col items-center w-full max-w-lg">
           
-          <div className="flex flex-row justify-center">
-          <div className="relative">
-            <MdAccountCircle 
-            className="rounded-full text-gray-500" 
-            style={{ width: "95px", height: "95px" }} 
-            />
-        <div 
-          className="absolute right-0 bottom-0 bg-gray-500 rounded-full p-1" 
-          style={{ transform: "translate(25%, 25%)" }}
-          >
-        <FaPlus size={18} className="text-white" />
-        </div>
-        </div>
-          </div>
+        <div className="flex flex-row justify-center">
+  <div className="relative">
+    <MdAccountCircle 
+      className="rounded-full text-gray-500" 
+      style={{ width: "95px", height: "95px", margin:"-10px" }} 
+    />
+    <div 
+      className="absolute right-0 bottom-0 bg-white rounded-full p-1 border-2 border-black" 
+      style={{ transform: "translate(25%, 25%)" }}
+    >
+      <FaPlus size={18} className="text-black" />
+    </div>
+  </div>
+</div>
+
 
           <div className="flex flex-row justify-center">
             <p style={{ fontSize: "24px", fontWeight: "bold" }} className="mt-6">
@@ -87,6 +88,14 @@ function page() {
               placeholder="Enter your facebook"
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
+            <div className="flex flex-row items-center w-full mt-4">
+            <p>Line</p>
+            </div>
+            <input
+              type="text"
+              placeholder="Enter your ID"
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+            />
             <button
               onClick={handleSave}
               className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
@@ -125,6 +134,14 @@ function page() {
             <input
               type="text"
               placeholder="Enter your facebook"
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+            />
+            <div className="flex flex-row items-center w-full mt-4">
+            <p>Line</p>
+            </div>
+            <input
+              type="text"
+              placeholder="Enter your ID"
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
             <button
