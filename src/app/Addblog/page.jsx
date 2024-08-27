@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import Photo from "../components/Photo";
 import ButtonSubmit from "../components/ButtonSubmit"
 import { set } from "mongoose";
+import { useTranslation } from "react-i18next";
 
 export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -20,6 +21,7 @@ export default function Page() {
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState("");
+  const { t, i18n } = useTranslation("translation");
   
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -93,7 +95,7 @@ export default function Page() {
               className="mt-3 mb-5"
               style={{ fontSize: "24px", fontWeight: "bold" }}
             >
-              Add Blog
+              {t("nav.blog.addblog.title")}
             </p>
           </div>
 
@@ -132,7 +134,7 @@ export default function Page() {
             <input
               type="text"
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="Topic"
+              placeholder={t("nav.blog.addblog.topic")}
               className="w-full p-2 mb-4 border border-gray-300 rounded mt-5"
             />
 
@@ -140,7 +142,7 @@ export default function Page() {
               <input
                 type="text"
                 onChange={(e) => setCourse(e.target.value)}
-                placeholder="Course ID"
+                placeholder={t("nav.blog.addblog.code")}
                 className="w-full p-2 mb-4 mr-5 border border-gray-300 rounded"
               />
 
@@ -149,22 +151,22 @@ export default function Page() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full p-2 mb-4 ml-5 border border-gray-300 rounded"
               >
-                <option value="" disabled>Select Category</option>
-                <option value="Document">Document</option>
-                <option value="Model/3D">Model/3D</option>
-                <option value="Website">Website</option>
-                <option value="MobileApp">MobileApp</option>
-                <option value="Datasets">Datasets</option>
-                <option value="AI">AI</option>
-                <option value="IOT">IOT</option>
-                <option value="Program">Program</option>
-                <option value="Photo/Art">Photo/Art</option>
-                <option value="Other">Other</option>
+                <option value="" disabled>{t("nav.blog.addblog.select")}</option>
+                <option value="Document">{t("nav.project.document")}</option>
+                <option value="Model/3D">{t("nav.project.model")}</option>
+                <option value="Website">{t("nav.project.website")}</option>
+                <option value="MobileApp">{t("nav.project.mobileapp")}</option>
+                <option value="Datasets">{t("nav.project.ai")}</option>
+                <option value="AI">{t("nav.project.datasets")}</option>
+                <option value="IOT">{t("nav.project.iot")}</option>
+                <option value="Program">{t("nav.project.program")}</option>
+                <option value="Photo/Art">{t("nav.project.photo")}</option>
+                <option value="Other">{t("nav.project.other")}</option>
               </select>
             </div>
             <textarea
               type="text"
-              placeholder="Description"
+              placeholder={t("nav.blog.addblog.des")}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full h-60 p-2 mb-4 border border-gray-300 rounded"
             />
@@ -174,7 +176,7 @@ export default function Page() {
               className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
               style={{ backgroundColor: "#33539B" }}
             >
-              Post
+              {t("nav.blog.addblog.post")}
             </button>
           </form>
         </div>

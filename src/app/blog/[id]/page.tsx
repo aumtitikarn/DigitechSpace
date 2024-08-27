@@ -16,6 +16,8 @@ import { FaRegCommentDots } from "react-icons/fa6";
 import { MdOutlineCancel } from "react-icons/md";
 import { set } from "mongoose";
 import { GoX } from "react-icons/go";
+import { useTranslation } from "react-i18next";
+import { BsChatDots } from "react-icons/bs";
 
 function Blog({ params }) {
   const [review, setReview] = useState("");
@@ -34,6 +36,7 @@ function Blog({ params }) {
   const [topic, setTopic] = useState("");
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
+  const { t, i18n } = useTranslation("translation");
 
   const [input1, setInput1] = useState("");
   const handleReviewChange = (
@@ -140,7 +143,7 @@ function Blog({ params }) {
                 className="text-white rounded-md p-2 m-1"
                 style={{ backgroundColor: "#33529B" }}
               >
-                รหัสวิชา 11010203
+                {t("nav.blog.code")} 11010203
               </Link>
               <Link
                 href=""
@@ -166,7 +169,7 @@ function Blog({ params }) {
                   <p className="ml-1">500</p>
                 </div>
                 <div className="flex items-center">
-                  <FaRegCommentDots className="text-2xl" />
+                  <BsChatDots className="text-2xl" />
                   <p className="ml-1">1</p>
                 </div>
               </div>
@@ -180,7 +183,7 @@ function Blog({ params }) {
             </div>
 
             <div className="mt-5">
-              <h1 className="font-bold text-2xl">Comment</h1>
+              <h1 className="font-bold text-2xl">{t("nav.blog.comment")}</h1>
             </div>
 
             <div className="flex flex-row mt-5 items-start">
@@ -191,7 +194,7 @@ function Blog({ params }) {
                   <p className="font-thin text-sm mt-1">8/6/2024</p>
                   <button>
                     <p className="underline decoration-[#0E6FFF] decoration-2 underline-offset-2 ml-3 font-semibold text-[#0E6FFF]">
-                      Reply
+                      {t("nav.blog.reply")}
                     </p>
                   </button>
                 </div>
@@ -216,7 +219,7 @@ function Blog({ params }) {
                   <p className="font-thin text-sm mt-1">8/6/2024</p>
                   <button>
                     <p className="underline decoration-[#0E6FFF] decoration-2 underline-offset-2 ml-3 font-semibold text-[#0E6FFF]">
-                      Reply
+                    {t("nav.blog.reply")}
                     </p>
                   </button>
                 </div>
@@ -247,7 +250,7 @@ function Blog({ params }) {
                 className="absolute bottom-2 right-2 w-36 p-2 text-white rounded bg-blue-500 mb-3 mr-1"
                 style={{ backgroundColor: "#33529B" }}
               >
-                Send
+                {t("nav.blog.send")}
               </button>
             </div>
 
@@ -259,38 +262,41 @@ function Blog({ params }) {
                     className="absolute top-4 right-4 text-red-600 text-3xl cursor-pointer"
                   />
                   <h2 className="text-2xl font-bold mb-4 text-center">
-                    Report
+                  {t("report.title")}
                   </h2>
                   <p className="text-lg font-medium mb-4 ">
-                    Blog: {postData.topic}
+                  {t("report.blog.topic")} : {postData.topic}
                   </p>
                   <div className="border-b border-gray-300 my-3"></div>
 
-                  <p className="text-lg font-medium mb-2">Reason</p>
+                  <p className="text-lg font-medium mb-2">{t("report.blog.reason")}</p>
                   <select
                     value={selectedReason}
                     onChange={handleReasonChange}
                     className="w-full p-2 border rounded-md mb-5"
                   >
                     <option value="profanity">
-                    มีคำไม่สุภาพ หรือ คำหยาบคาย
+                    {t("report.blog.r1")}
                     </option>
                     <option value="off-topic">
-                      ไฟล์ไม่ทำงานตามที่ควรจะเป็น
+                    {t("report.blog.r2")}
                     </option>
                     <option value="illegal-ads">
-                      เข้าใจยาก ไม่มีคู่มือการใช้
+                    {t("report.blog.r3")}
                     </option>
                     <option value="unrelated">
-                      โครงงานมีการละเมิดลิขสิทธิ์
+                    {t("report.blog.r4")}
+                    </option>
+                    <option value="unrelated">
+                    {t("report.blog.r5")}
                     </option>
                   </select>
                   <p className="text-lg font-medium mb-2">
-                    Additional message (200 Characters)
+                  {t("report.blog.add")}
                   </p>
                   <div className="relative mb-5">
                     <textarea
-                      placeholder=""
+                      placeholder={t("report.text")}
                       value={review}
                       onChange={(e) => setPopupInput(e.target.value)}
                       className="w-full h-40 p-3 border-2 border-gray-300 rounded-md resize-none"
@@ -304,7 +310,7 @@ function Blog({ params }) {
                     onClick={handlePopupSubmit}
                     className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition-colors duration-200"
                   >
-                    Send Report
+                    {t("report.send")}
                   </button>
                 </div>
               </div>

@@ -25,7 +25,7 @@ function Trend({ session }) {
         </div>
         <div
           className="mt-9 overflow-x-auto  lg:flex lg:pl-[360px] lg:flex-col lg:items-center"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          style={{ scrollbarWidth: "auto", msOverflowStyle: "auto" }}
         >
           <div className="flex space-x-4 lg:flex-start">
             {[
