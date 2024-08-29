@@ -57,6 +57,7 @@ export default function page() {
     _id: string;
     topic: string;
     course: string;
+    heart: string;
     // Add any other properties that are in your post data
   }
 
@@ -135,7 +136,7 @@ export default function page() {
                                 className="text-gray-500"
                                 style={{ fontSize: "16px" }}
                               >
-                                500
+                                {val.heart}
                               </p>
                             </div>
                           </div>
@@ -261,7 +262,7 @@ export default function page() {
             </div>
 
             <div className="mt-6 w-full flex justify-end">
-              {session?.user?.role !== "NormalUser" && (
+              {session?.user?.role == "NormalUser" && (
                 <Link href="/Addblog">
                   <div className=" w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                     <FaPlus size={24} />

@@ -1,5 +1,5 @@
 // models/NormalUser.js
-import mongoose from 'mongoose';
+import mongoose,{Schema} from 'mongoose';
 
 const normalUserSchema = new mongoose.Schema({
     name: { type: String, required: true },

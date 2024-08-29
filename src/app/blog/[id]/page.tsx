@@ -38,6 +38,9 @@ function Blog({ params }) {
   const [description, setDescription] = useState("");
   const { t, i18n } = useTranslation("translation");
 
+  const [setheart,setHeart] = useState(0);
+  const [isHeartClicked, setIsHeartClicked] = useState(false);
+
   const [input1, setInput1] = useState("");
   const handleReviewChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -90,6 +93,32 @@ function Blog({ params }) {
   const handleSubmit = () => {
     setInput1("");
   };
+
+  const handleSubmitCiHeart = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ setheart: setheart + 1 }),
+      });
+  
+      if (!res.ok) {
+        throw new Error("Failed to update post");
+      }
+  
+      setHeart(setheart + 1);
+      setIsHeartClicked(true); // Set the heart icon as clicked
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+
 
   const { data: session, status } = useSession();
 
@@ -165,8 +194,11 @@ function Blog({ params }) {
             <div className="flex justify-between items-center border-b-2 border-t-2 border-gray-200 py-3">
               <div className="flex space-x-4">
                 <div className="flex items-center">
-                  <CiHeart className="text-3xl" />
-                  <p className="ml-1">500</p>
+                <CiHeart
+                className={`text-3xl cursor-pointer ${isHeartClicked ? 'text-red-500' : ''}`}
+                onClick={handleSubmitCiHeart}
+                />
+                <p className="ml-1">{postData.heart}</p>
                 </div>
                 <div className="flex items-center">
                   <BsChatDots className="text-2xl" />
