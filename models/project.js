@@ -42,12 +42,10 @@ const ProjectSchema = new mongoose.Schema({
     ],
     required: true,
   },
-  files: [
-    {
-      filename: String,
-      path: String,
-    },
-  ],
+  filesUrl: {
+    type: [String], 
+    required: true,
+  },
 });
 
 const Project = mongoose.models.Project || mongoose.model('Project', ProjectSchema);

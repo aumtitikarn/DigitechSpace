@@ -7,7 +7,7 @@ export const revalidate = 0;
 
 export async function POST(req, res) {
   try {
-    const { client, bucket } = await connectMongoDB();
+    const { client, imgbucket, filebucket } = await connectMongoDB();
     const formData = await req.formData();
 
     // Initialize variables
@@ -19,6 +19,7 @@ export async function POST(req, res) {
     let imageUrl = [];
     let author = "";
     let permission = false;
+    let filesUrl = [];
 
     for (const [key, value] of formData.entries()) {
       switch (key) {
@@ -48,7 +49,7 @@ export async function POST(req, res) {
             const image = `${Date.now()}_${value.name}`;
             const buffer = Buffer.from(await value.arrayBuffer());
             const stream = Readable.from(buffer);
-            const uploadStream = bucket.openUploadStream(image);
+            const uploadStream = imgbucket.openUploadStream(image);
             await new Promise((resolve, reject) => {
               stream
                 .pipe(uploadStream)
@@ -58,10 +59,25 @@ export async function POST(req, res) {
             imageUrl.push(image);
           }
           break;
+          case "filesUrl":
+            if (value instanceof Blob) {
+              const file = `${Date.now()}_${value.name}`;
+              const buffer = Buffer.from(await value.arrayBuffer());
+              const stream = Readable.from(buffer);
+              const uploadStream = filebucket.openUploadStream(file);
+              await new Promise((resolve, reject) => {
+                stream
+                  .pipe(uploadStream)
+                  .on("finish", resolve)
+                  .on("error", reject);
+              });
+              filesUrl.push(file);
+            }
+            break;
       }
     }
 
-    if (!projectname || !description || !category) {
+    if (!projectname || !description || !category || !imageUrl || !filesUrl) {
       throw new Error("Missing required fields");
     }
 
@@ -74,6 +90,7 @@ export async function POST(req, res) {
       price,
       author,
       permission,
+      filesUrl
     });
 
     // Save the project

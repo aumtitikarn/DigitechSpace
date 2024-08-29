@@ -2,8 +2,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GoFile } from "react-icons/go";
 import { useTranslation } from "react-i18next";
-
-const FileUploadWithLimitedSize = () => {
+interface FileUploadWithLimitedSizeProps {
+  onFilesChange: (files: File[]) => void; // Callback prop
+}
+const FileUploadWithLimitedSize: React.FC<FileUploadWithLimitedSizeProps> = ({ onFilesChange }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<number[]>([]); // Track progress of each file
@@ -43,6 +45,8 @@ const FileUploadWithLimitedSize = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
+    console.log('Selected files:', selectedFiles); // Log selected files
+
     const currentFiles = [...files];
     let totalSize = selectedFiles.reduce((acc, file) => acc + file.size, 0) + currentFiles.reduce((acc, file) => acc + file.size, 0);
 
@@ -64,17 +68,23 @@ const FileUploadWithLimitedSize = () => {
     });
 
     if (!hasError) {
-      setFiles([...currentFiles, ...newFiles]);
+      const updatedFiles = [...currentFiles, ...newFiles];
+      setFiles(updatedFiles);
       setProgress([...progress, ...new Array(newFiles.length).fill(0)]); // Initialize progress for new files
       setError(null);
+      console.log('Updated files:', updatedFiles); // Log updated files
+      onFilesChange(updatedFiles); // Notify parent component of file changes
     }
   };
 
   const handleRemoveFile = (index: number) => {
-    setFiles(files.filter((_, i) => i !== index));
+    const updatedFiles = files.filter((_, i) => i !== index);
+    setFiles(updatedFiles);
     setProgress(progress.filter((_, i) => i !== index)); // Remove progress for deleted files
+    console.log('Removed file index:', index); // Log removed file index
+    console.log('Updated files after removal:', updatedFiles); // Log updated files
+    onFilesChange(updatedFiles); // Notify parent component of file changes
   };
-
   return (
     <div id="hs-file-upload-with-limited-file-size">
       <div

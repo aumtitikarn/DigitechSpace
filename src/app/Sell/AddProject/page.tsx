@@ -27,6 +27,8 @@ const Project: React.FC = () => {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const router = useRouter();
 
+  console.log("file",files);
+  console.log("img",img);
   if (status === "loading") {
     return <p>Loading...</p>;
   }
@@ -81,7 +83,8 @@ const Project: React.FC = () => {
     formData.append("price", price);
     formData.append("author", session.user.name);
     formData.append("permission", "false");
-    img.forEach((file) => formData.append("imageUrl", file));
+    img.forEach((img) => formData.append("imageUrl", img));
+    files.forEach((file) => formData.append("filesUrl", file));
   
     try {
       const res = await fetch("/api/project", {
@@ -129,6 +132,11 @@ const Project: React.FC = () => {
     }
   };
 
+  const handleFilesChange = (newFiles: File[]) => {
+    console.log('Files received in main component:', newFiles);
+    setFiles(newFiles);
+  };
+ 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
       <main className="flex-grow">
@@ -182,7 +190,8 @@ const Project: React.FC = () => {
               />
             </div>
             <div className="mt-5">
-              <Upload />
+            <p className="text-gray-500">* {t("nav.sell.addP.updes")}</p>
+              <Upload onFilesChange={handleFilesChange}/>
             </div>
             <div>
               <textarea
