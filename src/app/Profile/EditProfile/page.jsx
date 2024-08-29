@@ -62,7 +62,7 @@ function page() {
               <input
                 type="text"
                 placeholder="Enter name"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
               <div className="flex flex-row items-center w-full mt-4">
                 <p>{t("nav.profile.editprofile.email")}</p>
@@ -70,7 +70,7 @@ function page() {
               <input
                 type="email"
                 placeholder="Enter email"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
               <div className="flex flex-row items-center w-full mt-4">
                 <p>{t("nav.profile.editprofile.pnum")}</p>
@@ -78,7 +78,7 @@ function page() {
               <input
                 type="text"
                 placeholder="Enter phone number"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
               <div className="flex flex-row items-center w-full mt-4">
                 <p>{t("nav.profile.editprofile.facebook")}</p>
@@ -86,7 +86,7 @@ function page() {
               <input
                 type="text"
                 placeholder="Enter your facebook"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
               <div className="flex flex-row items-center w-full mt-4">
                 <p>{t("nav.profile.editprofile.line")}</p>
@@ -94,7 +94,7 @@ function page() {
               <input
                 type="text"
                 placeholder="Enter your ID"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
               <button
                 onClick={handleSave}
@@ -114,7 +114,7 @@ function page() {
               <input
                 type="text"
                 placeholder="Enter name"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
               <div className="flex flex-row items-center w-full mt-4">
                 <p>{t("nav.profile.editprofile.email")}</p>
@@ -128,7 +128,7 @@ function page() {
               <input
                 type="text"
                 placeholder="Enter phone number"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
               <div className="flex flex-row items-center w-full mt-4">
                 <p>{t("nav.profile.editprofile.facebook")}</p>
@@ -136,7 +136,7 @@ function page() {
               <input
                 type="text"
                 placeholder="Enter your facebook"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
               <div className="flex flex-row items-center w-full mt-4">
                 <p>{t("nav.profile.editprofile.line")}</p>
@@ -144,7 +144,7 @@ function page() {
               <input
                 type="text"
                 placeholder="Enter your ID"
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
               <button
                 onClick={handleSave}

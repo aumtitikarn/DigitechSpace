@@ -97,7 +97,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
             <Link href="/Sell/AddProject">
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 <p className="text-[18px]">{t("nav.sell.buttAdd")}</p>
               </button>
@@ -105,7 +105,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
             <Link href="/Sell/SellerInfo">
               <button
                 type="submit"
-                className="mt-5 flex w-full justify-center rounded-md bg-[#38B6FF] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="mt-5 flex w-full justify-center rounded-md bg-[#38B6FF] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 <p className="text-[18px]">{t("nav.sell.buttSell")}</p>
               </button>

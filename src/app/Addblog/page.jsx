@@ -12,6 +12,7 @@ import Photo from "../components/Photo";
 import ButtonSubmit from "../components/ButtonSubmit"
 import { set } from "mongoose";
 import { useTranslation } from "react-i18next";
+import { AiFillPlusCircle } from "react-icons/ai";
 
 export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -33,11 +34,6 @@ export default function Page() {
 
   if (status === "loading") {
     return <p>Loading...</p>;
-  }
-
-  if (!session) {
-    redirect("/auth/signin");
-    return null;
   }
 
   const handleFileUpload = (e) => {
@@ -119,7 +115,7 @@ export default function Page() {
               }`}
             >
               <div className="flex items-center justify-center w-10 h-10">
-                <FaPlus size={24} />
+                <AiFillPlusCircle size={50} className="text-[#38B6FF]"/>
               </div>
             </button>
           </div>
@@ -138,7 +134,7 @@ export default function Page() {
               type="text"
               onChange={(e) => setTopic(e.target.value)}
               placeholder={t("nav.blog.addblog.topic")}
-              className="w-full p-2 mb-4 border border-gray-300 rounded mt-5"
+              className="w-full p-2 mb-4 border border-gray-300 rounded mt-5 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
             />
 
             <div className="flex flex-row w-full">
@@ -146,13 +142,13 @@ export default function Page() {
                 type="text"
                 onChange={(e) => setCourse(e.target.value)}
                 placeholder={t("nav.blog.addblog.code")}
-                className="w-full p-2 mb-4 mr-5 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 mr-5 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
 
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full p-2 mb-4 ml-5 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 ml-5 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               >
                 <option value="" disabled>{t("nav.blog.addblog.select")}</option>
                 <option value="Document">{t("nav.project.document")}</option>
@@ -171,7 +167,7 @@ export default function Page() {
               type="text"
               placeholder={t("nav.blog.addblog.des")}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full h-60 p-2 mb-4 border border-gray-300 rounded"
+              className="w-full h-60 p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
             />
 
             <button
