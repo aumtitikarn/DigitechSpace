@@ -122,7 +122,7 @@ const Review: React.FC = () => {
       <Navbar  />
       <main className="flex-grow">
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <h1 className="font-bold mb-4 text-[24px]">{t("nav.review")}</h1>
+          <h1 className="font-bold mb-4 text-[24px]">{t("nav.review.title")}</h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {products.map((product, index) => (
               <Link key={index} href="/Reviewproject">
