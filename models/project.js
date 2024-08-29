@@ -13,7 +13,19 @@ const ProjectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  price: {
+    type: Number,
+    required: true,
+  },
+  author: {
+    type: String,
+    required: true,
+  },
   receive: [String],
+  permission: { 
+    type: Boolean, 
+    default: false 
+  },
   category: {
     type: String,
     enum: [

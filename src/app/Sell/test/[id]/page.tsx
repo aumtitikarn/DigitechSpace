@@ -1,4 +1,5 @@
-import { useRouter } from 'next/router';
+'use client';
+// src/app/Sell/test/[id]/page.tsx
 import { useEffect, useState } from 'react';
 import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
@@ -12,24 +13,23 @@ interface ProjectData {
   imageUrl: string[];
 }
 
-const ProjectDetail: React.FC = () => {
-  const router = useRouter();
-  const { id } = router.query;
+// Define the component as a React function component that receives params
+const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id) {
-      fetchProjectData();
+    if (params.id) {
+      fetchProjectData(params.id);
     }
-  }, [id]);
+  }, [params.id]);
 
-  const fetchProjectData = async () => {
+  const fetchProjectData = async (id: string) => {
     try {
       const response = await fetch(`/api/project/${id}`);
       if (response.ok) {
-        const { post } = await response.json(); // Adjust here
-        setProject(post); // Use 'post' to match the API response structure
+        const data = await response.json();
+        setProject(data.post); // Ensure data structure matches your API response
       } else {
         console.error('Failed to fetch project data');
       }
@@ -39,7 +39,6 @@ const ProjectDetail: React.FC = () => {
       setLoading(false);
     }
   };
-  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -72,11 +71,11 @@ const ProjectDetail: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               {project.imageUrl.map((url, index) => (
                 <img
-                  key={index}
-                  src={url}
-                  alt={`Project image ${index + 1}`}
-                  className="w-full h-auto object-cover rounded-lg"
-                />
+                key={index}
+                src={`/api/project/images/${project.imageUrl[index]}`}
+                alt={`Project image ${index + 1}`}
+                className="w-full h-auto object-cover rounded-lg"
+              />
               ))}
             </div>
           </div>

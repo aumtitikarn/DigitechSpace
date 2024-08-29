@@ -11,6 +11,7 @@ import Alert from "@mui/material/Alert";
 import { AiFillPlusCircle } from "react-icons/ai";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 const Project: React.FC = () => {
   const { data: session, status } = useSession();
@@ -18,6 +19,7 @@ const Project: React.FC = () => {
   const [projectname, setProjectname] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [price, setPrice] = useState("");
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const { t } = useTranslation("translation");
   const [files, setFiles] = useState<File[]>([]);
@@ -36,6 +38,13 @@ const Project: React.FC = () => {
   const handleRemove = (id: number) => {
     setInputs(inputs.filter((input) => input.id !== id));
   };
+  const handleDelete = (index: number) => {
+    setUploadedImages((prevImages) =>
+      prevImages.filter((_, i) => i !== index)
+    );
+    // Optional: Also remove the file from `img` state if necessary
+    setImg((prevImg) => prevImg.filter((_, i) => i !== index));
+  };
 
   const handleInputChange = (id: number, value: string) => {
     setInputs(
@@ -52,38 +61,50 @@ const Project: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
 
+    if (!session || !session.user || !session.user.name) {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "User is not authenticated",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+
+    const formData = new FormData();
     formData.append("projectname", projectname);
     formData.append("description", description);
-    formData.append(
-      "receive",
-      JSON.stringify(inputs.map((input) => input.value))
-    );
+    formData.append("receive", JSON.stringify(inputs.map((input) => input.value)));
     formData.append("category", category);
-    img.forEach((file, index) => formData.append(`imageUrl`, file));
-
+    formData.append("price", price);
+    formData.append("author", session.user.name);
+    formData.append("permission", "false");
+    img.forEach((file) => formData.append("imageUrl", file));
+  
     try {
       const res = await fetch("/api/project", {
         method: "POST",
         body: formData,
       });
-
+  
       if (res.ok) {
         const data = await res.json();
         setShowSuccessAlert(true);
-        setTimeout(() => {
-          setShowSuccessAlert(false);
-        }, 5000);
+        setTimeout(() => setShowSuccessAlert(false), 3000);
+  
         Swal.fire({
           position: "center",
           icon: "success",
-          title: "Success",
+          title: data.msg, // Use message from API response
           showConfirmButton: false,
           timer: 3000,
         });
+  
+        // Redirect to the project detail page using the ID from the response
         setTimeout(() => {
-          router.push(`/Sell/test/${data._id}`);
+          router.push(`/project/projectdetail/${data._id}`);
         }, 3000);
       } else {
         console.error("Failed to submit project");
@@ -101,8 +122,7 @@ const Project: React.FC = () => {
         position: "center",
         icon: "error",
         title: "Error submitting project",
-        text:
-          error instanceof Error ? error.message : "An unknown error occurred",
+        text: error instanceof Error ? error.message : "An unknown error occurred",
         showConfirmButton: false,
         timer: 3000,
       });
@@ -117,13 +137,21 @@ const Project: React.FC = () => {
           <h1 className="text-[24px] font-bold">{t("nav.sell.buttAdd")}</h1>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-wrap gap-4 mt-3">
-              {uploadedImages.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`Uploaded ${index}`}
-                  className="w-40 h-40 object-cover rounded-md "
-                />
+            {uploadedImages.map((image, index) => (
+                <div key={index} className="relative w-40 h-40">
+                  <img
+                    src={image}
+                    alt={`Uploaded ${index}`}
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(index)}
+                    className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-200"
+                  >
+                    <IoCloseCircleOutline className="text-red-500" size={24} />
+                  </button>
+                </div>
               ))}
               <button
                 type="button"
@@ -141,7 +169,7 @@ const Project: React.FC = () => {
               multiple
               className="hidden"
               onChange={handleFileUpload}
-              accept="image/*" // ใส่ accept เพื่อจำกัดประเภทไฟล์
+              accept="image/*" 
             />
             <div>
               <input
@@ -220,6 +248,17 @@ const Project: React.FC = () => {
                 <option value="photo">{t("nav.project.photo")}</option>
                 <option value="other">{t("nav.project.other")}</option>
               </select>
+            </div>
+            <div className="mt-5">
+              <p className="text-gray-500">* {t("nav.sell.addP.pricedes")}</p>
+              <input
+                id="price"
+                type="text"
+                placeholder={t("nav.sell.addP.price")}
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className=" block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+              />
             </div>
             <button
               type="submit"

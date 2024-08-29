@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import React, { useEffect, useState } from "react";
+import Navbar from "../../../components/Navbar";
+import Footer from "../../../components/Footer";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { GoCheck, GoShare, GoHeartFill } from "react-icons/go";
@@ -16,8 +16,17 @@ import { RiTwitterXLine } from "react-icons/ri";
 import { FaLink, FaFacebookF, FaTwitter } from "react-icons/fa";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-
-const Project = () => {
+interface ProjectData {
+  _id: string;
+  projectname: string;
+  description: string;
+  receive: string[];
+  category: string;
+  price: number;
+  imageUrl: string[];
+  author: string;
+}
+const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -25,7 +34,34 @@ const Project = () => {
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
   const { t, i18n } = useTranslation("translation");
   const [visibleReviewsCount, setVisibleReviewsCount] = useState(3);
+  const [project, setProject] = useState<ProjectData | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    if (params.id) {
+      fetchProjectData(params.id);
+    }
+  }, [params.id]);
+
+  const fetchProjectData = async (id: string) => {
+    try {
+      const response = await fetch(`/api/project/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setProject(data.post); // Ensure data structure matches your API response
+      } else {
+        console.error("Failed to fetch project data");
+      }
+    } catch (error) {
+      console.error("Error fetching project data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!project) {
+    return <div>Project not found</div>;
+  }
   if (status === "loading") {
     return <p>Loading...</p>;
   }
@@ -193,40 +229,37 @@ const Project = () => {
     <main className="bg-[#FBFBFB]">
       <Navbar />
       <div className="lg:mx-60 lg:mt-20 lg:mb-20 mt-10 mb-10 ">
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen mt-5">
           {/* Slider Section */}
-          <div className="flex flex-col items-center p-4">
-            <div className="w-full">
-              <div className="relative w-full h-auto overflow-hidden rounded-lg">
-                <img
-                  src={images[currentIndex]}
-                  alt="Project Image"
-                  className="w-full h-[500px] object-cover"
-                />
-                {/* Slider Controls */}
-                <button
-                  onClick={handlePrevClick}
-                  className="absolute left-10 top-1/2 transform -translate-y-1/2  text-gray-500 p-2 rounded-full text-4xl bg-gray-100"
-                >
-                  <FaChevronLeft />
-                </button>
-                <button
-                  onClick={handleNextClick}
-                  className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-500 p-2 rounded-full text-4xl bg-gray-100"
-                >
-                  <FaChevronRight />
-                </button>
-              </div>
+          <div className="flex flex-col items-center p-4 ">
+            <div className="relative w-full h-[500px] overflow-hidden rounded-lg">
+              <img
+                src={`/api/project/images/${project.imageUrl[currentIndex]}`}
+                alt="Project Image"
+                className="w-full h-full object-cover"
+              />
+              {/* Slider Controls */}
+              <button
+                onClick={handlePrevClick}
+                className="absolute left-10 top-1/2 transform -translate-y-1/2 text-gray-500 p-2 rounded-full text-4xl bg-gray-100"
+              >
+                <FaChevronLeft />
+              </button>
+              <button
+                onClick={handleNextClick}
+                className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-500 p-2 rounded-full text-4xl bg-gray-100"
+              >
+                <FaChevronRight />
+              </button>
             </div>
-
             {/* Information Section */}
             <div className="w-full mt-4">
               <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-xl font-bold text-[24px]">
-                    Facebook Website
+                <div className="mt-5">
+                  <p className="text-xl font-bold text-[28px] mt-3">
+                    {project.projectname}
                   </p>
-                  <div className="flex items-center">
+                  <div className="flex items-center mt-2">
                     <p className="text-sm text-gray-600 mr-2">
                       {t("nav.project.projectdetail.by")}
                     </p>
@@ -234,22 +267,24 @@ const Project = () => {
                       <MdAccountCircle />
                     </span>
                     <p className="text-sm text-gray-600 truncate w-[150px]">
-                      Titikarn Waitayasuwan
+                      {project.author}
                     </p>
                   </div>
-                  <p className="text-lg font-bold mt-3 text-[#33529B]">
-                    45,000 THB
-                  </p>
-                  <div className="flex items-center">
+                  <div>
+                    <p className="text-lg font-bold mt-3 text-[#33529B] text-[26px]">
+                      {project.price} THB
+                    </p>
+                  </div>
+                  <div className="flex items-center mt-2">
                     <span className="text-yellow-500 mr-2">
-                      <IoIosStar />
+                      <IoIosStar className="text-2xl" />
                     </span>
                     <span className="text-sm text-gray-600 ">
                       4.8 (28) | {t("nav.project.projectdetail.sold")} 28
                     </span>
                   </div>
                 </div>
-                <div className="flex flex-col items-end">
+                <div className="flex flex-col items-end mt-5">
                   <div className="flex space-x-2">
                     <div className="relative flex justify-center">
                       <GoShare
@@ -309,14 +344,8 @@ const Project = () => {
                   {t("nav.project.projectdetail.description")}
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
-                <p className="text-sm text-gray-600 mt-2">
-                  This is just a dummy text that has been inserted as a
-                  placeholder for future content. While it may seem
-                  insignificant at first glance, the use of dummy text is a
-                  common practice in the design and publishing industry, as it
-                  allows designers and developers to visualize the layout and
-                  overall aesthetic of a project without being distracted by the
-                  actual content.
+                <p className="text-sm text-gray-600 mt-2 text-[18px]">
+                  {project.description}
                 </p>
               </div>
 
@@ -326,20 +355,14 @@ const Project = () => {
                   {t("nav.project.projectdetail.receive")}
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
-                <ul className="list-none text-sm text-gray-600 mt-2">
-                  <li className="flex items-center">
-                    <GoCheck className="w-5 h-5 text-green-500 mr-2" />
-                    รายการ
-                  </li>
-                  <li className="flex items-center">
-                    <GoCheck className="w-5 h-5 text-green-500 mr-2" />
-                    ชุดข้อความ
-                  </li>
-                  <li className="flex items-center">
-                    <GoCheck className="w-5 h-5 text-green-500 mr-2" />
-                    ข้อมูล
-                  </li>
-                </ul>
+                {project.receive.map((item, index) => (
+                  <ul className="list-none text-sm text-gray-600 mt-2">
+                    <li className="flex items-center" key={index}>
+                      <GoCheck className="w-5 h-5 text-green-500 mr-2" />
+                      {item}
+                    </li>
+                  </ul>
+                ))}
               </div>
 
               {/* Reviews Section */}
@@ -401,7 +424,7 @@ const Project = () => {
                     {t("nav.project.projectdetail.projectby")}{" "}
                   </p>
                   <p className="text-[#33529B] ml-1 text-[20px] font-bold">
-                    Titikarn Waitayasuwan
+                    {project.author}
                   </p>
                 </div>
                 <Link href="/project/projectdetail">
@@ -519,7 +542,7 @@ const Project = () => {
                     </div>
                     <div className="border-t border-gray-300 mb-3"></div>
                     <p className="font-semibold">
-                      {t("nav.project.projectdetail.project")}: Facebook Website
+                      {t("nav.project.projectdetail.project")}: {project.projectname}
                     </p>
                     <div className="flex items-center">
                       <p className="text-sm text-gray-600 mr-2">
@@ -529,7 +552,7 @@ const Project = () => {
                         <MdAccountCircle />
                       </span>
                       <p className="text-sm text-gray-600 truncate w-[150px]">
-                        Titikarn Waitayasuwan
+                      {project.author}
                       </p>
                     </div>
                     <div className="flex items-center">
@@ -537,7 +560,7 @@ const Project = () => {
                         {t("nav.project.projectdetail.price")}:
                       </p>
                       <p className="text-[#33529B] ml-2 font-bold">
-                        45,000 THB
+                      {project.price} THB
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-col md:flex-row items-center space-y-5 md:space-y-0 md:space-x-5 mt-4">
@@ -566,4 +589,4 @@ const Project = () => {
   );
 };
 
-export default Project;
+export default ProjectDetail;
