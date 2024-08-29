@@ -44,7 +44,7 @@ const ProjectSchema = new mongoose.Schema({
   },
   filesUrl: {
     type: [String], 
-    required: true,
+    required: true, 
   },
 });
 

@@ -60,20 +60,20 @@ export async function POST(req, res) {
           }
           break;
           case "filesUrl":
-            if (value instanceof Blob) {
-              const file = `${Date.now()}_${value.name}`;
-              const buffer = Buffer.from(await value.arrayBuffer());
-              const stream = Readable.from(buffer);
-              const uploadStream = filebucket.openUploadStream(file);
-              await new Promise((resolve, reject) => {
-                stream
-                  .pipe(uploadStream)
-                  .on("finish", resolve)
-                  .on("error", reject);
-              });
-              filesUrl.push(file);
-            }
-            break;
+          if (value instanceof Blob) {
+            const files = `${value.name}`;
+            const buffer = Buffer.from(await value.arrayBuffer());
+            const stream = Readable.from(buffer);
+            const uploadStream = filebucket.openUploadStream(files);
+            await new Promise((resolve, reject) => {
+              stream
+                .pipe(uploadStream)
+                .on("finish", resolve)
+                .on("error", reject);
+            });
+            filesUrl.push(files);
+          }
+          break;
       }
     }
 

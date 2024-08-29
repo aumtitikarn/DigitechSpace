@@ -14,6 +14,7 @@ import { GoHeart } from "react-icons/go";
 import { MdClose } from "react-icons/md";
 import { RiTwitterXLine } from "react-icons/ri";
 import { FaLink, FaFacebookF, FaTwitter } from "react-icons/fa";
+import { MdOutlineFileDownload } from "react-icons/md";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 interface ProjectData {
@@ -25,10 +26,13 @@ interface ProjectData {
   price: number;
   imageUrl: string[];
   author: string;
+  filesUrl: string[];
 }
+
 const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex2, setCurrentIndex2] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
@@ -36,6 +40,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [visibleReviewsCount, setVisibleReviewsCount] = useState(3);
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     if (params.id) {
@@ -225,6 +230,33 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
   ];
 
+  const handleDownload = async (fileName: string) => {
+    try {
+      if (!project || !project.filesUrl.length) {
+        console.error("No files available for download");
+        return;
+      }
+
+      const fileUrl = `/api/project/files/${fileName}`;
+      const response = await fetch(fileUrl);
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error("Failed to download file");
+      }
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar />
@@ -356,7 +388,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 {project.receive.map((item, index) => (
-                  <ul className="list-none text-sm text-gray-600 mt-2">
+                  <ul className="list-none  text-gray-600 mt-2">
                     <li className="flex items-center" key={index}>
                       <GoCheck className="w-5 h-5 text-green-500 mr-2" />
                       {item}
@@ -364,7 +396,29 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                   </ul>
                 ))}
               </div>
-
+              <div>
+                {/* ไฟล์ */}
+                <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
+                  <h2 className="text-lg font-bold text-[#33529B]">
+                    {t("nav.project.projectdetail.file")}
+                  </h2>
+                  <div className="border-t border-gray-300 my-4"></div>
+                  <ul className="list-none mt-2">
+                      {project.filesUrl.map((fileName, index) => (
+                        <li className="flex items-center mb-2 " key={index}>
+                          <button
+                            onClick={() => handleDownload(fileName)}
+                            style={{ cursor: "pointer" }}
+                             className="flex items-center space-x-2 hover:text-blue-600"
+                          >
+                            <MdOutlineFileDownload className="w-5 h-5 text-gray-500" />
+                            <span>{fileName}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                </div>
+              </div>
               {/* Reviews Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
                 <h2 className="text-lg font-bold text-[#33529B]">
@@ -542,7 +596,8 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                     </div>
                     <div className="border-t border-gray-300 mb-3"></div>
                     <p className="font-semibold">
-                      {t("nav.project.projectdetail.project")}: {project.projectname}
+                      {t("nav.project.projectdetail.project")}:{" "}
+                      {project.projectname}
                     </p>
                     <div className="flex items-center">
                       <p className="text-sm text-gray-600 mr-2">
@@ -552,7 +607,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                         <MdAccountCircle />
                       </span>
                       <p className="text-sm text-gray-600 truncate w-[150px]">
-                      {project.author}
+                        {project.author}
                       </p>
                     </div>
                     <div className="flex items-center">
@@ -560,7 +615,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                         {t("nav.project.projectdetail.price")}:
                       </p>
                       <p className="text-[#33529B] ml-2 font-bold">
-                      {project.price} THB
+                        {project.price} THB
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-col md:flex-row items-center space-y-5 md:space-y-0 md:space-x-5 mt-4">

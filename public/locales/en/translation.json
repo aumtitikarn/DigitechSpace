@@ -70,7 +70,8 @@
         "paymentmobile" : "Payment with mobile banking",
         "by" : "By",
         "hidden" : "Hide review",
-        "download" : "Download All"
+        "download" : "Download All",
+        "file" : "File"
       }
     },
     "blog": {
