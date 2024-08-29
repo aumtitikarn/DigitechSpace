@@ -5,9 +5,10 @@ const postSchema = new Schema(
         topic: String,
         course: String,
         description: String,
-        file: String,
         heart: Number,
         comment: Object,
+        name: { type: String },
+        imageUrl: { type: String },
     },
     {
 

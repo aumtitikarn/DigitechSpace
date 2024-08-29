@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { MdGTranslate, MdAccountCircle } from "react-icons/md";
@@ -17,6 +17,7 @@ function CustomNavbar() {
   const [isAccountBoxVisible, setAccountBoxVisible] = useState(false);
   const { t, i18n } = useTranslation("translation");
   const { data: session } = useSession();
+  const [postData,setPostData] = useState([]);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -33,7 +34,36 @@ function CustomNavbar() {
     const newLanguage = i18n.language === "en" ? "th" : "en";
     i18n.changeLanguage(newLanguage);
   };
+  
+  
+  
+  const getPosts = async ()=> {
 
+    try{
+      const res = await fetch("http://localhost:3000//api/signup",{
+        cache:"no-store"
+      })
+
+      if(!res.ok){
+        throw new Error("Failed of fetch posts")
+      }
+
+      const data = await res.json();
+      console.log("Fetched Data: ", data); // Log the data to inspect its structure
+      setPostData(data.signup);
+      console.log(data); // Check the structure here
+      setPostData(data.signup); // Make sure data.posts exists
+
+    } catch(error) {
+      console.log("Error loading posts: ",error);
+    }
+  }
+
+  useEffect(()=>{
+    getPosts();
+  },[]);
+
+  console.log("Hellooo",postData)
 
   return (
     <nav className="bg-[#0B1E48] shadow-md p-5 relative z-50 sticky top-0">
@@ -284,11 +314,15 @@ function CustomNavbar() {
                           </p>
                           <b>
                             <u className="text-[#0E6FFF]">
-                              <Link href="/Profile">
+                            
+                            {postData && postData.length > 0 ? (
+                    postData.map(val => (
+                              <Link href={`/Profile/${val._id}`}>
                                 <p className="text-[14px] ml-1 text-[#0E6FFF] ">
                                   {t("nav.viewprofile")}
                                 </p>
                               </Link>
+                              ))):(<p>you don't have</p>)}
                             </u>
                           </b>
                         </span>

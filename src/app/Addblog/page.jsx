@@ -21,6 +21,7 @@ export default function Page() {
   const [topic, setTopic] = useState("");
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
+  const [heart, setHeart] = useState(0)
   const [file, setFile] = useState("");
   const { t, i18n } = useTranslation("translation");
   
@@ -48,6 +49,7 @@ export default function Page() {
   const handleCombinedChange = (e) => {
     handleFileUpload(e); // Call handleFileUpload first
     setFile(e.target.files[0]); // Then set the first file to state
+    setHeart(0)
   };
 
   const handleSudmit = async (e) => {
@@ -68,6 +70,7 @@ export default function Page() {
           topic,
           course,
           description,
+          heart,
           file: typeof file === "String" ? file : JSON.stringify(file),
         }),
       });
