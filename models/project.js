@@ -26,6 +26,19 @@ const ProjectSchema = new mongoose.Schema({
     type: Boolean, 
     default: false 
   },
+  rathing: {
+    type: Number,
+    default: 0.0,
+    get: (v) => Math.round(v * 10) / 10, 
+  },
+  sold: {
+    type: Number,
+    default: 0 
+  },
+  review: {
+    type: Number,
+    default: 0 
+  },
   category: {
     type: String,
     enum: [

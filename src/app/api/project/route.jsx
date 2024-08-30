@@ -20,6 +20,9 @@ export async function POST(req, res) {
     let author = "";
     let permission = false;
     let filesUrl = [];
+    let rathing = 0.0;
+    let sold = 0;
+    let review = 0;
 
     for (const [key, value] of formData.entries()) {
       switch (key) {
@@ -41,6 +44,15 @@ export async function POST(req, res) {
         case "author":
           author = value.toString();
           break;
+        case "rathing":
+          review = parseFloat(value);
+          break;
+        case "sold":
+          sold = parseInt(value, 10);
+          break;
+        case "review":
+          sold = parseInt(value, 10);
+          break;
         case "permission":
           permission = value === "true"; // Convert value to Boolean
           break;
@@ -59,7 +71,7 @@ export async function POST(req, res) {
             imageUrl.push(image);
           }
           break;
-          case "filesUrl":
+        case "filesUrl":
           if (value instanceof Blob) {
             const files = `${value.name}`;
             const buffer = Buffer.from(await value.arrayBuffer());
@@ -90,7 +102,9 @@ export async function POST(req, res) {
       price,
       author,
       permission,
-      filesUrl
+      filesUrl,
+      review,
+      sold,
     });
 
     // Save the project

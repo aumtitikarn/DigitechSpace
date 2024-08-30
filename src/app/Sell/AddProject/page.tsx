@@ -78,7 +78,9 @@ const Project: React.FC = () => {
       });
       return;
     }
-
+    const ratingValue: number = 0.0;
+    const soldValue: number = 0;
+    const reviewValue: number = 0;
     const formData = new FormData();
     formData.append("projectname", projectname);
     formData.append("description", description);
@@ -86,6 +88,9 @@ const Project: React.FC = () => {
     formData.append("category", category);
     formData.append("price", price);
     formData.append("author", session.user.name);
+    formData.append("rating", ratingValue.toFixed(1));
+    formData.append("sold", soldValue.toString());
+    formData.append("review", reviewValue.toString());
     formData.append("permission", "false");
     img.forEach((img) => formData.append("imageUrl", img));
     files.forEach((file) => formData.append("filesUrl", file));

@@ -24,6 +24,9 @@ interface ProjectData {
   receive: string[];
   category: string;
   price: number;
+  review: number;
+  sold: number;
+  rathing: number;
   imageUrl: string[];
   author: string;
   filesUrl: string[];
@@ -32,7 +35,6 @@ interface ProjectData {
 const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentIndex2, setCurrentIndex2] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
@@ -53,7 +55,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       const response = await fetch(`/api/project/${id}`);
       if (response.ok) {
         const data = await response.json();
-        setProject(data.post); // Ensure data structure matches your API response
+        setProject(data.post); 
       } else {
         console.error("Failed to fetch project data");
       }
@@ -71,7 +73,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     return <p>Loading...</p>;
   }
 
-  const images = ["/pexample1.png", "/pexample3.png", "/pexample4.png"];
 
   const handlePrevClick = () => {
     setCurrentIndex(
@@ -312,7 +313,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       <IoIosStar className="text-2xl" />
                     </span>
                     <span className="text-sm text-gray-600 ">
-                      4.8 (28) | {t("nav.project.projectdetail.sold")} 28
+                    {project.rathing} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
                     </span>
                   </div>
                 </div>
@@ -397,7 +398,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 ))}
               </div>
               <div>
-                {/* ไฟล์ */}
+                {/* ไฟล์
                 <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
                   <h2 className="text-lg font-bold text-[#33529B]">
                     {t("nav.project.projectdetail.file")}
@@ -417,7 +418,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                         </li>
                       ))}
                     </ul>
-                </div>
+                </div> */}
               </div>
               {/* Reviews Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
