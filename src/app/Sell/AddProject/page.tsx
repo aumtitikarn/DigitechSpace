@@ -41,12 +41,16 @@ const Project: React.FC = () => {
     setInputs(inputs.filter((input) => input.id !== id));
   };
   const handleDelete = (index: number) => {
-    setUploadedImages((prevImages) =>
-      prevImages.filter((_, i) => i !== index)
-    );
-    // Optional: Also remove the file from `img` state if necessary
     setImg((prevImg) => prevImg.filter((_, i) => i !== index));
+    setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  
+    // Reset the file input to allow re-selection of the same file
+    const fileInput = document.getElementById("file-upload") as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   };
+  
 
   const handleInputChange = (id: number, value: string) => {
     setInputs(
@@ -60,7 +64,7 @@ const Project: React.FC = () => {
     const newImages = files.map((file) => URL.createObjectURL(file));
     setUploadedImages((prevImages) => [...prevImages, ...newImages]);
   };
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
