@@ -1,18 +1,15 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import Navbar from "../components/Navbar";
-import { redirect } from "next/navigation";
 import Footer from "../components/Footer";
 import Container from "../components/Container";
-import { FaPlus } from "react-icons/fa6";
-import { useRouter } from "next/navigation";
-import Photo from "../components/Photo";
-import ButtonSubmit from "../components/ButtonSubmit"
-import { set } from "mongoose";
-import { useTranslation } from "react-i18next";
 import { AiFillPlusCircle } from "react-icons/ai";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -21,68 +18,83 @@ export default function Page() {
   const [topic, setTopic] = useState("");
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
-  const [heart, setHeart] = useState(0)
+  const [heart, setHeart] = useState(0);
   const [file, setFile] = useState("");
-  const { t, i18n } = useTranslation("translation");
-  
+  const [previewImage, setPreviewImage] = useState(null);
+  const { t } = useTranslation("translation");
+
+  const [img, setImg] = useState([]);
+
   const { data: session, status } = useSession();
   const router = useRouter();
-  const maxLength = 200;
-  const handleClick = (button) => {
-    setActiveButton(button === activeButton ? null : button);
-  };
+
+  const { register, handleSubmit } = useForm();
 
   if (status === "loading") {
     return <p>Loading...</p>;
   }
 
   const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
+    const files = Array.from(e.target.files || []);
+    setImg((prevImg) => [...prevImg, ...files]);
     const newImages = files.map((file) => URL.createObjectURL(file));
     setUploadedImages((prevImages) => [...prevImages, ...newImages]);
   };
 
-  const handleSave = () => {
-    console.log("Profile saved");
+  const handleCombinedChange = (e) => {
+    handleFileUpload(e);
+    setFile(e.target.files[0]);
+    setHeart(0);
+    handleFileChange(e);
   };
 
-  const handleCombinedChange = (e) => {
-    handleFileUpload(e); // Call handleFileUpload first
-    setFile(e.target.files[0]); // Then set the first file to state
-    setHeart(0)
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewImage(null);
+    }
   };
 
   const handleSudmit = async (e) => {
-    e.preventDefault();
-    console.log(file)
-    if (!topic || !course || !description || !file) {
+    console.log(file);
+  
+    const formData = new FormData();
+  
+    if (!topic || !course || !description) {
       alert("Please complete all inputs");
       return;
     }
-
+  
+    formData.append("topic", topic);
+    formData.append("course", course);
+    formData.append("description", description);
+    formData.append("heart", heart);
+    img.forEach((img) => formData.append("imageUrl", img));
+  
     try {
-      const res = await fetch("http://localhost:3000/api/posts", {
+      const res = await fetch("/api/posts", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          topic,
-          course,
-          description,
-          heart,
-          file: typeof file === "String" ? file : JSON.stringify(file),
-        }),
+        body: formData, // Don't manually set the Content-Type header
       });
-
+  
       if (res.ok) {
-        // Optionally redirect or show a success message
         router.push("/");
       }
     } catch (error) {
       console.log(error);
     }
   };
+
+  console.log(topic)
 
   return (
     <Container>
@@ -108,6 +120,16 @@ export default function Page() {
               />
             ))}
 
+            {previewImage && (
+              <Image
+                width={200}
+                height={200}
+                src={previewImage}
+                alt="Preview"
+                className="mt-2 w-full h-32 object-cover"
+              />
+            )}
+
             <button
               onClick={() => document.getElementById("file-upload").click()}
               className={`flex items-center justify-center w-40 h-40 rounded-md p-2 bg-white border-2 ${
@@ -115,19 +137,20 @@ export default function Page() {
               }`}
             >
               <div className="flex items-center justify-center w-10 h-10">
-                <AiFillPlusCircle size={50} className="text-[#38B6FF]"/>
+                <AiFillPlusCircle size={50} className="text-[#38B6FF]" />
               </div>
             </button>
           </div>
 
-          <form onSubmit={handleSudmit}>
+          <form onSubmit={handleSubmit(handleSudmit)}>
             <input
               id="file-upload"
               type="file"
+              accept="image/*"
               multiple
               className="hidden"
+              {...register("imageUrl")}
               onChange={handleCombinedChange}
-              
             />
 
             <input
@@ -150,7 +173,9 @@ export default function Page() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full p-2 mb-4 ml-5 border border-gray-300 rounded focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               >
-                <option value="" disabled>{t("nav.blog.addblog.select")}</option>
+                <option value="" disabled>
+                  {t("nav.blog.addblog.select")}
+                </option>
                 <option value="Document">{t("nav.project.document")}</option>
                 <option value="Model/3D">{t("nav.project.model")}</option>
                 <option value="Website">{t("nav.project.website")}</option>

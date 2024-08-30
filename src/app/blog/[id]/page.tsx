@@ -18,6 +18,7 @@ import { set } from "mongoose";
 import { GoX } from "react-icons/go";
 import { useTranslation } from "react-i18next";
 import { BsChatDots } from "react-icons/bs";
+import Image from "next/image";
 
 function Blog({ params }) {
   const [review, setReview] = useState("");
@@ -146,11 +147,18 @@ function Blog({ params }) {
         <div className="w-full max-w-screen-lg p-4">
           <div className="flex flex-col">
             <div className="relative w-auto h-96 md:h-[860px] lg:h-[860px] rounded-xl">
-              <img
+              {/* <img
                 src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
                 className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-xl"
                 alt="Blog Image"
-              />
+              /> */}
+              <Image
+              width={200}
+              height={200}
+              src={`/api/posts/images/${postData.imageUrl}`}
+              alt={postData.topic}
+              className="w-full h-full object-cover rounded-t-lg"
+            />
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 <button
                   className={`w-3 h-3 rounded-full`}
