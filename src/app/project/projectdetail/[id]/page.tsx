@@ -75,12 +75,12 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
 
   const handlePrevClick = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + images.length) % images.length
+      (prevIndex) => (prevIndex - 1 + project.imageUrl.length) % project.imageUrl.length
     );
   };
 
   const handleNextClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % project.imageUrl.length);
   };
   const handleFavoriteClick = () => {
     setIsFavorited((prev) => !prev); // เปลี่ยนสถานะเมื่อคลิก
