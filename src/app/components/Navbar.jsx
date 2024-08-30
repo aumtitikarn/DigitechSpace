@@ -322,7 +322,7 @@ function CustomNavbar() {
                                   {t("nav.viewprofile")}
                                 </p>
                               </Link>
-                              ))):(<p>you don't have</p>)}
+                              ))):(<p>{t("nav.viewprofile")}</p>)}
                             </u>
                           </b>
                         </span>
