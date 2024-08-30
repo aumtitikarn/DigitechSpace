@@ -315,14 +315,14 @@ function CustomNavbar() {
                           <b>
                             <u className="text-[#0E6FFF]">
                             
-                            {postData && postData.length > 0 ? (
-                    postData.map(val => (
-                              <Link href={`/Profile/${val._id}`}>
+                            {/* {postData && postData.length > 0 ? (
+                    postData.map(val => ( */}
+                              <Link href={`/Profile`}>
                                 <p className="text-[14px] ml-1 text-[#0E6FFF] ">
                                   {t("nav.viewprofile")}
                                 </p>
                               </Link>
-                              ))):(<p>you don't have</p>)}
+                              {/* ))):(<p>you don't have</p>)} */}
                             </u>
                           </b>
                         </span>

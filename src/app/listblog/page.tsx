@@ -13,19 +13,29 @@ import { IoIosSearch } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from 'react-i18next';
 import { FaSearch, FaFire } from "react-icons/fa";
+import Image from "next/image";
 
 export default function page() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupInput, setPopupInput] = useState("");
   const { t, i18n } = useTranslation('translation');
   const [input1, setInput1] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const [postData,setPostData] = useState<PostData[]>([]);
+
+  const images = ["/pexample1.png", "/pexample3.png", "/pexample4.png"];
   
   console.log(postData);
 
   const _id = useState(null);
   const topic = useState(null);
+
+  const handlePrevClick = () => {
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + images.length) % images.length
+    );
+  };
 
   const getPosts = async ()=> {
 
@@ -58,6 +68,7 @@ export default function page() {
     topic: string;
     course: string;
     heart: string;
+    imageUrl: string[];
     // Add any other properties that are in your post data
   }
 
@@ -113,11 +124,13 @@ export default function page() {
                       <Link href={`/blog/${val._id}`}>
                     <div key = {val._id} className=" w-[180px] h-[300px] flex flex-col">
                       <div className="rounded w-full relative" style={{height:"250px"}}>
-                        <img
-                          src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
-                          className="object-cover w-full h-full"
-                          alt="Blog Image"
-                        />
+                      <Image
+              width={200}
+              height={200}
+              src={`/api/posts/images/${val.imageUrl[currentIndex]}`}
+              alt={val.topic}
+              className="w-full h-[200px] object-cover rounded-t-lg"
+            />
                       </div>
                       <div className="ml-2 mt-2">
                         <div className="flex flex-col mt-1 justify-center">
@@ -262,7 +275,7 @@ export default function page() {
             </div>
 
             <div className="mt-6 w-full flex justify-end">
-              {session?.user?.role == "NormalUser" && (
+              {session?.user?.role !== "NormalUser" && (
                 <Link href="/Addblog">
                   <div className=" w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                     <FaPlus size={24} />

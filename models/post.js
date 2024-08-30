@@ -1,22 +1,17 @@
-import mongoose,{ Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const postSchema = new Schema(
-    {
-        topic: String,
-        course: String,
-        description: String,
-        heart: Number,
-        comment: Object,
-        name: { type: String },
-        imageUrl: { type: String },
-    },
-    {
+const postSchema = new mongoose.Schema(
+  {
+    topic: { type: String, required: true },
+    course: { type: String, required: true },
+    description: { type: String, required: true },
+    heart: { type: Number, default: 0 },
+    imageUrl: { type: [String], required: true }, // Array of strings
+  },
+  {
+    timestamps: true,
+  }
+);
 
-        timestamps: true
-
-    }
-
-)
-
-const Post = mongoose.models.Post || mongoose.model("Post",postSchema);
+const Post = mongoose.models.Post || mongoose.model("Post", postSchema);
 export default Post;
