@@ -17,6 +17,7 @@ import { FaLink, FaFacebookF, FaTwitter } from "react-icons/fa";
 import { MdOutlineFileDownload } from "react-icons/md";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import notfound from "./../../../../../public/error.png";
 interface ProjectData {
   _id: string;
   projectname: string;
@@ -67,7 +68,10 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   };
 
   if (!project) {
-    return <div>Project not found</div>;
+    return  <div>
+    <img src={notfound.src} alt="Project not found" />
+    Project not found
+  </div>
   }
   if (status === "loading") {
     return <p>Loading...</p>;

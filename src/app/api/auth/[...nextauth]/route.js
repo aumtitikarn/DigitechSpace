@@ -21,7 +21,6 @@ const authOption = {
 
           // Check NormalUser collection
           const normalUser = await NormalUser.findOne({ email });
-          console.log("NormalUser:", normalUser); // Debug line
           if (normalUser) {
             const passwordMatch = await bcrypt.compare(
               password,
@@ -30,14 +29,14 @@ const authOption = {
             if (passwordMatch) {
               return {
                 ...normalUser.toObject(),
-                role: "NormalUser", // Add role
+                role: "NormalUser",
+                id: normalUser._id.toString(), // เพิ่ม user ID
               };
             }
           }
 
           // Check StudentUser collection
           const studentUser = await StudentUser.findOne({ email });
-          console.log("StudentUser:", studentUser); // Debug line
           if (studentUser) {
             const passwordMatch = await bcrypt.compare(
               password,
@@ -46,7 +45,8 @@ const authOption = {
             if (passwordMatch) {
               return {
                 ...studentUser.toObject(),
-                role: "StudentUser", // Add role
+                role: "StudentUser",
+                id: studentUser._id.toString(), // เพิ่ม user ID
               };
             }
           }
@@ -78,17 +78,18 @@ const authOption = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+        token.id = user.id; // เก็บ user ID ใน token
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user.role = token.role;
+        session.user.id = token.id; // รวม user ID ใน session
       }
       return session;
     },
   },
-
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/signin",
