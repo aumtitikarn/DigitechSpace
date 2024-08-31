@@ -10,6 +10,7 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -33,6 +34,17 @@ export default function Page() {
   if (status === "loading") {
     return <p>Loading...</p>;
   }
+
+  const handleDelete = (index) => {
+    setImg((prevImg) => prevImg.filter((_, i) => i !== index));
+    setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  
+    // Reset the file input to allow re-selection of the same file
+    const fileInput = document.getElementById("file-upload");
+    if (fileInput) {
+      fileInput.value = '';
+    }
+};
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files || []);
@@ -68,16 +80,29 @@ export default function Page() {
     console.log(file);
   
     const formData = new FormData();
-  
-    if (!topic || !course || !description) {
-      alert("Please complete all inputs");
+
+    if (!session || !session.user || !session.user.name) {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "User is not authenticated",
+        showConfirmButton: false,
+        timer: 3000,
+      });
       return;
     }
   
+    if (!topic || !course || !description || !selectedCategory) {
+      alert("Please complete all inputs");
+      return;
+    }
+
     formData.append("topic", topic);
     formData.append("course", course);
     formData.append("description", description);
     formData.append("heart", heart);
+    formData.append("selectedCategory", selectedCategory);
+    formData.append("author", session.user.name);
     img.forEach((img) => formData.append("imageUrl", img));
   
     try {
@@ -112,15 +137,24 @@ export default function Page() {
 
           <div className="flex flex-wrap gap-4">
             {uploadedImages.map((image, index) => (
+              <div key={index} className="relative w-40 h-40">
               <img
                 key={index}
                 src={image}
                 alt={`Uploaded ${index}`}
                 className="w-40 h-40 object-cover rounded-md"
               />
+              <button
+              type="button"
+              onClick={() => handleDelete(index)}
+              className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-200"
+            >
+              <IoCloseCircleOutline className="text-red-500" size={24} />
+            </button>
+            </div>
             ))}
 
-            {previewImage && (
+            {/* {previewImage && (
               <Image
                 width={200}
                 height={200}
@@ -128,7 +162,7 @@ export default function Page() {
                 alt="Preview"
                 className="mt-2 w-full h-32 object-cover"
               />
-            )}
+            )} */}
 
             <button
               onClick={() => document.getElementById("file-upload").click()}

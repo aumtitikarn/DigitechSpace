@@ -69,6 +69,7 @@ export default function page() {
     course: string;
     heart: string;
     imageUrl: string[];
+    author: string;
     // Add any other properties that are in your post data
   }
 
@@ -129,7 +130,7 @@ export default function page() {
               height={200}
               src={`/api/posts/images/${val.imageUrl[currentIndex]}`}
               alt={val.topic}
-              className="w-full h-[200px] object-cover rounded-t-lg"
+              className="w-full h-full object-cover rounded-lg"
             />
                       </div>
                       <div className="ml-2 mt-2">
@@ -160,7 +161,7 @@ export default function page() {
                             className="mt-2 truncate text-gray-500"
                             style={{ fontSize: "12px" }}
                           >
-                            Titikarn Waitayasuwan
+                            {val.author}
                           </p>
                         </div>
                       </div>
@@ -275,7 +276,7 @@ export default function page() {
             </div>
 
             <div className="mt-6 w-full flex justify-end">
-              {session?.user?.role !== "NormalUser" && (
+              {session?.user?.role == "NormalUser" && (
                 <Link href="/Addblog">
                   <div className=" w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                     <FaPlus size={24} />

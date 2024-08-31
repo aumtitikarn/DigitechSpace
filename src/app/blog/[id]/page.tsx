@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { use } from "react";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { AiOutlineNotification } from "react-icons/ai";
@@ -19,10 +19,13 @@ import { GoX } from "react-icons/go";
 import { useTranslation } from "react-i18next";
 import { BsChatDots } from "react-icons/bs";
 import Image from "next/image";
-
+import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 function Blog({ params }) {
   const [review, setReview] = useState("");
+  const [report,setreport] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
+  const [blogname, setBlogname] = useState("")
   const maxLength = 200;
 
   const { id } = params;
@@ -42,11 +45,23 @@ function Blog({ params }) {
   const [setheart,setHeart] = useState(0);
   const [isHeartClicked, setIsHeartClicked] = useState(false);
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   const [input1, setInput1] = useState("");
   const handleReviewChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setReview(event.target.value);
+  };
+
+  const handlePrevClick = () => {
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + postData.imageUrl.length) % postData.imageUrl.length
+    );
+  };
+
+  const handleNextClick = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % postData.imageUrl.length);
   };
 
   const handleReasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -81,15 +96,43 @@ function Blog({ params }) {
     getPostById(id);
   }, []);
 
+  const handlePopupSubmit = async (e) => {
+  
+    const formData = new FormData();
+  
+    if (!report || !selectedReason) {
+      alert("Please complete all inputs");
+      return;
+    }
+
+    formData.append("blogname", blogname);
+    formData.append("selectedReason", selectedReason);
+    formData.append("report", report);
+  
+    try {
+      const res = await fetch("http://localhost:3000/api/reportblog", {
+        method: "POST",
+        body: formData, // Don't manually set the Content-Type header
+      });
+  
+      if (res.ok) {
+        router.push("/");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
-  const handlePopupSubmit = () => {
-    alert(`Popup Input: ${popupInput}`);
-    setPopupInput("");
-    setIsPopupOpen(false);
-  };
+  // const handlePopupSubmit = () => {
+  //   alert(`Popup Input: ${popupInput}`);
+  //   setPopupInput("");
+  //   setIsPopupOpen(false);
+  // };
+
   const charactersRemaining = maxLength - review.length;
   const handleSubmit = () => {
     setInput1("");
@@ -155,9 +198,13 @@ function Blog({ params }) {
               <Image
               width={200}
               height={200}
-              src={`/api/posts/images/${postData.imageUrl}`}
-              alt={postData.topic}
-              className="w-full h-full object-cover rounded-t-lg"
+              src={
+                postData.imageUrl && postData.imageUrl.length > 0
+                  ? `/api/posts/images/${postData.imageUrl[currentIndex]}`
+                  : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
+              }
+              alt={postData.topic || "Blog Image"}
+              className="w-full h-full object-cover rounded-lg"
             />
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 <button
@@ -165,12 +212,24 @@ function Blog({ params }) {
                   // onClick={() => handleIndicatorClick()}
                 ></button>
               </div>
+              <button
+                onClick={handlePrevClick}
+                className="absolute left-10 top-1/2 transform -translate-y-1/2 text-gray-500 p-2 rounded-full text-4xl bg-gray-100"
+              >
+                <FaChevronLeft />
+              </button>
+              <button
+                onClick={handleNextClick}
+                className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-500 p-2 rounded-full text-4xl bg-gray-100"
+              >
+                <FaChevronRight />
+              </button>
             </div>
 
             <div className="flex flex-row mt-5 mb-5 items-center">
               <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
               <div className="flex flex-col justify-center">
-                <h1 className="font-bold">T</h1>
+                <h1 className="font-bold">{postData.author}</h1>
               </div>
             </div>
 
@@ -180,14 +239,14 @@ function Blog({ params }) {
                 className="text-white rounded-md p-2 m-1"
                 style={{ backgroundColor: "#33529B" }}
               >
-                {t("nav.blog.code")} 11010203
+                {t("nav.blog.code")} {postData.course}
               </Link>
               <Link
                 href=""
                 className="text-white rounded-md p-2 m-1"
                 style={{ backgroundColor: "#33529B" }}
               >
-                Datasets
+                {postData.selectedCategory}
               </Link>
             </div>
 
@@ -312,22 +371,22 @@ function Blog({ params }) {
                   <p className="text-lg font-medium mb-2">{t("report.blog.reason")}</p>
                   <select
                     value={selectedReason}
-                    onChange={handleReasonChange}
+                    onChange={(e) => setSelectedReason(e.target.value)}
                     className="w-full p-2 border rounded-md mb-5"
                   >
-                    <option value="profanity">
+                    <option value="มีคำไม่สุภาพ หรือ คำหยาบคาย">
                     {t("report.blog.r1")}
                     </option>
-                    <option value="off-topic">
+                    <option value="เนื้อหาไม่ตรงกับหัวข้อ">
                     {t("report.blog.r2")}
                     </option>
-                    <option value="illegal-ads">
+                    <option value="มีการโฆษณาสิ่งผิดกฎหมาย, เว็บพนัน, แชร์ลูกโซ่">
                     {t("report.blog.r3")}
                     </option>
-                    <option value="unrelated">
+                    <option value="บทความไม่เกี่ยวข้องกับวิชาเรียน หรือมหาวิทยลัย">
                     {t("report.blog.r4")}
                     </option>
-                    <option value="unrelated">
+                    <option value="อื่นๆ">
                     {t("report.blog.r5")}
                     </option>
                   </select>
@@ -337,8 +396,13 @@ function Blog({ params }) {
                   <div className="relative mb-5">
                     <textarea
                       placeholder={t("report.text")}
-                      value={review}
-                      onChange={(e) => setPopupInput(e.target.value)}
+                      onChange={(e) => setreport(e.target.value)}
+                      className="w-full h-40 p-3 border-2 border-gray-300 rounded-md resize-none"
+                      maxLength={maxLength}
+                    />
+                    <textarea
+                      placeholder={t("report.text")}
+                      onChange={(e) => setBlogname(e.target.value)}
                       className="w-full h-40 p-3 border-2 border-gray-300 rounded-md resize-none"
                       maxLength={maxLength}
                     />
