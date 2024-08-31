@@ -11,7 +11,7 @@ const Items_Filter = () => {
   const { t, i18n } = useTranslation("translation");
   const [projects, setProjects] = useState([]);
   const [showMore, setShowMore] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(t("nav.project.all"));
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedRating, setSelectedRating] = useState(null);
 
   const categories = [
@@ -53,24 +53,18 @@ const Items_Filter = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    // Handle language change
-    const updateCategories = () => {
-      const newCategory = categories.find(cat => cat.category === selectedCategory) || categories[0];
-      setSelectedCategory(newCategory.category);
-    };
-
-    updateCategories();
-  }, [i18n.language]); // Run when language changes
+    const currentCategory = categories.find(cat => cat.categoryEN === selectedCategory);
+    if (currentCategory) {
+      setSelectedCategory(selectedCategory);
+    }
+  }, [i18n.language]);
 
   const handleCategoryChange = (e) => {
-    const selectedCategory = e.target.value;
-    console.log("Selected", selectedCategory);
-  
-    // Find the categoryEN corresponding to the selected category
-    const categoryEN = categories.find(c => c.category === selectedCategory)?.categoryEN || "";
-    setSelectedCategory(selectedCategory);
-  
-    console.log("Selected categoryEN", categoryEN); // Verify the selected categoryEN
+    const selectedTranslatedCategory = e.target.value;
+    const categoryItem = categories.find(c => c.category === selectedTranslatedCategory);
+    if (categoryItem) {
+      setSelectedCategory(categoryItem.categoryEN);
+    }
   };
 
   const handleRatingChange = (rating) => {
@@ -154,7 +148,7 @@ const Items_Filter = () => {
                         className="mr-2 accent-[#33539B]"
                         value={c.category}
                         onChange={handleCategoryChange}
-                        checked={selectedCategory === c.category}
+                        checked={selectedCategory === c.categoryEN}
                       />
                       <label htmlFor={`cat-list-${c.id}`}>{c.category}</label>
                     </li>
@@ -217,7 +211,7 @@ const Items_Filter = () => {
                         <IoIosStar />
                       </span>
                       <span className="lg:text-sm text-gray-600 text-[12px] truncate">
-                        {project.rating} ({project.reviews}) | {t("nav.project.projectdetail.sold")} {project.sold}
+                        {project.rathing} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
                       </span>
                     </div>
                     <p className="text-lg font-bold text-[#33529B]">{project.price} THB</p>

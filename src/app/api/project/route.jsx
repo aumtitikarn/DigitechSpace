@@ -45,7 +45,7 @@ export async function POST(req, res) {
           author = value.toString();
           break;
         case "rathing":
-          review = parseFloat(value);
+          rathing = parseFloat(value);
           break;
         case "sold":
           sold = parseInt(value, 10);

@@ -27,8 +27,8 @@ function CustomNavbar() {
     setAccountBoxVisible(!isAccountBoxVisible);
   };
 
-  const accountBoxMarginTop =
-    session?.user?.role === "StudentUser" ? "mt-[451px]" : "mt-[390px]";
+  // const accountBoxMarginTop =
+  //   session?.user?.role === "StudentUser" ? "mt-[451px]" : "mt-[390px]";
 
   const toggleLanguage = () => {
     const newLanguage = i18n.language === "en" ? "th" : "en";
@@ -103,7 +103,7 @@ function CustomNavbar() {
           </Link>
         </div>
         {/* Account Button for Mobile */}
-        <div className="relative flex-none flex items-center lg:hidden">
+        <div className="flex items-center lg:hidden">
           {session ? (
             <>
               <button
@@ -113,13 +113,14 @@ function CustomNavbar() {
                 <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
               </button>
               {isAccountBoxVisible && (
+                <div className="">
                 <div
-                  className={`px-3 py-3 absolute right-0 ${accountBoxMarginTop} border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg z-2000`}
+                  className="p-4 absolute right-0 top-full mr-5 border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] shadow-lg z-50"
                 >
                   {/* Account Box Content */}
                   <div className="">
                     <div className="flex items-center ">
-                      <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
+                      <MdAccountCircle className="text-gray-600 text-6xl  " />
                       <span>
                         <p className="text-[20px] mt-3 text-semibold">
                           {session?.user?.name}
@@ -202,6 +203,7 @@ function CustomNavbar() {
                     </div>
                   </div>
                 </div>
+                </div>
               )}
             </>
           ) : (
@@ -282,7 +284,7 @@ function CustomNavbar() {
           )}
 
           {/* ปุ่มบัญชีสำหรับเดสทอป */}
-          <div className="flex-none flex items-center">
+          <div className="flex-none flex items-center relative">
             {session ? (
               <>
                 {/* ปุ่มเปลี่ยนภาษา */}
@@ -302,10 +304,10 @@ function CustomNavbar() {
                 </div>
                 {isAccountBoxVisible && (
                   <div
-                    className={`absolute right-60 ${accountBoxMarginTop} border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg z-2000`}
+                    className={"p-4 absolute right-0 top-full mt-7  border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] shadow-lg z-50"}
                   >
                     {/* เนื้อหาภายในกล่องข้อมูลบัญชี */}
-                    <div className="px-3 py-3">
+                    <div className="">
                       <div className="flex items-center">
                         <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
                         <span>
@@ -513,7 +515,7 @@ function CustomNavbar() {
                 </div>
                 {isAccountBoxVisible && (
                   <div
-                    className={`absolute right-0 ${accountBoxMarginTop} border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg z-2000`}
+                    className={`absolute right-0 top-[100px] border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] h-auto flex flex-col items-start shadow-lg z-2000`}
                   >
                     {/* เนื้อหาภายในกล่องข้อมูลบัญชี */}
                     <div className="px-3 py-3">

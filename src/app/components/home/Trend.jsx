@@ -24,7 +24,7 @@ function Trend({ session }) {
           <FaFire className="text-red-500 text-2xl" />
         </div>
         <div
-          className="mt-9 overflow-x-auto  lg:flex lg:pl-[360px] lg:flex-col lg:items-center"
+          className="mt-9 overflow-x-auto   lg:flex-col lg:items-center"
           style={{ scrollbarWidth: "auto", msOverflowStyle: "auto" }}
         >
           <div className="flex space-x-4 lg:flex-start">
