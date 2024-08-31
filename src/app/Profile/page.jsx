@@ -25,10 +25,38 @@ function page() {
   };
 
   const { data: session, status } = useSession();
+
+  console.log("this is id kub "+session._id)
     
   if (status === "loading") {
       return <p>Loading...</p>;
     }
+
+    // const getPosts = async ()=> {
+
+    //   try{
+    //     const res = await fetch("http://localhost:3000/api/posts",{
+    //       cache:"no-store"
+    //     })
+  
+    //     if(!res.ok){
+    //       throw new Error("Failed of fetch posts")
+    //     }
+  
+    //     const data = await res.json();
+    //     console.log("Fetched Data: ", data); // Log the data to inspect its structure
+    //     setPostData(data.posts);
+    //     console.log(data); // Check the structure here
+    //     setPostData(data.posts); // Make sure data.posts exists
+  
+    //   } catch(error) {
+    //     console.log("Error loading posts: ",error);
+    //   }
+    // }
+  
+    // useEffect(()=>{
+    //   getPosts();
+    // },[]);
 
 
     const products = [
@@ -174,7 +202,7 @@ function page() {
         </div>
         
         <div className="flex flex-row justify-center mt-10 mb-10">
-        <Link href="/Profile/EditProfile" className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
+        <Link href={`/Profile/EditProfile/${session.id}`} className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
         <p>{t("nav.profile.edit")}</p>
         </Link>
         <Link href="/Profile/QRshare" className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
