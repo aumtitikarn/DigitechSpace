@@ -66,6 +66,8 @@ export async function POST(req) {
     let topic = "";
     let course = "";
     let description = "";
+    let selectedCategory = "";
+    let author = "";
     let heart = 0;
     let imageUrl = [];
 
@@ -82,6 +84,12 @@ export async function POST(req) {
           break;
         case "heart":
           heart = parseInt(value, 10);
+          break;
+        case "selectedCategory":
+          selectedCategory = value.toString();
+          break;
+        case "author":
+          author = value.toString();
           break;
         case "imageUrl":
           if (value instanceof Blob) {
@@ -107,6 +115,8 @@ export async function POST(req) {
       course,
       description,
       heart,
+      selectedCategory,
+      author,
       imageUrl, // Ensure this is passed as an array
     });
 

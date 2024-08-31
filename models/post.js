@@ -7,6 +7,23 @@ const postSchema = new mongoose.Schema(
     description: { type: String, required: true },
     heart: { type: Number, default: 0 },
     imageUrl: { type: [String], required: true }, // Array of strings
+    author: { type: String, required: true },
+    selectedCategory: {
+      type: String,
+      enum: [
+        'Document',
+        'Model/3D',
+        'Website',
+        'MobileApp',
+        'Datasets',
+        'AI',
+        'IOT',
+        'Program',
+        'Photo/Art',
+        'Other',
+      ],
+      required: true,
+    },
   },
   {
     timestamps: true,
