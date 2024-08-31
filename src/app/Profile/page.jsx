@@ -15,10 +15,12 @@ import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { FaPlus } from "react-icons/fa6";
 
+
 function page() {
   const [activeButton, setActiveButton] = useState("button1");  // Set initial state to "button1"
   const { t, i18n } = useTranslation("translation");
   const [activeButton1] = useState("button1");
+  console.log("User ID:", session?.user?.id);
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);

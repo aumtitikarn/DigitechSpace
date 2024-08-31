@@ -6,6 +6,7 @@ import { MdAccountCircle } from "react-icons/md";
 import { IoIosStar } from "react-icons/io";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { useSession } from "next-auth/react";
 
 const Items_Filter = () => {
   const { t, i18n } = useTranslation("translation");
@@ -13,6 +14,7 @@ const Items_Filter = () => {
   const [showMore, setShowMore] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedRating, setSelectedRating] = useState(null);
+
 
   const categories = [
     { id: 1, category: t("nav.project.all"), categoryEN: "" },
