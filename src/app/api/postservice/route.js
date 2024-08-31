@@ -13,6 +13,6 @@ export async function POST(req) {
 
 export async function GET() {
     await connectMongoDB();
-    const postservice = await Post.find({});
+    const postservice = await PostSer.find({});
     return NextResponse.json({ postservice });
 }
