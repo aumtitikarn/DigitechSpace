@@ -7,14 +7,23 @@ import { Card, CardBody } from '@nextui-org/react';
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { OrbitProgress } from "react-loading-indicators";
 
 const Notification = () => {
     const { data: session, status } = useSession();
     const { t, i18n } = useTranslation("translation");
 
     if (status === "loading") {
-        return <p>Loading...</p>;
-    }
+        return <div style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}>
+        <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+      </div>;
+      }
 
 
     return (

@@ -29,6 +29,19 @@ const studentUserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    // เพิ่มฟิลด์ SellInfo
+    SellInfo: {
+        fullname: { type: String },
+        phonenumber: { type: String },
+        nationalid: { type: String },
+        namebank: { type: String },
+        numberbankacc: { type: String },
+        housenum: { type: String },
+        subdistrict: { type: String },
+        district: { type: String },
+        province: { type: String },
+        postalnumber: { type: String }
+    }
 }, { timestamps: true });
 
 const StudentUser = mongoose.models.StudentUser || mongoose.model('StudentUser', studentUserSchema);

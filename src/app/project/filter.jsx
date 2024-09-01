@@ -7,6 +7,8 @@ import { IoIosStar } from "react-icons/io";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
+import { OrbitProgress } from "react-loading-indicators";
+
 
 const Items_Filter = () => {
   const { t, i18n } = useTranslation("translation");
@@ -122,8 +124,8 @@ const Items_Filter = () => {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:gap-10 lg:gap-20">
-        <div className="md:w-[300px] mb-4">
+      <div className="flex flex-col md:flex-row md:gap-10 lg:gap-20 w-full h-full">
+        <div className=" mb-4">
           <div className="p-4 flex border border-gray-300 rounded-lg shadow-sm lg:w-[300px]">
             <div className="space-y-0">
               <div className="relative mt-4">
@@ -190,13 +192,13 @@ const Items_Filter = () => {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-[10px] lg:gap-x-[50px] md:gap-x-[40px]">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-[10px] lg:gap-x-[50px] md:gap-x-[40px] ">
           {projects.length > 0 ? projects.map((project, index) => (
             <Link key={index} href={`/project/projectdetail/${project._id}`}>
-              <div className="w-[190px] h-auto lg:w-[230px] md:w-[210px] rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-5">
+              <div className="w-[190px] h-auto lg:w-[230px] md:w-[210px] rounded-[10px] border border-[#BEBEBE] bg-white p-4 ">
                 <div className=" flex flex-col">
                   <img
-                    src={`/api/project/images/${project.imageUrl[0]}`} // Adjust if necessary
+                    src={`/api/project/images/${project.imageUrl[0]}`} 
                     alt="Project Image"
                     className="w-full h-[150px] rounded-md object-cover mb-4"
                   />
@@ -221,7 +223,11 @@ const Items_Filter = () => {
                 </div>
               </div>
             </Link>
-          )) : <p>No projects found</p>}
+          )) : 
+          <div className="flex flex-col items-center align-center text-center ">
+          <p className="mt-2 text-gray-500 text-sm lg:text-base whitespace-nowrap">Sorry, we couldn't find any results.</p>
+        </div>
+        }
         </div>
       </div>
     </>
