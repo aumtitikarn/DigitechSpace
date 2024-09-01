@@ -125,7 +125,7 @@ const Review: React.FC = () => {
           <h1 className="font-bold mb-4 text-[24px]">{t("nav.review.title")}</h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {products.map((product, index) => (
-              <Link key={index} href="/Reviewproject">
+              <Link key={index} href="/review/Reviewproject">
                 <ReviewCard product={product} />
               </Link>
             ))}
