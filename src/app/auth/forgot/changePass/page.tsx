@@ -1,9 +1,27 @@
 'use client';
 import Image from 'next/image'
+import { useSession } from "next-auth/react";
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { OrbitProgress } from "react-loading-indicators";
+
 export default function changePass() {
   const router = useRouter()
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
+  }
+
+  
     return (
       <div 
         style={{ backgroundColor: "#FBFBFB", height: '100vh' }}

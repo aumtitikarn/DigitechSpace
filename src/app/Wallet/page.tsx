@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import { MdClose } from "react-icons/md";
 import Bill from "./bill"; 
 import { useTranslation } from "react-i18next";
-
+import { OrbitProgress } from "react-loading-indicators";
 const Wallet = () => {
   const { data: session, status } = useSession();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -16,7 +16,15 @@ const Wallet = () => {
   const { t, i18n } = useTranslation("translation");
 
   if (status === "loading") {
-    return <p>Loading...</p>;
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
   }
 
 

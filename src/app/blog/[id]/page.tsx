@@ -21,6 +21,8 @@ import { BsChatDots } from "react-icons/bs";
 import Image from "next/image";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
+import { OrbitProgress } from "react-loading-indicators";
+
 function Blog({ params }) {
   const [review, setReview] = useState("");
   const [report,setreport] = useState("");
@@ -167,7 +169,15 @@ function Blog({ params }) {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return <p>Loading...</p>;
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
   }
 
   // const [currentIndex, setCurrentIndex] = useState(0);
