@@ -22,8 +22,24 @@ function page() {
     return <p>Loading...</p>;
   }
 
-  const handleSave = () => {
-    console.log("Profile saved");
+  const handleSave = async () => {
+    // ส่งข้อมูลที่ได้รับการแก้ไขกลับไปยังเซิร์ฟเวอร์
+    const response = await fetch("/api/auth/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+      }),
+    });
+
+    if (response.ok) {
+      console.log("Profile saved");
+      // ทำสิ่งที่ต้องการเมื่อบันทึกข้อมูลสำเร็จ
+    } else {
+      console.log("Error saving profile");
+    }
   };
 
   return (
@@ -61,7 +77,7 @@ function page() {
               </div>
               <input
                 type="text"
-                placeholder="Enter name"
+                placeholder={session?.user?.name}
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />
               <div className="flex flex-row items-center w-full mt-4">

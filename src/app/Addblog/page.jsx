@@ -112,7 +112,7 @@ export default function Page() {
       });
   
       if (res.ok) {
-        router.push("/");
+        router.push("/listblog");
       }
     } catch (error) {
       console.log(error);
