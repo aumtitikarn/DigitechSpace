@@ -9,20 +9,29 @@ import { redirect } from "next/navigation";
 import { GoCheck ,GoShare,GoHeartFill } from "react-icons/go";
 import Link from "next/link";
 import Filter from "./filter"
+import { OrbitProgress } from "react-loading-indicators";
 
 
 const Project = () => {
     const { data: session, status } = useSession();
 
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
+    if (status === "loading") {
+      return <div style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        textAlign: "center",
+      }}>
+      <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+    </div>;
+    }
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
     <main className="flex-grow ">
      <Navbar  />
-     <div className="lg:ml-[100px] lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5 mx-30">
+     <div className=" lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5 lg:mx-20 ">
       <Filter/>
       </div>
     </main>

@@ -7,6 +7,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Navbar from "./../../components/Navbar";
 import Footer from "./../../components/Footer";
+import { OrbitProgress } from "react-loading-indicators";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -16,7 +17,18 @@ export default function SignIn() {
   const { data: session } = useSession();
   const { t, i18n } = useTranslation('translation');
 
-
+  if (status === "loading") {
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
+  }
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

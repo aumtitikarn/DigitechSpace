@@ -7,11 +7,11 @@ import Upload from "./upload";
 import { useSession } from "next-auth/react";
 import { MdDeleteOutline } from "react-icons/md";
 import { useTranslation } from "react-i18next";
-import Alert from "@mui/material/Alert";
 import { AiFillPlusCircle } from "react-icons/ai";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { OrbitProgress } from "react-loading-indicators";
 
 const Project: React.FC = () => {
   const { data: session, status } = useSession();
@@ -30,7 +30,15 @@ const Project: React.FC = () => {
   console.log("file",files);
   console.log("img",img);
   if (status === "loading") {
-    return <p>Loading...</p>;
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
   }
 
   const handleAdd = () => {
@@ -78,7 +86,7 @@ const Project: React.FC = () => {
       });
       return;
     }
-    const ratingValue: number = 0.0;
+    const rathingValue: number = parseFloat("0.0");
     const soldValue: number = 0;
     const reviewValue: number = 0;
     const formData = new FormData();
@@ -88,7 +96,7 @@ const Project: React.FC = () => {
     formData.append("category", category);
     formData.append("price", price);
     formData.append("author", session.user.name);
-    formData.append("rating", ratingValue.toFixed(1));
+    formData.append("rathing", rathingValue.toFixed(1));
     formData.append("sold", soldValue.toString());
     formData.append("review", reviewValue.toString());
     formData.append("permission", "false");
@@ -109,7 +117,7 @@ const Project: React.FC = () => {
         Swal.fire({
           position: "center",
           icon: "success",
-          title: data.msg, // Use message from API response
+          title: data.msg, 
           showConfirmButton: false,
           timer: 3000,
         });

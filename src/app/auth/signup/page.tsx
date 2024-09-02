@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from 'react-i18next';
 import Navbar from "./../../components/Navbar";
 import Footer from "./../../components/Footer";
+import { useSession } from "next-auth/react";
+import { OrbitProgress } from "react-loading-indicators";
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +25,19 @@ function SignUp() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { t, i18n } = useTranslation('translation');
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
+  }
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleConfirmPasswordVisibility = () =>

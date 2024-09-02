@@ -14,10 +14,13 @@ import { GoHeart } from "react-icons/go";
 import { MdClose } from "react-icons/md";
 import { RiTwitterXLine } from "react-icons/ri";
 import { FaLink, FaFacebookF, FaTwitter } from "react-icons/fa";
-import { MdOutlineFileDownload } from "react-icons/md";
+import { OrbitProgress } from "react-loading-indicators";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import notfound from "./../../../../../public/error.png";
+import { MdOutlineFileDownload } from  "react-icons/md";
+
+
 interface ProjectData {
   _id: string;
   projectname: string;
@@ -69,12 +72,18 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
 
   if (!project) {
     return  <div>
-    <img src={notfound.src} alt="Project not found" />
-    Project not found
-  </div>
+  </div>;
   }
   if (status === "loading") {
-    return <p>Loading...</p>;
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
   }
 
 
@@ -402,7 +411,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 ))}
               </div>
               <div>
-                {/* ไฟล์
+                {/* ไฟล์ */}
                 <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
                   <h2 className="text-lg font-bold text-[#33529B]">
                     {t("nav.project.projectdetail.file")}
@@ -422,7 +431,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                         </li>
                       ))}
                     </ul>
-                </div> */}
+                </div>
               </div>
               {/* Reviews Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">

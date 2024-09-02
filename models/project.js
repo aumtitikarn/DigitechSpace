@@ -29,7 +29,7 @@ const ProjectSchema = new mongoose.Schema({
   rathing: {
     type: Number,
     default: 0.0,
-    get: (v) => Math.round(v * 10) / 10, 
+    get: (v) => parseFloat(v.toFixed(1)), 
   },
   sold: {
     type: Number,

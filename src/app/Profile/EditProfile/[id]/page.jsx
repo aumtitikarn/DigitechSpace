@@ -14,12 +14,21 @@ import Box from "next-auth/providers/box";
 import { MdAccountCircle } from "react-icons/md";
 import { FaPlus } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
+import { OrbitProgress } from "react-loading-indicators";
 
 function page() {
   const { data: session, status } = useSession();
   const { t, i18n } = useTranslation("translation");
   if (status === "loading") {
-    return <p>Loading...</p>;
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
   }
 
   const handleSave = async () => {
