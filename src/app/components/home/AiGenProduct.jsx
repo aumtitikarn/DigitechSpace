@@ -4,17 +4,23 @@ import React, { useEffect, useState } from "react";
 import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import Link from "next/link";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
+import { OrbitProgress } from "react-loading-indicators";
 
-// Define ProductList Component
 const ProductList = ({ products, titles }) => {
-  const { t } = useTranslation('translation');
-  
+  const { t } = useTranslation("translation");
+
   return (
     <div className="flex flex-col items-center justify-center w-full">
       {titles.map((title, idx) => {
-        const processedTitle = title.includes('/') ? title.split('/')[0].toLowerCase() : title.toLowerCase();
+        const processedTitle = title.includes("/")
+          ? title.split("/")[0].toLowerCase()
+          : title.toLowerCase();
+        const filteredProducts = products.filter(
+          (product) => product.category.toLowerCase() === processedTitle
+        );
+
         return (
           <div key={idx} className="flex flex-col justify-center w-full mb-3">
             <div className="flex items-center space-x-2 mt-3">
@@ -23,22 +29,21 @@ const ProductList = ({ products, titles }) => {
               </p>
             </div>
             <div className="flex overflow-x-auto gap-[30px]">
-              {products.map((product, index) => (
-                <Link key={index} href="/project/projectdetail">
-                  <div
-                    className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-6 mt-5"
-                    style={{ width: "203px", height: "275px" }}
-                  >
-                    <div className="w-full h-full flex flex-col">
-                      {/* Product Image */}
+              {filteredProducts.map((product, index) => (
+                <Link
+                  key={index}
+                  href={`/project/projectdetail/${product._id}`}
+                >
+                  <div className="w-[190px] h-auto lg:w-[230px] md:w-[210px] rounded-[10px] border border-[#BEBEBE] bg-white p-4  mb-5 mt-5">
+                    <div className=" flex flex-col">
                       <img
-                        src={product.image}
-                        alt="Product Image"
+                        src={`/api/project/images/${product.imageUrl[0]}`}
+                        alt="Project Image"
                         className="w-full h-[150px] rounded-md object-cover mb-4"
                       />
                       <div className="flex flex-col justify-between h-full">
                         <p className="text-lg font-semibold mb-2 truncate">
-                          {product.name}
+                          {product.projectname}
                         </p>
                         <div className="flex items-center mb-2">
                           <span className="text-gray-500 mr-2 text-2xl">
@@ -52,9 +57,9 @@ const ProductList = ({ products, titles }) => {
                           <span className="text-yellow-500 mr-2">
                             <IoIosStar />
                           </span>
-                          <span className="lg:text-sm text-gray-600 text-[12px]">
-                            {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
-                            {product.sold}
+                          <span className="lg:text-sm text-gray-600 text-[12px] truncate">
+                            {product.rathing || "N/A"} ({product.review}) |{" "}
+                            {t("nav.project.projectdetail.sold")} {product.sold}
                           </span>
                         </div>
                         <p className="text-lg font-bold text-[#33529B]">
@@ -68,7 +73,7 @@ const ProductList = ({ products, titles }) => {
             </div>
             <div className="flex-grow text-center">
               <p className="text-[#33529B] font-bold mt-3 text-[18px]">
-                {t("nav.home.seemore")} (128)
+                {t("nav.home.seemore")} ({filteredProducts.length})
               </p>
             </div>
           </div>
@@ -77,67 +82,99 @@ const ProductList = ({ products, titles }) => {
     </div>
   );
 };
+
 const Aigenproject = () => {
   const [titles, setTitles] = useState([]);
+  const [products, setProducts] = useState([]);
   const { data: session, status } = useSession();
   const [error, setError] = useState(null);
-  const { t } = useTranslation('translation');
-
-  const products = [
-    {
-      image: "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    // Add more products if needed
-  ];
+  const { t } = useTranslation("translation");
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (status === "authenticated" && session.user) {
         try {
-          const response = await fetch('/api/ai/interest/get', {
-            method: 'GET',
+          const response = await fetch("/api/ai/interest/get", {
+            method: "GET",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           });
-          
+
           if (response.ok) {
             const userData = await response.json();
             if (userData.interests && userData.interests.length > 0) {
-              setTitles(Array.isArray(userData.interests) ? userData.interests : userData.interests.split(','));
+              setTitles(
+                Array.isArray(userData.interests)
+                  ? userData.interests
+                  : userData.interests.split(",")
+              );
             } else {
-              // Set default titles if no interests are found
-              setTitles(["website", "mobileapp", "ai"]);
+              await fetchTopCategories();
             }
           } else {
             const errorData = await response.json();
             console.error("Failed to fetch user interests:", errorData);
             setError(errorData.message || "Failed to fetch user interests");
-            // Set default titles in case of error
-            setTitles(["website", "mobileapp", "ai"]);
+            await fetchTopCategories();
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
           setError("An error occurred while fetching user data");
-          // Set default titles in case of error
-          setTitles(["website", "mobileapp", "ai"]);
+          await fetchTopCategories();
         }
       } else if (status === "unauthenticated") {
-        // Set default titles for unauthenticated users
-        setTitles(["website", "mobileapp", "ai"]);
+        await fetchTopCategories();
+      }
+    };
+
+    const fetchTopCategories = async () => {
+      try {
+        const response = await fetch("/api/project/getProjects", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const projectsData = await response.json();
+          setProducts(projectsData);
+
+          // Count projects per category
+          const categoryCounts = projectsData.reduce((acc, project) => {
+            acc[project.category] = (acc[project.category] || 0) + 1;
+            return acc;
+          }, {});
+
+          // Sort categories by project count and get top 3
+          const topCategories = Object.entries(categoryCounts)
+            .sort((a, b) => b[1] - a[1])
+            .filter(([_, count]) => count > 0)
+            .slice(0, 3)
+            .map(([category]) => category);
+
+          setTitles(topCategories);
+        } else {
+          console.error("Failed to fetch projects");
+          setError("Failed to fetch projects");
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        setError("An error occurred while fetching projects");
       }
     };
 
     fetchUserData();
   }, [status, session]);
 
-
+  if (error) {
+    return (
+      <div>
+        {t("error_occurred")}: {error}
+      </div>
+    );
+  }
 
   return (
     <main className="bg-[#FBFBFB]">

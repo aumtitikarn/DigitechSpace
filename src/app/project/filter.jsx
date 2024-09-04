@@ -215,7 +215,7 @@ const Items_Filter = () => {
                         <IoIosStar />
                       </span>
                       <span className="lg:text-sm text-gray-600 text-[12px] truncate">
-                        {project.rathing} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
+                        {project.rathing  || "N/A"} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
                       </span>
                     </div>
                     <p className="text-lg font-bold text-[#33529B]">{project.price} THB</p>
