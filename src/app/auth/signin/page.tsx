@@ -14,7 +14,7 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter()
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { t, i18n } = useTranslation('translation');
 
   if (status === "loading") {
@@ -43,8 +43,18 @@ export default function SignIn() {
         setError("Invalid credentials");
         return;
       }
-
-      router.replace("/Ai/role"); //ต้องทำครั้งเดียวเข้าสู่ระบบครั้งแรก
+      const sessionResponse = await fetch("/api/auth/session");
+      const sessionData = await sessionResponse.json();
+      console.log('interests : ', sessionData.user?.interests)
+      if (sessionData.user?.roleaii) {
+        if (sessionData.user?.interests) {
+          router.replace("/Home"); // Redirect to /Home if both roleaii and interest are present
+        } else {
+          router.replace("/Ai/interest"); // Redirect to /Ai/interest if roleaii is present but interest is missing
+        }
+      } else {
+        router.replace("/Ai/role"); // Redirect to /Ai/role if roleaii is empty or undefined
+      }
     } catch (error) {
       console.log(error);
       setError(t("authen.signin.error"));

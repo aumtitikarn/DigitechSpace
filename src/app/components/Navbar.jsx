@@ -63,7 +63,7 @@ function CustomNavbar() {
   //   getPosts();
   // },[]);
 
-  console.log("Hellooo",postData)
+  // console.log("Hellooo",postData)
 
   return (
     <nav className="bg-[#0B1E48] shadow-md p-5 relative z-50 sticky top-0">

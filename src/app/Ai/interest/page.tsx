@@ -5,9 +5,8 @@ import { useState, useEffect } from "react";
 import Container from "../../components/Container";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import { useRouter } from "next/router";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { BsBox } from "react-icons/bs";
 import { MdWeb } from "react-icons/md";
@@ -25,21 +24,6 @@ export default function Interest() {
   const [selected, setSelected] = useState<string[]>([]);
   const { t, i18n } = useTranslation("translation");
 
-  useEffect(() => {
-    const storedTypes = JSON.parse(localStorage.getItem('selectedInterests') || "[]");
-    if (storedTypes.length > 0) {
-      setSelected(storedTypes);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (selected.length > 0) {
-      localStorage.setItem('selectedInterests', JSON.stringify(selected)); // Store selected types in local storage
-    }
-  }, [selected]);
-
-  if (!session) redirect("/auth/signin");
-
   const handleButtonClick = (type: string) => {
     setSelected((prevSelected) => {
       if (prevSelected.includes(type)) {
@@ -53,19 +37,37 @@ export default function Interest() {
     });
   };
 
-  const handleNextClick = () => {
+  const handleNextClick = async () => {
     if (selected.length > 0) {
-      router.push({
-        pathname: "/Home",
-        query: { selected: JSON.stringify(selected) }, // Pass selected interests as query parameter
-      });
+      try {
+        const response = await fetch('/api/ai/interest', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            interests: selected,
+          }),
+        });
+        const result = await response.json();
+        console.log("API Response:", result);
+  
+        if (result.message === 'User updated successfully') {
+          // รีเฟรชเซสชันหลังการอัปเดต
+          await signIn("credentials", { redirect: false });
+          router.push(`/`);
+        }
+      } catch (error) {
+        console.error("Error sending data:", error);
+      }
     }
   };
+  
 
   return (
     <main>
       <Container>
-        <Navbar session={session} />
+        <Navbar  />
         <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h3 className="text-center text-3xl mb-10">
             {t("nav.ai.interest.des")}

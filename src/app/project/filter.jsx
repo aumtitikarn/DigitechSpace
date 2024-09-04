@@ -192,7 +192,7 @@ const Items_Filter = () => {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-[10px] lg:gap-x-[50px] md:gap-x-[40px] ">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-[10px] gap-y-[20px] lg:gap-x-[50px] md:gap-x-[40px] md:gap-y-[40px] ">
           {projects.length > 0 ? projects.map((project, index) => (
             <Link key={index} href={`/project/projectdetail/${project._id}`}>
               <div className="w-[190px] h-auto lg:w-[230px] md:w-[210px] rounded-[10px] border border-[#BEBEBE] bg-white p-4 ">

@@ -29,7 +29,11 @@ const studentUserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // เพิ่มฟิลด์ SellInfo
+    roleai: { 
+        type: String, 
+        default: '' 
+    },
+    interests: { type: [String], default: [] },
     SellInfo: {
         fullname: { type: String },
         phonenumber: { type: String },
@@ -43,6 +47,7 @@ const studentUserSchema = new mongoose.Schema({
         postalnumber: { type: String }
     }
 }, { timestamps: true });
+
 
 const StudentUser = mongoose.models.StudentUser || mongoose.model('StudentUser', studentUserSchema);
 export default StudentUser;

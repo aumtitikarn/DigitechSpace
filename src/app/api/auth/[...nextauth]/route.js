@@ -30,7 +30,9 @@ const authOption = {
               return {
                 ...normalUser.toObject(),
                 role: "NormalUser",
-                id: normalUser._id.toString(), // เพิ่ม user ID
+                id: normalUser._id.toString(),
+                roleaii: normalUser.roleai? normalUser.roleai.toString() : "",
+                interests: Array.isArray(normalUser.interests) ? normalUser.interests.join(',') : normalUser.interests || "",
               };
             }
           }
@@ -46,7 +48,9 @@ const authOption = {
               return {
                 ...studentUser.toObject(),
                 role: "StudentUser",
-                id: studentUser._id.toString(), // เพิ่ม user ID
+                id: studentUser._id.toString(),
+                roleaii: studentUser.roleai? studentUser.roleai.toString() : "",
+                interests: Array.isArray(studentUser.interests) ? studentUser.interests.join(',') : studentUser.interests || "",
               };
             }
           }
@@ -78,17 +82,22 @@ const authOption = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
-        token.id = user.id; // เก็บ user ID ใน token
+        token.id = user.id; 
+        token.roleaii = user.roleaii || ""; 
+        token.interests = user.interests || ""; // Use default value if undefined
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user.role = token.role;
-        session.user.id = token.id; // รวม user ID ใน session
+        session.user.id = token.id; 
+        session.user.roleaii = token.roleaii || "";
+        session.user.interests = token.interests || "";
       }
       return session;
     },
+    
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

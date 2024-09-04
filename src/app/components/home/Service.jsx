@@ -167,7 +167,7 @@ function Service() {
               className="w-full p-2 mb-2 border border-gray-300 rounded"
             />
             <button
-              className="w-full p-2 text-white rounded"
+              className="w-full p-2 text-white rounded mt-3"
               style={{backgroundColor:"#33539B"}}
             >
               {t("nav.home.service.send")}
