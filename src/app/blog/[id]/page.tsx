@@ -118,7 +118,8 @@ function Blog({ params }) {
       });
   
       if (res.ok) {
-        router.push("/");
+        router.push(`/blog/${postData._id}`);
+        setIsPopupOpen(false);
       }
     } catch (error) {
       console.log(error);
@@ -377,7 +378,13 @@ function Blog({ params }) {
                   {t("report.blog.topic")} : {postData.topic}
                   </p>
                   <div className="border-b border-gray-300 my-3"></div>
-
+                  <p className="text-lg font-medium mb-3">หัวข้อที่รายงาน</p>
+                  <input
+                      placeholder="หัวข้อที่ต้องการรายงาน"
+                      onChange={(e) => setBlogname(e.target.value)}
+                      className="w-full p-3 border-2 border-gray-300 rounded-md resize-none mb-3"
+                      maxLength={maxLength}
+                    />
                   <p className="text-lg font-medium mb-2">{t("report.blog.reason")}</p>
                   <select
                     value={selectedReason}
@@ -407,12 +414,6 @@ function Blog({ params }) {
                     <textarea
                       placeholder={t("report.text")}
                       onChange={(e) => setreport(e.target.value)}
-                      className="w-full h-40 p-3 border-2 border-gray-300 rounded-md resize-none"
-                      maxLength={maxLength}
-                    />
-                    <textarea
-                      placeholder={t("report.text")}
-                      onChange={(e) => setBlogname(e.target.value)}
                       className="w-full h-40 p-3 border-2 border-gray-300 rounded-md resize-none"
                       maxLength={maxLength}
                     />

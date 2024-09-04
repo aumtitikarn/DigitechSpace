@@ -20,13 +20,14 @@ function page() {
   const [activeButton, setActiveButton] = useState("button1");  // Set initial state to "button1"
   const { t, i18n } = useTranslation("translation");
   const [activeButton1] = useState("button1");
-  console.log("User ID:", session?.user?.id);
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
   };
 
   const { data: session, status } = useSession();
+
+  console.log("User ID:", session?.user?.id);
 
   console.log("this is id kub "+session._id)
     
@@ -212,7 +213,7 @@ function page() {
         </div>
         
         <div className="flex flex-row justify-center mt-10 mb-10">
-        <Link href={`/Profile/EditProfile/${session.id}`} className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
+        <Link href={`/Profile/EditProfile/${session?.user?.id}`} className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
         <p>{t("nav.profile.edit")}</p>
         </Link>
         <Link href="/Profile/QRshare" className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center" style={{backgroundColor:"#33539B"}}>
