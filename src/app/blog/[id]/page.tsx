@@ -22,16 +22,19 @@ import Image from "next/image";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 import { OrbitProgress } from "react-loading-indicators";
+import { text } from "stream/consumers";
 
-function Blog({ params }) {
+
+function Blog({ params, initialComments }) {
   const [review, setReview] = useState("");
-  const [report,setreport] = useState("");
+  const [report, setreport] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [blogname, setBlogname] = useState("")
   const maxLength = 200;
 
   const { id } = params;
 
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -44,10 +47,51 @@ function Blog({ params }) {
   const [description, setDescription] = useState("");
   const { t, i18n } = useTranslation("translation");
 
-  const [setheart,setHeart] = useState(0);
+  const [setheart, setHeart] = useState(0);
   const [isHeartClicked, setIsHeartClicked] = useState(false);
 
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [comments, setComments] = useState([]);
+  const [commentInput, setCommentInput] = useState("");
+  const [replyInput, setReplyInput] = useState("");
+  const [replyingTo, setReplyingTo] = useState(null); // เก็บ ID ของ comment ที่กำลังตอบกลับ
+  
+
+  const handleAddCommentOrReply = async (isReply, commentId = null) => {
+    const requestBody = {
+      text: isReply ? replyInput : commentInput,
+      action: isReply ? "reply" : "comment",
+      author: session?.user?.name || "Anonymous", // เพิ่มชื่อผู้แสดงความคิดเห็น
+      ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
+    };
+  
+    try {
+      const res = await fetch(`/api/posts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+  
+      if (res.ok) {
+        const updatedData = await res.json();
+        setComments(updatedData.post.comments); // อัปเดตคอมเมนต์ใหม่
+        setCommentInput("");
+        setReplyInput("");
+        setReplyingTo(null);
+        router.refresh();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+
+  ////////////////////////////////
+
+  ////////////////////////////////
+
 
   const [input1, setInput1] = useState("");
   const handleReviewChange = (
@@ -99,9 +143,9 @@ function Blog({ params }) {
   }, []);
 
   const handlePopupSubmit = async (e) => {
-  
+
     const formData = new FormData();
-  
+
     if (!report || !selectedReason) {
       alert("Please complete all inputs");
       return;
@@ -110,13 +154,13 @@ function Blog({ params }) {
     formData.append("blogname", blogname);
     formData.append("selectedReason", selectedReason);
     formData.append("report", report);
-  
+
     try {
       const res = await fetch("http://localhost:3000/api/reportblog", {
         method: "POST",
         body: formData, // Don't manually set the Content-Type header
       });
-  
+
       if (res.ok) {
         router.push(`/blog/${postData._id}`);
         setIsPopupOpen(false);
@@ -143,7 +187,7 @@ function Blog({ params }) {
 
   const handleSubmitCiHeart = async (e) => {
     e.preventDefault();
-  
+
     try {
       const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
         method: "PUT",
@@ -152,11 +196,11 @@ function Blog({ params }) {
         },
         body: JSON.stringify({ setheart: setheart + 1 }),
       });
-  
+
       if (!res.ok) {
         throw new Error("Failed to update post");
       }
-  
+
       setHeart(setheart + 1);
       setIsHeartClicked(true); // Set the heart icon as clicked
       router.refresh();
@@ -164,10 +208,7 @@ function Blog({ params }) {
       console.log(error);
     }
   };
-  
 
-
-  const { data: session, status } = useSession();
 
   if (status === "loading") {
     return <div style={{
@@ -177,8 +218,8 @@ function Blog({ params }) {
       transform: "translate(-50%, -50%)",
       textAlign: "center",
     }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
+      <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+    </div>;
   }
 
   // const [currentIndex, setCurrentIndex] = useState(0);
@@ -196,7 +237,7 @@ function Blog({ params }) {
 
   return (
     <Container>
-      <Navbar />
+      <Navbar session={session}/>
       <main className="flex flex-col items-center w-full">
         <div className="w-full max-w-screen-lg p-4">
           <div className="flex flex-col">
@@ -207,20 +248,20 @@ function Blog({ params }) {
                 alt="Blog Image"
               /> */}
               <Image
-              width={200}
-              height={200}
-              src={
-                postData.imageUrl && postData.imageUrl.length > 0
-                  ? `/api/posts/images/${postData.imageUrl[currentIndex]}`
-                  : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
-              }
-              alt={postData.topic || "Blog Image"}
-              className="w-full h-full object-cover rounded-lg"
-            />
+                width={200}
+                height={200}
+                src={
+                  postData.imageUrl && postData.imageUrl.length > 0
+                    ? `/api/posts/images/${postData.imageUrl[currentIndex]}`
+                    : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
+                }
+                alt={postData.topic || "Blog Image"}
+                className="w-full h-full object-cover rounded-lg"
+              />
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 <button
                   className={`w-3 h-3 rounded-full`}
-                  // onClick={() => handleIndicatorClick()}
+                // onClick={() => handleIndicatorClick()}
                 ></button>
               </div>
               <button
@@ -272,11 +313,11 @@ function Blog({ params }) {
             <div className="flex justify-between items-center border-b-2 border-t-2 border-gray-200 py-3">
               <div className="flex space-x-4">
                 <div className="flex items-center">
-                <CiHeart
-                className={`text-3xl cursor-pointer ${isHeartClicked ? 'text-red-500' : ''}`}
-                onClick={handleSubmitCiHeart}
-                />
-                <p className="ml-1">{postData.heart}</p>
+                  <CiHeart
+                    className={`text-3xl cursor-pointer ${isHeartClicked ? 'text-red-500' : ''}`}
+                    onClick={handleSubmitCiHeart}
+                  />
+                  <p className="ml-1">{postData.heart}</p>
                 </div>
                 <div className="flex items-center">
                   <BsChatDots className="text-2xl" />
@@ -296,7 +337,7 @@ function Blog({ params }) {
               <h1 className="font-bold text-2xl">{t("nav.blog.comment")}</h1>
             </div>
 
-            <div className="flex flex-row mt-5 items-start">
+            {/* <div className="flex flex-row mt-5 items-start">
               <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
               <div className="flex flex-col justify-center">
                 <h1 className="font-bold">Titikarn Waitayasuwan</h1>
@@ -329,7 +370,7 @@ function Blog({ params }) {
                   <p className="font-thin text-sm mt-1">8/6/2024</p>
                   <button>
                     <p className="underline decoration-[#0E6FFF] decoration-2 underline-offset-2 ml-3 font-semibold text-[#0E6FFF]">
-                    {t("nav.blog.reply")}
+                      {t("nav.blog.reply")}
                     </p>
                   </button>
                 </div>
@@ -344,24 +385,71 @@ function Blog({ params }) {
                 <p className="font-thin text-sm">8/6/2024</p>
                 <p>ดีงาม</p>
               </div>
-            </div>
+            </div> */}
 
-            <div className="relative mt-4">
-              <input
-                type="text"
-                value={input1}
-                onChange={(e) => setInput1(e.target.value)}
-                placeholder="Enter first message"
-                className="w-full p-2 mb-2 border border-gray-300 rounded h-36"
-                style={{ flexDirection: "column", textAlign: "start" }}
-              />
-              <button
-                onClick={handleSubmit}
-                className="absolute bottom-2 right-2 w-36 p-2 text-white rounded bg-blue-500 mb-3 mr-1"
-                style={{ backgroundColor: "#33529B" }}
-              >
-                {t("nav.blog.send")}
-              </button>
+            {/* แสดงฟอร์มแสดงความคิดเห็น */}
+
+            <div>
+              {Array.isArray(postData.comments) &&
+                postData.comments.map((comment) => (
+                  <div key={comment._id}>
+                    <p>{comment.text}</p>
+
+                    {/* Handle replies if they exist */}
+                    {comment.replies && comment.replies.length > 0 && (
+                      <div style={{ marginLeft: '20px' }}>
+                        {comment.replies.map((reply) => (
+                          <p key={reply._id}>- {reply.text}</p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </div>
+            <textarea
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+              placeholder="Add a comment"
+            />
+            <button onClick={() => handleAddCommentOrReply(false)}>
+              Add Comment
+            </button>
+
+            {/* แสดงรายการความคิดเห็น */}
+            <div>
+              {Array.isArray(comments) && comments.map((comment) => (
+                <div key={comment._id}>
+                  <p>{comment.text}</p>
+
+                  {/* แสดงฟอร์มการตอบกลับ */}
+                  {replyingTo === comment._id ? (
+                    <>
+                      <textarea
+                        value={replyInput}
+                        onChange={(e) => setReplyInput(e.target.value)}
+                        placeholder="Reply to this comment"
+                      />
+                      <button
+                        onClick={() => handleAddCommentOrReply(true, comment._id)}
+                      >
+                        Reply
+                      </button>
+                      <button onClick={() => setReplyingTo(null)}>Cancel</button>
+                    </>
+                  ) : (
+                    <button onClick={() => setReplyingTo(comment._id)}>Reply</button>
+                  )}
+
+                  {/* แสดงรายการตอบกลับ */}
+                  {comment.replies && comment.replies.length > 0 && (
+                    <div style={{ marginLeft: "20px" }}>
+                      {comment.replies.map((reply) => (
+                        <p key={reply._id}>- {reply.text}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
 
             {isPopupOpen && (
@@ -372,19 +460,19 @@ function Blog({ params }) {
                     className="absolute top-4 right-4 text-red-600 text-3xl cursor-pointer"
                   />
                   <h2 className="text-2xl font-bold mb-4 text-center">
-                  {t("report.title")}
+                    {t("report.title")}
                   </h2>
                   <p className="text-lg font-medium mb-4 ">
-                  {t("report.blog.topic")} : {postData.topic}
+                    {t("report.blog.topic")} : {postData.topic}
                   </p>
                   <div className="border-b border-gray-300 my-3"></div>
                   <p className="text-lg font-medium mb-3">หัวข้อที่รายงาน</p>
                   <input
-                      placeholder="หัวข้อที่ต้องการรายงาน"
-                      onChange={(e) => setBlogname(e.target.value)}
-                      className="w-full p-3 border-2 border-gray-300 rounded-md resize-none mb-3"
-                      maxLength={maxLength}
-                    />
+                    placeholder="หัวข้อที่ต้องการรายงาน"
+                    onChange={(e) => setBlogname(e.target.value)}
+                    className="w-full p-3 border-2 border-gray-300 rounded-md resize-none mb-3"
+                    maxLength={maxLength}
+                  />
                   <p className="text-lg font-medium mb-2">{t("report.blog.reason")}</p>
                   <select
                     value={selectedReason}
@@ -392,23 +480,23 @@ function Blog({ params }) {
                     className="w-full p-2 border rounded-md mb-5"
                   >
                     <option value="มีคำไม่สุภาพ หรือ คำหยาบคาย">
-                    {t("report.blog.r1")}
+                      {t("report.blog.r1")}
                     </option>
                     <option value="เนื้อหาไม่ตรงกับหัวข้อ">
-                    {t("report.blog.r2")}
+                      {t("report.blog.r2")}
                     </option>
                     <option value="มีการโฆษณาสิ่งผิดกฎหมาย, เว็บพนัน, แชร์ลูกโซ่">
-                    {t("report.blog.r3")}
+                      {t("report.blog.r3")}
                     </option>
                     <option value="บทความไม่เกี่ยวข้องกับวิชาเรียน หรือมหาวิทยลัย">
-                    {t("report.blog.r4")}
+                      {t("report.blog.r4")}
                     </option>
                     <option value="อื่นๆ">
-                    {t("report.blog.r5")}
+                      {t("report.blog.r5")}
                     </option>
                   </select>
                   <p className="text-lg font-medium mb-2">
-                  {t("report.blog.add")}
+                    {t("report.blog.add")}
                   </p>
                   <div className="relative mb-5">
                     <textarea

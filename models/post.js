@@ -1,4 +1,17 @@
 import mongoose from "mongoose";
+import { type } from "os";
+
+const replySchema = new mongoose.Schema({
+  text: String,
+  author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
+});
+
+const commentSchema = new mongoose.Schema({
+  text: String,
+  author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
+  replies: [replySchema],
+});
+
 
 const postSchema = new mongoose.Schema(
   {
@@ -8,6 +21,7 @@ const postSchema = new mongoose.Schema(
     heart: { type: Number, default: 0 },
     imageUrl: { type: [String], required: true }, // Array of strings
     author: { type: String, required: true },
+    comments: { type: [commentSchema], default: [] },
     selectedCategory: {
       type: String,
       enum: [
