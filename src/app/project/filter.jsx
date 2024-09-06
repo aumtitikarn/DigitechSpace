@@ -10,13 +10,13 @@ import { useSession } from "next-auth/react";
 import { OrbitProgress } from "react-loading-indicators";
 
 
-const Items_Filter = () => {
+
+const Items_Filter = ({ initialCategory }) => {
   const { t, i18n } = useTranslation("translation");
   const [projects, setProjects] = useState([]);
   const [showMore, setShowMore] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState();
   const [selectedRating, setSelectedRating] = useState(null);
-
 
   const categories = [
     { id: 1, category: t("nav.project.all"), categoryEN: "" },
@@ -32,36 +32,42 @@ const Items_Filter = () => {
     { id: 11, category: t("nav.project.other"), categoryEN: "Other" },
   ];
 
+  useEffect(() => {
+    if (initialCategory) {
+      const categoryItem = categories.find(c => c.categoryEN.toLowerCase() === initialCategory.toLowerCase());
+      console.log("intial",categoryItem);
+      if (categoryItem) {
+        setSelectedCategory(categoryItem.categoryEN);
+      } else {
+        setSelectedCategory("All");
+      }
+    } else {
+      setSelectedCategory("All");
+    }
+  }, [initialCategory]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log('Current selected category:', selectedCategory);
+      const fetchedProjects = await fetchProjects(selectedCategory);
+      console.log('Fetched projects:', fetchedProjects);
+      setProjects(fetchedProjects);
+    };
+    fetchData();
+  }, [selectedCategory]);
+
   const fetchProjects = async (categoryEN) => {
     try {
       const normalizedCategory = categoryEN.toLowerCase();
-      console.log('Fetching projects for category:', categoryEN); // Debugging info
-      const response = await fetch(`/api/project/getProjects?category=${encodeURIComponent(normalizedCategory)}`);
+      console.log('Fetching projects for category:', normalizedCategory);
+      const response = await fetch(`/api/project/getProjects${normalizedCategory !== 'all' ? `?category=${encodeURIComponent(normalizedCategory)}` : ''}`);
       const data = await response.json();
-      console.log('Fetched projects:', data);
       return data;
     } catch (error) {
       console.error('Error fetching projects:', error);
       return [];
     }
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const selectedCategoryEN = categories.find(cat => cat.category === selectedCategory)?.categoryEN || "";
-      console.log('Selected categoryEN:', selectedCategoryEN); // Debugging info
-      const projects = await fetchProjects(selectedCategoryEN);
-      setProjects(projects);
-    };
-    fetchData();
-  }, [selectedCategory]);
-
-  useEffect(() => {
-    const currentCategory = categories.find(cat => cat.categoryEN === selectedCategory);
-    if (currentCategory) {
-      setSelectedCategory(selectedCategory);
-    }
-  }, [i18n.language]);
 
   const handleCategoryChange = (e) => {
     const selectedTranslatedCategory = e.target.value;
@@ -235,3 +241,5 @@ const Items_Filter = () => {
 };
 
 export default Items_Filter;
+
+
