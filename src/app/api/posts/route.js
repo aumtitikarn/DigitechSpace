@@ -58,6 +58,7 @@ import Post from "../../../../models/post";
 
 export const revalidate = 0;
 
+
 export async function POST(req) {
   try {
     const { imgbucket } = await connectMongoDB();
@@ -69,6 +70,7 @@ export async function POST(req) {
     let selectedCategory = "";
     let author = "";
     let heart = 0;
+    let comments = [];
     let imageUrl = [];
 
     for (const [key, value] of formData.entries()) {
@@ -91,6 +93,12 @@ export async function POST(req) {
         case "author":
           author = value.toString();
           break;
+          case "author":
+          author = value.toString();
+          break;
+          case "comments":
+            comments = value.toString();
+            break;
         case "imageUrl":
           if (value instanceof Blob) {
             const image = `${Date.now()}_${value.name}`;
@@ -117,7 +125,8 @@ export async function POST(req) {
       heart,
       selectedCategory,
       author,
-      imageUrl, // Ensure this is passed as an array
+      imageUrl,
+      comments: [], // This will handle it as an empty array
     });
 
     const savedProject = await newItem.save();
