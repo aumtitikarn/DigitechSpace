@@ -11,6 +11,9 @@ const normalUserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     roleai: { type: String, default: '' },
     interests: { type: [String], default: [] },
+    line : { type: String, required: true },
+    facebook : { type: String, required: true },
+    imageUrl: { type: [String], required: true },
 }, { timestamps: true });
 
 const NormalUser = mongoose.models.NormalUser || mongoose.model('NormalUser', normalUserSchema);
