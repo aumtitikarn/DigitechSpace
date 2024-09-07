@@ -1,57 +1,93 @@
 "use client";
 
-import React, { useState } from "react";
-import { IoIosStar } from "react-icons/io";
-import { CiHeart } from "react-icons/ci";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
+import { MdAccountCircle } from "react-icons/md";
+import { FaPlus } from "react-icons/fa6";
+import { OrbitProgress } from "react-loading-indicators";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import Container from "../../../components/Container";
 import { useSession } from "next-auth/react";
-import { FaLink } from "react-icons/fa";
-import Box from "next-auth/providers/box";
-import { MdAccountCircle } from "react-icons/md";
-import { FaPlus } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
-import { OrbitProgress } from "react-loading-indicators";
 
 function page() {
+  const { data: session, status } = useSession(); // Initialize session
+  const { t } = useTranslation("translation");
 
-  // const [newName, setNewName] = useState(session?.user?.name || "");
+  // State for the new name, profile image, and image file
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newLine, setNewLine] = useState("");
+  const [newFacebook, setNewFacebook] = useState("");
+  const [newPhonenumber, setNewPhonenumber] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // Add this state to store the image file
 
-  const { data: session, status } = useSession();
-  const { t, i18n } = useTranslation("translation");
+  // Handle session updates once the session data is loaded
+  useEffect(() => {
+    if (session?.user?.name) {
+      setNewName(session.user.name); // Set the initial name from session data
+    }
+    if (session?.user?.email) {
+      setNewEmail(session.user.email); // Set the initial name from session data
+    }
+    if (session?.user?.imageUrl) {
+      setProfileImage(session.user.imageUrl); // Set the initial image from session data
+    }
+  }, [session]);
+
   if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" />
+      </div>
+    );
   }
 
-  const handleSave = async () => {
-    // Send the updated name to the backend API for saving
-    const response = await fetch(`/api/auth/${id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        // email: session?.user?.email, // Identify the user by email
-        name: newName, // Updated name
-      }),
-    });
+  // Handle image file selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file); // Store the file in the imageFile state
+      setProfileImage(URL.createObjectURL(file)); // Show preview of the uploaded image
+    }
+  };
 
-    if (response.ok) {
-      console.log("Profile saved successfully");
-      // Optionally, you can add a success message or reload the session data
-    } else {
-      console.log("Error saving profile");
+  // Handle saving profile updates
+  const handleSave = async () => {
+    const formData = new FormData();
+    formData.append("name", newName);
+    formData.append("email", newEmail);
+    formData.append("line", newLine);
+    formData.append("facebook", newFacebook);
+    formData.append("phonenumber", newPhonenumber);
+
+    if (imageFile) {
+      formData.append("imageUrl", imageFile); // Append image file to form data
+    }
+
+    try {
+      const response = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "PUT",
+        body: formData, // Use FormData to handle file uploads
+      });
+
+      if (response.ok) {
+        console.log("Profile saved successfully");
+        // Optionally reload session data or update the UI
+      } else {
+        console.log("Error saving profile");
+      }
+    } catch (error) {
+      console.error("Error during save:", error);
     }
   };
 
@@ -60,19 +96,40 @@ function page() {
       <Navbar />
       <main className="flex flex-col md:flex-row w-full justify-center p-4 my-[50px]">
         <div className="flex flex-col items-center w-full max-w-lg">
-          <div className="flex flex-row justify-center">
-            <div className="relative">
+          <div className="flex flex-row justify-center relative">
+            {profileImage ? (
+              // Show uploaded image if available
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="rounded-full"
+                style={{ width: "95px", height: "95px", margin: "-10px", objectFit: "cover" }}
+              />
+            ) : (
+              // Show default icon if no image is uploaded
               <MdAccountCircle
                 className="rounded-full text-gray-500"
                 style={{ width: "95px", height: "95px", margin: "-10px" }}
               />
-              <div
-                className="absolute right-0 bottom-0 bg-white rounded-full p-1 border-2 border-black"
-                style={{ transform: "translate(25%, 25%)" }}
-              >
-                <FaPlus size={18} className="text-black" />
-              </div>
-            </div>
+            )}
+
+            {/* Hidden file input for image upload */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+              id="imageUpload"
+            />
+
+            {/* Plus icon to trigger file input */}
+            <label
+              htmlFor="imageUpload"
+              className="absolute right-0 bottom-0 bg-white rounded-full p-1 border-2 border-black cursor-pointer"
+              style={{ transform: "translate(25%, 25%)" }}
+            >
+              <FaPlus size={18} className="text-black" />
+            </label>
           </div>
 
           <div className="flex flex-row justify-center">
@@ -100,7 +157,9 @@ function page() {
               </div>
               <input
                 type="email"
-                placeholder="Enter email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder={session?.user?.email}
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />
               <div className="flex flex-row items-center w-full mt-4">
@@ -108,6 +167,8 @@ function page() {
               </div>
               <input
                 type="text"
+                value={newPhonenumber}
+                onChange={(e) => setNewPhonenumber(e.target.value)}
                 placeholder="Enter phone number"
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />
@@ -116,6 +177,8 @@ function page() {
               </div>
               <input
                 type="text"
+                value={newFacebook}
+                onChange={(e) => setNewFacebook(e.target.value)}
                 placeholder="Enter your facebook"
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />
@@ -124,6 +187,8 @@ function page() {
               </div>
               <input
                 type="text"
+                value={newLine}
+                onChange={(e) => setNewLine(e.target.value)}
                 placeholder="Enter your ID"
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />
