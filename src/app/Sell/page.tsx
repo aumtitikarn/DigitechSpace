@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
@@ -13,19 +13,15 @@ import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 // Define the Product type
 type Product = {
-  image: string;
-  name: string;
+  _id: string;
+  imageUrl: string;
+  projectname: string;
   author: string;
-  rating: string;
-  reviews: number;
+  rathing: string;
+  review: number;
   sold: number;
   price: string;
 };
-
-// Define the type for the ProductList props
-interface ProductListProps {
-  products: Product[];
-}
 
 // Modal Component for confirmation
 const ConfirmDeleteModal: React.FC<{
@@ -38,9 +34,7 @@ const ConfirmDeleteModal: React.FC<{
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-[300px]">
-        <p className="mt-4 text-center font-bold">
-        {t("nav.sell.want")}
-        </p>
+        <p className="mt-4 text-center font-bold">{t("nav.sell.want")}</p>
         <div className="mt-6 flex justify-center space-x-3">
           <button
             className="bg-gray-200 px-4 py-2 rounded-md"
@@ -61,14 +55,17 @@ const ConfirmDeleteModal: React.FC<{
 };
 
 // ProductList Component
-const ProductList: React.FC<ProductListProps> = ({ products }) => {
-  const { data: session } = useSession();
+const ProductList: React.FC = () => {
+  const { data: session, status } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const { t, i18n } = useTranslation("translation");
+  const [pendingProjects, setPendingProjects] = useState<Product[]>([]);
+  const [publishedProjects, setPublishedProjects] = useState<Product[]>([]);
+  const [projectToDelete, setProjectToDelete] = useState<Product | null>(null);
 
-  const handleDeleteClick = (product: Product) => {
-    setProductToDelete(product);
+  const handleDeleteClick = (project: Product) => {
+    setProjectToDelete(project);
     setIsModalOpen(true);
   };
 
@@ -77,30 +74,96 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
     setProductToDelete(null);
   };
 
-  const handleConfirmDelete = () => {
-    if (productToDelete) {
-      // Logic to delete the product
-      console.log("Deleting product:", productToDelete);
-      // Close the modal after deletion
+  const handleConfirmDelete = async () => {
+    if (projectToDelete) {
+      console.log("Attempting to delete project:", projectToDelete._id);
+      try {
+        const response = await fetch(`/api/project/delete/${projectToDelete._id}`, {
+          method: 'DELETE',
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+          console.log(data.message);
+          setPublishedProjects(prevProjects => 
+            prevProjects.filter(project => project._id !== projectToDelete._id)
+          );
+        } else {
+          console.error("Failed to delete project:", data.message);
+        }
+      } catch (error) {
+        console.error("Error deleting project:", error);
+      }
       setIsModalOpen(false);
-      setProductToDelete(null);
+      setProjectToDelete(null);
+    } else {
+      console.error("No project selected for deletion");
     }
   };
   if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
   }
+  useEffect(() => {
+    const fetchPendingProjects = async () => {
+      try {
+        const response = await fetch("/api/project/getProjects/notpermission");
+        if (!response.ok) {
+          throw new Error("Failed to fetch pending projects");
+        }
+        const data = await response.json();
+        setPendingProjects(data);
+      } catch (error) {
+        console.error("Error fetching pending projects:", error);
+      }
+    };
 
+    fetchPendingProjects();
+  }, []);
+  useEffect(() => {
+    const fetchProjects = async () => {
+        if (status === "authenticated" && session) {
+          try {
+            // Fetch published projects
+            const publishedResponse = await fetch('/api/project/getProjects/user', {
+              method: 'GET',
+            });
+            if (publishedResponse.ok) {
+              const publishedData = await publishedResponse.json();
+              console.log("Published Data:", publishedData); // Debug log
+              setPublishedProjects(publishedData);
+            } else {
+              console.error("Failed to fetch published projects");
+            }
+          } catch (error) {
+            console.error('Error fetching projects:', error);
+          }
+      }
+    };
+
+    fetchProjects();
+  }, [status, session]);
   return (
     <div className="flex-grow">
-      <Navbar  />
+      <Navbar />
       <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
         <h1 className="text-[24px] font-bold">{t("nav.sell.title")}</h1>
         <div>
@@ -124,27 +187,30 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
           </div>
           <h1 className="text-[24px] font-bold mt-10">{t("nav.sell.wait")}</h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-            {products.map((product, index) => (
-              <Link key={index} href="/project/projectdetail" passHref>
-                <div className="relative mt-2">
+            {pendingProjects.map((project, index) => (
+              <Link
+                key={index}
+                href={`/project/projectdetail/${project._id}`}
+                passHref
+              >
+                <div className="relative mt-5">
                   <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
-                    {/* Product Image */}
                     <div className="w-auto h-auto flex flex-col">
                       <img
-                        src={product.image}
+                        src={`/api/project/images/${project.imageUrl[0]}`}
                         alt="Product Image"
                         className="w-full h-[150px] rounded-md object-cover mb-4"
                       />
                       <div className="flex flex-col h-full">
                         <p className="text-lg font-semibold mb-2 truncate">
-                          {product.name}
+                          {project.projectname}
                         </p>
                         <div className="flex items-center mb-2">
                           <span className="text-gray-500 mr-2 text-2xl">
                             <MdAccountCircle />
                           </span>
                           <p className="text-sm text-gray-600 truncate">
-                            {product.author}
+                            {project.author}
                           </p>
                         </div>
                         <div className="flex items-center mb-2">
@@ -152,12 +218,12 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                             <IoIosStar />
                           </span>
                           <span className="text-gray-600 text-xs lg:text-sm">
-                            {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
-                            {product.sold}
+                            {project.rathing || "N/A"} ({project.review}) |{" "}
+                            {t("nav.project.projectdetail.sold")} {project.sold}
                           </span>
                         </div>
                         <p className="text-lg font-bold text-[#33529B]">
-                          {product.price} THB
+                          {project.price} THB
                         </p>
                       </div>
                     </div>
@@ -167,62 +233,64 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
             ))}
           </div>
           <h1 className="text-[24px] font-bold mt-10">{t("nav.sell.publish")}</h1>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-            {products.map((product, index) => (
-              <div key={index} className="relative mt-2">
-                <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
-                  <Link href="/project/projectdetail" passHref>
-                    <div className="w-auto h-auto flex flex-col cursor-pointer">
-                      {/* Product Image */}
-                      <img
-                        src={product.image}
-                        alt="Product Image"
-                        className="w-full h-[150px] rounded-md object-cover mb-4"
-                      />
-                      <div className="flex flex-col h-full">
-                        <p className="text-lg font-semibold mb-2 truncate">
-                          {product.name}
-                        </p>
-                        <div className="flex items-center mb-2">
-                          <span className="text-gray-500 mr-2 text-2xl">
-                            <MdAccountCircle />
-                          </span>
-                          <p className="text-sm text-gray-600 truncate">
-                            {product.author}
-                          </p>
-                        </div>
-                        <div className="flex items-center mb-2">
-                          <span className="text-yellow-500 mr-2 text-lg">
-                            <IoIosStar />
-                          </span>
-                          <span className="text-gray-600 text-xs lg:text-sm truncate">
-                            {product.rating} ({product.reviews}) | {t("nav.project.projectdetail.sold")}{" "}
-                            {product.sold}
-                          </span>
-                        </div>
-                        <p className="text-lg font-bold text-[#33529B]">
-                          {product.price} THB
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+        {publishedProjects.length > 0 ? (
+          publishedProjects.map((project) => (
+            <div key={project._id} className="relative mt-5">
+              <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
+                <Link href={`/project/projectdetail/${project._id}`} passHref>
+                  <div className="w-auto h-auto flex flex-col cursor-pointer">
+                    <img
+                      src={`/api/project/images/${project.imageUrl[0]}`}
+                      alt="Project Image"
+                      className="w-full h-[150px] rounded-md object-cover mb-4"
+                    />
+                    <div className="flex flex-col h-full">
+                      <p className="text-lg font-semibold mb-2 truncate">
+                        {project.projectname}
+                      </p>
+                      <div className="flex items-center mb-2">
+                        <span className="text-gray-500 mr-2 text-2xl">
+                          <MdAccountCircle />
+                        </span>
+                        <p className="text-sm text-gray-600 truncate">
+                          {project.author}
                         </p>
                       </div>
+                      <div className="flex items-center mb-2">
+                        <span className="text-yellow-500 mr-2 text-lg">
+                          <IoIosStar />
+                        </span>
+                        <span className="text-gray-600 text-xs lg:text-sm truncate">
+                          {project.rathing || "N/A"} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
+                        </span>
+                      </div>
+                      <p className="text-lg font-bold text-[#33529B]">
+                        {project.price} THB
+                      </p>
                     </div>
-                  </Link>
-                  {/* Icons */}
-                  <div className="reletive flex justify-between lg:px-10 md:px-[50px] px-5 my-2">
-                    <Link href="/Sell/AddProject">
-                      <VscEdit
-                        size={20}
-                        className="text-gray-500 hover:text-[#33539B]"
-                      />
-                    </Link>
-                    <MdDeleteOutline
-                      size={20}
-                      className="text-gray-500 hover:text-red-500 cursor-pointer"
-                      onClick={() => handleDeleteClick(product)}
-                    />
                   </div>
+                </Link>
+                {/* Icons */}
+                <div className="reletive flex justify-between lg:px-10 md:px-[50px] px-5 my-2">
+                  <Link href={`/Sell/Edit?edit=${project._id}`}>
+                    <VscEdit
+                      size={20}
+                      className="text-gray-500 hover:text-[#33539B]"
+                    />
+                  </Link>
+                  <MdDeleteOutline
+                    size={20}
+                    className="text-gray-500 hover:text-red-500 cursor-pointer"
+                    onClick={() => handleDeleteClick(project)}
+                  />
                 </div>
               </div>
-            ))}
+            </div>
+          ))
+        ) : (
+        <></>
+        )}
           </div>
         </div>
       </div>
@@ -237,92 +305,11 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
 };
 
 const App: React.FC = () => {
-  const products: Product[] = [
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Flutter Developer",
-      author: "Seksit Panyapat",
-      rating: "4.9",
-      reviews: 37,
-      sold: 42,
-      price: "100,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Flutter Developer",
-      author: "Seksit Panyapat",
-      rating: "4.9",
-      reviews: 37,
-      sold: 42,
-      price: "100,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Flutter Developer",
-      author: "Seksit Panyapat",
-      rating: "4.9",
-      reviews: 37,
-      sold: 42,
-      price: "100,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Flutter Developer",
-      author: "Seksit Panyapat",
-      rating: "4.9",
-      reviews: 37,
-      sold: 42,
-      price: "100,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Flutter Developer",
-      author: "Seksit Panyapat",
-      rating: "4.9",
-      reviews: 37,
-      sold: 42,
-      price: "100,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Flutter Developer",
-      author: "Seksit Panyapat",
-      rating: "4.9",
-      reviews: 37,
-      sold: 42,
-      price: "100,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Flutter Developer",
-      author: "Seksit Panyapat",
-      rating: "4.9",
-      reviews: 37,
-      sold: 42,
-      price: "100,000",
-    },
-  ];
-
   return (
-    <div>
-      <ProductList products={products} />
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-grow">
+        <ProductList />
+      </main>
       <Footer />
     </div>
   );

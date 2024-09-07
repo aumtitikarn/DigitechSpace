@@ -21,6 +21,10 @@ const ProjectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+  },
   receive: [String],
   permission: { 
     type: Boolean, 

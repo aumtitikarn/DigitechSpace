@@ -117,6 +117,7 @@
       "want" : "Want to delete your project?",
       "no" : "No",
       "yes" : "Yes",
+      "edit" : "Edit your project",
       "addP" : {
         "proname" : "Project name",
         "des" : "Description",
