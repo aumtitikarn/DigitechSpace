@@ -55,6 +55,8 @@
       "photo": "รูปภาพ/ศิลปะ",
       "other": "อื่นๆ",
       "rating": "เรตติง",
+      "showless" : "แสดงน้อยลง",
+      "showmore" : "แสดงมากขึ้น",
       "projectdetail": {
         "buy": "ซื้อ",
         "description": "คำอธิบาย",

@@ -55,6 +55,8 @@
       "photo": "Photo/Art",
       "other": "Other",
       "rating": "Rating",
+      "showless" : "Show Less",
+      "showmore" : "Show More",
       "projectdetail" : {
         "buy" : "Buy",
         "description" : "Description",

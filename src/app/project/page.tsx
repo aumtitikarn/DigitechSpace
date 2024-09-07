@@ -10,10 +10,19 @@ import { GoCheck ,GoShare,GoHeartFill } from "react-icons/go";
 import Link from "next/link";
 import Filter from "./filter"
 import { OrbitProgress } from "react-loading-indicators";
+import { useRouter } from 'next/router';
 
+type SearchParams = {
+  category?: string;
+};
 
-const Project = () => {
+type Props = {
+  searchParams: SearchParams;
+};
+
+const Project = ({ searchParams }: Props) => {
     const { data: session, status } = useSession();
+    const category = searchParams.category;
 
     if (status === "loading") {
       return <div style={{
@@ -32,7 +41,7 @@ const Project = () => {
     <main className="flex-grow ">
      <Navbar  />
      <div className=" lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5 lg:mx-20 ">
-      <Filter/>
+      <Filter initialCategory={category} isProjectPage={true}/>
       </div>
     </main>
     <Footer />
