@@ -17,6 +17,9 @@ import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 
 function page() {
+
+  // const [newName, setNewName] = useState(session?.user?.name || "");
+
   const { data: session, status } = useSession();
   const { t, i18n } = useTranslation("translation");
   if (status === "loading") {
@@ -32,20 +35,21 @@ function page() {
   }
 
   const handleSave = async () => {
-    // ส่งข้อมูลที่ได้รับการแก้ไขกลับไปยังเซิร์ฟเวอร์
-    const response = await fetch("/api/auth/", {
+    // Send the updated name to the backend API for saving
+    const response = await fetch(`/api/auth/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
+        // email: session?.user?.email, // Identify the user by email
+        name: newName, // Updated name
       }),
     });
 
     if (response.ok) {
-      console.log("Profile saved");
-      // ทำสิ่งที่ต้องการเมื่อบันทึกข้อมูลสำเร็จ
+      console.log("Profile saved successfully");
+      // Optionally, you can add a success message or reload the session data
     } else {
       console.log("Error saving profile");
     }
@@ -86,6 +90,8 @@ function page() {
               </div>
               <input
                 type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)} // Update state when input changes
                 placeholder={session?.user?.name}
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />

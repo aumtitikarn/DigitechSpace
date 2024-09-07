@@ -56,23 +56,24 @@ function Blog({ params, initialComments }) {
   const [commentInput, setCommentInput] = useState("");
   const [replyInput, setReplyInput] = useState("");
   const [replyingTo, setReplyingTo] = useState(null); // เก็บ ID ของ comment ที่กำลังตอบกลับ
-  
+
 
   const handleAddCommentOrReply = async (isReply, commentId = null) => {
     const requestBody = {
       text: isReply ? replyInput : commentInput,
       action: isReply ? "reply" : "comment",
       author: session?.user?.name || "Anonymous", // เพิ่มชื่อผู้แสดงความคิดเห็น
+      timestamp: new Date(),
       ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
     };
-  
+
     try {
       const res = await fetch(`/api/posts/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
-  
+
       if (res.ok) {
         const updatedData = await res.json();
         setComments(updatedData.post.comments); // อัปเดตคอมเมนต์ใหม่
@@ -80,12 +81,12 @@ function Blog({ params, initialComments }) {
         setReplyInput("");
         setReplyingTo(null);
         router.refresh();
+        router.push(`/blog/${id}`);
       }
     } catch (error) {
       console.log(error);
     }
   };
-
 
 
   ////////////////////////////////
@@ -237,7 +238,7 @@ function Blog({ params, initialComments }) {
 
   return (
     <Container>
-      <Navbar session={session}/>
+      <Navbar session={session} />
       <main className="flex flex-col items-center w-full">
         <div className="w-full max-w-screen-lg p-4">
           <div className="flex flex-col">
@@ -392,14 +393,58 @@ function Blog({ params, initialComments }) {
             <div>
               {Array.isArray(postData.comments) &&
                 postData.comments.map((comment) => (
-                  <div key={comment._id}>
-                    <p>{comment.text}</p>
+                  <div key={comment._id} className="flex flex-col border-2 m-3 p-2">
+                    <div className="flex flex-col">
+                      <p className="flex flex-row">
+                        <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+                        <strong className="flex flex-col justify-center text-lg">{comment.author} : </strong>
+                      </p>
+                      <p className="ml-4 text-lg">{comment.text}</p>
+                      <div className="flex flex-col">
+                        {/* <p className="text-sm text-gray-500"><em>Commented on: {new Date(comment.timestamp).toLocaleString()}</em></p>  */}
+                        <div className="flex flex-row">
+                          {replyingTo === comment._id ? (
+                            <div className="flex flex-col ml-4">
 
+                              <textarea className="border-2 rounded p-2"
+                                value={replyInput}
+                                onChange={(e) => setReplyInput(e.target.value)}
+                                placeholder="Reply to this comment"
+                              />
+
+                              <div className="flex flex-row w-80">
+                                <div className="flex flex-row w-80 justify-end">
+                                <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm"
+                                  onClick={() => handleAddCommentOrReply(true, comment._id)}
+                                >
+                                  Replyt
+                                </button>
+                                <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#9B3933] text-white text-sm"
+                                  onClick={() => setReplyingTo(null)}
+                                >
+                                  Cancel
+                                </button>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <button onClick={() => setReplyingTo(comment._id)} className="font-bold text-[#0E6FFF] ml-4">Reply</button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                     {/* Handle replies if they exist */}
                     {comment.replies && comment.replies.length > 0 && (
                       <div style={{ marginLeft: '20px' }}>
                         {comment.replies.map((reply) => (
-                          <p key={reply._id}>- {reply.text}</p>
+                          <div>
+                            <p key={reply._id}></p>
+                            <p className="flex flex-row">
+                              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+                              <strong className="flex flex-col justify-center text-lg">{reply.author} : </strong>
+                            </p>
+                            <p className="ml-4 text-lg">{reply.text}</p>
+                          </div>
                         ))}
                       </div>
                     )}
@@ -415,13 +460,13 @@ function Blog({ params, initialComments }) {
               Add Comment
             </button>
 
-            {/* แสดงรายการความคิดเห็น */}
-            <div>
+            
+            {/* <div>
               {Array.isArray(comments) && comments.map((comment) => (
                 <div key={comment._id}>
                   <p>{comment.text}</p>
 
-                  {/* แสดงฟอร์มการตอบกลับ */}
+                
                   {replyingTo === comment._id ? (
                     <>
                       <textarea
@@ -440,7 +485,7 @@ function Blog({ params, initialComments }) {
                     <button onClick={() => setReplyingTo(comment._id)}>Reply</button>
                   )}
 
-                  {/* แสดงรายการตอบกลับ */}
+                  
                   {comment.replies && comment.replies.length > 0 && (
                     <div style={{ marginLeft: "20px" }}>
                       {comment.replies.map((reply) => (
@@ -450,7 +495,7 @@ function Blog({ params, initialComments }) {
                   )}
                 </div>
               ))}
-            </div>
+            </div> */}
 
             {isPopupOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
