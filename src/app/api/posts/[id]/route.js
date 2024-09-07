@@ -25,6 +25,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ message: 'Post not found' }, { status: 404 });
     }
 
+    const timestamp = new Date().toLocaleString(); // สร้าง timestamp ตรงนี้ก่อนใช้งาน
+
     // Update heart value
     if (heart !== undefined) {
       post.heart = heart;
@@ -35,12 +37,13 @@ export async function PUT(req, { params }) {
       post.comments.push({
         text,
         author, // Add comment author
+        timestamp, // เพิ่ม timestamp
         replies: [],
       });
     } else if (action === 'reply' && commentId) {
       const comment = post.comments.id(commentId);
       if (comment) {
-        comment.replies.push({ text, author }); // Add reply with author
+        comment.replies.push({ text, author, timestamp }); // เพิ่ม timestamp สำหรับ reply
       }
     }
 
