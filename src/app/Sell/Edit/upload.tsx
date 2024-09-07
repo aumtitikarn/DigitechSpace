@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { GoFile } from "react-icons/go";
 import { useTranslation } from "react-i18next";
 
@@ -16,26 +16,10 @@ const Upload: React.FC<UploadProps> = ({
 }) => {
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState<number[]>([]);
   const maxFilesize = 50; // Maximum total file size in MB
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation("translation");
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files || []);
-    let totalSize =
-      selectedFiles.reduce((acc, file) => acc + file.size, 0) +
-      newFiles.reduce((acc, file) => acc + file.size, 0);
-
-    if (totalSize > maxFilesize * 1024 * 1024) {
-      setError(t("nav.sell.upload.error"));
-      return;
-    }
-
-    const updatedNewFiles = [...newFiles, ...selectedFiles];
-    setNewFiles(updatedNewFiles);
-    setError(null);
-    onFilesChange(updatedNewFiles);
-  };
 
   const handleRemoveNewFile = (index: number) => {
     const updatedNewFiles = newFiles.filter((_, i) => i !== index);
@@ -49,7 +33,57 @@ const Upload: React.FC<UploadProps> = ({
       console.error("onExistingFileRemove is not a function");
     }
   };
-
+  useEffect(() => {
+    if (newFiles.length > 0) {
+      const intervals = newFiles.map((_, index) => {
+        return setInterval(() => {
+          setProgress((prevProgress) => {
+            const newProgress = [...prevProgress];
+            if (newProgress[index] < 100) {
+              newProgress[index] = newProgress[index] + 1; // Increase progress
+            }
+            return newProgress;
+          });
+        }, 100); // Update progress every 100ms
+      });
+  
+      const progressCheckInterval = setInterval(() => {
+        if (progress.every((p) => p >= 100)) {
+          clearInterval(progressCheckInterval);
+          intervals.forEach(clearInterval); // Clear all intervals
+        }
+      }, 100);
+  
+      return () => {
+        clearInterval(progressCheckInterval);
+        intervals.forEach(clearInterval);
+      };
+    }
+  }, [newFiles]);
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(event.target.files || []);
+    let totalSize =
+      selectedFiles.reduce((acc, file) => acc + file.size, 0) +
+      newFiles.reduce((acc, file) => acc + file.size, 0);
+  
+    if (totalSize > maxFilesize * 1024 * 1024) {
+      setError(t("nav.sell.upload.error"));
+      return;
+    }
+  
+    const updatedNewFiles = [...newFiles, ...selectedFiles];
+    setNewFiles(updatedNewFiles);
+  
+    // Initialize progress for the new files
+    setProgress((prevProgress) => [
+      ...prevProgress,
+      ...new Array(selectedFiles.length).fill(0),
+    ]);
+  
+    setError(null);
+    onFilesChange(updatedNewFiles);
+  };
   return (
     <div id="hs-file-upload-with-limited-file-size">
       <div
@@ -153,9 +187,20 @@ const Upload: React.FC<UploadProps> = ({
             className="p-3 bg-white border border-solid border-gray-300 rounded-xl"
           >
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-x-3">
-                <GoFile className="text-gray-500" size={24} />
-                <span className="truncate">{file.name}</span>
+            <div className="flex items-center gap-x-3">
+                <span className="size-10 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg ">
+                <GoFile />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800 ">
+                    <span className="truncate inline-block max-w-[300px] align-bottom">
+                      {file.name}
+                    </span>
+                  </p>
+                  <p className="text-xs text-gray-500 ">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
               </div>
               <button
                 type="button"
@@ -181,6 +226,25 @@ const Upload: React.FC<UploadProps> = ({
                   <line x1="14" x2="14" y1="11" y2="17"></line>
                 </svg>
               </button>
+            </div>
+            <div className="flex items-center gap-x-3 whitespace-nowrap">
+              <div
+                className="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden "
+                role="progressbar"
+                aria-valuenow={progress[index] || 0}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <div
+                  className="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap transition-all duration-500"
+                  style={{ width: `${progress[index] || 0}%` }}
+                ></div>
+              </div>
+              <div className="w-10 text-end">
+                <span className="text-sm text-gray-800 ">
+                  {progress[index] || 0}%
+                </span>
+              </div>
             </div>
           </div>
         ))}
