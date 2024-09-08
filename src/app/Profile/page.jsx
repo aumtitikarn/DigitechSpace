@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import { IoIosStar } from "react-icons/io";
 import { CiHeart } from "react-icons/ci";
 import Image from 'next/image'
@@ -43,31 +43,31 @@ function page() {
   </div>;
   }
 
-    // const getPosts = async ()=> {
+    const getPosts = async ()=> {
 
-    //   try{
-    //     const res = await fetch("http://localhost:3000/api/posts",{
-    //       cache:"no-store"
-    //     })
+      try{
+        const res = await fetch("http://localhost:3000/api/auth/signup",{
+          cache:"no-store"
+        })
   
-    //     if(!res.ok){
-    //       throw new Error("Failed of fetch posts")
-    //     }
+        if(!res.ok){
+          throw new Error("Failed of fetch posts")
+        }
   
-    //     const data = await res.json();
-    //     console.log("Fetched Data: ", data); // Log the data to inspect its structure
-    //     setPostData(data.posts);
-    //     console.log(data); // Check the structure here
-    //     setPostData(data.posts); // Make sure data.posts exists
+        const data = await res.json();
+        console.log("Fetched Data: ", data); // Log the data to inspect its structure
+        setPostData(data.posts);
+        console.log(data); // Check the structure here
+        setPostData(data.posts); // Make sure data.posts exists
   
-    //   } catch(error) {
-    //     console.log("Error loading posts: ",error);
-    //   }
-    // }
+      } catch(error) {
+        console.log("Error loading posts: ",error);
+      }
+    }
   
-    // useEffect(()=>{
-    //   getPosts();
-    // },[]);
+    useEffect(()=>{
+      getPosts();
+    },[]);
 
 
     const products = [

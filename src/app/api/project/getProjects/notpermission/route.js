@@ -1,6 +1,6 @@
 //./api/project/getProjects
-import { connectMongoDB } from '../../../../../lib/mongodb';
-import Project from '../../../../../models/project';
+import { connectMongoDB } from '../../../../../../lib/mongodb';
+import Project from '../../../../../../models/project';
 
 export async function GET(req) {
   try {
@@ -11,7 +11,7 @@ export async function GET(req) {
 
     const query = {
         ...(category && category !== "All" && { category }),
-        permission: true
+        permission: false
       };
 
     const projects = await Project.find(query).sort({ createdAt: -1 });

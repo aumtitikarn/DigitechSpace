@@ -72,9 +72,13 @@ const ProductList = ({ products, titles }) => {
               ))}
             </div>
             <div className="flex-grow text-center">
-              <p className="text-[#33529B] font-bold mt-3 text-[18px]">
-                {t("nav.home.seemore")} ({filteredProducts.length})
-              </p>
+              <Link
+                href={`/project?category=${encodeURIComponent(processedTitle)}`}
+              >
+                <p className="text-[#33529B] font-bold mt-3 text-[18px] cursor-pointer">
+                  {t("nav.home.seemore")} ({filteredProducts.length})
+                </p>
+              </Link>
             </div>
           </div>
         );
@@ -82,6 +86,21 @@ const ProductList = ({ products, titles }) => {
     </div>
   );
 };
+
+const productCategories = [
+  {
+    group: "Software Development",
+    categories: ["Website", "MobileApp", "Program"],
+  },
+  { group: "Data and AI", categories: ["Ai", "Datasets"] },
+  { group: "Hardware and IoT", categories: ["IOT", "Program"] },
+  { group: "Content and Design", categories: ["Document", "photo"] },
+  {
+    group: "3D and Modeling",
+    categories: ["model", "photo", "Document"],
+  },
+];
+// มีสองหมวดในหนึ่งกรุ๊ป, มีอันนึงไม่มีอันนึง, ไม่มีเลย
 
 const Aigenproject = () => {
   const [titles, setTitles] = useState([]);
@@ -91,81 +110,108 @@ const Aigenproject = () => {
   const { t } = useTranslation("translation");
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (status === "authenticated" && session.user) {
-        try {
-          const response = await fetch("/api/ai/interest/get", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (response.ok) {
-            const userData = await response.json();
-            if (userData.interests && userData.interests.length > 0) {
-              setTitles(
-                Array.isArray(userData.interests)
-                  ? userData.interests
-                  : userData.interests.split(",")
-              );
-            } else {
-              await fetchTopCategories();
-            }
-          } else {
-            const errorData = await response.json();
-            console.error("Failed to fetch user interests:", errorData);
-            setError(errorData.message || "Failed to fetch user interests");
-            await fetchTopCategories();
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          setError("An error occurred while fetching user data");
-          await fetchTopCategories();
-        }
-      } else if (status === "unauthenticated") {
-        await fetchTopCategories();
-      }
-    };
-
-    const fetchTopCategories = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch("/api/project/getProjects", {
+        const projectsResponse = await fetch("/api/project/getProjects", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
         });
 
-        if (response.ok) {
-          const projectsData = await response.json();
-          setProducts(projectsData);
-
-          // Count projects per category
-          const categoryCounts = projectsData.reduce((acc, project) => {
-            acc[project.category] = (acc[project.category] || 0) + 1;
-            return acc;
-          }, {});
-
-          // Sort categories by project count and get top 3
-          const topCategories = Object.entries(categoryCounts)
-            .sort((a, b) => b[1] - a[1])
-            .filter(([_, count]) => count > 0)
-            .slice(0, 3)
-            .map(([category]) => category);
-
-          setTitles(topCategories);
-        } else {
-          console.error("Failed to fetch projects");
-          setError("Failed to fetch projects");
+        if (!projectsResponse.ok) {
+          throw new Error("Failed to fetch projects");
         }
+
+        const projectsData = await projectsResponse.json();
+        setProducts(projectsData);
+        console.log("Fetched projects:", projectsData);
+
+        // Count projects per category (case-insensitive)
+        const categoryCounts = projectsData.reduce((acc, project) => {
+          const category = project.category.toLowerCase();
+          acc[category] = (acc[category] || 0) + 1;
+          return acc;
+        }, {});
+        console.log("Category counts:", categoryCounts);
+
+        let userTitles = [];
+        if (status === "authenticated" && session.user) {
+          const interestsResponse = await fetch("/api/ai/interest/get", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (interestsResponse.ok) {
+            const userData = await interestsResponse.json();
+            if (userData.interests && userData.interests.length > 0) {
+              userTitles = Array.isArray(userData.interests)
+                ? userData.interests
+                : userData.interests.split(",");
+            }
+          }
+        }
+        console.log("User titles:", userTitles);
+
+        if (userTitles.length === 0) {
+          userTitles = getTopCategories(categoryCounts, 3);
+        }
+        console.log("Final user titles:", userTitles);
+
+        // Process titles, replace with related categories if needed, and filter out those without products
+        const finalTitles = userTitles.reduce((acc, title) => {
+          const lowercaseTitle = title.toLowerCase();
+          if (categoryCounts[lowercaseTitle] > 0) {
+            acc.push(lowercaseTitle);
+          }
+        
+          const relatedCategories = findRelatedCategories(lowercaseTitle);
+          relatedCategories.forEach(category => {
+            if (categoryCounts[category.toLowerCase()] > 0 && !acc.includes(category.toLowerCase())) {
+              acc.push(category.toLowerCase());
+            }
+          });
+        
+          return acc;
+        }, []);
+
+        console.log("Processed titles:", finalTitles);
+        setTitles(finalTitles);
       } catch (error) {
-        console.error("Error fetching projects:", error);
-        setError("An error occurred while fetching projects");
+        console.error("Error fetching data:", error);
+        setError("An error occurred while fetching data");
       }
     };
 
-    fetchUserData();
+    const getTopCategories = (categoryCounts, count) => {
+      return Object.entries(categoryCounts)
+        .sort((a, b) => b[1] - a[1])
+        .filter(([_, count]) => count > 0)
+        .slice(0, count)
+        .map(([category]) => category);
+    };
+
+    const findRelatedCategories = (title) => {
+      const relatedCategories = new Set();
+      productCategories.forEach((group) => {
+        if (
+          group.categories.some(
+            (cat) => cat.toLowerCase() === title.toLowerCase()
+          )
+        ) {
+          group.categories.forEach((category) => {
+            if (category.toLowerCase() !== title.toLowerCase()) {
+              relatedCategories.add(category);
+            }
+          });
+        }
+      });
+      return Array.from(relatedCategories);
+    };
+
+    fetchData();
   }, [status, session]);
 
   if (error) {

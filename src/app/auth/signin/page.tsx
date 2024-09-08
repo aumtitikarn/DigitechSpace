@@ -48,12 +48,12 @@ export default function SignIn() {
       console.log('interests : ', sessionData.user?.interests)
       if (sessionData.user?.roleaii) {
         if (sessionData.user?.interests) {
-          router.replace("/Home"); // Redirect to /Home if both roleaii and interest are present
+          router.replace("/Home"); 
         } else {
-          router.replace("/Ai/interest"); // Redirect to /Ai/interest if roleaii is present but interest is missing
+          router.replace("/Ai/interest"); 
         }
       } else {
-        router.replace("/Ai/role"); // Redirect to /Ai/role if roleaii is empty or undefined
+        router.replace("/Ai/role");
       }
     } catch (error) {
       console.log(error);

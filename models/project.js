@@ -21,6 +21,10 @@ const ProjectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+  },
   receive: [String],
   permission: { 
     type: Boolean, 
@@ -50,7 +54,7 @@ const ProjectSchema = new mongoose.Schema({
       'ai',
       'iot',
       'program',
-      'photo/art',
+      'photo',
       'other',
     ],
     required: true,
@@ -59,6 +63,11 @@ const ProjectSchema = new mongoose.Schema({
     type: [String], 
     required: true, 
   },
+  status: {
+    type: String,
+    enum: ['submitted', 'pending', 'reviewing', 'approved', 'rejected'],
+    default: 'submitted'
+  }
 });
 
 const Project = mongoose.models.Project || mongoose.model('Project', ProjectSchema);

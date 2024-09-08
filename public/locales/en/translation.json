@@ -55,6 +55,8 @@
       "photo": "Photo/Art",
       "other": "Other",
       "rating": "Rating",
+      "showless" : "Show Less",
+      "showmore" : "Show More",
       "projectdetail" : {
         "buy" : "Buy",
         "description" : "Description",
@@ -115,6 +117,8 @@
       "want" : "Want to delete your project?",
       "no" : "No",
       "yes" : "Yes",
+      "edit" : "Edit your project",
+      "noproject" : "No projects to display",
       "addP" : {
         "proname" : "Project name",
         "des" : "Description",

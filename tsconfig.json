@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [".next/types/next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/components/home/AiGenProduct2.jsx", "src/app/_app.jsx", "src/app/api/project/[id]/route.่ห", "src/app/api/project/[id]/route.js", "src/app/components/home/AiGenProduct.ts"],
+  "include": [".next/types/next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/components/home/AiGenProduct2.jsx", "src/app/_app.jsx", "src/app/api/project/[id]/route.่ห", "src/app/api/project/[id]/route.js", "src/app/components/home/AiGenProduct.ts", "src/app/api/project/delete/[id]/route.js", "src/app/api/project/getProjects/user/route.js", "src/app/api/auth/[...nextauth]/route.js"],
   "exclude": ["node_modules"]
 }

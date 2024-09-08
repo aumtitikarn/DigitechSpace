@@ -1,6 +1,6 @@
-//Sell/Addproject
+//Sell/Edit
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Upload from "./upload";
@@ -9,11 +9,12 @@ import { MdDeleteOutline } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { AiFillPlusCircle } from "react-icons/ai";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { OrbitProgress } from "react-loading-indicators";
+import Image from "next/image";
 
-const Project: React.FC = () => {
+const ProjectEdit: React.FC = () => {
   const { data: session, status } = useSession();
   const [inputs, setInputs] = useState([{ id: Date.now(), value: "" }]);
   const [projectname, setProjectname] = useState("");
@@ -25,21 +26,89 @@ const Project: React.FC = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [img, setImg] = useState<File[]>([]);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [existingFiles, setExistingFiles] = useState<string[]>([]);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(true);
+  const [projectId, setProjectId] = useState<string | null>(null);
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
+  const [filesToDelete, setFilesToDelete] = useState<string[]>([]);
 
-  console.log("file",files);
-  console.log("img",img);
+  // Fetch existing project data
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      const id = searchParams.get("edit");
+      if (id) {
+        setProjectId(id);
+        try {
+          const response = await fetch(`/api/project/update/get/${id}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Received project data:", data);
+
+          setProjectname(data.projectname || "");
+          setDescription(data.description || "");
+          setCategory(data.category || "");
+          setPrice(data.price ? data.price.toString() : "");
+          setInputs(
+            Array.isArray(data.receive)
+              ? data.receive.map((value: string, index: number) => ({
+                  id: Date.now() + index,
+                  value,
+                }))
+              : []
+          );
+          setExistingImages(data.imageUrl || []);
+          setExistingFiles(data.filesUrl || []);
+        } catch (error) {
+          console.error("Error fetching project data:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: `Failed to load project data: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`,
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+        console.error("No project ID provided in URL");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No project ID provided in URL.",
+        });
+      }
+    };
+
+    fetchProjectData();
+  }, [searchParams]);
+
   if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
+    return (
+      <div style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        textAlign: "center",
+      }}>
+        <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+      </div>
+    );
   }
+  const handleDeleteExistingImage = (index: number) => {
+    const imageToDelete = existingImages[index];
+    setExistingImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImagesToDelete((prev) => [...prev, imageToDelete]);
+  };
+
 
   const handleAdd = () => {
     setInputs([...inputs, { id: Date.now(), value: "" }]);
@@ -48,17 +117,16 @@ const Project: React.FC = () => {
   const handleRemove = (id: number) => {
     setInputs(inputs.filter((input) => input.id !== id));
   };
+
   const handleDelete = (index: number) => {
     setImg((prevImg) => prevImg.filter((_, i) => i !== index));
     setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   
-    // Reset the file input to allow re-selection of the same file
     const fileInput = document.getElementById("file-upload") as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
     }
   };
-  
 
   const handleInputChange = (id: number, value: string) => {
     setInputs(
@@ -68,14 +136,14 @@ const Project: React.FC = () => {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setImg((prevImg) => [...prevImg, ...files]); // เพิ่มไฟล์ใหม่เข้าไปใน state
+    setImg((prevImg) => [...prevImg, ...files]);
     const newImages = files.map((file) => URL.createObjectURL(file));
     setUploadedImages((prevImages) => [...prevImages, ...newImages]);
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!session || !session.user || !session.user.name || !session.user.email) {
       Swal.fire({
         position: "center",
@@ -86,27 +154,42 @@ const Project: React.FC = () => {
       });
       return;
     }
-    const rathingValue: number = parseFloat("0.0");
-    const soldValue: number = 0;
-    const reviewValue: number = 0;
+  
+    if (!projectId) {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Project ID is missing",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+  
     const formData = new FormData();
     formData.append("projectname", projectname);
     formData.append("description", description);
     formData.append("receive", JSON.stringify(inputs.map((input) => input.value)));
     formData.append("category", category);
     formData.append("price", price);
-    formData.append("author", session.user.name);
-    formData.append("email", session.user.email);
-    formData.append("rathing", rathingValue.toFixed(1));
-    formData.append("sold", soldValue.toString());
-    formData.append("review", reviewValue.toString());
-    formData.append("permission", "false");
-    img.forEach((img) => formData.append("imageUrl", img));
-    files.forEach((file) => formData.append("filesUrl", file));
   
+    // Append existing images that were not deleted
+    existingImages.forEach((img) => formData.append("existingImageUrl", img));
+    
+    // Append new images
+    img.forEach((imgFile) => formData.append("newImageUrl", imgFile));
+    
+    // Append images to delete
+    imagesToDelete.forEach((image) => formData.append("imagesToDelete", image));
+  
+    // Append new files
+    files.forEach((file) => formData.append("newFilesUrl", file));
+  
+    filesToDelete.forEach(file => formData.append("filesToDelete", file));
+
     try {
-      const res = await fetch("/api/project", {
-        method: "POST",
+      const res = await fetch(`/api/project/update/${projectId}`, {
+        method: "PUT",
         body: formData,
       });
   
@@ -118,31 +201,30 @@ const Project: React.FC = () => {
         Swal.fire({
           position: "center",
           icon: "success",
-          title: data.msg, 
+          title: "Project updated successfully", 
           showConfirmButton: false,
           timer: 3000,
         });
   
-        // Redirect to the project detail page using the ID from the response
         setTimeout(() => {
-          router.push(`/project/projectdetail/${data._id}`);
+          router.push(`/project/projectdetail/${projectId}`);
         }, 3000);
       } else {
-        console.error("Failed to submit project");
+        console.error("Failed to update project");
         Swal.fire({
           position: "center",
           icon: "error",
-          title: "Failed to submit project",
+          title: "Failed to update project",
           showConfirmButton: false,
           timer: 3000,
         });
       }
     } catch (error) {
-      console.error("Error submitting project:", error);
+      console.error("Error updating project:", error);
       Swal.fire({
         position: "center",
         icon: "error",
-        title: "Error submitting project",
+        title: "Error updating project",
         text: error instanceof Error ? error.message : "An unknown error occurred",
         showConfirmButton: false,
         timer: 3000,
@@ -154,20 +236,40 @@ const Project: React.FC = () => {
     console.log('Files received in main component:', newFiles);
     setFiles(newFiles);
   };
+  const handleDeleteExistingFile = (fileName: string) => {
+    setExistingFiles(prevFiles => prevFiles.filter(file => file !== fileName));
+    setFilesToDelete(prev => [...prev, fileName]);
+  };
  
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
       <main className="flex-grow">
         <Navbar />
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <h1 className="text-[24px] font-bold">{t("nav.sell.buttAdd")}</h1>
+          <h1 className="text-[24px] font-bold">{t("nav.sell.edit")}</h1>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-wrap gap-4 mt-3">
-            {uploadedImages.map((image, index) => (
-                <div key={index} className="relative w-40 h-40">
+            {existingImages.map((image, index) => (
+                <div key={`existing-${index}`} className="relative w-40 h-40">
+                  <img
+                    src={`/api/project/images/${image}`}
+                    alt={`Existing ${index}`}
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteExistingImage(index)}
+                    className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-200"
+                  >
+                    <IoCloseCircleOutline className="text-red-500" size={24} />
+                  </button>
+                </div>
+              ))}
+              {uploadedImages.map((image, index) => (
+                <div key={`new-${index}`} className="relative w-40 h-40">
                   <img
                     src={image}
-                    alt={`Uploaded ${index}`}
+                    alt={`New Upload ${index}`}
                     className="w-full h-full object-cover rounded-md"
                   />
                   <button
@@ -201,20 +303,24 @@ const Project: React.FC = () => {
               <input
                 id="projectname"
                 type="text"
-                placeholder={t("nav.sell.addP.proname")}
+                placeholder={projectname || t("nav.sell.addP.proname")}
                 value={projectname}
                 onChange={(e) => setProjectname(e.target.value)}
                 className="mt-5 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
             </div>
             <div className="mt-5">
-            <p className="text-gray-500">* {t("nav.sell.addP.updes")}</p>
-              <Upload onFilesChange={handleFilesChange}/>
+              <p className="text-gray-500">* {t("nav.sell.addP.updes")}</p>
+               <Upload 
+        onFilesChange={handleFilesChange}
+        existingFiles={existingFiles}
+        onExistingFileRemove={handleDeleteExistingFile}
+      />
             </div>
             <div>
               <textarea
                 id="description"
-                placeholder={t("nav.sell.addP.des")}
+                placeholder={description || t("nav.sell.addP.des")}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={10}
@@ -291,7 +397,7 @@ const Project: React.FC = () => {
               type="submit"
               className="mt-5 flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              <p className="text-[18px]">{t("nav.sell.buttAdd")}</p>
+              <p className="text-[18px]">{t("nav.sell.edit")}</p>
             </button>
           </form>
         </div>
@@ -301,4 +407,4 @@ const Project: React.FC = () => {
   );
 };
 
-export default Project;
+export default ProjectEdit;
