@@ -20,14 +20,14 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const categories = [
     { id: 1, category: t("nav.project.all"), categoryEN: "All" },
     { id: 2, category: t("nav.project.document"), categoryEN: "Document" },
-    { id: 3, category: t("nav.project.model"), categoryEN: "Model/3D" },
+    { id: 3, category: t("nav.project.model"), categoryEN: "Model" },
     { id: 4, category: t("nav.project.website"), categoryEN: "Website" },
     { id: 5, category: t("nav.project.mobileapp"), categoryEN: "MobileApp" },
     { id: 6, category: t("nav.project.ai"), categoryEN: "Ai" },
     { id: 7, category: t("nav.project.datasets"), categoryEN: "Datasets" },
     { id: 8, category: t("nav.project.iot"), categoryEN: "IOT" },
     { id: 9, category: t("nav.project.program"), categoryEN: "Program" },
-    { id: 10, category: t("nav.project.photo"), categoryEN: "Photo/Art" },
+    { id: 10, category: t("nav.project.photo"), categoryEN: "Photo" },
     { id: 11, category: t("nav.project.other"), categoryEN: "Other" },
   ];
 

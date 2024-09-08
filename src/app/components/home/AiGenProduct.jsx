@@ -94,12 +94,13 @@ const productCategories = [
   },
   { group: "Data and AI", categories: ["Ai", "Datasets"] },
   { group: "Hardware and IoT", categories: ["IOT", "Program"] },
-  { group: "Content and Design", categories: ["Document", "Photo/Art"] },
+  { group: "Content and Design", categories: ["Document", "photo"] },
   {
     group: "3D and Modeling",
-    categories: ["Model/3D", "Photo/Art", "Document"],
+    categories: ["model", "photo", "Document"],
   },
 ];
+// มีสองหมวดในหนึ่งกรุ๊ป, มีอันนึงไม่มีอันนึง, ไม่มีเลย
 
 const Aigenproject = () => {
   const [titles, setTitles] = useState([]);
@@ -163,19 +164,16 @@ const Aigenproject = () => {
         const finalTitles = userTitles.reduce((acc, title) => {
           const lowercaseTitle = title.toLowerCase();
           if (categoryCounts[lowercaseTitle] > 0) {
-            acc.push(title); // Keep if main category has products
-            return acc;
+            acc.push(lowercaseTitle);
           }
-
-          const relatedCategories = findRelatedCategories(title);
-          const relatedCategoryWithProducts = relatedCategories.find(
-            (category) => categoryCounts[category.toLowerCase()] > 0
-          );
-
-          if (relatedCategoryWithProducts) {
-            acc.push(relatedCategoryWithProducts); // Add related category with products
-          }
-
+        
+          const relatedCategories = findRelatedCategories(lowercaseTitle);
+          relatedCategories.forEach(category => {
+            if (categoryCounts[category.toLowerCase()] > 0 && !acc.includes(category.toLowerCase())) {
+              acc.push(category.toLowerCase());
+            }
+          });
+        
           return acc;
         }, []);
 
