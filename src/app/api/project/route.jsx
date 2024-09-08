@@ -24,6 +24,7 @@ export async function POST(req, res) {
     let rathing = 0.0;
     let sold = 0;
     let review = 0;
+    let status = "submitted";
 
     for (const [key, value] of formData.entries()) {
       switch (key) {
@@ -60,6 +61,9 @@ export async function POST(req, res) {
         case "permission":
           permission = value === "true"; // Convert value to Boolean
           break;
+        case "status":
+          status = value.toString();
+        break;
         case "imageUrl":
           if (value instanceof Blob) {
             const image = `${Date.now()}_${value.name}`;
@@ -107,6 +111,7 @@ export async function POST(req, res) {
       author,
       email,
       permission,
+      status,
       filesUrl,
       review,
       sold,
