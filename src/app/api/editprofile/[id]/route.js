@@ -3,6 +3,13 @@ import { connectMongoDB } from "../../../../../lib/mongodb";
 import NormalUser from "../../../../../models/NormalUser";
 import { NextResponse } from "next/server";
 
+export async function GET(req, { params }) {
+  const { id } = params;
+  await connectMongoDB();
+  const post = await NormalUser.findOne({ _id: id });
+  return NextResponse.json({ post }, { status: 200 });
+}
+
 export async function PUT(req, { params }) {
     try {
       const { id } = params; // Get the user ID from params

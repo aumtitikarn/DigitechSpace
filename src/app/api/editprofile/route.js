@@ -53,7 +53,9 @@ export async function POST(req) {
     const newItem = new NormalUser({
         name,
         email,
-        line, facebook, phonenumber,
+        line, 
+        facebook, 
+        phonenumber,
         imageUrl,
         
     });

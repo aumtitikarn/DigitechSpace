@@ -401,7 +401,7 @@ function Blog({ params, initialComments }) {
                       </p>
                       <p className="ml-4 text-lg">{comment.text}</p>
                       <div className="flex flex-col">
-                        {/* <p className="text-sm text-gray-500"><em>Commented on: {new Date(comment.timestamp).toLocaleString()}</em></p>  */}
+                        {/* <p className="text-sm text-gray-500">{new Date(comment.timestamp).toLocaleString()}</p>  */}
                         <div className="flex flex-row">
                           {replyingTo === comment._id ? (
                             <div className="flex flex-col ml-4">
