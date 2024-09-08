@@ -147,6 +147,17 @@ function Blog({ params, initialComments }) {
 
     const formData = new FormData();
 
+    if (!session || !session.user || !session.user.name) {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "User is not authenticated",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+
     if (!report || !selectedReason) {
       alert("Please complete all inputs");
       return;
@@ -155,6 +166,7 @@ function Blog({ params, initialComments }) {
     formData.append("blogname", blogname);
     formData.append("selectedReason", selectedReason);
     formData.append("report", report);
+    formData.append("author", session.user.name);
 
     try {
       const res = await fetch("http://localhost:3000/api/reportblog", {
