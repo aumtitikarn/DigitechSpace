@@ -9,27 +9,35 @@ import Footer from "../../../components/Footer";
 import Container from "../../../components/Container";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
 function page() {
   const { data: session, status } = useSession(); // Initialize session
   const { t } = useTranslation("translation");
 
-  // State for the new name, profile image, and image file
+  const [postData, setPostData] = useState([]);
+
+  
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newLine, setNewLine] = useState("");
   const [newFacebook, setNewFacebook] = useState("");
   const [newPhonenumber, setNewPhonenumber] = useState("");
   const [profileImage, setProfileImage] = useState(null);
-  const [imageFile, setImageFile] = useState(null); // Add this state to store the image file
+  const [imageFile, setImageFile] = useState(null); 
 
-  // Handle session updates once the session data is loaded
   useEffect(() => {
     if (session?.user?.name) {
       setNewName(session.user.name); // Set the initial name from session data
     }
     if (session?.user?.email) {
       setNewEmail(session.user.email); // Set the initial name from session data
+    }
+    if (session?.user?.facebook) {
+      setNewEmail(session.user.facebook); // Set the initial name from session data
+    }
+    if (session?.user?.line) {
+      setNewEmail(session.user.line); // Set the initial name from session data
     }
     if (session?.user?.imageUrl) {
       setProfileImage(session.user.imageUrl); // Set the initial image from session data
@@ -52,16 +60,42 @@ function page() {
     );
   }
 
-  // Handle image file selection
+  // Handle image
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file); // Store the file in the imageFile state
-      setProfileImage(URL.createObjectURL(file)); // Show preview of the uploaded image
+      setImageFile(file); 
+      setProfileImage(URL.createObjectURL(file)); 
     }
   };
 
-  // Handle saving profile updates
+  const getPostById = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Edit post: ", data);
+
+      const post = data.post;
+      setPostData(post);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostById();
+  }, []);
+
+
+  // Handle save profile updates
   const handleSave = async () => {
     const formData = new FormData();
     formData.append("name", newName);
@@ -71,7 +105,7 @@ function page() {
     formData.append("phonenumber", newPhonenumber);
 
     if (imageFile) {
-      formData.append("imageUrl", imageFile); // Append image file to form data
+      formData.append("imageUrl", imageFile); 
     }
 
     try {
@@ -81,8 +115,9 @@ function page() {
       });
 
       if (response.ok) {
-        console.log("Profile saved successfully");
-        // Optionally reload session data or update the UI
+        console.log("/auth/signin");
+        router.push("/auth/signin");
+        
       } else {
         console.log("Error saving profile");
       }
@@ -96,24 +131,31 @@ function page() {
       <Navbar />
       <main className="flex flex-col md:flex-row w-full justify-center p-4 my-[50px]">
         <div className="flex flex-col items-center w-full max-w-lg">
-          <div className="flex flex-row justify-center relative">
+          <div className="flex flex-row justify-center relative w-24 h-24" style={{ width: "95px", height: "95px", margin: "-10px", objectFit: "cover", borderRadius: "50%" }}>
             {profileImage ? (
-              // Show uploaded image if available
+              
               <img
                 src={profileImage}
                 alt="Profile"
-                className="rounded-full"
-                style={{ width: "95px", height: "95px", margin: "-10px", objectFit: "cover" }}
+                className="rounded-full w-24 h-24"
+                style={{ width: "95px", height: "95px", margin: "-10px", objectFit: "cover", borderRadius: "50%" }}
               />
             ) : (
-              // Show default icon if no image is uploaded
-              <MdAccountCircle
-                className="rounded-full text-gray-500"
-                style={{ width: "95px", height: "95px", margin: "-10px" }}
+
+              <Image
+                width={200}
+                height={200}
+                src={postData.imageUrl && postData.imageUrl.length > 0
+                  ? `/api/editprofile/images/${postData.imageUrl}`
+                  : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
+                  }
+                alt="Profile"
+                className="rounded-full w-24 h-24"
+                style={{ width: "95px", height: "95px", margin: "-10px", objectFit: "cover", borderRadius: "50%" }}
               />
             )}
 
-            {/* Hidden file input for image upload */}
+            
             <input
               type="file"
               accept="image/*"
@@ -122,7 +164,7 @@ function page() {
               id="imageUpload"
             />
 
-            {/* Plus icon to trigger file input */}
+            
             <label
               htmlFor="imageUpload"
               className="absolute right-0 bottom-0 bg-white rounded-full p-1 border-2 border-black cursor-pointer"
