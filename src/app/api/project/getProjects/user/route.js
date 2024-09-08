@@ -34,7 +34,7 @@ export async function GET(req) {
           unpublishedCount: allUserProjects.length
         }, { status: 404 });
       } else {
-        return NextResponse.json({ message: 'No projects found' }, { status: 404 });
+        return NextResponse.json({ message: 'No projects found' });
       }
     }
 

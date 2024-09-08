@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useSession } from "next-auth/react";
@@ -38,16 +38,17 @@ const SellInfo = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const res = await fetch('/api/Seller', {
-      method: 'POST',
+  
+    if (!session?.user?.id) return;
+  
+    const res = await fetch(`/api/Seller/update/${session.user.id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
     });
-    
-
+  
     if (res.ok) {
       setShowSuccessAlert(true);
       setTimeout(() => setShowSuccessAlert(false), 3000);
@@ -58,7 +59,7 @@ const SellInfo = () => {
         showConfirmButton: false,
         timer: 3000,
       });
-
+  
       router.push('/Sell');
     } else {
       Swal.fire({
@@ -70,6 +71,40 @@ const SellInfo = () => {
       });
     }
   };
+  
+
+  useEffect(() => {
+    const fetchExistingData = async () => {
+      if (!session?.user?.id) return; // ใช้ session เพื่อดึง id ของผู้ใช้
+  
+      try {
+        const response = await fetch(`/api/Seller/${session.user.id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const data = await response.json();
+
+        // Set formData from the fetched data
+        setFormData({
+          fullname: data.SellInfo.fullname || "",
+          phonenumber: data.SellInfo.phonenumber || data.phonenumber || "",
+          nationalid: data.SellInfo.nationalid || "",
+          namebank: data.SellInfo.namebank || "",
+          numberbankacc: data.SellInfo.numberbankacc || "",
+          housenum: data.SellInfo.housenum || "",
+          subdistrict: data.SellInfo.subdistrict || "",
+          district: data.SellInfo.district || "",
+          province: data.SellInfo.province || "",
+          postalnumber: data.SellInfo.postalnumber || "",
+        });
+      } catch (error) {
+
+      }
+    };
+  
+    fetchExistingData();
+  }, [session?.user?.id]);
 
   if (status === "loading") {
     return (
@@ -94,8 +129,6 @@ const SellInfo = () => {
     );
   }
 
-
-
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
       <main className="flex-grow">
@@ -111,7 +144,8 @@ const SellInfo = () => {
                 name="fullname"
                 type="text"
                 autoComplete="fullname"
-                placeholder={t("nav.sell.sellinfo.fullname")}
+                value={formData.fullname}
+                placeholder={formData.fullname || t("nav.sell.sellinfo.fullname")}
                 required
                 onChange={handleChange}
                 className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
@@ -121,7 +155,8 @@ const SellInfo = () => {
                 name="phonenumber"
                 type="text"
                 autoComplete="phonenumber"
-                placeholder={t("nav.sell.sellinfo.phonenum")}
+                value={formData.phonenumber}
+                placeholder={formData.phonenumber || t("nav.sell.sellinfo.phonenum")}
                 required
                 onChange={handleChange}
                 className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
@@ -131,7 +166,8 @@ const SellInfo = () => {
                 name="nationalid"
                 type="text"
                 autoComplete="nationalid"
-                placeholder={t("nav.sell.sellinfo.id")}
+                value={formData.nationalid}
+                placeholder={formData.nationalid || t("nav.sell.sellinfo.id")}
                 required
                 onChange={handleChange}
                 className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
@@ -141,7 +177,8 @@ const SellInfo = () => {
                 name="namebank"
                 type="text"
                 autoComplete="namebank"
-                placeholder={t("nav.sell.sellinfo.namebank")}
+                value={formData.namebank}
+                placeholder={formData.namebank || t("nav.sell.sellinfo.namebank")}
                 required
                 onChange={handleChange}
                 className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
@@ -151,7 +188,8 @@ const SellInfo = () => {
                 name="numberbankacc"
                 type="text"
                 autoComplete="numberbankacc"
-                placeholder={t("nav.sell.sellinfo.numbankacc")}
+                value={formData.numberbankacc}
+                placeholder={formData.numberbankacc || t("nav.sell.sellinfo.numbankacc")}
                 required
                 onChange={handleChange}
                 className="mt-3 mb-10 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
@@ -169,7 +207,8 @@ const SellInfo = () => {
                 name="housenum"
                 type="text"
                 autoComplete="housenum"
-                placeholder={t("nav.sell.sellinfo.housenum")}
+                value={formData.housenum}
+                placeholder={formData.housenum || t("nav.sell.sellinfo.housenum")}
                 required
                 onChange={handleChange}
                 className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
@@ -179,7 +218,8 @@ const SellInfo = () => {
                 name="subdistrict"
                 type="text"
                 autoComplete="subdistrict"
-                placeholder={t("nav.sell.sellinfo.subdistrict")}
+                value={formData.subdistrict}
+                placeholder={formData.subdistrict || t("nav.sell.sellinfo.subdistrict")}
                 required
                 onChange={handleChange}
                 className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
@@ -189,7 +229,8 @@ const SellInfo = () => {
                 name="district"
                 type="text"
                 autoComplete="district"
-                placeholder={t("nav.sell.sellinfo.district")}
+                value={formData.district}
+                placeholder={formData.district || t("nav.sell.sellinfo.district")}
                 required
                 onChange={handleChange}
                 className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
@@ -199,7 +240,8 @@ const SellInfo = () => {
                 name="province"
                 type="text"
                 autoComplete="province"
-                placeholder={t("nav.sell.sellinfo.province")}
+                value={formData.province}
+                placeholder={formData.province || t("nav.sell.sellinfo.province")}
                 required
                 onChange={handleChange}
                 className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
@@ -209,7 +251,8 @@ const SellInfo = () => {
                 name="postalnumber"
                 type="text"
                 autoComplete="postalnumber"
-                placeholder={t("nav.sell.sellinfo.postalnumber")}
+                value={formData.postalnumber}
+                placeholder={formData.postalnumber || t("nav.sell.sellinfo.postalnumber")}
                 required
                 onChange={handleChange}
                 className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
