@@ -2,20 +2,23 @@
 
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 import { GoX } from "react-icons/go";
 import { useTranslation } from "react-i18next";
 
 interface ReportProject {
   project: string;
-  onClose: () => void; // Add the onClose prop
+  onClose: () => void;
 }
 
 const Report: React.FC<ReportProject> = ({ project, onClose }) => {
   const [review, setReview] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
+  const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
   const maxLength = 200;
-  const { t, i18n } = useTranslation("translation");
+  const { t } = useTranslation("translation");
+  const { data: session, status } = useSession();
+
+  const charactersRemaining = maxLength - review.length;
 
   const handleReviewChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -23,18 +26,48 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
     setReview(event.target.value);
   };
 
+  
+  const handleSubmit = async () => {
+    if (!session) return;
+  
+    const data = {
+      name: project,
+      report: selectedReason,
+      more: review,
+      username: session.user?.name,
+    };
+  
+    console.log("Data to be sent:", data);
+  
+    try {
+      const response = await fetch("/api/reportproject", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (response.ok) {
+        setSubmissionStatus("success");
+        setTimeout(onClose, 2000);
+      } else {
+        const responseData = await response.json();
+        console.error("Error response data:", responseData);
+        setSubmissionStatus("error");
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setSubmissionStatus("error");
+    }
+  };
   const handleReasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedReason(event.target.value);
   };
-
-  const handleSubmit = () => {
-    // Handle submit logic here
-    console.log("Review:", review);
-    console.log("Selected Reason:", selectedReason);
-  };
-
-  const charactersRemaining = maxLength - review.length;
-  const { data: session, status } = useSession();
+  
+  console.log("Selected reason:", selectedReason); // ตรวจสอบค่าที่เลือก
+  
+  
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -44,11 +77,13 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
       <div className="relative max-w-lg w-full p-8 bg-white shadow-md rounded-lg">
         <GoX
-          onClick={onClose} // Use the onClose prop to close the modal
+          onClick={onClose}
           className="absolute top-4 right-4 text-red-600 text-3xl cursor-pointer"
         />
         <h2 className="text-2xl font-bold mb-4 text-center">{t("report.title")}</h2>
-        <p className="text-lg font-medium mb-4 ">{t("report.project.topic")} : {project}</p>
+        <p className="text-lg font-medium mb-4">
+          {t("report.project.topic")} : {project}
+        </p>
         <div className="border-b border-gray-300 my-3"></div>
 
         <p className="text-lg font-medium mb-2">{t("report.project.reason")}</p>
@@ -61,11 +96,10 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
           <option value="off-topic">{t("report.project.r2")}</option>
           <option value="illegal-ads">{t("report.project.r3")}</option>
           <option value="unrelated">{t("report.project.r4")}</option>
-          <option value="unrelated">{t("report.project.r5")}</option>
+          <option value="other">{t("report.project.r5")}</option>
         </select>
-        <p className="text-lg font-medium mb-2">
-        {t("report.project.add")}
-        </p>
+
+        <p className="text-lg font-medium mb-2">{t("report.project.add")}</p>
         <div className="relative mb-5">
           <textarea
             placeholder={t("report.text")}
@@ -78,12 +112,24 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
             {charactersRemaining} / {maxLength}
           </div>
         </div>
+
         <button
           onClick={handleSubmit}
           className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition-colors duration-200"
         >
           {t("report.send")}
         </button>
+        {/* Display success or error message */}
+        {submissionStatus === "success" && (
+          <p className="mt-4 text-green-500 text-center">
+            {t("report.successMessage")}
+          </p>
+        )}
+        {submissionStatus === "error" && (
+          <p className="mt-4 text-red-500 text-center">
+            {t("report.errorMessage")}
+          </p>
+        )}
       </div>
     </div>
   );

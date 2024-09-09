@@ -4,6 +4,7 @@ const PostBlogSchema = new Schema(
     {
         blogname: { type: String, required: true },
         report: { type: String, required: true },
+        author: { type: String, required: true },
         selectedReason: {
             type: String,
             enum: [
