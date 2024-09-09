@@ -24,6 +24,7 @@ type Product = {
   review: number;
   sold: number;
   price: string;
+  status: 'submitted' | 'pending' | 'reviewing' | 'approved' | 'rejected';
 };
 
 // Modal Component for confirmation
