@@ -23,10 +23,12 @@ export default function page() {
   const [input1, setInput1] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [postData,setPostData] = useState<PostData[]>([]);
+  const [postData, setPostData] = useState<PostData[]>([]);
+
+  const [postPor, setPostPor] = useState([]);
 
   const images = ["/pexample1.png", "/pexample3.png", "/pexample4.png"];
-  
+
   console.log(postData);
 
   const _id = useState(null);
@@ -38,14 +40,14 @@ export default function page() {
     );
   };
 
-  const getPosts = async ()=> {
+  const getPosts = async () => {
 
-    try{
-      const res = await fetch("http://localhost:3000/api/posts",{
-        cache:"no-store"
+    try {
+      const res = await fetch("http://localhost:3000/api/posts", {
+        cache: "no-store"
       })
 
-      if(!res.ok){
+      if (!res.ok) {
         throw new Error("Failed of fetch posts")
       }
 
@@ -55,14 +57,39 @@ export default function page() {
       console.log(data); // Check the structure here
       setPostData(data.posts); // Make sure data.posts exists
 
-    } catch(error) {
-      console.log("Error loading posts: ",error);
+    } catch (error) {
+      console.log("Error loading posts: ", error);
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getPosts();
-  },[]);
+  }, []);
+
+  const getPostById = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Edit post: ", data);
+
+      const post = data.post;
+      setPostPor(post);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostById();
+  }, []);
 
   interface PostData {
     _id: string;
@@ -99,8 +126,8 @@ export default function page() {
       transform: "translate(-50%, -50%)",
       textAlign: "center",
     }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
+      <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+    </div>;
   }
 
 
@@ -117,29 +144,30 @@ export default function page() {
               {t("nav.blog.title")}
             </p>
             <div className="mt-4 w-full max-w-screen-lg flex justify-center relative">
-            <input
-            type="text"
-            placeholder={t("nav.home.search")}
-            className="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          />
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder={t("nav.home.search")}
+                className="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
-            
-                 
-                  {postData && postData.length > 0 ? (
-                    postData.map(val => (
-                      <Link href={`/blog/${val._id}`}>
-                    <div key = {val._id} className=" w-[180px] h-[300px] flex flex-col">
-                      <div className="rounded w-full relative" style={{height:"250px"}}>
-                      <Image
-              width={200}
-              height={200}
-              src={`/api/posts/images/${val.imageUrl[currentIndex]}`}
-              alt={val.topic}
-              className="w-full h-full object-cover rounded-lg"
-            />
+
+
+              {postData && postData.length > 0 ? (
+                postData.map(val => (
+                  <Link href={`/blog/${val._id}`}>
+                    <div key={val._id} className="flex flex-col" style={{ height: "300px", width: "180px" }}>
+                      <div className="rounded w-full relative" style={{ height: "250px" }}>
+                        <Image
+                          width={100}
+                          height={100}
+                          src={`/api/posts/images/${val.imageUrl[currentIndex]}`}
+                          alt={val.topic}
+                          className="w-full object-cover rounded-lg"
+                          style={{ height: "100px" }}
+                        />
                       </div>
                       <div className="ml-2 mt-2">
                         <div className="flex flex-col mt-1 justify-center">
@@ -164,7 +192,17 @@ export default function page() {
                           </div>
                         </div>
                         <div className="flex flex-row mb-3">
-                          <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
+                          {/* <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" /> */}
+                          <Image
+                            width={200}
+                            height={200}
+                            src={postPor.imageUrl && postPor.imageUrl.length > 0
+                              ? `/api/editprofile/images/${postPor.imageUrl}`
+                              : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
+                            }
+                            alt="Profile"
+                            style={{ objectFit: "cover", borderRadius: "50%", width: "30px", height: "30px", marginRight: "10px" }}
+                          />
                           <p
                             className="mt-2 truncate text-gray-500"
                             style={{ fontSize: "12px" }}
@@ -174,11 +212,11 @@ export default function page() {
                         </div>
                       </div>
                     </div>
-                    </Link>
-                    ))):(<p>you don't have</p>)}
-                  
-                  
-                
+                  </Link>
+                ))) : (<p>you don't have</p>)}
+
+
+
 
               {Array(5)
                 .fill("")
@@ -188,7 +226,7 @@ export default function page() {
                       key={index}
                       className=" w-[180px] h-[300px] flex flex-col"
                     >
-                      <div className="rounded w-full relative" style={{height:"250px"}}>
+                      <div className="rounded w-full relative" style={{ height: "250px" }}>
                         <img
                           src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
                           className="object-cover w-full h-full"
@@ -239,7 +277,7 @@ export default function page() {
                       key={index}
                       className=" w-[180px] h-[300px] flex flex-col"
                     >
-                      <div className="rounded w-full relative" style={{height:"250px"}}>
+                      <div className="rounded w-full relative" style={{ height: "250px" }}>
                         <img
                           src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
                           className="object-cover w-full h-full"
