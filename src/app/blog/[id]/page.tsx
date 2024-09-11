@@ -23,6 +23,7 @@ import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 import { OrbitProgress } from "react-loading-indicators";
 import { text } from "stream/consumers";
+import Swal from 'sweetalert2';
 
 
 function Blog({ params, initialComments }) {
@@ -202,7 +203,8 @@ function Blog({ params, initialComments }) {
     e.preventDefault();
 
     try {
-      const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
+      // Update the blog post heart count
+      const blogRes = await fetch(`http://localhost:3000/api/posts/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -210,15 +212,44 @@ function Blog({ params, initialComments }) {
         body: JSON.stringify({ setheart: setheart + 1 }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to update post");
+      if (!blogRes.ok) {
+        throw new Error("Failed to update blog post");
       }
 
-      setHeart(setheart + 1);
-      setIsHeartClicked(true); // Set the heart icon as clicked
+      // Prepare FormData to send blogId as multipart/form-data
+      const favBlog = {
+        blogId: postData._id,
+        imageUrl: postData.imageUrl,
+        topic: postData.topic,
+      };
+  
+      // Prepare FormData to send the favblog data as multipart/form-data
+      const formData = new FormData();
+      formData.append("favblog", JSON.stringify(favBlog)); // Append the favblog data
+  
+      // Update the user's profile with the favblog data
+      const profileRes = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "PUT",
+        body: formData,
+      });
+  
+      if (!profileRes.ok) {
+        throw new Error("Failed to update user profile with favblog");
+      }
+  
+      // Update the heart state locally and refresh the page
+      setHeart((prevHeart) => prevHeart + 1);
+      setIsHeartClicked(true);
       router.refresh();
     } catch (error) {
-      console.log(error);
+      console.error("Error updating:", error);
+      Swal.fire({
+        position: 'center',
+        icon: 'error',
+        title: 'An error occurred',
+        text: error.message,
+        showConfirmButton: true,
+      });
     }
   };
 

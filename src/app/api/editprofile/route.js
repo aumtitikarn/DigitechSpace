@@ -17,6 +17,7 @@ export async function POST(req) {
     let facebook = "";
     let phonenumber = "";
     let imageUrl = [];
+    let favblog = [];
 
     for (const [key, value] of formData.entries()) {
       switch (key) {
@@ -47,16 +48,26 @@ export async function POST(req) {
             imageUrl.push(image);
           }
           break;
+          case "favblog":
+          // Assuming favblog is being sent as a JSON string
+          const favBlogEntry = JSON.parse(value);
+          favblog.push({
+            blogId: new mongoose.Types.ObjectId(favBlogEntry.blogId), // Ensure ObjectId type
+            imageUrl: favBlogEntry.imageUrl,
+            topic: favBlogEntry.topic
+          });
+          break;
       }
     }
 
     const newItem = new NormalUser({
-        name,
-        email,
-        line, 
-        facebook, 
-        phonenumber,
-        imageUrl,
+      name, 
+      email, 
+      line, 
+      facebook, 
+      phonenumber, 
+      imageUrl,
+      favblog,
         
     });
 
