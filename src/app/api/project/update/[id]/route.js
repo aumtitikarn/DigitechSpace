@@ -125,6 +125,7 @@ export async function PUT(req, { params }) {
     const category = formData.get("category");
     const price = formData.get("price");
     const permission = formData.get("permission") === "true";
+    const status = "pending";
     const imagesToDelete = formData.getAll("imagesToDelete");
     const filesToDelete = formData.getAll("filesToDelete");
 
@@ -221,6 +222,7 @@ export async function PUT(req, { params }) {
     existingProject.category = category;
     existingProject.price = price;
     existingProject.permission = permission;
+    existingProject.status = status;
 
     // บันทึกการแก้ไข
     await existingProject.save();

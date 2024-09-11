@@ -24,7 +24,7 @@ export async function POST(req, res) {
     let rathing = 0.0;
     let sold = 0;
     let review = 0;
-    let status = "submitted";
+    let status = "pending";
 
     for (const [key, value] of formData.entries()) {
       switch (key) {

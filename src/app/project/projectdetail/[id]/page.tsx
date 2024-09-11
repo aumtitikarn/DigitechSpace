@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import { useSession } from "next-auth/react";
@@ -17,9 +17,7 @@ import { FaLink, FaFacebookF, FaTwitter } from "react-icons/fa";
 import { OrbitProgress } from "react-loading-indicators";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import notfound from "./../../../../../public/error.png";
-import { MdOutlineFileDownload } from  "react-icons/md";
-
+import { MdOutlineFileDownload } from "react-icons/md";
 
 interface ProjectData {
   _id: string;
@@ -46,50 +44,138 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [visibleReviewsCount, setVisibleReviewsCount] = useState(3);
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [publishedProjects, setPublishedProjects] = useState<ProjectData[]>([]);
+  const [similarProjects, setSimilarProjects] = useState<ProjectData[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
+  const projectGroups = [
+    {
+      group: "Software Development",
+      categories: ["website", "mobileapp", "program", "document"],
+    },
+    { group: "Data and AI", categories: ["ai", "datasets", "document"] },
+    { group: "Hardware and IoT", categories: ["iot", "program", "document"] },
+    { group: "Content and Design", categories: ["document", "photo", "document"] },
+    {
+      group: "3D and Modeling",
+      categories: ["model", "photo", "document"],
+    },
+  ];
 
+ useEffect(() => {
+    const fetchSimilarProjects = async () => {
+      if (project && project.category) {
+        try {
+          // Find the group that contains the current project's category
+          const currentGroup = projectGroups.find(group => 
+            group.categories.includes(project.category)
+          );
+
+          if (currentGroup) {
+            const categories = currentGroup.categories.join(',');
+            const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
+            if (response.ok) {
+              const data = await response.json();
+              setSimilarProjects(data);
+            } else {
+              const errorData = await response.json();
+              setError(errorData.error || `Failed to fetch similar projects: ${response.status} ${response.statusText}`);
+            }
+          } else {
+            setError('No matching category group found');
+          }
+        } catch (error) {
+          console.error("Error fetching similar projects:", error);
+          setError('An error occurred while fetching similar projects');
+        }
+      }
+    };
+    console.log("project :", project);
+    fetchSimilarProjects();
+  }, [project]);
+
+  // const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
   useEffect(() => {
-    if (params.id) {
-      fetchProjectData(params.id);
-    }
+    const fetchData = async () => {
+      if (params.id) {
+        try {
+          setLoading(true);
+          // ดึงข้อมูลโปรเจกต์
+          const projectResponse = await fetch(`/api/project/${params.id}`);
+          if (projectResponse.ok) {
+            const projectData = await projectResponse.json();
+            setProject(projectData.post);
+            console.log("Project data:", projectData.post);
+
+            // ดึงโปรเจกต์อื่นๆ ของผู้ใช้คนเดียวกัน
+            if (projectData.post && projectData.post.email) {
+              console.log(
+                "Fetching projects for email:",
+                projectData.post.email
+              );
+              const publishedResponse = await fetch(
+                `/api/project/getProjects/by?email=${encodeURIComponent(projectData.post.email)}`,
+                {
+                  method: "GET",
+                }
+              );
+              console.log("Response status:", publishedResponse.status);
+              if (publishedResponse.ok) {
+                const publishedData = await publishedResponse.json();
+                console.log("Published Data:", publishedData);
+                setPublishedProjects(publishedData);
+              } else {
+                console.error("Failed to fetch published projects");
+                const errorData = await publishedResponse.text();
+                console.error("Error data:", errorData);
+              }
+            } else {
+              console.log("Email not found in project data");
+            }
+          } else {
+            console.error("Failed to fetch project data");
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
   }, [params.id]);
 
-  const fetchProjectData = async (id: string) => {
-    try {
-      const response = await fetch(`/api/project/${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setProject(data.post); 
-      } else {
-        console.error("Failed to fetch project data");
-      }
-    } catch (error) {
-      console.error("Error fetching project data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (!project) {
-    return  <div>
-  </div>;
+    return <div></div>;
   }
   if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
   }
-
 
   const handlePrevClick = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + project.imageUrl.length) % project.imageUrl.length
+      (prevIndex) =>
+        (prevIndex - 1 + project.imageUrl.length) % project.imageUrl.length
     );
   };
 
@@ -271,6 +357,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       console.error("Error downloading file:", error);
     }
   };
+
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar />
@@ -326,7 +413,8 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       <IoIosStar className="text-2xl" />
                     </span>
                     <span className="text-sm text-gray-600 ">
-                    {project.rathing} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
+                      {project.rathing || "N/A"} ({project.review}) |{" "}
+                      {t("nav.project.projectdetail.sold")} {project.sold}
                     </span>
                   </div>
                 </div>
@@ -418,19 +506,19 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                   </h2>
                   <div className="border-t border-gray-300 my-4"></div>
                   <ul className="list-none mt-2">
-                      {project.filesUrl.map((fileName, index) => (
-                        <li className="flex items-center mb-2 " key={index}>
-                          <button
-                            onClick={() => handleDownload(fileName)}
-                            style={{ cursor: "pointer" }}
-                             className="flex items-center space-x-2 hover:text-blue-600"
-                          >
-                            <MdOutlineFileDownload className="w-5 h-5 text-gray-500" />
-                            <span>{fileName}</span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
+                    {project.filesUrl.map((fileName, index) => (
+                      <li className="flex items-center mb-2 " key={index}>
+                        <button
+                          onClick={() => handleDownload(fileName)}
+                          style={{ cursor: "pointer" }}
+                          className="flex items-center space-x-2 hover:text-blue-600"
+                        >
+                          <MdOutlineFileDownload className="w-5 h-5 text-gray-500" />
+                          <span>{fileName}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
               {/* Reviews Section */}
@@ -495,73 +583,78 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                     {project.author}
                   </p>
                 </div>
-                <Link href="/project/projectdetail">
+                {publishedProjects.length > 0 ? (
                   <div className="flex overflow-x-auto gap-[17px] mt-10">
-                    {products.map((product, index) => (
-                      <div
+                    {publishedProjects.map((product, index) => (
+                      <Link
                         key={index}
-                        className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
+                        href={`/project/projectdetail/${product._id}`}
                       >
-                        <div className="w-full h-auto flex flex-col">
-                          {/* รูปภาพสินค้า */}
-                          <img
-                            src={product.image}
-                            alt="Product Image"
-                            className="w-full h-[150px] rounded-md object-cover mb-4"
-                          />
-                          <div className="flex flex-col justify-between h-full">
-                            <p className="text-lg font-semibold mb-2 truncate w-[150px]">
-                              {product.name}
-                            </p>
-                            <div className="flex items-center mb-2">
-                              <span className="text-gray-500 mr-2 text-2xl">
-                                <MdAccountCircle />
-                              </span>
-                              <p className="text-sm text-gray-600 truncate w-[150px]">
-                                {product.author}
+                        <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
+                          <div className="w-full h-auto flex flex-col">
+                            <img
+                              src={`/api/project/images/${product.imageUrl[0]}`}
+                              alt="Product Image"
+                              className="w-full h-[150px] rounded-md object-cover mb-4"
+                            />
+                            <div className="flex flex-col justify-between h-full">
+                              <p className="text-lg font-semibold mb-2 truncate w-[150px]">
+                                {product.projectname}
+                              </p>
+                              <div className="flex items-center mb-2">
+                                <span className="text-gray-500 mr-2 text-2xl">
+                                  <MdAccountCircle />
+                                </span>
+                                <p className="text-sm text-gray-600 truncate w-[150px]">
+                                  {product.author}
+                                </p>
+                              </div>
+                              <div className="flex items-center mb-2">
+                                <span className="text-yellow-500 mr-2">
+                                  <IoIosStar />
+                                </span>
+                                <span className="text-sm text-gray-600 truncate w-[150px]">
+                                  {product.rathing || "N/A"} ({product.review})
+                                  | {t("nav.project.projectdetail.sold")}{" "}
+                                  {product.sold}
+                                </span>
+                              </div>
+                              <p className="text-lg font-bold text-[#33529B]">
+                                {product.price} THB
                               </p>
                             </div>
-                            <div className="flex items-center mb-2">
-                              <span className="text-yellow-500 mr-2">
-                                <IoIosStar />
-                              </span>
-                              <span className="text-sm text-gray-600 truncate w-[150px]">
-                                {product.rating} ({product.reviews}) |{" "}
-                                {t("nav.project.projectdetail.sold")}{" "}
-                                {product.sold}
-                              </span>
-                            </div>
-                            <p className="text-lg font-bold text-[#33529B]">
-                              {product.price} THB
-                            </p>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
-                </Link>
+                ) : (
+                  <p className="text-center text-gray-500 mt-5">
+                    {t("nav.sell.noproject")}
+                  </p>
+                )}
               </div>
               <div className="mt-10">
                 <p className="text-[20px] font-bold">
                   {t("nav.project.projectdetail.otherproject")}
                 </p>
-                <Link href="/project/projectdetail">
-                  <div className="flex overflow-x-auto gap-[17px] mt-10">
-                    {products.map((product, index) => (
-                      <div
-                        key={index}
-                        className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4"
-                      >
+                {publishedProjects.length > 0 ? (
+                <div className="flex overflow-x-auto gap-[17px] mt-10">
+                  {similarProjects.map((product, index) => (
+                    <Link
+                      key={index}
+                      href={`/project/projectdetail/${product._id}`}
+                    >
+                      <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
                         <div className="w-full h-auto flex flex-col">
-                          {/* รูปภาพสินค้า */}
                           <img
-                            src={product.image}
+                            src={`/api/project/images/${product.imageUrl[0]}`}
                             alt="Product Image"
                             className="w-full h-[150px] rounded-md object-cover mb-4"
                           />
                           <div className="flex flex-col justify-between h-full">
                             <p className="text-lg font-semibold mb-2 truncate w-[150px]">
-                              {product.name}
+                              {product.projectname}
                             </p>
                             <div className="flex items-center mb-2">
                               <span className="text-gray-500 mr-2 text-2xl">
@@ -576,7 +669,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                                 <IoIosStar />
                               </span>
                               <span className="text-sm text-gray-600 truncate w-[150px]">
-                                {product.rating} ({product.reviews}) |{" "}
+                                {product.rathing || "N/A"} ({product.review}) |{" "}
                                 {t("nav.project.projectdetail.sold")}{" "}
                                 {product.sold}
                               </span>
@@ -587,10 +680,16 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </Link>
+                    </Link>
+                  ))}
+                </div>
+                 ) : (
+                  <p className="text-center text-gray-500 mt-5">
+                    {t("nav.sell.noproject")}
+                  </p>
+                )}
               </div>
+
               {/* Popup */}
               {isPopupOpen && (
                 <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
