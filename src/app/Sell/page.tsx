@@ -12,7 +12,8 @@ import { MdDeleteOutline } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 import Swal from "sweetalert2";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { t } from "i18next";
 
 // Define the Product type
 type Product = {
@@ -24,7 +25,7 @@ type Product = {
   review: number;
   sold: number;
   price: string;
-  status: 'submitted' | 'pending' | 'reviewing' | 'approved' | 'rejected';
+  status: "submitted" | "pending" | "reviewing" | "approved" | "rejected";
 };
 
 // Modal Component for confirmation
@@ -64,7 +65,8 @@ const ProductList: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const { t, i18n } = useTranslation("translation");
-  const [pendingProjects, setPendingProjects] = useState<Product[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<Product[]>([]);
+  const [currentStatus, setCurrentStatus] = useState<string>("pending");
   const [publishedProjects, setPublishedProjects] = useState<Product[]>([]);
   const [projectToDelete, setProjectToDelete] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -114,37 +116,36 @@ const ProductList: React.FC = () => {
 
   async function checkSellInfo() {
     try {
-      const response = await fetch('/api/Seller/check');
-  
+      const response = await fetch("/api/Seller/check");
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const data = await response.json();
-      
+
       if (data.hasSellInfo) {
-        router.push('/Sell/AddProject');
+        router.push("/Sell/AddProject");
       } else {
         Swal.fire({
-          icon: 'info',
-          title: 'Information',
-          text: 'User does not have Seller Information',
+          icon: "info",
+          title: "Information",
+          text: "User does not have Seller Information",
         }).then((result) => {
           if (result.isConfirmed) {
             // Redirect to the add project page
-            window.location.href = '/Sell/AddProject';
+            window.location.href = "/Sell/AddProject";
           }
         });
       }
     } catch (error) {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
+        icon: "error",
+        title: "Error",
         text: `Error checking SellInfo`,
       });
     }
   }
-  
 
   if (status === "loading") {
     return (
@@ -169,21 +170,29 @@ const ProductList: React.FC = () => {
     );
   }
   useEffect(() => {
-    const fetchPendingProjects = async () => {
-      try {
-        const response = await fetch("/api/project/getProjects/notpermission");
-        if (!response.ok) {
-          throw new Error("Failed to fetch pending projects");
+    const fetchProjectsByStatus = async () => {
+      if (status === "authenticated" && session) {
+        try {
+          const response = await fetch(`/api/project/getProjects/notpermission?status=${currentStatus}`, {
+            method: "GET",
+          });
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Fetched projects:", data); // เพิ่มบรรทัดนี้
+            setFilteredProjects(data);
+          } else {
+            console.error("Failed to fetch projects by status");
+          }
+        } catch (error) {
+          console.error("Error fetching projects by status:", error);
         }
-        const data = await response.json();
-        setPendingProjects(data);
-      } catch (error) {
-        console.error("Error fetching pending projects:", error);
       }
     };
+  
+    fetchProjectsByStatus();
+  }, [currentStatus, status, session]);
 
-    fetchPendingProjects();
-  }, []);
+
   useEffect(() => {
     const fetchProjects = async () => {
       if (status === "authenticated" && session) {
@@ -210,6 +219,10 @@ const ProductList: React.FC = () => {
 
     fetchProjects();
   }, [status, session]);
+  const handleStatusChange = (newStatus: string) => {
+    setCurrentStatus(newStatus);
+  };
+
   return (
     <div className="flex-grow">
       <Navbar />
@@ -217,13 +230,14 @@ const ProductList: React.FC = () => {
         <h1 className="text-[24px] font-bold">{t("nav.sell.title")}</h1>
         <div>
           <div className="mt-5">
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={checkSellInfo} disabled={isLoading}
-              >
-                <p className="text-[18px]">{t("nav.sell.buttAdd")}</p>
-              </button>
+            <button
+              type="submit"
+              className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              onClick={checkSellInfo}
+              disabled={isLoading}
+            >
+              <p className="text-[18px]">{t("nav.sell.buttAdd")}</p>
+            </button>
             <Link href="/Sell/SellerInfo">
               <button
                 type="submit"
@@ -234,9 +248,14 @@ const ProductList: React.FC = () => {
             </Link>
           </div>
           <h1 className="text-[24px] font-bold mt-10">{t("nav.sell.wait")}</h1>
-          {pendingProjects.length > 0 ? (
+          <StatusStepper
+           initialStatus={currentStatus}
+            onStatusChange={handleStatusChange}
+          />
+          {filteredProjects.length > 0 ? (
+            <div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-              {pendingProjects.map((project, index) => (
+            {filteredProjects.map((project, index) => (
                 <Link
                   key={index}
                   href={`/project/projectdetail/${project._id}`}
@@ -281,6 +300,7 @@ const ProductList: React.FC = () => {
                   </div>
                 </Link>
               ))}
+            </div>
             </div>
           ) : (
             <p className="text-center text-gray-500 mt-5">
@@ -381,3 +401,67 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+type StatusStepperProps = {
+  initialStatus: string;
+  onStatusChange: (status: string) => void;
+};
+
+const StatusStepper: React.FC<StatusStepperProps> = ({
+  initialStatus,
+  onStatusChange,
+}) => {
+  const [currentStatus, setCurrentStatus] = useState(initialStatus);
+
+  const statuses = [
+    { id: 1, name: t("nav.sell.status.submitted"), key: "submitted" },
+    { id: 2, name: t("nav.sell.status.pending"), key: "pending" },
+    { id: 3, name: t("nav.sell.status.reviewing"), key: "reviewing" },
+    { id: 4, name: t("nav.sell.status.approved"), key: "approved" },
+    { id: 5, name: t("nav.sell.status.rejected"), key: "rejected" },
+  ];
+
+  const handleStatusClick = (statusKey: string) => {
+    setCurrentStatus(statusKey);
+    onStatusChange(statusKey);
+  };
+
+  return (
+    <div className="flex justify-between items-center w-full max-w-3xl mx-auto my-8">
+      {statuses.map((status, index) => (
+        <React.Fragment key={status.id}>
+          <div className="flex flex-col items-center relative">
+            <button
+              onClick={() => handleStatusClick(status.key)}
+              className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-lg
+                ${
+                  currentStatus === status.key
+                    ? 'bg-blue-500 text-white border-blue-500'
+                    : 'bg-white text-gray-500 border-gray-300'
+                }`}
+            >
+              {status.id}
+            </button>
+            <span className="mt-2 text-sm font-medium text-gray-700">
+              {status.name}
+            </span>
+          </div>
+          {index < statuses.length - 1 && (
+            <div className="flex-1 flex items-center">
+              <div
+                className={`h-1 w-full ${
+                  currentStatus === statuses[index + 1].key ||
+                  statuses.findIndex((s) => s.key === currentStatus) > index
+                    ? 'bg-blue-500'
+                    : 'bg-gray-300'
+                }`}
+                style={{ transform: 'translateY(-15px)' }}
+              />
+            </div>
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+

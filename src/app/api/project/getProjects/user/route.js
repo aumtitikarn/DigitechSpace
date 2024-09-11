@@ -32,7 +32,7 @@ export async function GET(req) {
         return NextResponse.json({ 
           message: 'No published projects found',
           unpublishedCount: allUserProjects.length
-        }, { status: 404 });
+        }, );
       } else {
         return NextResponse.json({ message: 'No projects found' });
       }

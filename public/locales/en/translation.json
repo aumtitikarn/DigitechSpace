@@ -119,6 +119,13 @@
       "yes" : "Yes",
       "edit" : "Edit your project",
       "noproject" : "No projects to display",
+      "status" : {
+        "submitted" : "Submitted",
+        "pending" : "Pending",
+        "reviewing" : "Reviewing",
+        "approved" : "Approved",
+        "rejected" : "Rejected"
+      },
       "addP" : {
         "proname" : "Project name",
         "des" : "Description",

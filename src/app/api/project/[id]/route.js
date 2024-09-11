@@ -1,4 +1,3 @@
-// src/pages/api/project/[id]/route.js
 import { NextResponse } from 'next/server';
 import { connectMongoDB } from '../../../../../lib/mongodb';
 import Project from '../../../../../models/project';
@@ -6,6 +5,11 @@ import { ObjectId } from 'mongodb'; // Import ObjectId
 
 export async function GET(req, { params }) {
   const { id } = params;
+
+  // Check if id is a valid ObjectId
+  if (!ObjectId.isValid(id) || id.length !== 24) {
+    return NextResponse.json({ msg: "Invalid project ID format" }, { status: 400 });
+  }
 
   try {
     await connectMongoDB();

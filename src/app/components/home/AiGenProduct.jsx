@@ -100,7 +100,7 @@ const productCategories = [
     categories: ["model", "photo", "Document"],
   },
 ];
-// มีสองหมวดในหนึ่งกรุ๊ป, มีอันนึงไม่มีอันนึง, ไม่มีเลย
+
 
 const Aigenproject = () => {
   const [titles, setTitles] = useState([]);

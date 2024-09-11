@@ -27,8 +27,6 @@ const Project: React.FC = () => {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const router = useRouter();
 
-  console.log("file",files);
-  console.log("img",img);
   if (status === "loading") {
     return <div style={{
       position: "absolute",
@@ -101,6 +99,7 @@ const Project: React.FC = () => {
     formData.append("sold", soldValue.toString());
     formData.append("review", reviewValue.toString());
     formData.append("permission", "false");
+    formData.append("status", "pending");
     img.forEach((img) => formData.append("imageUrl", img));
     files.forEach((file) => formData.append("filesUrl", file));
   
