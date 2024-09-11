@@ -298,41 +298,48 @@ function CustomNavbar() {
                     >
                       <MdGTranslate className="text-3xl" />
                     </button>
-                    <button
-                      onClick={toggleAccountBox}
-                      className="text-white focus:outline-none  "
-                    >
-                      {/* <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" /> */}
-                      <Image
-                        width={200}
-                        height={200}
-                        src={postData.imageUrl && postData.imageUrl.length > 0
-                          ? `/api/editprofile/images/${postData.imageUrl}`
-                          : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
-                        }
-                        alt="Profile"
-                        style={{ objectFit: "cover", borderRadius: "50%", width: "40px", height: "40px", }}
-                      />
+                    <button onClick={toggleAccountBox} className="text-white focus:outline-none">
+                      {postData.imageUrl && postData.imageUrl.length > 0 ? (
+                        <Image
+                          width={200}
+                          height={200}
+                          src={`/api/editprofile/images/${postData.imageUrl}`}
+                          alt="Profile"
+                          style={{
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                            width: "40px",
+                            height: "40px",
+                          }}
+                        />
+                      ) : (
+                        <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                      )}
                     </button>
                   </div>
                   {isAccountBoxVisible && (
                     <div
                       className={"p-4 absolute right-0 top-full mt-7  border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] shadow-lg z-50"}
                     >
-                      {/* เนื้อหาภายในกล่องข้อมูลบัญชี */}
                       <div className="">
                         <div className="flex items-center">
-                          {/* <MdAccountCircle className="text-gray-600 text-6xl mt-3 " /> */}
-                          <Image
-                            width={200}
-                            height={200}
-                            src={postData.imageUrl && postData.imageUrl.length > 0
-                              ? `/api/editprofile/images/${postData.imageUrl}`
-                              : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
-                            }
-                            alt="Profile"
-                            style={{ objectFit: "cover", borderRadius: "50%", width: "55px", height: "55px", margin: "15px" }}
-                          />
+                          {postData.imageUrl && postData.imageUrl.length > 0 ? (
+                            <Image
+                              width={200}
+                              height={200}
+                              src={`/api/editprofile/images/${postData.imageUrl}`}
+                              alt="Profile"
+                              style={{
+                                objectFit: "cover",
+                                borderRadius: "50%",
+                                width: "55px",
+                                height: "55px",
+                                margin: "15px",
+                              }}
+                            />
+                          ) : (
+                            <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                          )}
                           <span>
                             <p className="text-[20px] mt-3 text-semibold">
                               {session?.user?.name}
@@ -340,7 +347,7 @@ function CustomNavbar() {
                             <b>
                               <u className="text-[#0E6FFF]">
                                 <Link href={`/Profile`}>
-                                  <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                                  <p className="text-[14px] ml-1 text-[#0E6FFF]">
                                     {t("nav.viewprofile")}
                                   </p>
                                 </Link>
@@ -348,6 +355,7 @@ function CustomNavbar() {
                             </b>
                           </span>
                         </div>
+
                         <div className="text-left ml-5">
                           <ul className="list-none mt-3 ">
                             {session?.user?.role !== "NormalUser" && (
