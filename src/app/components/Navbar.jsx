@@ -299,7 +299,7 @@ function CustomNavbar() {
                       <MdGTranslate className="text-3xl" />
                     </button>
                     <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                      {postData.imageUrl && postData.imageUrl.length > 0 ? (
+                      {postData && postData.imageUrl ? (
                         <Image
                           width={200}
                           height={200}
@@ -323,7 +323,7 @@ function CustomNavbar() {
                     >
                       <div className="">
                         <div className="flex items-center">
-                          {postData.imageUrl && postData.imageUrl.length > 0 ? (
+                        {postData && postData.imageUrl ? (
                             <Image
                               width={200}
                               height={200}

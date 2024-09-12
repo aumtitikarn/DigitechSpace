@@ -192,21 +192,18 @@ export default function page() {
                           </div>
                         </div>
                         <div className="flex flex-row mb-3">
-                          {/* <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" /> */}
-                          <Image
-                            width={200}
-                            height={200}
-                            src={postPor.imageUrl && postPor.imageUrl.length > 0
-                              ? `/api/editprofile/images/${postPor.imageUrl}`
-                              : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
-                            }
-                            alt="Profile"
-                            style={{ objectFit: "cover", borderRadius: "50%", width: "30px", height: "30px", marginRight: "10px" }}
-                          />
-                          <p
-                            className="mt-2 truncate text-gray-500"
-                            style={{ fontSize: "12px" }}
-                          >
+                          {postPor.imageUrl && postPor.imageUrl.length > 0 ? (
+                            <Image
+                              width={200}
+                              height={200}
+                              src={`/api/editprofile/images/${postPor.imageUrl}`}
+                              alt="Profile"
+                              style={{ objectFit: "cover", borderRadius: "50%", width: "30px", height: "30px", marginRight: "10px" }}
+                            />
+                          ) : (
+                            <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
+                          )}
+                          <p className="mt-2 truncate text-gray-500" style={{ fontSize: "12px" }}>
                             {val.author}
                           </p>
                         </div>

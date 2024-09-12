@@ -27,9 +27,6 @@ export async function PUT(req, { params }) {
     let phonenumber = "";
     let imageUrl = [];
     let favblog = [];
-    if (formData.has("favblog")) {
-      favblog = JSON.parse(formData.get("favblog")); // Parse the favblog data
-    }
 
     // Iterate over form data and handle each field
     for (const [key, value] of formData.entries()) {
@@ -49,9 +46,6 @@ export async function PUT(req, { params }) {
         case "phonenumber":
           phonenumber = value.toString();
           break;
-        case "blogId":
-          blogIds.push(new mongoose.Types.ObjectId(value.toString())); // Collect ObjectId values
-          break;
         case "imageUrl":
           if (value instanceof Blob) {
             const imageName = `${Date.now()}_${value.name}`;
@@ -64,10 +58,25 @@ export async function PUT(req, { params }) {
             imageUrl.push(imageName);
           }
           break;
+        case "favblog":
+          // Parse the favblog data if it's provided
+          const favBlogEntry = JSON.parse(value);
+          
+          // Convert imageUrl to array if necessary
+          const favBlogImageUrl = Array.isArray(favBlogEntry.imageUrl)
+            ? favBlogEntry.imageUrl
+            : [favBlogEntry.imageUrl];
+
+          favblog.push({
+            blogId: new mongoose.Types.ObjectId(favBlogEntry.blogId), // Ensure ObjectId type
+            imageUrl: favBlogImageUrl,
+            topic: favBlogEntry.topic,
+          });
+          break;
       }
     }
 
-    // Update the user profile
+    // Prepare update data object
     const updateData = {
       ...(name && { name }),
       ...(email && { email }),
@@ -77,16 +86,16 @@ export async function PUT(req, { params }) {
       ...(imageUrl.length > 0 && { imageUrl }),
     };
 
-    // Push `favblog` entries safely
+    // Correctly use $push to add entries to favblog
     if (favblog.length > 0) {
-      updateData.$push = { favblog };
+      updateData.$push = { favblog: { $each: favblog } };
     }
 
     // Update the user profile
     const updatedUser = await NormalUser.findByIdAndUpdate(
       id,
       updateData,
-      { new: true }
+      { new: true, runValidators: true } // Use runValidators to ensure data adheres to schema
     );
 
     if (!updatedUser) {

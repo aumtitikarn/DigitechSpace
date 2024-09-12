@@ -1,5 +1,5 @@
 // models/NormalUser.js
-import mongoose,{Schema} from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const normalUserSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -16,9 +16,9 @@ const normalUserSchema = new mongoose.Schema({
     imageUrl: { type: [String], required: true },
     // blogId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }], // Array of blog ObjectId references
     favblog: [{
-        blogId: { type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }, // Blog ObjectId reference
-        imageUrl: { type: String }, // URL or path to the blog image
-        topic: { type: String } // Topic or title of the blog
+        blogId: { type: mongoose.Types.ObjectId, required: true },
+        imageUrl: { type: [String], required: true },
+        topic: { type: String, required: true }
     }] // Array to store favorite blog details
 }, { timestamps: true });
 

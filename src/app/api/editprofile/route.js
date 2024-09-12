@@ -49,12 +49,18 @@ export async function POST(req) {
           }
           break;
           case "favblog":
-          // Assuming favblog is being sent as a JSON string
+          // Parse the favblog data if it's provided
           const favBlogEntry = JSON.parse(value);
+          
+          // Convert imageUrl to array if necessary
+          const favBlogImageUrl = Array.isArray(favBlogEntry.imageUrl)
+            ? favBlogEntry.imageUrl
+            : [favBlogEntry.imageUrl];
+
           favblog.push({
             blogId: new mongoose.Types.ObjectId(favBlogEntry.blogId), // Ensure ObjectId type
-            imageUrl: favBlogEntry.imageUrl,
-            topic: favBlogEntry.topic
+            imageUrl: favBlogImageUrl,
+            topic: favBlogEntry.topic,
           });
           break;
       }
