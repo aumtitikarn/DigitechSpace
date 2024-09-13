@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { GoCheck, GoShare, GoHeartFill } from "react-icons/go";
 import { IoIosStar } from "react-icons/io";
-import { MdAccountCircle } from "react-icons/md";
+import { MdAccountCircle, MdDescription } from "react-icons/md";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight, FaFacebook } from "react-icons/fa";
 import { GoHeart } from "react-icons/go";
@@ -19,6 +19,8 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { MdOutlineFileDownload } from "react-icons/md";
 import OmisePaymentButtons from "./OmisePaymentButtons";
+import Swal from "sweetalert2";
+import axios from 'axios';
 
 interface ProjectData {
   _id: string;
@@ -318,7 +320,29 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     }
   };
 
- 
+  const createInternetBankingCharge = async (amount: number, token: string, type: string) => {
+    try {
+      const response = await axios.post('/api/payment', {
+        token: token,
+        amount: project.price,
+        description: project.projectname,
+        typec: type,
+        product: project._id,
+        btype: 2
+      });
+      await Swal.fire({
+        icon: "success",
+        title: "Success",
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error instanceof Error ? error.message : "An unknown error occurred",
+      });
+    }
+  };
+
 
   return (
     <main className="bg-[#FBFBFB]">
@@ -461,27 +485,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 ))}
               </div>
               <div>
-                {/* ไฟล์ */}
-                <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
-                  <h2 className="text-lg font-bold text-[#33529B]">
-                    {t("nav.project.projectdetail.file")}
-                  </h2>
-                  <div className="border-t border-gray-300 my-4"></div>
-                  <ul className="list-none mt-2">
-                    {project.filesUrl.map((fileName, index) => (
-                      <li className="flex items-center mb-2 " key={index}>
-                        <button
-                          onClick={() => handleDownload(fileName)}
-                          style={{ cursor: "pointer" }}
-                          className="flex items-center space-x-2 hover:text-blue-600"
-                        >
-                          <MdOutlineFileDownload className="w-5 h-5 text-gray-500" />
-                          <span>{fileName}</span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
               </div>
               {/* Reviews Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
@@ -696,6 +699,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                     <OmisePaymentButtons
                       projectName={project?.projectname || ""}
                       price={project?.price || 0}
+                      createInternetBankingCharge={createInternetBankingCharge}
                       
                     />
                   </div>
