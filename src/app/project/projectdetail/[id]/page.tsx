@@ -292,39 +292,11 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
   ];
 
-  const handleDownload = async (fileName: string) => {
-    try {
-      if (!project || !project.filesUrl.length) {
-        console.error("No files available for download");
-        return;
-      }
-
-      const fileUrl = `/api/project/files/${fileName}`;
-      const response = await fetch(fileUrl);
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
-      } else {
-        console.error("Failed to download file");
-      }
-    } catch (error) {
-      console.error("Error downloading file:", error);
-    }
-  };
-
   const createInternetBankingCharge = async (amount: number, token: string, type: string) => {
     try {
       const response = await axios.post('/api/payment', {
         token: token,
-        amount: project.price,
+        amount: amount,
         description: project.projectname,
         typec: type,
         product: project._id,
