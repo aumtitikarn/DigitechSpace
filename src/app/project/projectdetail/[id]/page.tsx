@@ -18,6 +18,7 @@ import { OrbitProgress } from "react-loading-indicators";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { MdOutlineFileDownload } from "react-icons/md";
+import OmisePaymentButtons from "./OmisePaymentButtons";
 
 interface ProjectData {
   _id: string;
@@ -32,6 +33,11 @@ interface ProjectData {
   imageUrl: string[];
   author: string;
   filesUrl: string[];
+}
+declare global {
+  interface Window {
+    OmiseCard: any;
+  }
 }
 
 const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
@@ -55,38 +61,55 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
     { group: "Data and AI", categories: ["ai", "datasets", "document"] },
     { group: "Hardware and IoT", categories: ["iot", "program", "document"] },
-    { group: "Content and Design", categories: ["document", "photo", "document"] },
+    {
+      group: "Content and Design",
+      categories: ["document", "photo", "document"],
+    },
     {
       group: "3D and Modeling",
       categories: ["model", "photo", "document"],
     },
   ];
+  useEffect(() => {
+    if (window.OmiseCard) {
+      window.OmiseCard.configure({
+        publicKey: process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY
+      });
+    }
+  }, []);
 
- useEffect(() => {
+  
+  
+  useEffect(() => {
     const fetchSimilarProjects = async () => {
       if (project && project.category) {
         try {
           // Find the group that contains the current project's category
-          const currentGroup = projectGroups.find(group => 
+          const currentGroup = projectGroups.find((group) =>
             group.categories.includes(project.category)
           );
 
           if (currentGroup) {
-            const categories = currentGroup.categories.join(',');
-            const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
+            const categories = currentGroup.categories.join(",");
+            const response = await fetch(
+              `/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`
+            );
             if (response.ok) {
               const data = await response.json();
               setSimilarProjects(data);
             } else {
               const errorData = await response.json();
-              setError(errorData.error || `Failed to fetch similar projects: ${response.status} ${response.statusText}`);
+              setError(
+                errorData.error ||
+                  `Failed to fetch similar projects: ${response.status} ${response.statusText}`
+              );
             }
           } else {
-            setError('No matching category group found');
+            setError("No matching category group found");
           }
         } catch (error) {
           console.error("Error fetching similar projects:", error);
-          setError('An error occurred while fetching similar projects');
+          setError("An error occurred while fetching similar projects");
         }
       }
     };
@@ -213,69 +236,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const handleShowLessClick = () => {
     setVisibleReviewsCount(3); // กลับไปแสดงผลรีวิว 5 รีวิวแรก
   };
-  // ข้อมูลตัวอย่างของสินค้า
-  const products = [
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-  ];
 
   const reviews = [
     {
@@ -357,6 +317,8 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       console.error("Error downloading file:", error);
     }
   };
+
+ 
 
   return (
     <main className="bg-[#FBFBFB]">
@@ -639,51 +601,51 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                   {t("nav.project.projectdetail.otherproject")}
                 </p>
                 {publishedProjects.length > 0 ? (
-                <div className="flex overflow-x-auto gap-[17px] mt-10">
-                  {similarProjects.map((product, index) => (
-                    <Link
-                      key={index}
-                      href={`/project/projectdetail/${product._id}`}
-                    >
-                      <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
-                        <div className="w-full h-auto flex flex-col">
-                          <img
-                            src={`/api/project/images/${product.imageUrl[0]}`}
-                            alt="Product Image"
-                            className="w-full h-[150px] rounded-md object-cover mb-4"
-                          />
-                          <div className="flex flex-col justify-between h-full">
-                            <p className="text-lg font-semibold mb-2 truncate w-[150px]">
-                              {product.projectname}
-                            </p>
-                            <div className="flex items-center mb-2">
-                              <span className="text-gray-500 mr-2 text-2xl">
-                                <MdAccountCircle />
-                              </span>
-                              <p className="text-sm text-gray-600 truncate w-[150px]">
-                                {product.author}
+                  <div className="flex overflow-x-auto gap-[17px] mt-10">
+                    {similarProjects.map((product, index) => (
+                      <Link
+                        key={index}
+                        href={`/project/projectdetail/${product._id}`}
+                      >
+                        <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
+                          <div className="w-full h-auto flex flex-col">
+                            <img
+                              src={`/api/project/images/${product.imageUrl[0]}`}
+                              alt="Product Image"
+                              className="w-full h-[150px] rounded-md object-cover mb-4"
+                            />
+                            <div className="flex flex-col justify-between h-full">
+                              <p className="text-lg font-semibold mb-2 truncate w-[150px]">
+                                {product.projectname}
+                              </p>
+                              <div className="flex items-center mb-2">
+                                <span className="text-gray-500 mr-2 text-2xl">
+                                  <MdAccountCircle />
+                                </span>
+                                <p className="text-sm text-gray-600 truncate w-[150px]">
+                                  {product.author}
+                                </p>
+                              </div>
+                              <div className="flex items-center mb-2">
+                                <span className="text-yellow-500 mr-2">
+                                  <IoIosStar />
+                                </span>
+                                <span className="text-sm text-gray-600 truncate w-[150px]">
+                                  {product.rathing || "N/A"} ({product.review})
+                                  | {t("nav.project.projectdetail.sold")}{" "}
+                                  {product.sold}
+                                </span>
+                              </div>
+                              <p className="text-lg font-bold text-[#33529B]">
+                                {product.price} THB
                               </p>
                             </div>
-                            <div className="flex items-center mb-2">
-                              <span className="text-yellow-500 mr-2">
-                                <IoIosStar />
-                              </span>
-                              <span className="text-sm text-gray-600 truncate w-[150px]">
-                                {product.rathing || "N/A"} ({product.review}) |{" "}
-                                {t("nav.project.projectdetail.sold")}{" "}
-                                {product.sold}
-                              </span>
-                            </div>
-                            <p className="text-lg font-bold text-[#33529B]">
-                              {product.price} THB
-                            </p>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-                 ) : (
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
                   <p className="text-center text-gray-500 mt-5">
                     {t("nav.sell.noproject")}
                   </p>
@@ -731,20 +693,11 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                         {project.price} THB
                       </p>
                     </div>
-                    <div className="flex flex-col sm:flex-col md:flex-row items-center space-y-5 md:space-y-0 md:space-x-5 mt-4">
-                      <button
-                        type="submit"
-                        className="flex-grow flex justify-center rounded-md bg-[#33539B] px-3 py-3 w-full text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 md:w-1/2"
-                      >
-                        {t("nav.project.projectdetail.paymentde")}
-                      </button>
-                      <button
-                        type="submit"
-                        className="flex-grow flex justify-center rounded-md bg-[#33539B] px-3 py-3 w-full text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 md:w-1/2"
-                      >
-                        {t("nav.project.projectdetail.paymentmobile")}
-                      </button>
-                    </div>
+                    <OmisePaymentButtons
+                      projectName={project?.projectname || ""}
+                      price={project?.price || 0}
+                      
+                    />
                   </div>
                 </div>
               )}

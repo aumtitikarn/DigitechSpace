@@ -97,7 +97,7 @@ function CustomNavbar() {
         <div className="flex-1 flex justify-center lg:hidden">
           <Link href="/">
             <img
-              src="https://m1r.ai/bdebq.png"
+              src="https://m1r.ai/W8p5i.png"
               alt="Digitech Space logo"
               width={100}
               height={100}
@@ -221,7 +221,7 @@ function CustomNavbar() {
             <div className="flex-none">
               <Link href="/">
                 <img
-                  src="https://m1r.ai/bdebq.png"
+                  src="https://m1r.ai/W8p5i.png"
                   alt="Digitech Space logo"
                   width={120}
                   height={120}
@@ -456,7 +456,7 @@ function CustomNavbar() {
               <div className="flex-none">
                 <Link href="/">
                   <img
-                    src="https://m1r.ai/bdebq.png"
+                    src="https://m1r.ai/W8p5i.png"
                     alt="Digitech Space logo"
                     width={120}
                     height={120}
@@ -665,7 +665,7 @@ function CustomNavbar() {
             <div className="flex justify-between items-center px-5 py-5">
               <Link href="/">
                 <img
-                  src="https://m1r.ai/bdebq.png"
+                  src="https://m1r.ai/W8p5i.png"
                   alt="Digitech Space logo"
                   width={100}
                   height={100}
