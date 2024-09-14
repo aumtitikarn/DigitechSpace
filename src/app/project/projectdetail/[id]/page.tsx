@@ -21,7 +21,7 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import OmisePaymentButtons from "./OmisePaymentButtons";
 import Swal from "sweetalert2";
 import axios from 'axios';
-
+import { useRouter } from 'next/navigation';
 interface ProjectData {
   _id: string;
   projectname: string;
@@ -35,6 +35,7 @@ interface ProjectData {
   imageUrl: string[];
   author: string;
   filesUrl: string[];
+  email: string;
 }
 declare global {
   interface Window {
@@ -55,7 +56,8 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [publishedProjects, setPublishedProjects] = useState<ProjectData[]>([]);
   const [similarProjects, setSimilarProjects] = useState<ProjectData[]>([]);
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
+  
   const projectGroups = [
     {
       group: "Software Development",
@@ -72,15 +74,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       categories: ["model", "photo", "document"],
     },
   ];
-  useEffect(() => {
-    if (window.OmiseCard) {
-      window.OmiseCard.configure({
-        publicKey: process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY
-      });
-    }
-  }, []);
 
-  
   
   useEffect(() => {
     const fetchSimilarProjects = async () => {
@@ -292,25 +286,33 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
   ];
 
-  const createInternetBankingCharge = async (amount: number, token: string, type: string) => {
+  const createInternetBankingCharge = async (amount:number, token:string, type:string) => {
     try {
       const response = await axios.post('/api/payment', {
         token: token,
         amount: amount,
-        description: project.projectname,
+        description: project.projectname, 
         typec: type,
         product: project._id,
-        btype: 2
+        btype: 2,
+        email: project.email,
+        name : project.author
       });
+  
       await Swal.fire({
-        icon: "success",
-        title: "Success",
+        icon: 'success',
+        title: 'Success',
       });
+      if (type === 'credit_card') {
+        router.push('/myproject')
+      } else {
+        window.location.href = response.data.authorizeUri;
+      }
     } catch (error) {
       Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: error instanceof Error ? error.message : "An unknown error occurred",
+        icon: 'error',
+        title: 'Error',
+        text: error instanceof Error ? error.message : 'An unknown error occurred',
       });
     }
   };
@@ -671,6 +673,8 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                     <OmisePaymentButtons
                       projectName={project?.projectname || ""}
                       price={project?.price || 0}
+                      email={project.email}
+                      name={project.author}
                       createInternetBankingCharge={createInternetBankingCharge}
                       
                     />

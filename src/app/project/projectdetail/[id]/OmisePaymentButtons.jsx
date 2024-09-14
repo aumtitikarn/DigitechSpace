@@ -3,7 +3,7 @@ import Script from "react-load-script";
 import { useTranslation } from "react-i18next";
 import { MdDescription } from "react-icons/md";
 
-export default function CheckoutInternetBanking({ projectName, price, createInternetBankingCharge }) {
+export default function CheckoutInternetBanking({ projectName, price, createInternetBankingCharge, email,name }) {
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const { t, i18n } = useTranslation("translation");
   const handleScriptLoad = () => {
@@ -45,6 +45,8 @@ export default function CheckoutInternetBanking({ projectName, price, createInte
     window.OmiseCard.open({
       amount: price * 100,
       description: projectName,
+      email: email,
+      name: name,
       onCreateTokenSuccess: (token) => {
         createInternetBankingCharge(price, token, type);
       },

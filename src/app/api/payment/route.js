@@ -1,33 +1,3 @@
-// // app/api/payment/route.js
-
-// import { NextResponse } from 'next/server';
-// import Omise from 'omise';
-
-// const omise = Omise({
-//   publicKey: process.env.OMISE_PUBLIC_KEY,
-//   secretKey: process.env.OMISE_SECRET_KEY,
-// });
-
-// export async function POST(request) {
-//   try {
-//     const { amount, token } = await request.json();
-
-//     const charge = await omise.charges.create({
-//       amount: amount * 100,
-//       currency: 'thb',
-//       source: token, // ใช้ source แทน card
-//     });
-
-//     if (charge.status === 'successful' || charge.status === 'pending') {
-//       return NextResponse.json({ success: true, charge: charge });
-//     } else {
-//       return NextResponse.json({ success: false, error: 'Payment failed', charge: charge }, { status: 400 });
-//     }
-//   } catch (error) {
-//     console.error('Error processing payment:', error);
-//     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-//   }
-// }
 import Omise from 'omise';
 import { NextResponse } from 'next/server';
 
@@ -38,49 +8,63 @@ const omise = new Omise({
 
 export async function POST(request) {
   try {
-    if (!omise) {
-      throw new Error('Omise is not initialized');
-    }
-
     const body = await request.json();
     console.log('Received request body:', body);
 
-    const { token, amount, description, typec, product, btype } = body;
+    const { token, amount, description, typec, product, btype, email, name } = body;
 
-    if (!token || !amount || !description) {
+    if (!token || !amount || !description || !typec) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    console.log('Creating charge with:', { amount, description, typec, product, btype });
+    console.log('Creating charge with:', { amount, description, typec, product, btype, token });
 
-    const charge = await omise.charges.create({
-      amount: Math.round(amount * 100), // amount in satang (1 THB = 100 satang)
-      currency: 'thb',
-      source: token, 
-      description: description,
-      return_uri: `http://localhost:3000/project/projectdetail/${token}`,
-      capture: false,
-      metadata: {
-        typec,
-        product,
-        btype,
-      },
-    });
+    let charge;
+
+    if (typec === 'credit_card') {
+      const customer = await omise.customers.create({
+        email: email,
+        description: name,
+        card: token, 
+      });
+
+      charge = await omise.charges.create({
+        amount: Math.round(amount * 100), // amount in satang
+        currency: 'thb',
+        customer: customer.id,
+        return_uri: `http://localhost:3000/myproject`,
+      });
+    } else {
+     
+      charge = await omise.charges.create({
+        amount: Math.round(amount * 100), // amount in satang
+        currency: 'thb',
+        source: token, 
+        description: description,
+        return_uri: `http://localhost:3000/myproject`,
+        metadata: {
+          typec,
+          product,
+          btype,
+          email,
+        },
+      });
+    }
 
     console.log('Charge created successfully:', charge);
 
     return NextResponse.json({
+      authorizeUri: typec === 'credit_card' ? `return_uri: http://localhost:3000/myproject` : charge.authorize_uri,
       status: 'success',
       token: charge.id,
-      authorize_uri: charge.authorize_uri,
       charge: {
         id: charge.id,
         status: charge.status,
-        amount: charge.amount / 100, 
+        amount: charge.amount / 100, // back to THB from satang
         currency: charge.currency,
       },
     }, { status: 200 });
-    
+
   } catch (error) {
     console.error('Payment error:', error);
     return NextResponse.json({
