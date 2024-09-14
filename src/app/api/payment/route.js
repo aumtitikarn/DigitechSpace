@@ -1,5 +1,7 @@
 import Omise from 'omise';
 import { NextResponse } from 'next/server';
+import { connectMongoDB } from "../../../../lib/mongodb";
+import  Order  from "../../../../models/order"
 
 const omise = new Omise({
   secretKey: process.env.OMISE_SECRET_KEY,
@@ -29,21 +31,22 @@ export async function POST(request) {
       });
 
       charge = await omise.charges.create({
-        amount: Math.round(amount * 100), // amount in satang
+        amount: Math.round(amount * 100), 
         currency: 'thb',
         customer: customer.id,
-        return_uri: `http://localhost:3000/myproject`,
+        return_uri: `https://6b62-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
       });
     } else {
      
       charge = await omise.charges.create({
-        amount: Math.round(amount * 100), // amount in satang
+        amount: Math.round(amount * 100),
         currency: 'thb',
         source: token, 
         description: description,
-        return_uri: `http://localhost:3000/myproject`,
+        return_uri: `https://6b62-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
         metadata: {
           typec,
+          name,
           product,
           btype,
           email,
@@ -53,14 +56,15 @@ export async function POST(request) {
 
     console.log('Charge created successfully:', charge);
 
+
     return NextResponse.json({
-      authorizeUri: typec === 'credit_card' ? `return_uri: http://localhost:3000/myproject` : charge.authorize_uri,
+      authorizeUri: typec === 'credit_card' ? `return_uri: https://6b62-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject` : charge.authorize_uri,
       status: 'success',
       token: charge.id,
       charge: {
         id: charge.id,
         status: charge.status,
-        amount: charge.amount / 100, // back to THB from satang
+        amount: charge.amount / 100, 
         currency: charge.currency,
       },
     }, { status: 200 });

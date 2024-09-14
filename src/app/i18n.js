@@ -14,7 +14,7 @@ i18n
       addPath: 'locales/add/{{lng}}/{{ns}}'
     },
     fallbackLng: "en",
-    debug: true,
+    debug: false,
 
 
     interpolation: {
