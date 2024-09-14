@@ -192,11 +192,11 @@ export default function page() {
                           </div>
                         </div>
                         <div className="flex flex-row mb-3">
-                          {postPor.imageUrl && postPor.imageUrl.length > 0 ? (
+                          {postData && postData.length > 0 ? (
                             <Image
                               width={200}
                               height={200}
-                              src={`/api/editprofile/images/${postPor.imageUrl}`}
+                              src={`/api/posts/images/${val.userprofile}`}
                               alt="Profile"
                               style={{ objectFit: "cover", borderRadius: "50%", width: "30px", height: "30px", marginRight: "10px" }}
                             />
