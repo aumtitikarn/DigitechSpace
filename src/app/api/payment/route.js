@@ -35,6 +35,7 @@ export async function POST(request) {
         currency: 'thb',
         customer: customer.id,
         return_uri: `https://6b62-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
+        // return_uri: "http://localhost:3000/myproject",
       });
     } else {
      
@@ -44,6 +45,7 @@ export async function POST(request) {
         source: token, 
         description: description,
         return_uri: `https://6b62-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
+        // return_uri: "http://localhost:3000/myproject",
         metadata: {
           typec,
           name,
