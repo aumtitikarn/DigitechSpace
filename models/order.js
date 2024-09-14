@@ -17,6 +17,10 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  typec: {
+    type: String,
+    required: true,
+  },
   chargeId: {
     type: String,
     required: true,

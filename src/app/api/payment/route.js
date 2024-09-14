@@ -37,6 +37,21 @@ export async function POST(request) {
         return_uri: `https://6b62-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
         // return_uri: "http://localhost:3000/myproject",
       });
+      if (charge.status === 'successful') {
+        await connectMongoDB();
+        const newOrder = new Order({
+          email,
+          name,
+          product,
+          amount: charge.amount / 100,
+          typec,
+          chargeId: charge.id,
+          status: charge.status,
+        });
+
+        await newOrder.save();
+        console.log('Order saved to MongoDB:', newOrder);
+      }
     } else {
      
       charge = await omise.charges.create({

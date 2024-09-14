@@ -18,6 +18,7 @@ export async function POST(request) {
           name: charge.metadata.name,
           product: charge.metadata.product,
           amount: charge.amount / 100,
+          typec: charge.metadata.typec,
           chargeId: charge.id,
           status: charge.status
         });
