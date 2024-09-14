@@ -34,7 +34,7 @@ export default function PreAuth() {
       <div className="mx-auto w-full max-w-sm ">
         <img
           className="mx-auto h-116 w-244 mb-20" 
-          src="https://m1r.ai/bdebq.png"
+          src="https://m1r.ai/7ttM.png"
           alt="Digitech Space"
         />  
       </div>

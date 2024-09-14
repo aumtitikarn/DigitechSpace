@@ -295,8 +295,8 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         typec: type,
         product: project._id,
         btype: 2,
-        email: project.email,
-        name : project.author
+        email: session?.user.email,
+        name : session?.user.name
       });
   
       await Swal.fire({

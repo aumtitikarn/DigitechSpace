@@ -109,7 +109,7 @@ function SignUp() {
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
           className="mx-auto h-24 w-auto"
-          src="https://m1r.ai/bdebq.png"
+          src="https://m1r.ai/7ttM.png"
           alt="Digitech Space"
         />
         <h2

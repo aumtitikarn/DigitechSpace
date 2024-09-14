@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { connectMongoDB } from "../../../../../lib/mongodb";
 import  Order  from "../../../../../models/order"
+import  Project  from "../../../../../models/project"
 
 export async function POST(request) {
     try {
@@ -24,6 +25,11 @@ export async function POST(request) {
         });
   
         await newOrder.save();
+        await Project.findByIdAndUpdate(
+          charge.metadata.product,
+          { $inc: { sold: 1 } },
+          { new: true }
+        );
         console.log('Order saved to MongoDB:', newOrder);
   
         return NextResponse.json({ message: 'Order saved successfully' }, { status: 200 });

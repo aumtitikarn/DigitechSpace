@@ -455,20 +455,6 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       </>
                     )}
                   </div>
-                  {session ? (
-                    <button
-                      className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-11"
-                      onClick={handleBuyClick}
-                    >
-                      {t("nav.project.projectdetail.buy")}
-                    </button>
-                  ) : (
-                    <Link href="/auth/preauth">
-                      <button className="bg-[#33529B] text-white px-5  py-2 lg:px-10 lg:py-2 rounded-lg mt-11">
-                        {t("authen.signin.title")}
-                      </button>
-                    </Link>
-                  )}
                 </div>
               </div>
 

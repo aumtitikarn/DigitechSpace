@@ -258,7 +258,7 @@ const ProductList: React.FC = () => {
             {filteredProjects.map((project, index) => (
                 <Link
                   key={index}
-                  href={`/project/projectdetail/${project._id}`}
+                  href={`/project/projectreceive/${project._id}`}
                   passHref
                 >
                   <div className="relative mt-5">

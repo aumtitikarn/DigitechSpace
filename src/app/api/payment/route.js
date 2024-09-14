@@ -2,6 +2,7 @@ import Omise from 'omise';
 import { NextResponse } from 'next/server';
 import { connectMongoDB } from "../../../../lib/mongodb";
 import  Order  from "../../../../models/order"
+import  Project  from "../../../../models/project"
 
 const omise = new Omise({
   secretKey: process.env.OMISE_SECRET_KEY,
@@ -34,7 +35,7 @@ export async function POST(request) {
         amount: Math.round(amount * 100), 
         currency: 'thb',
         customer: customer.id,
-        return_uri: `https://6b62-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
+        return_uri: `https://a845-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
         // return_uri: "http://localhost:3000/myproject",
       });
       if (charge.status === 'successful') {
@@ -50,6 +51,13 @@ export async function POST(request) {
         });
 
         await newOrder.save();
+
+        await Project.findByIdAndUpdate(
+          product,
+          { $inc: { sold: 1 } },
+          { new: true }
+        );
+        console.log('Project sold count incremented');
         console.log('Order saved to MongoDB:', newOrder);
       }
     } else {
@@ -59,7 +67,7 @@ export async function POST(request) {
         currency: 'thb',
         source: token, 
         description: description,
-        return_uri: `https://6b62-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
+        return_uri: `https://a845-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
         // return_uri: "http://localhost:3000/myproject",
         metadata: {
           typec,
@@ -75,7 +83,7 @@ export async function POST(request) {
 
 
     return NextResponse.json({
-      authorizeUri: typec === 'credit_card' ? `return_uri: https://6b62-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject` : charge.authorize_uri,
+      authorizeUri: typec === 'credit_card' ? `return_uri: https://a845-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject` : charge.authorize_uri,
       status: 'success',
       token: charge.id,
       charge: {
