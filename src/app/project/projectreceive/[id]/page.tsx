@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { GoCheck, GoShare, GoHeartFill } from "react-icons/go";
 import { IoIosStar } from "react-icons/io";
-import { MdAccountCircle, MdDescription } from "react-icons/md";
+import { MdAccountCircle } from "react-icons/md";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight, FaFacebook } from "react-icons/fa";
 import { GoHeart } from "react-icons/go";
@@ -18,10 +18,7 @@ import { OrbitProgress } from "react-loading-indicators";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { MdOutlineFileDownload } from "react-icons/md";
-import OmisePaymentButtons from "./OmisePaymentButtons";
-import Swal from "sweetalert2";
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
+
 interface ProjectData {
   _id: string;
   projectname: string;
@@ -35,15 +32,9 @@ interface ProjectData {
   imageUrl: string[];
   author: string;
   filesUrl: string[];
-  email: string;
-}
-declare global {
-  interface Window {
-    OmiseCard: any;
-  }
 }
 
-const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
+const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -56,8 +47,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [publishedProjects, setPublishedProjects] = useState<ProjectData[]>([]);
   const [similarProjects, setSimilarProjects] = useState<ProjectData[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-  
+
   const projectGroups = [
     {
       group: "Software Development",
@@ -65,47 +55,38 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
     { group: "Data and AI", categories: ["ai", "datasets", "document"] },
     { group: "Hardware and IoT", categories: ["iot", "program", "document"] },
-    {
-      group: "Content and Design",
-      categories: ["document", "photo", "document"],
-    },
+    { group: "Content and Design", categories: ["document", "photo", "document"] },
     {
       group: "3D and Modeling",
       categories: ["model", "photo", "document"],
     },
   ];
 
-  
-  useEffect(() => {
+ useEffect(() => {
     const fetchSimilarProjects = async () => {
       if (project && project.category) {
         try {
           // Find the group that contains the current project's category
-          const currentGroup = projectGroups.find((group) =>
+          const currentGroup = projectGroups.find(group => 
             group.categories.includes(project.category)
           );
 
           if (currentGroup) {
-            const categories = currentGroup.categories.join(",");
-            const response = await fetch(
-              `/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`
-            );
+            const categories = currentGroup.categories.join(',');
+            const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
             if (response.ok) {
               const data = await response.json();
               setSimilarProjects(data);
             } else {
               const errorData = await response.json();
-              setError(
-                errorData.error ||
-                  `Failed to fetch similar projects: ${response.status} ${response.statusText}`
-              );
+              setError(errorData.error || `Failed to fetch similar projects: ${response.status} ${response.statusText}`);
             }
           } else {
-            setError("No matching category group found");
+            setError('No matching category group found');
           }
         } catch (error) {
           console.error("Error fetching similar projects:", error);
-          setError("An error occurred while fetching similar projects");
+          setError('An error occurred while fetching similar projects');
         }
       }
     };
@@ -232,6 +213,69 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const handleShowLessClick = () => {
     setVisibleReviewsCount(3); // กลับไปแสดงผลรีวิว 5 รีวิวแรก
   };
+  // ข้อมูลตัวอย่างของสินค้า
+  const products = [
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+    {
+      image:
+        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
+      name: "Hi5 Website",
+      author: "Titikarn Waitayasuwan",
+      rating: "4.8",
+      reviews: 28,
+      sold: 29,
+      price: "50,000",
+    },
+  ];
 
   const reviews = [
     {
@@ -286,37 +330,33 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
   ];
 
-  const createInternetBankingCharge = async (amount:number, token:string, type:string) => {
+  const handleDownload = async (fileName: string) => {
     try {
-      const response = await axios.post('/api/payment', {
-        token: token,
-        amount: amount,
-        description: project.projectname, 
-        typec: type,
-        product: project._id,
-        btype: 2,
-        email: project.email,
-        name : project.author
-      });
-  
-      await Swal.fire({
-        icon: 'success',
-        title: 'Success',
-      });
-      if (type === 'credit_card') {
-        router.push('/myproject')
+      if (!project || !project.filesUrl.length) {
+        console.error("No files available for download");
+        return;
+      }
+
+      const fileUrl = `/api/project/files/${fileName}`;
+      const response = await fetch(fileUrl);
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
       } else {
-        window.location.href = response.data.authorizeUri;
+        console.error("Failed to download file");
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error instanceof Error ? error.message : 'An unknown error occurred',
-      });
+      console.error("Error downloading file:", error);
     }
   };
-
 
   return (
     <main className="bg-[#FBFBFB]">
@@ -459,6 +499,27 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 ))}
               </div>
               <div>
+                {/* ไฟล์ */}
+                <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
+                  <h2 className="text-lg font-bold text-[#33529B]">
+                    {t("nav.project.projectdetail.file")}
+                  </h2>
+                  <div className="border-t border-gray-300 my-4"></div>
+                  <ul className="list-none mt-2">
+                    {project.filesUrl.map((fileName, index) => (
+                      <li className="flex items-center mb-2 " key={index}>
+                        <button
+                          onClick={() => handleDownload(fileName)}
+                          style={{ cursor: "pointer" }}
+                          className="flex items-center space-x-2 hover:text-blue-600"
+                        >
+                          <MdOutlineFileDownload className="w-5 h-5 text-gray-500" />
+                          <span>{fileName}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
               {/* Reviews Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
@@ -578,51 +639,51 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                   {t("nav.project.projectdetail.otherproject")}
                 </p>
                 {publishedProjects.length > 0 ? (
-                  <div className="flex overflow-x-auto gap-[17px] mt-10">
-                    {similarProjects.map((product, index) => (
-                      <Link
-                        key={index}
-                        href={`/project/projectdetail/${product._id}`}
-                      >
-                        <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
-                          <div className="w-full h-auto flex flex-col">
-                            <img
-                              src={`/api/project/images/${product.imageUrl[0]}`}
-                              alt="Product Image"
-                              className="w-full h-[150px] rounded-md object-cover mb-4"
-                            />
-                            <div className="flex flex-col justify-between h-full">
-                              <p className="text-lg font-semibold mb-2 truncate w-[150px]">
-                                {product.projectname}
-                              </p>
-                              <div className="flex items-center mb-2">
-                                <span className="text-gray-500 mr-2 text-2xl">
-                                  <MdAccountCircle />
-                                </span>
-                                <p className="text-sm text-gray-600 truncate w-[150px]">
-                                  {product.author}
-                                </p>
-                              </div>
-                              <div className="flex items-center mb-2">
-                                <span className="text-yellow-500 mr-2">
-                                  <IoIosStar />
-                                </span>
-                                <span className="text-sm text-gray-600 truncate w-[150px]">
-                                  {product.rathing || "N/A"} ({product.review})
-                                  | {t("nav.project.projectdetail.sold")}{" "}
-                                  {product.sold}
-                                </span>
-                              </div>
-                              <p className="text-lg font-bold text-[#33529B]">
-                                {product.price} THB
+                <div className="flex overflow-x-auto gap-[17px] mt-10">
+                  {similarProjects.map((product, index) => (
+                    <Link
+                      key={index}
+                      href={`/project/projectdetail/${product._id}`}
+                    >
+                      <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
+                        <div className="w-full h-auto flex flex-col">
+                          <img
+                            src={`/api/project/images/${product.imageUrl[0]}`}
+                            alt="Product Image"
+                            className="w-full h-[150px] rounded-md object-cover mb-4"
+                          />
+                          <div className="flex flex-col justify-between h-full">
+                            <p className="text-lg font-semibold mb-2 truncate w-[150px]">
+                              {product.projectname}
+                            </p>
+                            <div className="flex items-center mb-2">
+                              <span className="text-gray-500 mr-2 text-2xl">
+                                <MdAccountCircle />
+                              </span>
+                              <p className="text-sm text-gray-600 truncate w-[150px]">
+                                {product.author}
                               </p>
                             </div>
+                            <div className="flex items-center mb-2">
+                              <span className="text-yellow-500 mr-2">
+                                <IoIosStar />
+                              </span>
+                              <span className="text-sm text-gray-600 truncate w-[150px]">
+                                {product.rathing || "N/A"} ({product.review}) |{" "}
+                                {t("nav.project.projectdetail.sold")}{" "}
+                                {product.sold}
+                              </span>
+                            </div>
+                            <p className="text-lg font-bold text-[#33529B]">
+                              {product.price} THB
+                            </p>
                           </div>
                         </div>
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                 ) : (
                   <p className="text-center text-gray-500 mt-5">
                     {t("nav.sell.noproject")}
                   </p>
@@ -670,14 +731,20 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                         {project.price} THB
                       </p>
                     </div>
-                    <OmisePaymentButtons
-                      projectName={project?.projectname || ""}
-                      price={project?.price || 0}
-                      email={project.email}
-                      name={project.author}
-                      createInternetBankingCharge={createInternetBankingCharge}
-                      
-                    />
+                    <div className="flex flex-col sm:flex-col md:flex-row items-center space-y-5 md:space-y-0 md:space-x-5 mt-4">
+                      <button
+                        type="submit"
+                        className="flex-grow flex justify-center rounded-md bg-[#33539B] px-3 py-3 w-full text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 md:w-1/2"
+                      >
+                        {t("nav.project.projectdetail.paymentde")}
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex-grow flex justify-center rounded-md bg-[#33539B] px-3 py-3 w-full text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 md:w-1/2"
+                      >
+                        {t("nav.project.projectdetail.paymentmobile")}
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -690,4 +757,4 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   );
 };
 
-export default ProjectDetail;
+export default ProjectRecieve;

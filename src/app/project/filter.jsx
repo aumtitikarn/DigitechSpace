@@ -204,7 +204,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
           {projects.length > 0 ? (
             projects.map((project, index) => (
               <Link key={index} href={`/project/projectdetail/${project._id}`}>
-                <div className="w-[190px] h-auto lg:w-[230px] md:w-[210px] rounded-[10px] border border-[#BEBEBE] bg-white p-4">
+                <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
                   <img
                     src={`/api/project/images/${project.imageUrl[0]}`}
                     alt="Project Image"
