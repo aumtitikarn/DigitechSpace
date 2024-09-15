@@ -2,6 +2,7 @@ import mongoose from "mongoose"; // Add this import
 import { Readable } from "stream";
 import { connectMongoDB } from "../../../../../lib/mongodb";
 import NormalUser from "../../../../../models/NormalUser";
+import StudentUser from "../../../../../models/StudentUser";
 import { NextResponse } from "next/server";
 
 
@@ -9,7 +10,8 @@ export async function GET(req, { params }) {
   const { id } = params;
   await connectMongoDB();
   const post = await NormalUser.findOne({ _id: id });
-  return NextResponse.json({ post }, { status: 200 });
+  const posts = await StudentUser.findOne({ _id: id });
+  return NextResponse.json({ post,posts }, { status: 200 });
 }
 
 

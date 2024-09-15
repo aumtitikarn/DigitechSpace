@@ -44,7 +44,7 @@ function Blog({ params, initialComments }) {
 
   const [postData, setPostData] = useState<PostData[]>([]);
 
-  
+
 
   const [topic, setTopic] = useState("");
   const [course, setCourse] = useState("");
@@ -331,22 +331,22 @@ function Blog({ params, initialComments }) {
                 alt="Blog Image"
               /> */}
               {postData && postData.imageUrl ? (
-  <Image
-    width={200}
-    height={200}
-    src={`/api/posts/images/${postData.imageUrl[currentIndex]}`}
-    alt={postData.topic || "Blog Image"}
-    className="w-full h-full object-cover rounded-lg"
-  />
-) : (
-  <Image
-    width={200}
-    height={200}
-    src="/path/to/placeholder-image.jpg" // Fallback if imageUrl is undefined
-    alt="Placeholder"
-    className="w-full h-full object-cover rounded-lg"
-  />
-)}
+                <Image
+                  width={200}
+                  height={200}
+                  src={`/api/posts/images/${postData.imageUrl[currentIndex]}`}
+                  alt={postData.topic || "Blog Image"}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              ) : (
+                <Image
+                  width={200}
+                  height={200}
+                  src="/path/to/placeholder-image.jpg" // Fallback if imageUrl is undefined
+                  alt="Placeholder"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              )}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 <button
                   className={`w-3 h-3 rounded-full`}
@@ -370,11 +370,11 @@ function Blog({ params, initialComments }) {
             <div className="flex flex-row mt-5 mb-5 items-center">
               <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
               <div className="flex flex-col justify-center">
-              {postData && postData.author ? (
-      <h1 className="font-bold">{postData.author}</h1>
-    ) : (
-      <h1 className="font-bold">Anonymous</h1> // กรณีที่ไม่มีข้อมูลผู้เขียน
-    )}
+                {postData && postData.author ? (
+                  <h1 className="font-bold">{postData.author}</h1>
+                ) : (
+                  <h1 className="font-bold">Anonymous</h1> // กรณีที่ไม่มีข้อมูลผู้เขียน
+                )}
               </div>
             </div>
 
@@ -383,13 +383,13 @@ function Blog({ params, initialComments }) {
                 href=""
                 className="text-white rounded-md p-2 m-1"
                 style={{ backgroundColor: "#33529B" }}
-                
+
               >
                 {postData && postData.course ? (
-      <h1 className="font-bold">{postData.course}</h1>
-    ) : (
-      <h1 className="font-bold">No Course Available</h1> // กรณีที่ไม่มีข้อมูลคอร์ส
-    )}
+                  <h1 className="font-bold">{postData.course}</h1>
+                ) : (
+                  <h1 className="font-bold">No Course Available</h1> // กรณีที่ไม่มีข้อมูลคอร์ส
+                )}
                 {/* {t("nav.blog.code")} {postData.course} */}
               </Link>
               <Link
@@ -398,27 +398,27 @@ function Blog({ params, initialComments }) {
                 style={{ backgroundColor: "#33529B" }}
               >
                 {postData && postData.selectedCategory ? (
-    postData.selectedCategory
-  ) : (
-    <h1 className="font-bold">No Category Available</h1>
-  )}
+                  postData.selectedCategory
+                ) : (
+                  <h1 className="font-bold">No Category Available</h1>
+                )}
               </Link>
             </div>
 
             <div className="mt-5">
-            {postData && postData.topic ? (
-  <h1>{postData.topic}</h1>
-) : (
-  <h1>No Topic Available</h1>
-)}
+              {postData && postData.topic ? (
+                <h1>{postData.topic}</h1>
+              ) : (
+                <h1>No Topic Available</h1>
+              )}
             </div>
 
             <div className="mt-2 mb-3">
-            {postData && postData.description ? (
-    <p>{postData.description}</p>
-  ) : (
-    <p>No Description Available</p>
-  )}
+              {postData && postData.description ? (
+                <p>{postData.description}</p>
+              ) : (
+                <p>No Description Available</p>
+              )}
             </div>
 
             <div className="flex justify-between items-center border-b-2 border-t-2 border-gray-200 py-3">
@@ -428,11 +428,11 @@ function Blog({ params, initialComments }) {
                     className={`text-3xl cursor-pointer ${isHeartClicked ? 'text-red-500' : ''}`}
                     onClick={handleSubmitCiHeart}
                   />
-                 {postData && postData.heart !== undefined ? (
-    <p>Hearts: {postData.heart}</p>
-  ) : (
-    <p>No Heart Data Available</p>
-  )}
+                  {postData && postData.heart !== undefined ? (
+                    <p>Hearts: {postData.heart}</p>
+                  ) : (
+                    <p>No Heart Data Available</p>
+                  )}
                 </div>
                 <div className="flex items-center">
                   <BsChatDots className="text-2xl" />
@@ -507,22 +507,27 @@ function Blog({ params, initialComments }) {
             <div>
               {Array.isArray(postData.comments) &&
                 postData.comments.map((comment) => (
-                  <div key={comment._id} className="flex flex-col border-2 m-3 p-2">
+                  <div key={comment._id} className="flex flex-col m-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
-                        {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
-                        <Image
-                          width={200}
-                          height={200}
-                          src={comment.profile ? `/api/posts/images/${comment.profile}` : "/path-to-default-image.jpg"}
-                          alt={`${comment.author}'s profile picture`}
-                          className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
-                        />
-                        <strong className="flex flex-col justify-center text-lg">{comment.author} : </strong>
+                        {comment.profile && comment.profile ? (
+                          <Image
+                            width={200}
+                            height={200}
+                            src={`/api/posts/images/${comment.profile[0]}`}
+                            alt={`${comment.author}'s profile picture`}
+                            onError={(e) => { e.target.onerror = null; e.target.src = ""; }} // Handle broken image links
+                            className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                          />
+                        ) : (
+                          <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+                        )}
+                        <strong className="flex flex-col justify-center text-lg">{comment.author}</strong>
                       </p>
-                      <p className="ml-4 text-lg">{comment.text}</p>
-                      <div className="flex flex-col">
-                        {/* <p className="text-sm text-gray-500">{new Date(comment.timestamp).toLocaleString()}</p>  */}
+                      <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
+                      <p className="text-lg ml-10">{comment.text}</p>
+                      <div className="flex flex-col ml-10">
+
                         <div className="flex flex-row">
                           {replyingTo === comment._id ? (
                             <div className="flex flex-col ml-4">
@@ -575,12 +580,18 @@ function Blog({ params, initialComments }) {
             <textarea
               value={commentInput}
               onChange={(e) => setCommentInput(e.target.value)}
-              placeholder="Add a comment"
+              placeholder="Comment"
+              className="w-full p-2 border-2 rounded-md resize-none mt-4 h-32"
+              style={{ paddingRight: '100px' }}  // Add space for the button
             />
-            <button onClick={() => handleAddCommentOrReply(false)}>
-              Add Comment
-            </button>
-
+            <div className="flex flex-row justify-end m-4">
+              <button
+                onClick={() => handleAddCommentOrReply(false)}
+                className="่justify-end bottom-2 right-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm h-12"
+              >
+                Send
+              </button>
+            </div>
             {isPopupOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
                 <div className="relative max-w-lg w-full p-8 bg-white shadow-md rounded-lg">

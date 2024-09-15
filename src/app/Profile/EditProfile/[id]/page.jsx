@@ -26,6 +26,32 @@ function page() {
   const [profileImage, setProfileImage] = useState(null);
   const [imageFile, setImageFile] = useState(null); 
 
+  const getPostById = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Edit post: ", data);
+
+      const post = data.post;
+      setPostData(post);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostById();
+  }, []);
+
+
   useEffect(() => {
     if (session?.user?.name) {
       setNewName(session.user.name); // Set the initial name from session data
@@ -68,32 +94,6 @@ function page() {
       setProfileImage(URL.createObjectURL(file)); 
     }
   };
-
-  const getPostById = async () => {
-    try {
-      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch a post");
-      }
-
-      const data = await res.json();
-      console.log("Edit post: ", data);
-
-      const post = data.post;
-      setPostData(post);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getPostById();
-  }, []);
-
 
   // Handle save profile updates
   const handleSave = async () => {

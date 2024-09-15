@@ -22,7 +22,9 @@ function page() {
   const [activeButton1] = useState("button1");
 
   const [postData, setPostData] = useState([]);
+  const [postDataProject, setPostDataProject] = useState([]);
   const [postDataBlog, setPostDataBlog] = useState([]);
+  const [publishedProject,setPublishedProjects] = useState([]);
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
@@ -60,11 +62,17 @@ function page() {
       console.log("Fetched Data: ", data); // Log the data to inspect its structure
   
       // Update the state with the data
-      setPostData(data); // Assuming the API returns an array of projects
+      // setPublishedProjects(data); // Assuming the API returns an array of projects
+      console.log("เช็คข้อมูลโครงงาน",data)
     } catch (error) {
       console.log("Error loading posts: ", error);
     }
   };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
+  
 
   const getPostsblog = async () => {
     try {
@@ -112,9 +120,31 @@ function page() {
   // }
 
   useEffect(() => {
-    getPosts();
-  }, []);
+    const getPosts = async () => {
+      if (status === "authenticated" && session) {
+        try {
+          // Fetch published projects
+          const publishedResponse = await fetch(
+            "/api/project/getProjects/user",
+            {
+              method: "GET",
+            }
+          );
+          if (publishedResponse.ok) {
+            const publishedData = await publishedResponse.json();
+            console.log("Published Data:", publishedData); // Debug log
+            setPublishedProjects(publishedData);
+          } else {
+            console.error("Failed to fetch published projects");
+          }
+        } catch (error) {
+          console.error("Error fetching projects:", error);
+        }
+      }
+    };
 
+    getPosts();
+  }, [status, session]);
 
   const products = [
     {
@@ -320,16 +350,18 @@ function page() {
           </div>
           {activeButton1 === "button1" && activeButton === "button1" && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center mt-10 w-full">
-              {postData && postData.length > 0 ? (
-                postData.map((project, index) => (
+              {publishedProject && publishedProject.length > 0 ? (
+                publishedProject.map((project, index) => (
                   <Link key={index} href={`/project/projectdetail/${project._id}`}>
                     <div
                       className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white p-4 m-5"
                       style={{ width: "100%", maxWidth: "303px", height: "auto", maxHeight: "375px" }}
                     >
                       <div className="w-full h-full flex flex-col">
-                        <img
-                          src={project.imageUrl || 'default-image-url.jpg'} // Replace with the actual image field from your project model
+                        <Image
+                          width={100}
+                          height={400}
+                          src={`/api/project/images/${project.imageUrl[0]}`} // Replace with the actual image field from your project model
                           alt="Project Image"
                           className="w-full h-[150px] md:h-[120px] lg:h-[150px] rounded-md object-cover mb-4"
                         />
@@ -368,11 +400,10 @@ function page() {
                     <div className="rounded w-full relative" style={{ height: "200px" }}>
                       <Image
                           width={100}
-                          height={100}
+                          height={400}
                           src={`/api/posts/images/${blog.imageUrl}`}
                           alt={blog.topic}
-                          className="w-full object-cover rounded-lg"
-                          style={{ height: "100px" }}
+                          className="w-full object-cover rounded-lg h-full"
                         />
                     </div>
                     <div className="ml-2 mt-2">
