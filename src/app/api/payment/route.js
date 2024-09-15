@@ -35,8 +35,7 @@ export async function POST(request) {
         amount: Math.round(amount * 100), 
         currency: 'thb',
         customer: customer.id,
-        return_uri: `https://a845-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
-        // return_uri: "http://localhost:3000/myproject",
+        return_uri: `https://pretty-peas-write.loca.lt/myproject`,
       });
       if (charge.status === 'successful') {
         await connectMongoDB();
@@ -67,8 +66,7 @@ export async function POST(request) {
         currency: 'thb',
         source: token, 
         description: description,
-        return_uri: `https://a845-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject`,
-        // return_uri: "http://localhost:3000/myproject",
+        return_uri: `https://pretty-peas-write.loca.lt/myproject`,
         metadata: {
           typec,
           name,
@@ -83,7 +81,7 @@ export async function POST(request) {
 
 
     return NextResponse.json({
-      authorizeUri: typec === 'credit_card' ? `return_uri: https://a845-2405-9800-bc21-12a1-adf5-9bf3-3915-48a4.ngrok-free.app/myproject` : charge.authorize_uri,
+      authorizeUri: typec === 'credit_card' ? `return_uri: https://pretty-peas-write.loca.lt/myproject` : charge.authorize_uri,
       status: 'success',
       token: charge.id,
       charge: {

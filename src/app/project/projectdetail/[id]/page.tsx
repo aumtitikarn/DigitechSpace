@@ -67,11 +67,11 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     { group: "Hardware and IoT", categories: ["iot", "program", "document"] },
     {
       group: "Content and Design",
-      categories: ["document", "photo", "document"],
+      categories: ["document", "photo"],
     },
     {
       group: "3D and Modeling",
-      categories: ["model", "photo", "document"],
+      categories: ["photo", "document", "model"],
     },
   ];
 
@@ -80,28 +80,40 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     const fetchSimilarProjects = async () => {
       if (project && project.category) {
         try {
-          // Find the group that contains the current project's category
-          const currentGroup = projectGroups.find((group) =>
-            group.categories.includes(project.category)
-          );
-
-          if (currentGroup) {
-            const categories = currentGroup.categories.join(",");
-            const response = await fetch(
-              `/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`
-            );
-            if (response.ok) {
-              const data = await response.json();
-              setSimilarProjects(data);
-            } else {
-              const errorData = await response.json();
-              setError(
-                errorData.error ||
-                  `Failed to fetch similar projects: ${response.status} ${response.statusText}`
-              );
-            }
+          let categories;
+          
+          if (project.category.toLowerCase() === 'all') {
+            // If category is 'All', include all unique categories from all groups
+            categories = Array.from(new Set(projectGroups.flatMap(group => group.categories))).join(',');
           } else {
-            setError("No matching category group found");
+            // Find all groups that contain the current project's category
+            const relevantGroups = projectGroups.filter((group) =>
+              group.categories.includes(project.category)
+            );
+            
+            console.log("Relevant groups:", relevantGroups);
+            
+            // Collect all unique categories from relevant groups
+            categories = Array.from(new Set(
+              relevantGroups.flatMap(group => group.categories)
+            )).join(',');
+          }
+          
+          console.log("Categories being sent:", categories);
+  
+          const response = await fetch(
+            `/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`
+          );
+  
+          if (response.ok) {
+            const data = await response.json();
+            setSimilarProjects(data);
+          } else {
+            const errorData = await response.json();
+            setError(
+              errorData.error ||
+                `Failed to fetch similar projects: ${response.status} ${response.statusText}`
+            );
           }
         } catch (error) {
           console.error("Error fetching similar projects:", error);
@@ -109,11 +121,11 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         }
       }
     };
+  
     console.log("project :", project);
     fetchSimilarProjects();
   }, [project]);
-
-  // const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
+  
   useEffect(() => {
     const fetchData = async () => {
       if (params.id) {
