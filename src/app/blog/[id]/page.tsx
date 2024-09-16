@@ -63,6 +63,32 @@ function Blog({ params, initialComments }) {
 
   const [profileUser, setProfileUser] = useState("");
 
+  const getPostByIdprofile = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Edit post: ", data);
+
+      const postP = data.post;
+      setPostData(postP);
+      setProfileUser(postP.imageUrl);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostByIdprofile();
+  }, []);
+
 
   const handleAddCommentOrReply = async (isReply, commentId = null) => {
     const requestBody = {
@@ -94,32 +120,6 @@ function Blog({ params, initialComments }) {
       console.log(error);
     }
   };
-
-  const getPostByIdprofile = async () => {
-    try {
-      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch a post");
-      }
-
-      const data = await res.json();
-      console.log("Edit post: ", data);
-
-      const postP = data.post;
-      setPostData(postP);
-      setProfileUser(postP.imageUrl);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getPostByIdprofile();
-  }, []);
 
 
   ////////////////////////////////
@@ -510,18 +510,17 @@ function Blog({ params, initialComments }) {
                   <div key={comment._id} className="flex flex-col m-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
-                        {comment.profile && comment.profile ? (
+                        
                           <Image
                             width={200}
                             height={200}
-                            src={`/api/posts/images/${comment.profile[0]}`}
+                            src={`/api/posts/images/${comment.profile}`}
                             alt={`${comment.author}'s profile picture`}
-                            onError={(e) => { e.target.onerror = null; e.target.src = ""; }} // Handle broken image links
                             className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
                           />
-                        ) : (
-                          <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
-                        )}
+                        
+                          {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
+                        
                         <strong className="flex flex-col justify-center text-lg">{comment.author}</strong>
                       </p>
                       <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>

@@ -251,7 +251,9 @@ function page() {
               </div>
               <input
                 type="text"
-                placeholder="Enter name"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)} // Update state when input changes
+                placeholder={session?.user?.name}
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />
               <div className="flex flex-row items-center w-full mt-4">
@@ -265,6 +267,8 @@ function page() {
               </div>
               <input
                 type="text"
+                value={newPhonenumber}
+                onChange={(e) => setNewPhonenumber(e.target.value)}
                 placeholder="Enter phone number"
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />
@@ -273,6 +277,8 @@ function page() {
               </div>
               <input
                 type="text"
+                value={newFacebook}
+                onChange={(e) => setNewFacebook(e.target.value)}
                 placeholder="Enter your facebook"
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />
@@ -281,6 +287,8 @@ function page() {
               </div>
               <input
                 type="text"
+                value={newLine}
+                onChange={(e) => setNewLine(e.target.value)}
                 placeholder="Enter your ID"
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />

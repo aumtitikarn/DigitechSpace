@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Readable } from "stream";
 import { connectMongoDB } from "../../../../lib/mongodb";
 import NormalUser from "../../../../models/NormalUser"
+import StudentUser from "../../../../models/StudentUser"
 
 export const revalidate = 0;
 
@@ -77,7 +78,20 @@ export async function POST(req) {
         
     });
 
+    const newItemStudentUser = new StudentUser({
+      name, 
+      email, 
+      line, 
+      facebook, 
+      phonenumber, 
+      imageUrl,
+      favblog,
+        
+    });
+
     const savedProject = await newItem.save();
+
+    const savedProjectStudentUser = await newItemStudentUser.save();
 
     return NextResponse.json({ message: "Post created" }, { status: 201 });
   } catch (error) {
@@ -93,6 +107,7 @@ export async function POST(req) {
 
 export async function GET() {
     const { db } = await connectMongoDB();
-    const edits = await NormalUser.find({});
-    return NextResponse.json({ edits });
+    const edit = await NormalUser.find({});
+    const edits = await StudentUser.find({});
+    return NextResponse.json({ edit,edits });
 }

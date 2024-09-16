@@ -88,17 +88,48 @@ export async function PUT(req, { params }) {
       ...(imageUrl.length > 0 && { imageUrl }),
     };
 
+        // Add line and facebook if they exist in the request
+        if (line) {
+          updateData.line = line; // Add line to updateData
+        }
+        if (facebook) {
+          updateData.facebook = facebook; // Add facebook to updateData
+        }
+    
+        if (favblog.length > 0) {
+          updateData.$push = { favblog: { $each: favblog } };
+        }
+
     // Correctly use $push to add entries to favblog
     if (favblog.length > 0) {
       updateData.$push = { favblog: { $each: favblog } };
     }
 
     // Update the user profile
-    const updatedUser = await NormalUser.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true } // Use runValidators to ensure data adheres to schema
-    );
+    // const updatedUser = await NormalUser.findByIdAndUpdate(
+    //   id,
+    //   updateData,
+    //   { new: true, runValidators: true } // Use runValidators to ensure data adheres to schema
+    // );
+    
+
+    // if (!updatedUser) {
+    //   return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    // }
+
+    let updatedUser = await NormalUser.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    // If not found in NormalUser, attempt to update StudentUser
+    if (!updatedUser) {
+      updatedUser = await StudentUser.findByIdAndUpdate(
+        id,
+        { $set: updateData }, // Use $set to ensure new fields are added
+        { new: true, runValidators: true, strict: false }
+      );
+    }
 
     if (!updatedUser) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
