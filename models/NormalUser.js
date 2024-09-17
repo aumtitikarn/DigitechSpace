@@ -15,11 +15,6 @@ const normalUserSchema = new mongoose.Schema({
     facebook: { type: String, required: true },
     imageUrl: { type: [String], required: true },
     // blogId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }], // Array of blog ObjectId references
-    favblog: [{
-        blogId: { type: mongoose.Types.ObjectId, required: true },
-        imageUrl: { type: [String], required: true },
-        topic: { type: String, required: true }
-    }] // Array to store favorite blog details
 }, { timestamps: true });
 
 const NormalUser = mongoose.models.NormalUser || mongoose.model('NormalUser', normalUserSchema);

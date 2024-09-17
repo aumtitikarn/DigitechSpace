@@ -53,8 +53,11 @@ const studentUserSchema = new mongoose.Schema({
         district: { type: String },
         province: { type: String },
         postalnumber: { type: String }
-    }
-}, { timestamps: true });
+    },
+    line: { type: String, required: true },
+    facebook: { type: String, required: true },
+    imageUrl: { type: [String], required: true },
+}, { timestamps: true ,strict: false });
 
 
 const StudentUser = mongoose.models.StudentUser || mongoose.model('StudentUser', studentUserSchema);
