@@ -22,6 +22,7 @@ function page() {
   const [activeButton1] = useState("button1");
 
   const [postData, setPostData] = useState([]);
+  const [postDataS, setPostDataS] = useState([]);
   const [postDataProject, setPostDataProject] = useState([]);
   const [postDataBlog, setPostDataBlog] = useState([]);
   const [publishedProject,setPublishedProjects] = useState([]);
@@ -269,25 +270,75 @@ function page() {
     },
   ];
 
+  const getPostById = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Edit post: ", data);
+
+      const post = data.post;
+      setPostData(post);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostById();
+  }, []);
+
+  const getPostByIdS = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Edit post: ", data);
+
+      const posts = data.posts;
+      setPostDataS(posts);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostByIdS();
+  }, []);
+
   return (
     <Container>
       <Navbar session={session} />
       <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20">
         <div className="flex flex-col w-full max-w-auto mb-20">
-
+        {session?.user?.role == "NormalUser" && (
           <div className="flex flex-row justify-center">
             <div className="relative">
               {postData && postData.imageUrl ? (
                 <Image
                   width={200}
                   height={200}
-                  src={`api/project/getProjects/user/${postData.imageUrl}`}
+                  src={`/api/editprofile/images/${postData.imageUrl}`}
                   alt="Profile"
                   style={{
                     objectFit: "cover",
                     borderRadius: "50%",
-                    width: "55px",
-                    height: "55px",
+                    width: "95px",
+                    height: "95px",
                     margin: "15px",
                   }}
                 />
@@ -299,7 +350,33 @@ function page() {
               )}
             </div>
           </div>
-
+          )}
+          {session?.user?.role !== "NormalUser" && (
+          <div className="flex flex-row justify-center">
+            <div className="relative">
+              {postDataS && postDataS.imageUrl ? (
+                <Image
+                  width={200}
+                  height={200}
+                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                  alt="Profile"
+                  style={{
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                    width: "95px",
+                    height: "95px",
+                    margin: "15px",
+                  }}
+                />
+              ) : (
+                <MdAccountCircle
+                  className="rounded-full text-gray-500"
+                  style={{ width: "95px", height: "95px" }}
+                />
+              )}
+            </div>
+          </div>
+          )}
           <div className="flex flex-row justify-center">
             <p style={{ fontSize: "24px", fontWeight: "bold" }} className="mt-6">{session?.user?.name}</p>
           </div>

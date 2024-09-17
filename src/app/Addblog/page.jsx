@@ -93,7 +93,7 @@ export default function Page() {
       const data = await res.json();
       console.log("Show Blog image: ", data);
 
-      const post = data.post;
+      const post = data.combinedData;
       setPostData(post);
       setProfileUserT(post.imageUrl);
     } catch (error) {

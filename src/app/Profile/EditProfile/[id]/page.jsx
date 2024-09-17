@@ -16,6 +16,7 @@ function page() {
   const { t } = useTranslation("translation");
 
   const [postData, setPostData] = useState([]);
+  const [postDataS, setPostDataS] = useState([]);
 
   
   const [newName, setNewName] = useState("");
@@ -49,6 +50,31 @@ function page() {
 
   useEffect(() => {
     getPostById();
+  }, []);
+
+  const getPostByIdS = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Edit post: ", data);
+
+      const posts = data.posts;
+      setPostDataS(posts);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostByIdS();
   }, []);
 
 
@@ -131,6 +157,8 @@ function page() {
       <Navbar />
       <main className="flex flex-col md:flex-row w-full justify-center p-4 my-[50px]">
         <div className="flex flex-col items-center w-full max-w-lg">
+        {session?.user?.role == "NormalUser" && (
+          <>
           <div className="flex flex-row justify-center relative w-24 h-24" style={{ width: "95px", height: "95px", margin: "-10px", objectFit: "cover", borderRadius: "50%" }}>
             {profileImage ? (
               
@@ -182,7 +210,7 @@ function page() {
               {session?.user?.name}
             </p>
           </div>
-          {session?.user?.role == "NormalUser" && (
+          
             <div className="flex flex-col items-center w-full mt-4">
               <div className="flex flex-row items-center w-full mt-4">
                 <p>{t("nav.profile.editprofile.name")}</p>
@@ -242,13 +270,58 @@ function page() {
                 {t("nav.profile.editprofile.save")}
               </button>
             </div>
+            </>
           )}
 
           {session?.user?.role !== "NormalUser" && (
+            <>
+            <div className="flex flex-row justify-center relative w-24 h-24" style={{ width: "95px", height: "95px", margin: "-10px", objectFit: "cover", borderRadius: "50%" }}>
+            {profileImage ? (
+              
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="rounded-full w-24 h-24"
+                style={{ width: "95px", height: "95px", margin: "-10px", objectFit: "cover", borderRadius: "50%" }}
+              />
+            ) : (
+
+              <Image
+                width={200}
+                height={200}
+                src={postDataS.imageUrl && postDataS.imageUrl.length > 0
+                  ? `/api/editprofile/images/${postDataS.imageUrl}`
+                  : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
+                  }
+                alt="Profile"
+                className="rounded-full w-24 h-24"
+                style={{ width: "95px", height: "95px", margin: "-10px", objectFit: "cover", borderRadius: "50%" }}
+              />
+            )}
+
+            
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+              id="imageUpload"
+            />
+
+            
+            <label
+              htmlFor="imageUpload"
+              className="absolute right-0 bottom-0 bg-white rounded-full p-1 border-2 border-black cursor-pointer"
+              style={{ transform: "translate(25%, 25%)" }}
+            >
+              <FaPlus size={18} className="text-black" />
+            </label>
+          </div>
             <div className="flex flex-col items-center w-full mt-4">
               <div className="flex flex-row items-center w-full mt-4">
                 <p>{t("nav.profile.editprofile.name")}</p>
               </div>
+
               <input
                 type="text"
                 value={newName}
@@ -300,6 +373,7 @@ function page() {
                 {t("nav.profile.editprofile.save")}
               </button>
             </div>
+            </>
           )}
         </div>
       </main>

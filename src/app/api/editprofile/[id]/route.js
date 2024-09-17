@@ -11,7 +11,16 @@ export async function GET(req, { params }) {
   await connectMongoDB();
   const post = await NormalUser.findOne({ _id: id });
   const posts = await StudentUser.findOne({ _id: id });
-  return NextResponse.json({ post,posts }, { status: 200 });
+
+  const normalUser = await NormalUser.findOne({ _id: id });
+  const studentUser = await StudentUser.findOne({ _id: id });
+
+  const combinedData = {
+    ...normalUser?._doc,  // Use _doc to get the raw document data
+    ...studentUser?._doc, // Use _doc to get the raw document data
+  };
+  
+  return NextResponse.json({ post,posts,combinedData }, { status: 200 });
 }
 
 
