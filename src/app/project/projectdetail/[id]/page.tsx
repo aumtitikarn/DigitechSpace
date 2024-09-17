@@ -298,7 +298,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
   ];
 
-  const createInternetBankingCharge = async (amount:number, token:string, type:string) => {
+  const createInternetBankingCharge = async (amount:number, token:string, type:string, net:number) => {
     try {
       const response = await axios.post('/api/payment', {
         token: token,

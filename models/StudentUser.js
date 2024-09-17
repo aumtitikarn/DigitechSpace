@@ -33,6 +33,14 @@ const studentUserSchema = new mongoose.Schema({
         type: String, 
         default: '' 
     },
+    amount: { 
+        type: Number, 
+        get: (v) => parseFloat(v.toFixed(2))
+    },
+    net: { 
+        type: Number, 
+        get: (v) => parseFloat(v.toFixed(2))
+    },
     interests: { type: [String], default: [] },
     SellInfo: {
         fullname: { type: String },

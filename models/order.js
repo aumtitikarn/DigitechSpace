@@ -17,6 +17,11 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  net: {
+    type: Number,
+    required: true,
+    get: (v) => parseFloat(v.toFixed(2))
+},
   typec: {
     type: String,
     required: true,

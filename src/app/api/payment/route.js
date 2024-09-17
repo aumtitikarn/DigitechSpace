@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { connectMongoDB } from "../../../../lib/mongodb";
 import  Order  from "../../../../models/order"
 import  Project  from "../../../../models/project"
+import  StudentUser  from "../../../../models/StudentUser"
 
 const omise = new Omise({
   secretKey: process.env.OMISE_SECRET_KEY,
@@ -14,7 +15,7 @@ export async function POST(request) {
     const body = await request.json();
     console.log('Received request body:', body);
 
-    const { token, amount, description, typec, product, btype, email, name } = body;
+    const { token, amount, description, typec, product, btype, email, name, net } = body;
 
     if (!token || !amount || !description || !typec) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
@@ -35,7 +36,7 @@ export async function POST(request) {
         amount: Math.round(amount * 100), 
         currency: 'thb',
         customer: customer.id,
-        return_uri: `https://pretty-peas-write.loca.lt/myproject`,
+        return_uri: `https://digitechspace.loca.lt/myproject`,
       });
       if (charge.status === 'successful') {
         await connectMongoDB();
@@ -43,6 +44,7 @@ export async function POST(request) {
           email,
           name,
           product,
+          net: charge.net / 100,
           amount: charge.amount / 100,
           typec,
           chargeId: charge.id,
@@ -56,6 +58,16 @@ export async function POST(request) {
           { $inc: { sold: 1 } },
           { new: true }
         );
+        await StudentUser.findOneAndUpdate(
+          { email: email },  // เปลี่ยนจาก email เป็น { email: email }
+          { 
+            $inc: { 
+              net: charge.net / 100,
+              amount: charge.amount / 100 
+            }
+          },
+          { new: true }
+        );
         console.log('Project sold count incremented');
         console.log('Order saved to MongoDB:', newOrder);
       }
@@ -66,7 +78,7 @@ export async function POST(request) {
         currency: 'thb',
         source: token, 
         description: description,
-        return_uri: `https://pretty-peas-write.loca.lt/myproject`,
+        return_uri: `https://digitechspace.loca.lt/myproject`,
         metadata: {
           typec,
           name,
@@ -81,7 +93,7 @@ export async function POST(request) {
 
 
     return NextResponse.json({
-      authorizeUri: typec === 'credit_card' ? `return_uri: https://pretty-peas-write.loca.lt/myproject` : charge.authorize_uri,
+      authorizeUri: typec === 'credit_card' ? `return_uri: https://digitechspace.loca.lt/myproject` : charge.authorize_uri,
       status: 'success',
       token: charge.id,
       charge: {

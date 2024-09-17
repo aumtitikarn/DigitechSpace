@@ -436,12 +436,12 @@ function CustomNavbar() {
                     <MdGTranslate className="text-3xl" />
                   </button>
                   <Link href="/auth/signup">
-                    <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8">
+                    <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8 hover:bg-[#FFFFFF] hover:text-black">
                       {t("authen.signup.title")}
                     </button>
                   </Link>
                   <Link href="/auth/signin">
-                    <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8">
+                    <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8 hover:bg-[#FFC92B] hover:text-white">
                       {t("authen.signin.title")}
                     </button>
                   </Link>
@@ -643,12 +643,12 @@ function CustomNavbar() {
                       <MdGTranslate className="text-3xl" />
                     </button>
                     <Link href="/auth/signup">
-                      <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8">
+                      <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8 hover:bg-[#FFFFFF] hover:text-black">
                         {t("authen.signup.title")}
                       </button>
                     </Link>
                     <Link href="/auth/signin">
-                      <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8">
+                      <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8 hover:bg-[#FFC92B] hover:text-white">
                         {t("authen.signin.title")}
                       </button>
                     </Link>
@@ -756,12 +756,12 @@ function CustomNavbar() {
                   <li className="flex flex-col items-center space-y-4">
                     {/* auth Button */}
                     <Link href="/auth/signin">
-                      <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8">
+                      <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8 hover:bg-[#FFC92B] hover:text-white">
                         {t("authen.signin.title")}
                       </button>
                     </Link>
                     <Link href="/auth/signup">
-                      <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8">
+                      <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8 hover:bg-[#FFFFFF] hover:text-black">
                         {t("authen.signup.title")}
                       </button>
                     </Link>

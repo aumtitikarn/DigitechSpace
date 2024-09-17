@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { connectMongoDB } from "../../../../../lib/mongodb";
 import  Order  from "../../../../../models/order"
 import  Project  from "../../../../../models/project"
+import  StudentUser  from "../../../../../models/StudentUser"
 
 export async function POST(request) {
     try {
@@ -19,6 +20,7 @@ export async function POST(request) {
           name: charge.metadata.name,
           product: charge.metadata.product,
           amount: charge.amount / 100,
+          net: charge.net / 100,
           typec: charge.metadata.typec,
           chargeId: charge.id,
           status: charge.status
@@ -28,6 +30,16 @@ export async function POST(request) {
         await Project.findByIdAndUpdate(
           charge.metadata.product,
           { $inc: { sold: 1 } },
+          { new: true }
+        );
+        await StudentUser.findOneAndUpdate(
+          { email: charge.metadata.email }, 
+          { 
+            $inc: { 
+              net: charge.net / 100,
+              amount: charge.amount / 100 
+            }
+          },
           { new: true }
         );
         console.log('Order saved to MongoDB:', newOrder);
