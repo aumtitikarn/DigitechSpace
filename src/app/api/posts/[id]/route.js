@@ -14,7 +14,7 @@ export async function PUT(req, { params }) {
   try {
     const { id } = params; // Get the post ID from params
     const body = await req.json();
-    const { text, action, commentId, author, setheart: heart } = body;
+    const { text, profile, action, commentId, author, setheart: heart } = body;
 
     await connectMongoDB(); // Connect to MongoDB
 
@@ -34,16 +34,24 @@ export async function PUT(req, { params }) {
 
     // Handle comments and replies
     if (action === 'comment') {
+      // บันทึกความคิดเห็นใหม่พร้อมชื่อผู้ใช้ รูปโปรไฟล์ และเวลา
       post.comments.push({
         text,
-        author, // Add comment author
-        timestamp, // เพิ่ม timestamp
-        replies: [],
+        author, // ชื่อผู้ใช้
+        profile, // รูปโปรไฟล์ของผู้ใช้
+        timestamp, // เวลา
+        replies: [], // Array ว่างสำหรับการตอบกลับ
       });
     } else if (action === 'reply' && commentId) {
       const comment = post.comments.id(commentId);
       if (comment) {
-        comment.replies.push({ text, author, timestamp }); // เพิ่ม timestamp สำหรับ reply
+        // บันทึกการตอบกลับในความคิดเห็น
+        comment.replies.push({
+          text,
+          profile, // รูปโปรไฟล์ของผู้ตอบกลับ
+          author,
+          timestamp, // เวลา
+        });
       }
     }
 

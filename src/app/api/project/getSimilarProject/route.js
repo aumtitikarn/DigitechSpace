@@ -22,6 +22,7 @@ export async function GET(request) {
     await connectMongoDB();
     const similarProjects = await Project.find({
       category: { $in: categoriesArray },
+      permission: true,
       _id: { $ne: new ObjectId(exclude) }
     }).limit(10);
     

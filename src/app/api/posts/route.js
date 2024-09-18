@@ -70,6 +70,7 @@ export async function POST(req) {
     let selectedCategory = "";
     let author = "";
     let heart = 0;
+    let userprofile = "";
     let comments = [];
     let imageUrl = [];
 
@@ -90,8 +91,8 @@ export async function POST(req) {
         case "selectedCategory":
           selectedCategory = value.toString();
           break;
-        case "author":
-          author = value.toString();
+        case "userprofile":
+          userprofile = value.toString();
           break;
           case "author":
           author = value.toString();
@@ -124,11 +125,12 @@ export async function POST(req) {
       description,
       heart,
       selectedCategory,
+      userprofile, // รูปภาพที่เก็บใน userprofile
       author,
       imageUrl,
-      comments: [], // This will handle it as an empty array
+      comments: [],
     });
-
+    
     const savedProject = await newItem.save();
 
     return NextResponse.json({ message: "Post created" }, { status: 201 });

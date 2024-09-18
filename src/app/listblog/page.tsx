@@ -166,7 +166,7 @@ export default function page() {
                           src={`/api/posts/images/${val.imageUrl[currentIndex]}`}
                           alt={val.topic}
                           className="w-full object-cover rounded-lg"
-                          style={{ height: "100px" }}
+                          style={{ height: "200px" }}
                         />
                       </div>
                       <div className="ml-2 mt-2">
@@ -192,16 +192,17 @@ export default function page() {
                           </div>
                         </div>
                         <div className="flex flex-row mb-3">
-                          {postPor.imageUrl && postPor.imageUrl.length > 0 ? (
+                          {postData.length && postData.length > 0 && val.userprofile && val.userprofile[0] ? (
                             <Image
                               width={200}
                               height={200}
-                              src={`/api/editprofile/images/${postPor.imageUrl}`}
+                              src={`/api/posts/images/${val.userprofile[0]}`}
                               alt="Profile"
+                              onError={(e) => { e.target.onerror = null; e.target.src = ""; }} // Handle broken image links
                               style={{ objectFit: "cover", borderRadius: "50%", width: "30px", height: "30px", marginRight: "10px" }}
                             />
                           ) : (
-                            <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
+                            <MdAccountCircle className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500" />
                           )}
                           <p className="mt-2 truncate text-gray-500" style={{ fontSize: "12px" }}>
                             {val.author}
@@ -319,13 +320,13 @@ export default function page() {
             </div>
 
             <div className="mt-6 w-full flex justify-end">
-              {session?.user?.role == "NormalUser" && (
-                <Link href="/Addblog">
-                  <div className=" w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
-                    <FaPlus size={24} />
-                  </div>
-                </Link>
-              )}
+
+              <Link href="/Addblog">
+                <div className=" w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
+                  <FaPlus size={24} />
+                </div>
+              </Link>
+
             </div>
           </div>
         </div>

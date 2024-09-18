@@ -19,6 +19,7 @@ function CustomNavbar() {
   const { t, i18n } = useTranslation("translation");
   const { data: session } = useSession();
   const [postData, setPostData] = useState([]);
+  const [postDataS, setPostDataS] = useState([]);
   const [profileImage, setProfileImage] = useState(null);
 
   const toggleMobileMenu = () => {
@@ -68,6 +69,31 @@ function CustomNavbar() {
     getPostById();
   }, []);
 
+  const getPostByIdS = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Edit post: ", data);
+
+      const posts = data.posts;
+      setPostDataS(posts);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostByIdS();
+  }, []);
+
   return (
     <nav className="bg-[#0B1E48] shadow-md p-5 relative z-50 sticky top-0">
       <div className="flex items-center justify-between lg:mx-[50px]">
@@ -97,7 +123,7 @@ function CustomNavbar() {
         <div className="flex-1 flex justify-center lg:hidden">
           <Link href="/">
             <img
-              src="https://m1r.ai/bdebq.png"
+              src="https://m1r.ai/W8p5i.png"
               alt="Digitech Space logo"
               width={100}
               height={100}
@@ -221,7 +247,7 @@ function CustomNavbar() {
             <div className="flex-none">
               <Link href="/">
                 <img
-                  src="https://m1r.ai/bdebq.png"
+                  src="https://m1r.ai/W8p5i.png"
                   alt="Digitech Space logo"
                   width={120}
                   height={120}
@@ -298,24 +324,46 @@ function CustomNavbar() {
                     >
                       <MdGTranslate className="text-3xl" />
                     </button>
-                    <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                      {postData && postData.imageUrl ? (
-                        <Image
-                          width={200}
-                          height={200}
-                          src={`/api/editprofile/images/${postData.imageUrl}`}
-                          alt="Profile"
-                          style={{
-                            objectFit: "cover",
-                            borderRadius: "50%",
-                            width: "40px",
-                            height: "40px",
-                          }}
-                        />
-                      ) : (
-                        <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                      )}
-                    </button>
+                    {session?.user?.role == "NormalUser" && (
+                      <button onClick={toggleAccountBox} className="text-white focus:outline-none">
+                        {postData && postData.imageUrl ? (
+                          <Image
+                            width={200}
+                            height={200}
+                            src={`/api/editprofile/images/${postData.imageUrl}`}
+                            alt="Profile"
+                            style={{
+                              objectFit: "cover",
+                              borderRadius: "50%",
+                              width: "40px",
+                              height: "40px",
+                            }}
+                          />
+                        ) : (
+                          <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                        )}
+                      </button>
+                    )}
+                    {session?.user?.role !== "NormalUser" && (
+                      <button onClick={toggleAccountBox} className="text-white focus:outline-none">
+                        {postDataS && postDataS.imageUrl ? (
+                          <Image
+                            width={200}
+                            height={200}
+                            src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                            alt="Profile"
+                            style={{
+                              objectFit: "cover",
+                              borderRadius: "50%",
+                              width: "40px",
+                              height: "40px",
+                            }}
+                          />
+                        ) : (
+                          <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                        )}
+                      </button>
+                    )}
                   </div>
                   {isAccountBoxVisible && (
                     <div
@@ -323,22 +371,47 @@ function CustomNavbar() {
                     >
                       <div className="">
                         <div className="flex items-center">
-                        {postData && postData.imageUrl ? (
-                            <Image
-                              width={200}
-                              height={200}
-                              src={`/api/editprofile/images/${postData.imageUrl}`}
-                              alt="Profile"
-                              style={{
-                                objectFit: "cover",
-                                borderRadius: "50%",
-                                width: "55px",
-                                height: "55px",
-                                margin: "15px",
-                              }}
-                            />
-                          ) : (
-                            <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                        {session?.user?.role == "NormalUser" && (
+                          <>
+                            {postData && postData.imageUrl ? (
+                              <Image
+                                width={200}
+                                height={200}
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
+                                alt="Profile"
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                                  width: "55px",
+                                  height: "55px",
+                                  margin: "15px",
+                                }}
+                              />
+                            ) : (
+                              <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                            )}
+                          </>
+                          )}
+                          {session?.user?.role !== "NormalUser" && (
+                            <>
+                              {postDataS && postDataS.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "55px",
+                                    height: "55px",
+                                    margin: "15px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                              )}
+                            </>
                           )}
                           <span>
                             <p className="text-[20px] mt-3 text-semibold">
@@ -436,12 +509,12 @@ function CustomNavbar() {
                     <MdGTranslate className="text-3xl" />
                   </button>
                   <Link href="/auth/signup">
-                    <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8">
+                    <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8 hover:bg-[#FFFFFF] hover:text-black">
                       {t("authen.signup.title")}
                     </button>
                   </Link>
                   <Link href="/auth/signin">
-                    <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8">
+                    <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8 hover:bg-[#FFC92B] hover:text-white">
                       {t("authen.signin.title")}
                     </button>
                   </Link>
@@ -456,7 +529,7 @@ function CustomNavbar() {
               <div className="flex-none">
                 <Link href="/">
                   <img
-                    src="https://m1r.ai/bdebq.png"
+                    src="https://m1r.ai/W8p5i.png"
                     alt="Digitech Space logo"
                     width={120}
                     height={120}
@@ -643,12 +716,12 @@ function CustomNavbar() {
                       <MdGTranslate className="text-3xl" />
                     </button>
                     <Link href="/auth/signup">
-                      <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8">
+                      <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8 hover:bg-[#FFFFFF] hover:text-black">
                         {t("authen.signup.title")}
                       </button>
                     </Link>
                     <Link href="/auth/signin">
-                      <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8">
+                      <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8 hover:bg-[#FFC92B] hover:text-white">
                         {t("authen.signin.title")}
                       </button>
                     </Link>
@@ -665,7 +738,7 @@ function CustomNavbar() {
             <div className="flex justify-between items-center px-5 py-5">
               <Link href="/">
                 <img
-                  src="https://m1r.ai/bdebq.png"
+                  src="https://m1r.ai/W8p5i.png"
                   alt="Digitech Space logo"
                   width={100}
                   height={100}
@@ -756,12 +829,12 @@ function CustomNavbar() {
                   <li className="flex flex-col items-center space-y-4">
                     {/* auth Button */}
                     <Link href="/auth/signin">
-                      <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8">
+                      <button className="text-[#FFC92B] text-[18px] font-bold rounded-full border-[#FFC92B] border-2 py-2 px-8 hover:bg-[#FFC92B] hover:text-white">
                         {t("authen.signin.title")}
                       </button>
                     </Link>
                     <Link href="/auth/signup">
-                      <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8">
+                      <button className="text-white text-[18px] font-bold rounded-full border-[#FFFFFF] border-2 py-2 px-8 hover:bg-[#FFFFFF] hover:text-black">
                         {t("authen.signup.title")}
                       </button>
                     </Link>

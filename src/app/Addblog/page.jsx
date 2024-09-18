@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import Navbar from "../components/Navbar";
@@ -19,12 +19,15 @@ export default function Page() {
   const [topic, setTopic] = useState("");
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
+  const [postData,setPostData] = useState("");
   const [heart, setHeart] = useState(0);
   const [file, setFile] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
   const { t } = useTranslation("translation");
 
   const [img, setImg] = useState([]);
+
+  const [profileUserT, setProfileUserT] = useState("");
 
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -76,6 +79,35 @@ export default function Page() {
     }
   };
 
+  const getPostByIdprofile = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Show Blog image: ", data);
+
+      const post = data.combinedData;
+      setPostData(post);
+      setProfileUserT(post.imageUrl);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostByIdprofile();
+  }, []);
+
+      console.log("อันนี้set"+setProfileUserT)
+      console.log("อันนี้p"+profileUserT)
+
   const handleSudmit = async (e) => {
     console.log(file);
   
@@ -103,6 +135,7 @@ export default function Page() {
     formData.append("heart", heart);
     formData.append("selectedCategory", selectedCategory);
     formData.append("author", session.user.name);
+    formData.append("userprofile", profileUserT)
     img.forEach((img) => formData.append("imageUrl", img));
   
     try {

@@ -4,6 +4,7 @@ import { type } from "os";
 const replySchema = new mongoose.Schema({
   text: String,
   author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
+  profile: String,
   timestamp: String, // เพิ่ม timestamp
 });
 
@@ -12,6 +13,7 @@ const commentSchema = new mongoose.Schema({
   text: String,
   author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
   timestamp: String, // เพิ่ม timestamp
+  profile: { type: [String], required: true },
   replies: [replySchema],
 });
 
@@ -23,6 +25,7 @@ const postSchema = new mongoose.Schema(
     description: { type: String, required: true },
     heart: { type: Number, default: 0 },
     imageUrl: { type: [String], required: true }, // Array of strings
+    userprofile: { type: [String], required: true },
     author: { type: String, required: true },
     comments: { type: [commentSchema], default: [] },
     selectedCategory: {

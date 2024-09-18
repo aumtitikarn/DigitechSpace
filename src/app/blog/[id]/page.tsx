@@ -24,6 +24,7 @@ import { FaChevronRight } from "react-icons/fa";
 import { OrbitProgress } from "react-loading-indicators";
 import { text } from "stream/consumers";
 import Swal from 'sweetalert2';
+import { profile } from "console";
 
 
 function Blog({ params, initialComments }) {
@@ -43,6 +44,8 @@ function Blog({ params, initialComments }) {
 
   const [postData, setPostData] = useState<PostData[]>([]);
 
+
+
   const [topic, setTopic] = useState("");
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
@@ -58,12 +61,41 @@ function Blog({ params, initialComments }) {
   const [replyInput, setReplyInput] = useState("");
   const [replyingTo, setReplyingTo] = useState(null); // เก็บ ID ของ comment ที่กำลังตอบกลับ
 
+  const [profileUser, setProfileUser] = useState("");
+
+  const getPostByIdprofile = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Edit post: ", data);
+
+      const postP = data.post;
+      setPostData(postP);
+      setProfileUser(postP.imageUrl);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostByIdprofile();
+  }, []);
+
 
   const handleAddCommentOrReply = async (isReply, commentId = null) => {
     const requestBody = {
       text: isReply ? replyInput : commentInput,
       action: isReply ? "reply" : "comment",
       author: session?.user?.name || "Anonymous", // เพิ่มชื่อผู้แสดงความคิดเห็น
+      profile: profileUser,
       timestamp: new Date(),
       ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
     };
@@ -130,11 +162,7 @@ function Blog({ params, initialComments }) {
       const data = await res.json();
       console.log("Edit post: ", data);
 
-      const post = data.post;
-      setPostData(post);
-      setTopic(post.topic);
-      setCourse(post.course);
-      setDescription(post.description);
+      setPostData(data.post);
     } catch (error) {
       console.log(error);
     }
@@ -222,21 +250,21 @@ function Blog({ params, initialComments }) {
         imageUrl: postData.imageUrl,
         topic: postData.topic,
       };
-  
+
       // Prepare FormData to send the favblog data as multipart/form-data
       const formData = new FormData();
       formData.append("favblog", JSON.stringify(favBlog)); // Append the favblog data
-  
+
       // Update the user's profile with the favblog data
       const profileRes = await fetch(`/api/editprofile/${session?.user?.id}`, {
         method: "PUT",
         body: formData,
       });
-  
+
       if (!profileRes.ok) {
         throw new Error("Failed to update user profile with favblog");
       }
-  
+
       // Update the heart state locally and refresh the page
       setHeart((prevHeart) => prevHeart + 1);
       setIsHeartClicked(true);
@@ -279,6 +307,17 @@ function Blog({ params, initialComments }) {
     // Add any other properties that are in your post data
   }
 
+  interface PostData {
+    _id: string;
+    topic: string;
+    course: string;
+    description: string;
+    imageUrl: string[];
+    author: string;
+    selectedCategory: string;
+    heart: number;
+  }
+
   return (
     <Container>
       <Navbar session={session} />
@@ -291,17 +330,23 @@ function Blog({ params, initialComments }) {
                 className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-xl"
                 alt="Blog Image"
               /> */}
-              <Image
-                width={200}
-                height={200}
-                src={
-                  postData.imageUrl && postData.imageUrl.length > 0
-                    ? `/api/posts/images/${postData.imageUrl[currentIndex]}`
-                    : "/path/to/placeholder-image.jpg" // Use a placeholder image or a default URL
-                }
-                alt={postData.topic || "Blog Image"}
-                className="w-full h-full object-cover rounded-lg"
-              />
+              {postData && postData.imageUrl ? (
+                <Image
+                  width={200}
+                  height={200}
+                  src={`/api/posts/images/${postData.imageUrl[currentIndex]}`}
+                  alt={postData.topic || "Blog Image"}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              ) : (
+                <Image
+                  width={200}
+                  height={200}
+                  src="/path/to/placeholder-image.jpg" // Fallback if imageUrl is undefined
+                  alt="Placeholder"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              )}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 <button
                   className={`w-3 h-3 rounded-full`}
@@ -325,7 +370,11 @@ function Blog({ params, initialComments }) {
             <div className="flex flex-row mt-5 mb-5 items-center">
               <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
               <div className="flex flex-col justify-center">
-                <h1 className="font-bold">{postData.author}</h1>
+                {postData && postData.author ? (
+                  <h1 className="font-bold">{postData.author}</h1>
+                ) : (
+                  <h1 className="font-bold">Anonymous</h1> // กรณีที่ไม่มีข้อมูลผู้เขียน
+                )}
               </div>
             </div>
 
@@ -334,24 +383,42 @@ function Blog({ params, initialComments }) {
                 href=""
                 className="text-white rounded-md p-2 m-1"
                 style={{ backgroundColor: "#33529B" }}
+
               >
-                {t("nav.blog.code")} {postData.course}
+                {postData && postData.course ? (
+                  <h1 className="font-bold">{postData.course}</h1>
+                ) : (
+                  <h1 className="font-bold">No Course Available</h1> // กรณีที่ไม่มีข้อมูลคอร์ส
+                )}
+                {/* {t("nav.blog.code")} {postData.course} */}
               </Link>
               <Link
                 href=""
                 className="text-white rounded-md p-2 m-1"
                 style={{ backgroundColor: "#33529B" }}
               >
-                {postData.selectedCategory}
+                {postData && postData.selectedCategory ? (
+                  postData.selectedCategory
+                ) : (
+                  <h1 className="font-bold">No Category Available</h1>
+                )}
               </Link>
             </div>
 
             <div className="mt-5">
-              <h1 className="font-bold text-2xl">{postData.topic}</h1>
+              {postData && postData.topic ? (
+                <h1>{postData.topic}</h1>
+              ) : (
+                <h1>No Topic Available</h1>
+              )}
             </div>
 
             <div className="mt-2 mb-3">
-              <p>{postData.description}</p>
+              {postData && postData.description ? (
+                <p>{postData.description}</p>
+              ) : (
+                <p>No Description Available</p>
+              )}
             </div>
 
             <div className="flex justify-between items-center border-b-2 border-t-2 border-gray-200 py-3">
@@ -361,7 +428,11 @@ function Blog({ params, initialComments }) {
                     className={`text-3xl cursor-pointer ${isHeartClicked ? 'text-red-500' : ''}`}
                     onClick={handleSubmitCiHeart}
                   />
-                  <p className="ml-1">{postData.heart}</p>
+                  {postData && postData.heart !== undefined ? (
+                    <p>Hearts: {postData.heart}</p>
+                  ) : (
+                    <p>No Heart Data Available</p>
+                  )}
                 </div>
                 <div className="flex items-center">
                   <BsChatDots className="text-2xl" />
@@ -436,15 +507,26 @@ function Blog({ params, initialComments }) {
             <div>
               {Array.isArray(postData.comments) &&
                 postData.comments.map((comment) => (
-                  <div key={comment._id} className="flex flex-col border-2 m-3 p-2">
+                  <div key={comment._id} className="flex flex-col m-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
-                        <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
-                        <strong className="flex flex-col justify-center text-lg">{comment.author} : </strong>
+                        
+                          <Image
+                            width={200}
+                            height={200}
+                            src={`/api/posts/images/${comment.profile}`}
+                            alt={`${comment.author}'s profile picture`}
+                            className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                          />
+                        
+                          {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
+                        
+                        <strong className="flex flex-col justify-center text-lg">{comment.author}</strong>
                       </p>
-                      <p className="ml-4 text-lg">{comment.text}</p>
-                      <div className="flex flex-col">
-                        {/* <p className="text-sm text-gray-500">{new Date(comment.timestamp).toLocaleString()}</p>  */}
+                      <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
+                      <p className="text-lg ml-10">{comment.text}</p>
+                      <div className="flex flex-col ml-10">
+
                         <div className="flex flex-row">
                           {replyingTo === comment._id ? (
                             <div className="flex flex-col ml-4">
@@ -457,16 +539,16 @@ function Blog({ params, initialComments }) {
 
                               <div className="flex flex-row w-80">
                                 <div className="flex flex-row w-80 justify-end">
-                                <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm"
-                                  onClick={() => handleAddCommentOrReply(true, comment._id)}
-                                >
-                                  Replyt
-                                </button>
-                                <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#9B3933] text-white text-sm"
-                                  onClick={() => setReplyingTo(null)}
-                                >
-                                  Cancel
-                                </button>
+                                  <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm"
+                                    onClick={() => handleAddCommentOrReply(true, comment._id)}
+                                  >
+                                    Replyt
+                                  </button>
+                                  <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#9B3933] text-white text-sm"
+                                    onClick={() => setReplyingTo(null)}
+                                  >
+                                    Cancel
+                                  </button>
                                 </div>
                               </div>
                             </div>
@@ -497,49 +579,18 @@ function Blog({ params, initialComments }) {
             <textarea
               value={commentInput}
               onChange={(e) => setCommentInput(e.target.value)}
-              placeholder="Add a comment"
+              placeholder="Comment"
+              className="w-full p-2 border-2 rounded-md resize-none mt-4 h-32"
+              style={{ paddingRight: '100px' }}  // Add space for the button
             />
-            <button onClick={() => handleAddCommentOrReply(false)}>
-              Add Comment
-            </button>
-
-            
-            {/* <div>
-              {Array.isArray(comments) && comments.map((comment) => (
-                <div key={comment._id}>
-                  <p>{comment.text}</p>
-
-                
-                  {replyingTo === comment._id ? (
-                    <>
-                      <textarea
-                        value={replyInput}
-                        onChange={(e) => setReplyInput(e.target.value)}
-                        placeholder="Reply to this comment"
-                      />
-                      <button
-                        onClick={() => handleAddCommentOrReply(true, comment._id)}
-                      >
-                        Reply
-                      </button>
-                      <button onClick={() => setReplyingTo(null)}>Cancel</button>
-                    </>
-                  ) : (
-                    <button onClick={() => setReplyingTo(comment._id)}>Reply</button>
-                  )}
-
-                  
-                  {comment.replies && comment.replies.length > 0 && (
-                    <div style={{ marginLeft: "20px" }}>
-                      {comment.replies.map((reply) => (
-                        <p key={reply._id}>- {reply.text}</p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div> */}
-
+            <div className="flex flex-row justify-end m-4">
+              <button
+                onClick={() => handleAddCommentOrReply(false)}
+                className="่justify-end bottom-2 right-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm h-12"
+              >
+                Send
+              </button>
+            </div>
             {isPopupOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
                 <div className="relative max-w-lg w-full p-8 bg-white shadow-md rounded-lg">
