@@ -64,33 +64,48 @@ function Blog({ params, initialComments }) {
   const [profileUser, setProfileUser] = useState("");
 
   const getPostByIdprofile = async () => {
+    if (!session?.user?.id) {
+      console.error("User ID not available.");
+      return;
+    }
+  
     try {
-      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+      const res = await fetch(`/api/editprofile/${session.user.id}`, {
         method: "GET",
         cache: "no-store",
       });
-
+  
       if (!res.ok) {
         throw new Error("Failed to fetch a post");
       }
-
+  
       const data = await res.json();
-      console.log("Edit post: ", data);
-
-      const postP = data.post;
-      setPostData(postP);
-      setProfileUser(postP.imageUrl);
+      console.log("Fetched profile data: ", data);
+  
+      const postP = data.combinedData;
+  
+      if (postP && postP.imageUrl) {
+        setProfileUser(postP.imageUrl);
+      } else {
+        console.log("Profile image URL not found.");
+      }
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching profile:", error);
     }
   };
-
+  
   useEffect(() => {
-    getPostByIdprofile();
-  }, []);
+    if (session?.user?.id) {
+      getPostByIdprofile();
+    } else {
+      console.error("User ID not found in session.");
+    }
+  }, [session?.user?.id]);
 
 
   const handleAddCommentOrReply = async (isReply, commentId = null) => {
+    console.log("Profile URL:", profileUser);
+
     const requestBody = {
       text: isReply ? replyInput : commentInput,
       action: isReply ? "reply" : "comment",

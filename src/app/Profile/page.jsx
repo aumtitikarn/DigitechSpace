@@ -431,7 +431,7 @@ function page() {
                 publishedProject.map((project, index) => (
                   <Link key={index} href={`/project/projectdetail/${project._id}`}>
                     <div
-                      className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white p-4 m-5"
+                      className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white p-4 m-2"
                       style={{ width: "100%", maxWidth: "303px", height: "auto", maxHeight: "375px" }}
                     >
                       <div className="w-full h-full flex flex-col">
