@@ -27,6 +27,7 @@ export default function Page() {
 
   const [img, setImg] = useState([]);
 
+  const [email,setEmail] = useState("");
   const [profileUserT, setProfileUserT] = useState("");
 
   const { data: session, status } = useSession();
@@ -96,6 +97,7 @@ export default function Page() {
       const post = data.combinedData;
       setPostData(post);
       setProfileUserT(post.imageUrl);
+      setEmail(post.email);
     } catch (error) {
       console.log(error);
     }
@@ -135,7 +137,8 @@ export default function Page() {
     formData.append("heart", heart);
     formData.append("selectedCategory", selectedCategory);
     formData.append("author", session.user.name);
-    formData.append("userprofile", profileUserT)
+    formData.append("userprofile", profileUserT);
+    formData.append("email", email);
     img.forEach((img) => formData.append("imageUrl", img));
   
     try {

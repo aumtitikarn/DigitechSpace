@@ -69,6 +69,7 @@ export async function POST(req) {
     let description = "";
     let selectedCategory = "";
     let author = "";
+    let email = "";
     let heart = 0;
     let userprofile = "";
     let comments = [];
@@ -94,7 +95,10 @@ export async function POST(req) {
         case "userprofile":
           userprofile = value.toString();
           break;
-          case "author":
+        case "email":
+            email = value.toString();
+          break;
+        case "author":
           author = value.toString();
           break;
           case "comments":
@@ -127,6 +131,7 @@ export async function POST(req) {
       selectedCategory,
       userprofile, // รูปภาพที่เก็บใน userprofile
       author,
+      email,
       imageUrl,
       comments: [],
     });
