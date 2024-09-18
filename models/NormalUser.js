@@ -14,6 +14,8 @@ const normalUserSchema = new mongoose.Schema({
     line: { type: String, required: true },
     facebook: { type: String, required: true },
     imageUrl: { type: [String], required: true },
+    notification:{ type: [String], required: true },
+    favorite:{ type: [String], required: true },
     // blogId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }], // Array of blog ObjectId references
     favblog: [{
         blogId: { type: mongoose.Types.ObjectId, required: true },
