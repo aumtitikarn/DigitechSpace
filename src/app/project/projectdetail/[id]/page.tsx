@@ -22,6 +22,7 @@ import OmisePaymentButtons from "./OmisePaymentButtons";
 import Swal from "sweetalert2";
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+
 interface ProjectData {
   _id: string;
   projectname: string;
@@ -56,8 +57,10 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [publishedProjects, setPublishedProjects] = useState<ProjectData[]>([]);
   const [similarProjects, setSimilarProjects] = useState<ProjectData[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [confirmAction, setConfirmAction] = useState(false);
+
   const router = useRouter();
-  
+
   const projectGroups = [
     {
       group: "Software Development",
@@ -209,13 +212,67 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         (prevIndex - 1 + project.imageUrl.length) % project.imageUrl.length
     );
   };
-
+  
   const handleNextClick = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % project.imageUrl.length);
   };
-  const handleFavoriteClick = () => {
-    setIsFavorited((prev) => !prev); // เปลี่ยนสถานะเมื่อคลิก
+  
+  const handleFavoriteClick = async () => {
+    if (session) {
+      try {
+        // ตรวจสอบสถานะโปรเจกต์ใน favorites
+        const response = await fetch(`/api/favorites?username=${session.user.name}&projectId=${project._id}`);
+        const result = await response.json();
+        
+        const isCurrentlyFavorited = result.isFavorited;
+  
+        // เตรียมข้อมูลที่ต้องการส่ง
+        const data = {
+          username: session.user.name, // ชื่อผู้ใช้จาก session
+          projectId: project._id, // ID ของโปรเจกต์
+          projectname: project.projectname, // ชื่อโปรเจกต์
+          description: project.description, // คำบรรยายโปรเจกต์
+          receive: project.receive, // รายการที่ได้รับ (เป็น array)
+          price: project.price, // ราคา
+          review: project.review, // จำนวนรีวิว
+          sold: project.sold, // จำนวนที่ขายไป
+          rathing: project.rathing, // การให้คะแนน
+          imageUrl: project.imageUrl, // URL ของรูปภาพ (เป็น array)
+          author: project.author // ผู้เขียน
+        };
+        
+        // ส่ง request เพื่อเพิ่มหรือลบจาก favorites
+        const favoriteResponse = await fetch("/api/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+  
+      if (favoriteResponse.ok) {
+  // อัปเดตสถานะ favorite
+  const newFavoritedStatus = !isCurrentlyFavorited;
+  setIsFavorited(newFavoritedStatus);
+  
+  // แสดงข้อความตามสถานะ
+  const message = newFavoritedStatus
+    ? "Added to favorites!"
+    : "Removed from favorites!";
+  alert(message);
+} else {
+  const result = await favoriteResponse.json();
+  alert(`Error: ${result.error}`);
+}
+      } catch (error) {
+        console.error("Error during favorite request:", error);
+        alert("Error adding/removing favorite");
+      }
+    } else {
+      alert("Please log in to save favorites");
+    }
   };
+  
 
   const handleBuyClick = () => {
     setIsPopupOpen(true);
@@ -407,25 +464,24 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       )}
                     </div>
                     {session ? (
-                      <button
-                        onClick={handleFavoriteClick}
-                        className="cursor-pointer"
-                      >
-                        {isFavorited ? (
-                          <GoHeartFill className="text-gray-600 text-2xl" />
-                        ) : (
-                          <GoHeart className="text-gray-600 text-2xl" />
-                        )}
-                      </button>
-                    ) : (
-                      <>
-                        <Link href="/auth/preauth">
-                          <button className="cursor-pointer">
-                            <GoHeart className="text-gray-600 text-2xl" />
-                          </button>
-                        </Link>
-                      </>
-                    )}
+  <button
+    onClick={handleFavoriteClick}
+    className={`cursor-pointer text-2xl ${isFavorited ? 'text-red-500' : 'text-gray-600'}`} // Change color based on favorite status
+  >
+    {isFavorited ? (
+      <GoHeartFill />
+    ) : (
+      <GoHeart />
+    )}
+  </button>
+) : (
+  <Link href="/auth/preauth">
+    <button className="cursor-pointer text-gray-600 text-2xl">
+      <GoHeart />
+    </button>
+  </Link>
+)}
+
                   </div>
                   {session ? (
                     <button
