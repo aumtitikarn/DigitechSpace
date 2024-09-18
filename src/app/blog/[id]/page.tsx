@@ -61,39 +61,38 @@ function Blog({ params, initialComments }) {
   const [replyInput, setReplyInput] = useState("");
   const [replyingTo, setReplyingTo] = useState(null); // เก็บ ID ของ comment ที่กำลังตอบกลับ
 
-  const [profileUser, setProfileUser] = useState("");
+  const [blogid, setBlogid] = useState("");
+
+  const [profileUser, setProfileUser] = useState([]);
+  const [profileUserN, setProfileUserN] = useState([]);
 
   const getPostByIdprofile = async () => {
     if (!session?.user?.id) {
       console.error("User ID not available.");
       return;
     }
-  
+
     try {
-      const res = await fetch(`/api/editprofile/${session.user.id}`, {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
         method: "GET",
         cache: "no-store",
       });
-  
+
       if (!res.ok) {
         throw new Error("Failed to fetch a post");
       }
-  
+
       const data = await res.json();
       console.log("Fetched profile data: ", data);
-  
+
       const postP = data.combinedData;
-  
-      if (postP && postP.imageUrl) {
-        setProfileUser(postP.imageUrl);
-      } else {
-        console.log("Profile image URL not found.");
-      }
+
+      setProfileUserN(postP);
     } catch (error) {
       console.log("Error fetching profile:", error);
     }
   };
-  
+
   useEffect(() => {
     if (session?.user?.id) {
       getPostByIdprofile();
@@ -104,13 +103,14 @@ function Blog({ params, initialComments }) {
 
 
   const handleAddCommentOrReply = async (isReply, commentId = null) => {
-    console.log("Profile URL:", profileUser);
+    const imageUrl = profileUserN?.imageUrl?.[0] || "/path/to/default-image.jpg"; // ใช้รูปภาพเริ่มต้นหากไม่มี
+    setProfileUser(imageUrl);
 
     const requestBody = {
       text: isReply ? replyInput : commentInput,
       action: isReply ? "reply" : "comment",
       author: session?.user?.name || "Anonymous", // เพิ่มชื่อผู้แสดงความคิดเห็น
-      profile: profileUser,
+      profile: imageUrl,
       timestamp: new Date(),
       ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
     };
@@ -135,6 +135,10 @@ function Blog({ params, initialComments }) {
       console.log(error);
     }
   };
+  useEffect(() => {
+    console.log("Updated Profile URL:", profileUser);
+  }, [profileUser]);
+  
 
 
   ////////////////////////////////
@@ -189,6 +193,8 @@ function Blog({ params, initialComments }) {
 
   const handlePopupSubmit = async (e) => {
 
+    setBlogid(postData._id);
+
     const formData = new FormData();
 
     if (!session || !session.user || !session.user.name) {
@@ -211,6 +217,7 @@ function Blog({ params, initialComments }) {
     formData.append("selectedReason", selectedReason);
     formData.append("report", report);
     formData.append("author", session.user.name);
+    formData.append("blogid", blogid);
 
     try {
       const res = await fetch("http://localhost:3000/api/reportblog", {
@@ -525,17 +532,17 @@ function Blog({ params, initialComments }) {
                   <div key={comment._id} className="flex flex-col m-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
-                        
-                          <Image
-                            width={200}
-                            height={200}
-                            src={`/api/posts/images/${comment.profile}`}
-                            alt={`${comment.author}'s profile picture`}
-                            className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
-                          />
-                        
-                          {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
-                        
+
+                        <Image
+                          width={200}
+                          height={200}
+                          src={`/api/posts/images/${comment.profile}`}
+                          alt={`${comment.author}'s profile picture`}
+                          className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                        />
+
+                        {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
+
                         <strong className="flex flex-col justify-center text-lg">{comment.author}</strong>
                       </p>
                       <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>

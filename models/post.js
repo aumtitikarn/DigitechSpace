@@ -4,7 +4,7 @@ import { type } from "os";
 const replySchema = new mongoose.Schema({
   text: String,
   author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
-  profile: String,
+  profile: { type: [String], required: true },
   timestamp: String, // เพิ่ม timestamp
 });
 

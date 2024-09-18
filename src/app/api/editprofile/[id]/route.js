@@ -69,18 +69,18 @@ export async function PUT(req, { params }) {
         case "phonenumber":
           phonenumber = value.toString();
           break;
-        case "imageUrl":
-          if (value instanceof Blob) {
-            const imageName = `${Date.now()}_${value.name}`;
-            const buffer = Buffer.from(await value.arrayBuffer());
-            const stream = Readable.from(buffer);
-            const uploadStream = imgbucket.openUploadStream(imageName);
-            await new Promise((resolve, reject) => {
-              stream.pipe(uploadStream).on("finish", resolve).on("error", reject);
-            });
-            imageUrl.push(imageName);
-          }
-          break;
+          case "imageUrl":
+            if (value instanceof Blob && value.type.startsWith('image/')) {
+              const imageName = `${Date.now()}_${value.name}`;
+              const buffer = Buffer.from(await value.arrayBuffer());
+              const stream = Readable.from(buffer);
+              const uploadStream = imgbucket.openUploadStream(imageName);
+              await new Promise((resolve, reject) => {
+                stream.pipe(uploadStream).on("finish", resolve).on("error", reject);
+              });
+              updateData.imageUrl = [imageName];
+            }
+            break;
         case "favblog":
           // Parse the favblog data if it's provided
           const favBlogEntry = JSON.parse(value);

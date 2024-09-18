@@ -11,6 +11,7 @@ try {
     let report = "";
     let selectedReason = "";
     let author = "";
+    let blogid = "";
 
 
     for (const [key, value] of formData.entries()) {
@@ -23,10 +24,13 @@ try {
           break;
         case "selectedReason":
             selectedReason = value.toString();
-          break;
-          case "author":
+        break;
+        case "author":
           author = value.toString();
-          break;
+        break;
+        case "blogid":
+            blogid = value.toString();
+        break;
       }
     }
 
@@ -38,7 +42,8 @@ try {
         blogname,
       report,
       selectedReason,
-      author
+      author,
+      blogid
     });
 
     const savedProject = await newItem.save();
