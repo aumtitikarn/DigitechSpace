@@ -8,7 +8,8 @@ if (mongoose.models.Reportprojets) {
 const reportprojetsSchema = new mongoose.Schema({
   name: { type: String, required: true },
   username: { type: String, required: true },
-  more: { type: String, required: true }, // Ensure there's no enum constraint here
+  more: { type: String, required: true },
+  projectId: { type: String, required: true }, // Ensure there's no enum constraint here
   report: {
     type: String,
     enum: [
