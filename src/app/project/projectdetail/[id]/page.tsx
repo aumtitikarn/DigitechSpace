@@ -20,8 +20,8 @@ import { useTranslation } from "react-i18next";
 import { MdOutlineFileDownload } from "react-icons/md";
 import OmisePaymentButtons from "./OmisePaymentButtons";
 import Swal from "sweetalert2";
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface ProjectData {
   _id: string;
@@ -78,36 +78,37 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
   ];
 
-  
   useEffect(() => {
     const fetchSimilarProjects = async () => {
       if (project && project.category) {
         try {
           let categories;
-          
-          if (project.category.toLowerCase() === 'all') {
+
+          if (project.category.toLowerCase() === "all") {
             // If category is 'All', include all unique categories from all groups
-            categories = Array.from(new Set(projectGroups.flatMap(group => group.categories))).join(',');
+            categories = Array.from(
+              new Set(projectGroups.flatMap((group) => group.categories))
+            ).join(",");
           } else {
             // Find all groups that contain the current project's category
             const relevantGroups = projectGroups.filter((group) =>
               group.categories.includes(project.category)
             );
-            
+
             console.log("Relevant groups:", relevantGroups);
-            
+
             // Collect all unique categories from relevant groups
-            categories = Array.from(new Set(
-              relevantGroups.flatMap(group => group.categories)
-            )).join(',');
+            categories = Array.from(
+              new Set(relevantGroups.flatMap((group) => group.categories))
+            ).join(",");
           }
-          
+
           console.log("Categories being sent:", categories);
-  
+
           const response = await fetch(
             `/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`
           );
-  
+
           if (response.ok) {
             const data = await response.json();
             setSimilarProjects(data);
@@ -124,11 +125,11 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         }
       }
     };
-  
+
     console.log("project :", project);
     fetchSimilarProjects();
   }, [project]);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       if (params.id) {
@@ -212,20 +213,22 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         (prevIndex - 1 + project.imageUrl.length) % project.imageUrl.length
     );
   };
-  
+
   const handleNextClick = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % project.imageUrl.length);
   };
-  
+
   const handleFavoriteClick = async () => {
     if (session) {
       try {
         // ตรวจสอบสถานะโปรเจกต์ใน favorites
-        const response = await fetch(`/api/favorites?username=${session.user.name}&projectId=${project._id}`);
+        const response = await fetch(
+          `/api/favorites?username=${session.user.name}&projectId=${project._id}`
+        );
         const result = await response.json();
-        
+
         const isCurrentlyFavorited = result.isFavorited;
-  
+
         // เตรียมข้อมูลที่ต้องการส่ง
         const data = {
           username: session.user.name, // ชื่อผู้ใช้จาก session
@@ -238,9 +241,9 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           sold: project.sold, // จำนวนที่ขายไป
           rathing: project.rathing, // การให้คะแนน
           imageUrl: project.imageUrl, // URL ของรูปภาพ (เป็น array)
-          author: project.author // ผู้เขียน
+          author: project.author, // ผู้เขียน
         };
-        
+
         // ส่ง request เพื่อเพิ่มหรือลบจาก favorites
         const favoriteResponse = await fetch("/api/favorites", {
           method: "POST",
@@ -249,21 +252,21 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           },
           body: JSON.stringify(data),
         });
-  
-      if (favoriteResponse.ok) {
-  // อัปเดตสถานะ favorite
-  const newFavoritedStatus = !isCurrentlyFavorited;
-  setIsFavorited(newFavoritedStatus);
-  
-  // แสดงข้อความตามสถานะ
-  const message = newFavoritedStatus
-    ? "Added to favorites!"
-    : "Removed from favorites!";
-  alert(message);
-} else {
-  const result = await favoriteResponse.json();
-  alert(`Error: ${result.error}`);
-}
+
+        if (favoriteResponse.ok) {
+          // อัปเดตสถานะ favorite
+          const newFavoritedStatus = !isCurrentlyFavorited;
+          setIsFavorited(newFavoritedStatus);
+
+          // แสดงข้อความตามสถานะ
+          const message = newFavoritedStatus
+            ? "Added to favorites!"
+            : "Removed from favorites!";
+          alert(message);
+        } else {
+          const result = await favoriteResponse.json();
+          alert(`Error: ${result.error}`);
+        }
       } catch (error) {
         console.error("Error during favorite request:", error);
         alert("Error adding/removing favorite");
@@ -272,7 +275,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       alert("Please log in to save favorites");
     }
   };
-  
 
   const handleBuyClick = () => {
     setIsPopupOpen(true);
@@ -355,37 +357,42 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
   ];
 
-  const createInternetBankingCharge = async (amount:number, token:string, type:string, net:number) => {
+  const createInternetBankingCharge = async (
+    amount: number,
+    token: string,
+    type: string,
+    net: number
+  ) => {
     try {
-      const response = await axios.post('/api/payment', {
+      const response = await axios.post("/api/payment", {
         token: token,
         amount: amount,
-        description: project.projectname, 
+        description: project.projectname,
         typec: type,
         product: project._id,
         btype: 2,
         email: session?.user.email,
-        name : session?.user.name
+        name: session?.user.name,
       });
-  
+
       await Swal.fire({
-        icon: 'success',
-        title: 'Success',
+        icon: "success",
+        title: "Success",
       });
-      if (type === 'credit_card') {
-        router.push('/myproject')
+      if (type === "credit_card") {
+        router.push("/myproject");
       } else {
         window.location.href = response.data.authorizeUri;
       }
     } catch (error) {
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error instanceof Error ? error.message : 'An unknown error occurred',
+        icon: "error",
+        title: "Error",
+        text:
+          error instanceof Error ? error.message : "An unknown error occurred",
       });
     }
   };
-
 
   return (
     <main className="bg-[#FBFBFB]">
@@ -464,24 +471,19 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       )}
                     </div>
                     {session ? (
-  <button
-    onClick={handleFavoriteClick}
-    className={`cursor-pointer text-2xl ${isFavorited ? 'text-red-500' : 'text-gray-600'}`} // Change color based on favorite status
-  >
-    {isFavorited ? (
-      <GoHeartFill />
-    ) : (
-      <GoHeart />
-    )}
-  </button>
-) : (
-  <Link href="/auth/preauth">
-    <button className="cursor-pointer text-gray-600 text-2xl">
-      <GoHeart />
-    </button>
-  </Link>
-)}
-
+                      <button
+                        onClick={handleFavoriteClick}
+                        className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`} // Change color based on favorite status
+                      >
+                        {isFavorited ? <GoHeartFill /> : <GoHeart />}
+                      </button>
+                    ) : (
+                      <Link href="/auth/preauth">
+                        <button className="cursor-pointer text-gray-600 text-2xl">
+                          <GoHeart />
+                        </button>
+                      </Link>
+                    )}
                   </div>
                   {session ? (
                     <button
@@ -526,8 +528,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                   </ul>
                 ))}
               </div>
-              <div>
-              </div>
+              <div></div>
               {/* Reviews Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
                 <h2 className="text-lg font-bold text-[#33529B]">
@@ -744,7 +745,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       email={project.email}
                       name={project.author}
                       createInternetBankingCharge={createInternetBankingCharge}
-                      
                     />
                   </div>
                 </div>

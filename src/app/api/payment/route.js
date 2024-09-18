@@ -40,12 +40,15 @@ export async function POST(request) {
       });
       if (charge.status === 'successful') {
         await connectMongoDB();
+        const servicefee = (charge.amount / 100) * 0.3;
+        const withdrawable = (charge.amount / 100) - servicefee;
         const newOrder = new Order({
           email,
           name,
           product,
           net: charge.net / 100,
           amount: charge.amount / 100,
+          withdrawable,
           typec,
           chargeId: charge.id,
           status: charge.status,
@@ -63,7 +66,8 @@ export async function POST(request) {
           { 
             $inc: { 
               net: charge.net / 100,
-              amount: charge.amount / 100 
+              amount: charge.amount / 100,
+              withdrawable,
             }
           },
           { new: true }
