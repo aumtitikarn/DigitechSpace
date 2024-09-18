@@ -1,13 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
 // Define the Project interface
 interface Project {
   _id: string;
@@ -40,7 +39,7 @@ const ReviewCard: React.FC<{ projectId: string }> = ({ projectId }) => {
       try {
         setLoading(true);
         // ดึงข้อมูลโปรเจกต์ตาม projectId
-        const projectResponse = await fetch(`/api/favorites/`);
+        const projectResponse = await fetch(`/api/project/${projectId}`);
         if (projectResponse.ok) {
           const projectData = await projectResponse.json();
           setProject(projectData.post); // รับข้อมูล project
@@ -86,14 +85,7 @@ const ReviewCard: React.FC<{ projectId: string }> = ({ projectId }) => {
             </span>
           </div>
           <p className="text-lg font-bold text-[#33529B] mb-2">{project.price} THB</p>
-          <p className="text-sm text-gray-600 mb-2 truncate">{project.description}</p>
           <div>
-            <strong>{t("nav.project.receive")}:</strong>
-            <ul className="list-disc ml-4">
-              {project.receive.map((item, index) => (
-                <li key={index} className="text-sm text-gray-600 truncate">{item}</li>
-              ))}
-            </ul>
           </div>
         </div>
       </div>
@@ -159,9 +151,7 @@ const Favorite: React.FC = () => {
             ) : favoriteProjectIds.length > 0 ? (
               favoriteProjectIds.map((projectId) => (
                 <Link key={projectId} href={`/project/projectdetail/${projectId}`} passHref>
-                  <a>
-                    <ReviewCard projectId={projectId} /> 
-                  </a>
+                   <ReviewCard projectId={projectId} />
                 </Link>
               ))
             ) : (
