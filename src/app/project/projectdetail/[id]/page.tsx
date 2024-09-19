@@ -394,6 +394,24 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     }
   };
 
+  const url = typeof window !== 'undefined' ? window.location.href : '';
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(url).then(() => {
+      alert('URL copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy URL: ', err);
+    });
+  };
+
+  const handleFacebookShare = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+  };
+
+  const handleTwitterShare = () => {
+    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank');
+  };
+
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar />
@@ -464,9 +482,9 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       {/* Share Popup */}
                       {isSharePopupOpen && (
                         <div className="absolute bottom-full mb-[10px] w-[121px] h-[46px] flex-shrink-0 rounded-[30px] border border-gray-300 bg-white flex items-center justify-center space-x-4 shadow-lg">
-                          <FaLink className="text-gray-600 cursor-pointer" />
-                          <FaFacebook className="text-gray-600 cursor-pointer" />
-                          <RiTwitterXLine className="text-gray-600 cursor-pointer" />
+                          <FaLink className="text-gray-600 cursor-pointer" onClick={handleCopyLink}/>
+                          <FaFacebook className="text-gray-600 cursor-pointer" onClick={handleFacebookShare}/>
+                          <RiTwitterXLine className="text-gray-600 cursor-pointer" onClick={handleTwitterShare}/>
                         </div>
                       )}
                     </div>

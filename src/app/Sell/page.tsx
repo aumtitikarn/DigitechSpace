@@ -26,6 +26,7 @@ type Product = {
   sold: number;
   price: string;
   status: "submitted" | "pending" | "reviewing" | "approved" | "rejected";
+  rejecttext: string;
 };
 
 // Modal Component for confirmation
@@ -72,6 +73,42 @@ const ProductList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (status === "authenticated" && session) {
+        try {
+          // Fetch projects by status
+          const statusResponse = await fetch(`/api/project/getProjects/notpermission?status=${currentStatus}`, {
+            method: "GET",
+          });
+          if (statusResponse.ok) {
+            const statusData = await statusResponse.json();
+            console.log("Fetched projects by status:", statusData);
+            setFilteredProjects(statusData);
+          } else {
+            console.error("Failed to fetch projects by status");
+          }
+
+          // Fetch published projects
+          const publishedResponse = await fetch("/api/project/getProjects/user", {
+            method: "GET",
+          });
+          if (publishedResponse.ok) {
+            const publishedData = await publishedResponse.json();
+            console.log("Published Data:", publishedData);
+            setPublishedProjects(publishedData);
+          } else {
+            console.error("Failed to fetch published projects");
+          }
+        } catch (error) {
+          console.error("Error fetching projects:", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [currentStatus, status, session]);
+
   const handleDeleteClick = (project: Product) => {
     setProjectToDelete(project);
     setIsModalOpen(true);
@@ -86,20 +123,15 @@ const ProductList: React.FC = () => {
     if (projectToDelete) {
       console.log("Attempting to delete project:", projectToDelete._id);
       try {
-        const response = await fetch(
-          `/api/project/delete/${projectToDelete._id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`/api/project/delete/${projectToDelete._id}`, {
+          method: "DELETE",
+        });
         const data = await response.json();
 
         if (response.ok) {
           console.log(data.message);
           setPublishedProjects((prevProjects) =>
-            prevProjects.filter(
-              (project) => project._id !== projectToDelete._id
-            )
+            prevProjects.filter((project) => project._id !== projectToDelete._id)
           );
         } else {
           console.error("Failed to delete project:", data.message);
@@ -133,7 +165,6 @@ const ProductList: React.FC = () => {
           text: "User does not have Seller Information",
         }).then((result) => {
           if (result.isConfirmed) {
-            // Redirect to the add project page
             window.location.href = "/Sell/AddProject";
           }
         });
@@ -147,17 +178,19 @@ const ProductList: React.FC = () => {
     }
   }
 
+  const handleStatusChange = (newStatus: string) => {
+    setCurrentStatus(newStatus);
+  };
+
   if (status === "loading") {
     return (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-        }}
-      >
+      <div style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        textAlign: "center",
+      }}>
         <OrbitProgress
           variant="track-disc"
           dense
@@ -169,59 +202,7 @@ const ProductList: React.FC = () => {
       </div>
     );
   }
-  useEffect(() => {
-    const fetchProjectsByStatus = async () => {
-      if (status === "authenticated" && session) {
-        try {
-          const response = await fetch(`/api/project/getProjects/notpermission?status=${currentStatus}`, {
-            method: "GET",
-          });
-          if (response.ok) {
-            const data = await response.json();
-            console.log("Fetched projects:", data); // เพิ่มบรรทัดนี้
-            setFilteredProjects(data);
-          } else {
-            console.error("Failed to fetch projects by status");
-          }
-        } catch (error) {
-          console.error("Error fetching projects by status:", error);
-        }
-      }
-    };
-  
-    fetchProjectsByStatus();
-  }, [currentStatus, status, session]);
 
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      if (status === "authenticated" && session) {
-        try {
-          // Fetch published projects
-          const publishedResponse = await fetch(
-            "/api/project/getProjects/user",
-            {
-              method: "GET",
-            }
-          );
-          if (publishedResponse.ok) {
-            const publishedData = await publishedResponse.json();
-            console.log("Published Data:", publishedData); // Debug log
-            setPublishedProjects(publishedData);
-          } else {
-            console.error("Failed to fetch published projects");
-          }
-        } catch (error) {
-          console.error("Error fetching projects:", error);
-        }
-      }
-    };
-
-    fetchProjects();
-  }, [status, session]);
-  const handleStatusChange = (newStatus: string) => {
-    setCurrentStatus(newStatus);
-  };
 
   return (
     <div className="flex-grow">
@@ -295,6 +276,13 @@ const ProductList: React.FC = () => {
                             {project.price} THB
                           </p>
                         </div>
+                        {project.status === "rejected" && (
+              <div className="mt-2 p-2 bg-red-100 rounded-md">
+                <p className="text-sm text-red-600">
+                  {project.rejecttext}
+                </p>
+              </div>
+            )}
                       </div>
                     </div>
                   </div>
@@ -317,7 +305,7 @@ const ProductList: React.FC = () => {
                 <div key={project._id} className="relative mt-5">
                   <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
                     <Link
-                      href={`/project/projectdetail/${project._id}`}
+                      href={`/project/projectreceive/${project._id}`}
                       passHref
                     >
                       <div className="w-auto h-auto flex flex-col cursor-pointer">
@@ -379,6 +367,7 @@ const ProductList: React.FC = () => {
           )}
         </div>
       </div>
+      <Footer />
       {/* Confirm Delete Modal */}
       <ConfirmDeleteModal
         isOpen={isModalOpen}
@@ -395,7 +384,6 @@ const App: React.FC = () => {
       <main className="flex-grow">
         <ProductList />
       </main>
-      <Footer />
     </div>
   );
 };

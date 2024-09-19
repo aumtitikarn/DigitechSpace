@@ -279,7 +279,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
                 ) : (
             <div className="col-span-full flex justify-center items-center">
               <p className="mt-2 text-gray-500 text-sm lg:text-base whitespace-nowrap">
-                Sorry, we couldn't find any results.
+              {t("nav.project.noresult")}
               </p>
             </div>
           )}

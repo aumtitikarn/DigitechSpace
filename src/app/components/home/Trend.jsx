@@ -78,7 +78,8 @@ function Trend({ session }) {
           style={{ scrollbarWidth: "auto", msOverflowStyle: "auto" }}
         >
           <div className="flex space-x-4 lg:flex-start">
-            {popularSearches.map((search, index) => (
+          {popularSearches.length > 0 ? (
+            popularSearches.map((search, index) => (
               <Link
                 key={index}
                 href={`/project?search=${search.term}`}
@@ -87,7 +88,14 @@ function Trend({ session }) {
                   {search.term}
                 </button>
               </Link>
-            ))}
+            ))
+          ) : (
+            <div className="col-span-full flex justify-center items-center">
+              <p className="mt-2 text-gray-500 text-sm lg:text-base whitespace-nowrap">
+                {t("nav.project.notrend")}
+              </p>
+            </div>
+          )}
           </div>
         </div>
       </div>
