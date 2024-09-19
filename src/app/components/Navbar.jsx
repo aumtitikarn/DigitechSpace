@@ -141,7 +141,7 @@ function CustomNavbar() {
               >
                 {session?.user?.role == "NormalUser" && (
                           <>
-                            {postData && postData.imageUrl ? (
+                            {postData?.imageUrl ? (
                               <Image
                                 width={200}
                                 height={200}
@@ -161,7 +161,7 @@ function CustomNavbar() {
                           )}
                           {session?.user?.role !== "NormalUser" && (
                             <>
-                              {postDataS && postDataS.imageUrl ? (
+                              {postData?.imageUrl ? (
                                 <Image
                                   width={200}
                                   height={200}
@@ -190,7 +190,7 @@ function CustomNavbar() {
                       <div className="flex items-center ">
                       {session?.user?.role == "NormalUser" && (
                           <>
-                            {postData && postData.imageUrl ? (
+                            {postData?.imageUrl ? (
                               <Image
                                 width={200}
                                 height={200}
@@ -211,7 +211,7 @@ function CustomNavbar() {
                           )}
                           {session?.user?.role !== "NormalUser" && (
                             <>
-                              {postDataS && postDataS.imageUrl ? (
+                              {postData?.imageUrl ? (
                                 <Image
                                   width={200}
                                   height={200}
@@ -406,7 +406,7 @@ function CustomNavbar() {
                     </button>
                     {session?.user?.role == "NormalUser" && (
                       <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                        {postData && postData.imageUrl ? (
+                        {postData?.imageUrl ? (
                           <Image
                             width={200}
                             height={200}
@@ -426,7 +426,7 @@ function CustomNavbar() {
                     )}
                     {session?.user?.role !== "NormalUser" && (
                       <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                        {postDataS && postDataS.imageUrl ? (
+                        {postData?.imageUrl ? (
                           <Image
                             width={200}
                             height={200}
@@ -453,7 +453,7 @@ function CustomNavbar() {
                         <div className="flex items-center">
                         {session?.user?.role == "NormalUser" && (
                           <>
-                            {postData && postData.imageUrl ? (
+                            {postData?.imageUrl ? (
                               <Image
                                 width={200}
                                 height={200}
@@ -474,7 +474,7 @@ function CustomNavbar() {
                           )}
                           {session?.user?.role !== "NormalUser" && (
                             <>
-                              {postDataS && postDataS.imageUrl ? (
+                              {postData?.imageUrl ? (
                                 <Image
                                   width={200}
                                   height={200}
@@ -692,7 +692,7 @@ function CustomNavbar() {
                       >
                         {session?.user?.role == "NormalUser" && (
                           <>
-                            {postData && postData.imageUrl ? (
+                            {postData?.imageUrl ? (
                               <Image
                                 width={200}
                                 height={200}
@@ -712,7 +712,7 @@ function CustomNavbar() {
                           )}
                           {session?.user?.role !== "NormalUser" && (
                             <>
-                              {postDataS && postDataS.imageUrl ? (
+                              {postData?.imageUrl ? (
                                 <Image
                                   width={200}
                                   height={200}
@@ -742,7 +742,7 @@ function CustomNavbar() {
                             <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
                             {session?.user?.role == "NormalUser" && (
                           <>
-                            {postData && postData.imageUrl ? (
+                            {postData?.imageUrl ? (
                               <Image
                                 width={200}
                                 height={200}
@@ -763,7 +763,7 @@ function CustomNavbar() {
                           )}
                           {session?.user?.role !== "NormalUser" && (
                             <>
-                              {postDataS && postDataS.imageUrl ? (
+                              {postData?.imageUrl ? (
                                 <Image
                                   width={200}
                                   height={200}
