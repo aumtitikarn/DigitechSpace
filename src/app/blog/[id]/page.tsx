@@ -62,6 +62,7 @@ function Blog({ params, initialComments }) {
   const [replyingTo, setReplyingTo] = useState(null); // เก็บ ID ของ comment ที่กำลังตอบกลับ
 
   const [blogid, setBlogid] = useState("");
+  const [blogEmail,setBlogEmail] = useState("");
 
   const [profileUser, setProfileUser] = useState([]);
   const [profileUserN, setProfileUserN] = useState([]);
@@ -192,7 +193,7 @@ function Blog({ params, initialComments }) {
   }, []);
 
   const handlePopupSubmit = async (e) => {
-
+    setBlogEmail(postData.email);
     setBlogid(postData._id);
 
     const formData = new FormData();
@@ -218,6 +219,7 @@ function Blog({ params, initialComments }) {
     formData.append("report", report);
     formData.append("author", session.user.name);
     formData.append("blogid", blogid);
+    formData.append("blogEmail",blogEmail);
 
     try {
       const res = await fetch("http://localhost:3000/api/reportblog", {
@@ -338,6 +340,7 @@ function Blog({ params, initialComments }) {
     author: string;
     selectedCategory: string;
     heart: number;
+    email: string;
   }
 
   return (

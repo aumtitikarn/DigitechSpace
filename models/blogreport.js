@@ -6,6 +6,7 @@ const PostBlogSchema = new Schema(
         report: { type: String, required: true },
         author: { type: String, required: true },
         blogid: { type: String, required: true },
+        blogEmail: { type: String, required: true },
         selectedReason: {
             type: String,
             enum: [

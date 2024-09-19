@@ -161,12 +161,12 @@ export default function page() {
                     <div key={val._id} className="flex flex-col" style={{ height: "300px", width: "180px" }}>
                       <div className="rounded w-full relative" style={{ height: "250px" }}>
                         <Image
-                          width={100}
-                          height={100}
+                          width={300}
+                          height={300}
                           src={`/api/posts/images/${val.imageUrl[currentIndex]}`}
                           alt={val.topic}
-                          className="w-full object-cover rounded-lg"
-                          style={{ height: "200px" }}
+                          className="w-full object-cover rounded-lg h-full"
+                          style={{ height: "220px" }}
                         />
                       </div>
                       <div className="ml-2 mt-2">

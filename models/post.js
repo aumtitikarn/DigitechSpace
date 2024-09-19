@@ -27,6 +27,7 @@ const postSchema = new mongoose.Schema(
     imageUrl: { type: [String], required: true }, // Array of strings
     userprofile: { type: [String], required: true },
     author: { type: String, required: true },
+    email: { type: String, required: true },
     comments: { type: [commentSchema], default: [] },
     selectedCategory: {
       type: String,
