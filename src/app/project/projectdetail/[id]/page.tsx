@@ -222,7 +222,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     if (session) {
       try {
         // ตรวจสอบสถานะโปรเจกต์ใน favorites
-        const response = await fetch(`/api/favorites?username=${session.user.name}&projectId=${project._id}`);
+        const response = await fetch(`/api/favorites?email=${session.user.email}&projectId=${project._id}`);
         const result = await response.json();
 
         const isCurrentlyFavorited = result.isFavorited;
