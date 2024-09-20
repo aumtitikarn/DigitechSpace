@@ -11,50 +11,27 @@ import { useTranslation } from "react-i18next";
 // Define types for project data
 interface Project {
   _id: string;
-  projectname: string;
-  description: string;
-  receive: string[];
-  username: string;
-  price: number;
-  review: number;
-  sold: number;
-  rathing: number;
-  imageUrl: string[];
-  author: string;
+  product: string;
+  status: string;
+  createdAt: string;
+  projectDetails: {
+    _id: string;
+    projectname: string;
+    description: string;
+    price: number;
+    author: string;
+    email: string;
+    receive: string[];
+    permission: boolean;
+    rathing: number;
+    sold: number;
+    review: number;
+    category: string;
+    imageUrl: string[];
+    filesUrl: string[];
+    status: string;
+  };
 }
-
-// ReviewCard Component
-const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
-  const { t } = useTranslation("translation");
-
-  return (
-    <div className="rounded-[10px] border border-[#BEBEBE] bg-white p-4" style={{ width: "100%", height: "auto" }}>
-      <div className="w-full h-full flex flex-col mb-4">
-        {project.imageUrl.length > 0 && (
-          <img
-            src={`/api/project/images/${project.imageUrl[0]}`}
-            alt="Product Image"
-            className="w-full h-[150px] rounded-md object-cover mb-4"
-          />
-        )}
-        <div className="flex flex-col h-full">
-          <p className="text-lg font-semibold mb-2 truncate">{project.projectname}</p>
-          <div className="flex mb-2">
-            <span className="text-gray-500 mr-2 text-2xl"><MdAccountCircle /></span>
-            <p className="text-sm text-gray-600 truncate">{project.author}</p>
-          </div>
-          <div className="flex mb-2">
-            <span className="text-yellow-500 mr-2"><IoIosStar /></span>
-            <span className="lg:text-sm text-gray-600 text-[12px] truncate">
-              {project.rathing} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
-            </span>
-          </div>
-          <p className="text-lg font-bold text-[#33529B] mb-2">{project.price} THB</p>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // Main Review Component
 const Review: React.FC = () => {
@@ -65,50 +42,28 @@ const Review: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      if (!session?.user?.email) {
-        setError("User is not logged in");
-        setLoading(false);
-        return;
-      }
-  
-      setLoading(true);
-      setError(null);
-  
+    const fetchProjects = async () => {
       try {
-        // เรียก API ของ orders
-        const response = await fetch(`/api/order?email=${encodeURIComponent(session.user.email)}`, {
-          method: "GET",
-          cache: "no-store",
-        });
-  
+        const response = await fetch("/api/myproject");
         if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Error response from server:", errorData);
-          throw new Error("Failed to fetch orders.");
+          throw new Error("Failed to fetch projects");
         }
-  
-        const orders = await response.json(); // ตรวจสอบข้อมูลจาก API
-        console.log("Orders fetched from API:", orders); // Log ข้อมูลเพื่อตรวจสอบ
-  
-        // ตรวจสอบว่ามี `product` ภายใน `orders` หรือไม่
-        if (!orders || !orders.product || !Array.isArray(orders.product)) {
-          throw new Error("Invalid data structure from server");
-        }
-  
-        const projectIds = orders.product.map((project: any) => project._id); // ตรวจสอบโครงสร้างข้อมูลของ product
-        setProjects(projectIds); // Store project IDs in state
+        const data = await response.json();
+        console.log("Fetched projects:", data);
+        setProjects(data);
       } catch (error) {
-        console.error("Error loading reviews:", error);
-        setError("Failed to load reviews.");
+        console.error("Error fetching projects:", error);
+        
       } finally {
         setLoading(false);
       }
     };
-  
-    fetchReviews();
-  }, [session?.user?.email]);
-  
+
+    fetchProjects();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">
@@ -117,19 +72,53 @@ const Review: React.FC = () => {
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h1 className="font-bold mb-4 text-[24px]">{t("nav.review.title")}</h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {loading ? (
-              <p>{t("loading")}</p>
-            ) : error ? (
-              <p>{error}</p>
-            ) : projects.length > 0 ? (
-              projects.map((project) => (
-                <Link key={project._id} href={`/review/Reviewproject?id=${project._id}`}>
-                  <ReviewCard project={project} />
-                </Link>
-              ))
-            ) : (
-              <p>{t("noProjectsFound")}</p>
-            )}
+            {projects.map((project) => (
+             <Link href={`/review/Reviewproject?id=${project.projectDetails._id}&name=${encodeURIComponent(project.projectDetails.projectname)}`} key={project._id}>
+
+                <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
+                  <div className="w-auto h-auto flex flex-col">
+                    {project.projectDetails.imageUrl.length > 0 ? (
+                      <img
+                        src={`/api/project/images/${project.projectDetails.imageUrl[0]}`}
+                        alt="Product Image"
+                        className="w-full h-[150px] rounded-md object-cover mb-4"
+                      />
+                    ) : (
+                      <div className="w-full h-[150px] bg-gray-200 rounded-md mb-4 flex items-center justify-center">
+                        <p>No Image Available</p>
+                      </div>
+                    )}
+                    <div className="flex flex-col h-full">
+                      <p className="text-lg font-semibold mb-2 truncate">
+                        {project.projectDetails.projectname}
+                      </p>
+                      <div className="flex items-center mb-2">
+                        <span className="text-gray-500 mr-2 text-2xl">
+                          <MdAccountCircle />
+                        </span>
+                        <p className="text-sm text-gray-600 truncate">
+                          {project.projectDetails.author}
+                        </p>
+                      </div>
+                      <div className="flex items-center mb-2">
+                        <span className="text-yellow-500 mr-2 text-lg">
+                          <IoIosStar />
+                        </span>
+                        <span className="text-gray-600 text-xs lg:text-sm truncate">
+                          {project.projectDetails.rathing || "N/A"} (
+                          {project.projectDetails.review}) |{" "}
+                          {t("nav.project.projectdetail.sold")}{" "}
+                          {project.projectDetails.sold}
+                        </span>
+                      </div>
+                      <p className="text-lg font-bold text-[#33529B]">
+                        {project.projectDetails.price} THB
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </main>

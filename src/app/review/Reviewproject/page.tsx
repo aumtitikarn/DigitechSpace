@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation';
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
-
+import { useSearchParams } from 'next/navigation';
 interface ReviewProject {
   project: string; // Assuming this is the project ID
 }
@@ -18,6 +18,10 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   const { t } = useTranslation("translation");
   const router = useRouter();
   const { data: session, status } = useSession();
+  const searchParams = useSearchParams();
+  const projectId = searchParams.get("id");
+  const name = searchParams.get("name");
+  
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
@@ -28,13 +32,13 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   };
 
   const handleSubmit = async () => {
-    if (!rating || !review) {
-      alert("Please provide both a rating and a review.");
+    if (!rating || !review || !projectId) { // ตรวจสอบ project ด้วย
+      alert("Please provide rating, review, and project ID.");
       return;
     }
-
+  
     try {
-      const response = await fetch('/api/reviews', {
+      const response = await fetch('/api/review', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,14 +46,14 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
         body: JSON.stringify({
           rating,
           review,
-          projectId: project, // Use the project ID passed as a prop
+          projectId, // ตรวจสอบว่า project มีค่า
         }),
       });
-
+  
       const data = await response.json();
       if (response.ok) {
         alert(data.message);
-        router.push('/project'); // Navigate after submission
+        router.push('/project');
       } else {
         alert(data.message);
       }
@@ -58,6 +62,7 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
       alert('Failed to submit review.');
     }
   };
+  
 
   if (status === "loading") {
     return (
@@ -80,7 +85,7 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h1 className="text-3xl md:text-4xl font-bold mb-6">{t("nav.review.topic")}</h1>
           <div className="border-b border-gray-500 my-4 lg:max-w-[950px]"></div>
-          <p className="text-lg font-medium mb-4">{t("nav.review.project")} : Facebook Website</p>
+          <p className="text-lg font-medium mb-4">{t("nav.review.project")} :{name || ""} </p>
           <p className="text-lg font-medium mb-2">{t("nav.review.point")}:</p>
           <div className="flex justify-left mb-4">
             {[...Array(5)].map((_, i) => (
