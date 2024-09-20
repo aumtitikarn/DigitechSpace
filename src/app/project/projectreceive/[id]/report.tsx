@@ -4,11 +4,23 @@ import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { GoX } from "react-icons/go";
 import { useTranslation } from "react-i18next";
+import Email from "next-auth/providers/email";
 
 interface ReportProject {
-  project: string;
+  project: {
+    _id: string;
+    email: string; // Ensure this field exists in your project data
+    projectname: string;
+    author: string;
+    price: number;
+    imageUrl: string[];
+    rathing: number;
+    review: number;
+    sold: number;
+  };
   onClose: () => void;
 }
+
 
 const Report: React.FC<ReportProject> = ({ project, onClose }) => {
   const [review, setReview] = useState("");
@@ -26,19 +38,21 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
     setReview(event.target.value);
   };
 
-  
   const handleSubmit = async () => {
     if (!session) return;
-  
+
     const data = {
-      name: project,
+      name: project.projectname,
+      projectId: project._id, // Project ID
+      email: project.email, // Correctly accessing the email property
       report: selectedReason,
       more: review,
       username: session.user?.name,
+      author: project.author,
     };
-  
+
     console.log("Data to be sent:", data);
-  
+
     try {
       const response = await fetch("/api/reportproject", {
         method: "POST",
@@ -47,7 +61,7 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
         },
         body: JSON.stringify(data),
       });
-  
+
       if (response.ok) {
         setSubmissionStatus("success");
         setTimeout(onClose, 2000);
@@ -61,13 +75,10 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
       setSubmissionStatus("error");
     }
   };
+
   const handleReasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedReason(event.target.value);
   };
-  
-  console.log("Selected reason:", selectedReason); // ตรวจสอบค่าที่เลือก
-  
-  
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -82,7 +93,7 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
         />
         <h2 className="text-2xl font-bold mb-4 text-center">{t("report.title")}</h2>
         <p className="text-lg font-medium mb-4">
-          {t("report.project.topic")} : {project}
+          {t("report.project.topic")} : {project.projectname}
         </p>
         <div className="border-b border-gray-300 my-3"></div>
 
@@ -119,7 +130,6 @@ const Report: React.FC<ReportProject> = ({ project, onClose }) => {
         >
           {t("report.send")}
         </button>
-        {/* Display success or error message */}
         {submissionStatus === "success" && (
           <p className="mt-4 text-green-500 text-center">
             {t("report.successMessage")}

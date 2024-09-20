@@ -687,8 +687,8 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
         </div>
       </div>
       {isModalOpen && (
-        <Report project="Facebook Website" onClose={closeModal} />
-      )}
+  <Report project={project} onClose={closeModal} />
+       )}
       <Footer />
     </main>
   );
