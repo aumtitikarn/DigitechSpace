@@ -221,25 +221,18 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     if (session) {
       try {
         // ตรวจสอบสถานะโปรเจกต์ใน favorites
-        const response = await fetch(`/api/favorites?username=${session.user.name}&projectId=${project._id}`);
+        const response = await fetch(`/api/favorites?email=${session.user.email}&projectId=${project._id}`);
         const result = await response.json();
         
         const isCurrentlyFavorited = result.isFavorited;
   
         // เตรียมข้อมูลที่ต้องการส่ง
         const data = {
-          username: session.user.name, // ชื่อผู้ใช้จาก session
+          email: session.user.email, // ใช้อีเมลจาก session
           projectId: project._id, // ID ของโปรเจกต์
-          projectname: project.projectname, // ชื่อโปรเจกต์
-          description: project.description, // คำบรรยายโปรเจกต์
-          receive: project.receive, // รายการที่ได้รับ (เป็น array)
-          price: project.price, // ราคา
-          review: project.review, // จำนวนรีวิว
-          sold: project.sold, // จำนวนที่ขายไป
-          rathing: project.rathing, // การให้คะแนน
-          imageUrl: project.imageUrl, // URL ของรูปภาพ (เป็น array)
-          author: project.author // ผู้เขียน
+          
         };
+        
         
         // ส่ง request เพื่อเพิ่มหรือลบจาก favorites
         const favoriteResponse = await fetch("/api/favorites", {

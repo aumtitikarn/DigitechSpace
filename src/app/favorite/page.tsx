@@ -103,27 +103,29 @@ const Favorite: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchFavorites = async () => {
-    if (!session?.user?.name) {
+    if (!session?.user?.email) {
       setError("User is not logged in");
       setLoading(false);
       return;
     }
-
+  
     setLoading(true);
     setError(null);
-
+  
     try {
-      const response = await fetch(`/api/favorites?username=${encodeURIComponent(session.user.name)}`, {
+      const response = await fetch(`/api/favorites?email=${encodeURIComponent(session.user.email)}`, {
         method: "GET",
         cache: "no-store",
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to fetch favorites.");
       }
-
-      const favorites = await response.json();
-      const favoriteProjectIds = favorites.map((favorite: any) => favorite.projectId);
+  
+      // Since the backend returns an array of project IDs, directly map them
+      const favoriteProjectIds = await response.json();
+      
+      // Set the favorite project IDs to state
       setFavoriteProjectIds(favoriteProjectIds);
     } catch (error) {
       console.error("Error loading favorites:", error);
@@ -132,11 +134,12 @@ const Favorite: React.FC = () => {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     fetchFavorites();
-  }, [session?.user?.name]);
-
+  }, [session?.user?.email]); // Re-fetch favorites when the email changes
+  
+  
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">
       <Navbar />
