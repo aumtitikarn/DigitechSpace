@@ -84,13 +84,13 @@ function Blog() {
 
   return (
     <main className="flex flex-col items-center justify-center px-4 w-full">
-      <div className="flex flex-col justify-center w-full">
+      <div className="flex flex-col justify-center w-full h-auto">
         <div className="flex items-center space-x-2 mt-3">
           <p className="font-bold" style={{ fontSize: "24px" }}>
           {t("nav.blog.title")}
           </p>
         </div>
-        <div className="mt-5 flex overflow-x-auto space-x-5 h-auto">
+        <div className="mt-5 flex overflow-x-auto space-x-5 h-96">
           {postData && postData.length > 0 ? (
                 postData.map(val => (
                   <Link href={`/blog/${val._id}`}>
