@@ -41,6 +41,10 @@ const studentUserSchema = new mongoose.Schema({
         type: Number, 
         get: (v) => parseFloat(v.toFixed(2))
     },
+    withdrawable: {
+    type: Number, 
+    get: (v) => parseFloat(v.toFixed(2))
+},
     interests: { type: [String], default: [] },
     SellInfo: {
         fullname: { type: String },
@@ -54,8 +58,8 @@ const studentUserSchema = new mongoose.Schema({
         province: { type: String },
         postalnumber: { type: String }
     },
-    line: { type: String, required: true },
-    facebook: { type: String, required: true },
+    line: { type: String, required: false },
+    facebook: { type: String, required: false },
     imageUrl: { type: [String], required: true },
 }, { timestamps: true ,strict: false });
 

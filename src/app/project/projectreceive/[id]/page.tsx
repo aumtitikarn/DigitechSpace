@@ -16,6 +16,8 @@ import { RiTwitterXLine } from "react-icons/ri";
 import { FaLink, FaFacebookF, FaTwitter } from "react-icons/fa";
 import { OrbitProgress } from "react-loading-indicators";
 import Link from "next/link";
+import Report from "./report";
+import { AiOutlineNotification } from "react-icons/ai";
 import { useTranslation } from "react-i18next";
 import { MdOutlineFileDownload } from "react-icons/md";
 
@@ -47,6 +49,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [publishedProjects, setPublishedProjects] = useState<ProjectData[]>([]);
   const [similarProjects, setSimilarProjects] = useState<ProjectData[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const projectGroups = [
     {
@@ -213,69 +216,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const handleShowLessClick = () => {
     setVisibleReviewsCount(3); // กลับไปแสดงผลรีวิว 5 รีวิวแรก
   };
-  // ข้อมูลตัวอย่างของสินค้า
-  const products = [
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-  ];
+  
 
   const reviews = [
     {
@@ -357,7 +298,12 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
       console.error("Error downloading file:", error);
     }
   };
-
+  const handleNotificationClick = () => {
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar />
@@ -435,7 +381,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       )}
                     </div>
                     {session ? (
-                      <button
+                      <><button
                         onClick={handleFavoriteClick}
                         className="cursor-pointer"
                       >
@@ -444,7 +390,9 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                         ) : (
                           <GoHeart className="text-gray-600 text-2xl" />
                         )}
-                      </button>
+                      </button><AiOutlineNotification
+                          onClick={handleNotificationClick}
+                          className="text-gray-600 cursor-pointer text-2xl" /></>
                     ) : (
                       <>
                         <Link href="/auth/preauth">
@@ -738,6 +686,9 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
           </div>
         </div>
       </div>
+      {isModalOpen && (
+        <Report project="Facebook Website" onClose={closeModal} />
+      )}
       <Footer />
     </main>
   );

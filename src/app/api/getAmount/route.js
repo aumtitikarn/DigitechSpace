@@ -17,12 +17,14 @@ export async function GET(req) {
     const userEmail = session.user.email;
     const query = { email: userEmail };
 
-    const user = await Studentuser.findOne(query).select('amount SellInfo');
+    const user = await Studentuser.findOne(query).select('amount net SellInfo');
 
     if (user) {
-      const amount = user.amount || 0; // Use 0 as default if amount is undefined
+      const amount = user.amount || 0; 
+      const net = user.net || 0;
       const response = {
         amount: amount,
+        net: net,
         fullname: user.SellInfo?.fullname || ''
       };
       return NextResponse.json(response, { status: 200 });

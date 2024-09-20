@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaSearch } from "react-icons/fa";
 import { star } from "react-icons-kit/fa";
 import Icon from "react-icons-kit";
@@ -8,7 +8,8 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
 import { OrbitProgress } from "react-loading-indicators";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import debounce from 'lodash/debounce';
 
 const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const { t, i18n } = useTranslation("translation");
@@ -16,6 +17,11 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const [showMore, setShowMore] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState();
   const [selectedRating, setSelectedRating] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
 
   const categories = [
     { id: 1, category: t("nav.project.all"), categoryEN: "All" },
@@ -32,9 +38,13 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   ];
 
   useEffect(() => {
+    const search = searchParams.get('search');
+    if (search) {
+      setSearchTerm(search);
+    }
+
     if (initialCategory) {
       const categoryItem = categories.find(c => c.categoryEN.toLowerCase() === initialCategory.toLowerCase());
-      console.log("initial", categoryItem);
       if (categoryItem) {
         setSelectedCategory(categoryItem.categoryEN);
       } else {
@@ -45,7 +55,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     } else {
       setSelectedCategory(undefined);
     }
-  }, [initialCategory, isProjectPage]);
+  }, [initialCategory, isProjectPage, searchParams]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,9 +63,31 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
       const fetchedProjects = await fetchProjects(selectedCategory);
       console.log('Fetched projects:', fetchedProjects);
       setProjects(fetchedProjects);
+      filterProjects(fetchedProjects, searchTerm);
     };
     fetchData();
   }, [selectedCategory]);
+
+  const filterProjects = (projectsToFilter, term) => {
+    const filtered = projectsToFilter.filter(project =>
+      project.projectname.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredProjects(filtered);
+  };
+
+  const debouncedSearch = useCallback(
+    debounce((term) => {
+      filterProjects(projects, term);
+      router.push(`/project?search=${encodeURIComponent(term)}`, { scroll: false });
+    }, 300),
+    [projects, router]
+  );
+
+  const handleSearchChange = (e) => {
+    const newSearchTerm = e.target.value;
+    setSearchTerm(newSearchTerm);
+    debouncedSearch(newSearchTerm);
+  };
 
   const fetchProjects = async (categoryEN) => {
     try {
@@ -69,6 +101,18 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
       return [];
     }
   };
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log('Current selected category:', selectedCategory);
+      const fetchedProjects = await fetchProjects(selectedCategory);
+      console.log('Fetched projects:', fetchedProjects);
+      setProjects(fetchedProjects);
+    };
+    fetchData();
+  }, [selectedCategory]);
+
 
   const handleCategoryChange = (e) => {
     const selectedTranslatedCategory = e.target.value;
@@ -141,10 +185,11 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
                 type="text"
                 placeholder={t("nav.home.search")}
                 className="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                value={searchTerm}
+                onChange={handleSearchChange}
               />
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
-
             {/* Categories */}
             <div>
               <h4 className="text-xl font-semibold">{t("nav.project.catagory")}</h4>
@@ -201,40 +246,40 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
       {/* Projects Display Section */}
       <div className="flex-grow">
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-x-[10px] gap-y-[20px] lg:gap-x-[30px] md:gap-x-[40px] md:gap-y-[40px]">
-          {projects.length > 0 ? (
-            projects.map((project, index) => (
-              <Link key={index} href={`/project/projectdetail/${project._id}`}>
-                <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
-                  <img
-                    src={`/api/project/images/${project.imageUrl[0]}`}
-                    alt="Project Image"
-                    className="w-full h-[150px] rounded-md object-cover mb-4"
-                  />
-                  <div className="flex flex-col justify-between h-full">
-                    <p className="text-lg font-semibold mb-2 truncate">{project.projectname}</p>
-                    <div className="flex items-center mb-2">
-                      <span className="text-gray-500 mr-2 text-2xl">
-                        <MdAccountCircle />
-                      </span>
-                      <p className="text-sm text-gray-600 truncate">{project.author}</p>
+      {filteredProjects.length > 0 ? (
+            filteredProjects.map((project, index) => (
+                  <Link key={index} href={`/project/projectdetail/${project._id}`}>
+                    <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
+                      <img
+                        src={`/api/project/images/${project.imageUrl[0]}`}
+                        alt="Project Image"
+                        className="w-full h-[150px] rounded-md object-cover mb-4"
+                      />
+                      <div className="flex flex-col justify-between h-full">
+                        <p className="text-lg font-semibold mb-2 truncate">{project.projectname}</p>
+                        <div className="flex items-center mb-2">
+                          <span className="text-gray-500 mr-2 text-2xl">
+                            <MdAccountCircle />
+                          </span>
+                          <p className="text-sm text-gray-600 truncate">{project.author}</p>
+                        </div>
+                        <div className="flex items-center mb-2">
+                          <span className="text-yellow-500 mr-2">
+                            <IoIosStar />
+                          </span>
+                          <span className="lg:text-sm text-gray-600 text-[12px] truncate">
+                            {project.rathing || "N/A"} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
+                          </span>
+                        </div>
+                        <p className="text-lg font-bold text-[#33529B]">{project.price} THB</p>
+                      </div>
                     </div>
-                    <div className="flex items-center mb-2">
-                      <span className="text-yellow-500 mr-2">
-                        <IoIosStar />
-                      </span>
-                      <span className="lg:text-sm text-gray-600 text-[12px] truncate">
-                        {project.rathing || "N/A"} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
-                      </span>
-                    </div>
-                    <p className="text-lg font-bold text-[#33529B]">{project.price} THB</p>
-                  </div>
-                </div>
-              </Link>
-            ))
-          ) : (
+                  </Link>
+                 ))
+                ) : (
             <div className="col-span-full flex justify-center items-center">
               <p className="mt-2 text-gray-500 text-sm lg:text-base whitespace-nowrap">
-                Sorry, we couldn't find any results.
+              {t("nav.project.noresult")}
               </p>
             </div>
           )}

@@ -84,25 +84,25 @@ function Blog() {
 
   return (
     <main className="flex flex-col items-center justify-center px-4 w-full">
-      <div className="flex flex-col justify-center w-full">
+      <div className="flex flex-col justify-center w-full h-auto">
         <div className="flex items-center space-x-2 mt-3">
           <p className="font-bold" style={{ fontSize: "24px" }}>
           {t("nav.blog.title")}
           </p>
         </div>
-        <div className="mt-5 flex overflow-x-auto space-x-5">
+        <div className="mt-5 flex overflow-x-auto space-x-5 h-96">
           {postData && postData.length > 0 ? (
                 postData.map(val => (
                   <Link href={`/blog/${val._id}`}>
                     <div key={val._id} className="flex flex-col" style={{ height: "300px", width: "180px" }}>
                       <div className="rounded w-full relative" style={{ height: "250px" }}>
                         <Image
-                          width={100}
-                          height={100}
+                          width={300}
+                          height={300}
                           src={`/api/posts/images/${val.imageUrl}`}
                           alt={val.topic}
-                          className="w-full object-cover rounded-lg"
-                          style={{ height: "200px" }}
+                          className="w-full object-cover rounded-lg h-full"
+                          style={{ height: "220px" }}
                         />
                       </div>
                       <div className="ml-2 mt-2">
@@ -151,7 +151,7 @@ function Blog() {
         </div>
         <div className="flex-grow text-center mt-3">
           <p className="text-[#33529B] font-bold text-[18px]">
-          {t("nav.home.seemore")} (20)
+          {t("nav.home.seemore")} ({postData.length})
           </p>
         </div>
       </div>

@@ -57,6 +57,8 @@
       "rating": "Rating",
       "showless" : "Show Less",
       "showmore" : "Show More",
+      "noresult" : "Sorry, we couldn't find any results.",
+      "notrend" : "Sorry, there are no trends right now.",
       "projectdetail" : {
         "buy" : "Buy",
         "description" : "Description",

@@ -14,12 +14,14 @@ export async function POST(request) {
         const charge = body.data;
         
         await connectMongoDB();
-  
+        const servicefee = (charge.amount / 100) * 0.3;
+        const withdrawable = (charge.amount / 100) - servicefee;
         const newOrder = new Order({
           email: charge.metadata.email,
           name: charge.metadata.name,
           product: charge.metadata.product,
           amount: charge.amount / 100,
+          withdrawable,
           net: charge.net / 100,
           typec: charge.metadata.typec,
           chargeId: charge.id,
@@ -37,7 +39,8 @@ export async function POST(request) {
           { 
             $inc: { 
               net: charge.net / 100,
-              amount: charge.amount / 100 
+              amount: charge.amount / 100 ,
+              withdrawable,
             }
           },
           { new: true }

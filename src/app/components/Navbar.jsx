@@ -139,7 +139,46 @@ function CustomNavbar() {
                 onClick={toggleAccountBox}
                 className="text-white focus:outline-none"
               >
-                <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                {session?.user?.role == "NormalUser" && (
+                          <>
+                            {postData?.imageUrl ? (
+                              <Image
+                                width={200}
+                                height={200}
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
+                                alt="Profile"
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                                  width: "40px",
+                                  height: "40px",
+                                }}
+                              />
+                            ) : (
+                              <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                            )}
+                          </>
+                          )}
+                          {session?.user?.role !== "NormalUser" && (
+                            <>
+                              {postData?.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "40px",
+                                    height: "40px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                              )}
+                            </>
+                          )}
               </button>
               {isAccountBoxVisible && (
                 <div className="">
@@ -149,7 +188,48 @@ function CustomNavbar() {
                     {/* Account Box Content */}
                     <div className="">
                       <div className="flex items-center ">
-                        <MdAccountCircle className="text-gray-600 text-6xl  " />
+                      {session?.user?.role == "NormalUser" && (
+                          <>
+                            {postData?.imageUrl ? (
+                              <Image
+                                width={200}
+                                height={200}
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
+                                alt="Profile"
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                                  width: "55px",
+                                  height: "55px",
+                                  margin: "15px",
+                                }}
+                              />
+                            ) : (
+                              <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                            )}
+                          </>
+                          )}
+                          {session?.user?.role !== "NormalUser" && (
+                            <>
+                              {postData?.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "55px",
+                                    height: "55px",
+                                    margin: "15px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                              )}
+                            </>
+                          )}
                         <span>
                           <p className="text-[20px] mt-3 text-semibold">
                             {session?.user?.name}
@@ -326,7 +406,7 @@ function CustomNavbar() {
                     </button>
                     {session?.user?.role == "NormalUser" && (
                       <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                        {postData && postData.imageUrl ? (
+                        {postData?.imageUrl ? (
                           <Image
                             width={200}
                             height={200}
@@ -346,7 +426,7 @@ function CustomNavbar() {
                     )}
                     {session?.user?.role !== "NormalUser" && (
                       <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                        {postDataS && postDataS.imageUrl ? (
+                        {postData?.imageUrl ? (
                           <Image
                             width={200}
                             height={200}
@@ -373,7 +453,7 @@ function CustomNavbar() {
                         <div className="flex items-center">
                         {session?.user?.role == "NormalUser" && (
                           <>
-                            {postData && postData.imageUrl ? (
+                            {postData?.imageUrl ? (
                               <Image
                                 width={200}
                                 height={200}
@@ -394,7 +474,7 @@ function CustomNavbar() {
                           )}
                           {session?.user?.role !== "NormalUser" && (
                             <>
-                              {postDataS && postDataS.imageUrl ? (
+                              {postData?.imageUrl ? (
                                 <Image
                                   width={200}
                                   height={200}
@@ -610,7 +690,46 @@ function CustomNavbar() {
                         onClick={toggleAccountBox}
                         className="text-white focus:outline-none "
                       >
-                        <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                        {session?.user?.role == "NormalUser" && (
+                          <>
+                            {postData?.imageUrl ? (
+                              <Image
+                                width={200}
+                                height={200}
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
+                                alt="Profile"
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                                  width: "40px",
+                                  height: "40px",
+                                }}
+                              />
+                            ) : (
+                              <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                            )}
+                          </>
+                          )}
+                          {session?.user?.role !== "NormalUser" && (
+                            <>
+                              {postData?.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "40px",
+                                    height: "40px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                              )}
+                            </>
+                          )}
                       </button>
                     </div>
                     {isAccountBoxVisible && (
@@ -621,6 +740,48 @@ function CustomNavbar() {
                         <div className="px-3 py-3">
                           <div className="flex items-center">
                             <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
+                            {session?.user?.role == "NormalUser" && (
+                          <>
+                            {postData?.imageUrl ? (
+                              <Image
+                                width={200}
+                                height={200}
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
+                                alt="Profile"
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                                  width: "55px",
+                                  height: "55px",
+                                  margin: "15px",
+                                }}
+                              />
+                            ) : (
+                              <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
+                            )}
+                          </>
+                          )}
+                          {session?.user?.role !== "NormalUser" && (
+                            <>
+                              {postData?.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "55px",
+                                    height: "55px",
+                                    margin: "15px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
+                              )}
+                            </>
+                          )}
                             <span>
                               <p className="text-[20px] mt-3 text-semibold">
                                 {session?.user?.name}

@@ -38,7 +38,7 @@ export async function PUT(req, { params }) {
       post.comments.push({
         text,
         author, // ชื่อผู้ใช้
-        profile, // รูปโปรไฟล์ของผู้ใช้
+        profile: typeof profile === 'string' ? profile : '', // รูปโปรไฟล์ของผู้ใช้
         timestamp, // เวลา
         replies: [], // Array ว่างสำหรับการตอบกลับ
       });

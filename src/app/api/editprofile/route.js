@@ -3,6 +3,7 @@ import { Readable } from "stream";
 import { connectMongoDB } from "../../../../lib/mongodb";
 import NormalUser from "../../../../models/NormalUser"
 import StudentUser from "../../../../models/StudentUser"
+import { getSession } from 'next-auth/react';
 
 export const revalidate = 0;
 
@@ -105,9 +106,30 @@ export async function POST(req) {
 
 
 
-export async function GET() {
+export async function GET(req) {
+
+  const session = await getSession({ req });
+
+  if (!session) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  if (!session || !session.user || !session.user.id) {
+      return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
+  }
+
+  const id = session.user.id;  // ดึง id จาก session ของผู้ใช้
+
     const { db } = await connectMongoDB();
     const edit = await NormalUser.find({});
     const edits = await StudentUser.find({});
-    return NextResponse.json({ edit,edits });
+
+    const normalUser = await NormalUser.findOne({ _id: id });
+    const studentUser = await StudentUser.findOne({ _id: id });
+
+    const combinedData = {
+      ...(normalUser ? normalUser._doc : {}),  
+      ...(studentUser ? studentUser._doc : {}), 
+    };
+    return NextResponse.json({ edit,edits,combinedData });
 }
