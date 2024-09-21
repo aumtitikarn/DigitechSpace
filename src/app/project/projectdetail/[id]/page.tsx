@@ -441,8 +441,9 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   };
 
   const handleTwitterShare = () => {
+    const text = encodeURIComponent(`project: ${project.projectname} by: ${project.author}`);
     window.open(
-      `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`,
+      `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`,
       "_blank"
     );
   };

@@ -9,7 +9,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  product: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true }],
+  product: {
+    type: String,
+    required: true,
+  },
   amount: {
     type: Number,
     required: true,
