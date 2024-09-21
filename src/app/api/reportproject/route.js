@@ -9,17 +9,20 @@ export async function POST(req) {
     
     console.log("Received data:", data); // Log received data to check its correctness
 
-    const { name, report, more, username } = data;
+    const { name, projectId, email, report, more, username, author  } = data;
 
-    if (!report || !more || !username || !name) {
+    if (!name || !projectId || !email || !report || !more || !username || !author) {
       throw new Error("Missing required fields");
     }
 
     const newItem = new Reportprojets({
       name,
-      report,
-      more,
-      username,
+       projectId,
+        email, 
+        report,
+         more,
+          username,
+           author
     });
 
     await newItem.save();

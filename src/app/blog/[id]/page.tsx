@@ -193,11 +193,20 @@ function Blog({ params, initialComments }) {
   }, []);
 
   const handlePopupSubmit = async (e) => {
+    e.preventDefault(); // Prevent form default behavior
+    
+    // Set blogid and blogEmail from postData
     setBlogEmail(postData.email);
     setBlogid(postData._id);
-
+  
+    // Debugging: check the values
+    console.log("Blog Email:", postData.email);
+    console.log("Blog ID:", postData._id);
+  
+    // Create a new FormData object
     const formData = new FormData();
-
+  
+    // Check if the user is authenticated
     if (!session || !session.user || !session.user.name) {
       Swal.fire({
         position: "center",
@@ -208,31 +217,35 @@ function Blog({ params, initialComments }) {
       });
       return;
     }
-
+  
+    // Check if all required fields are filled
     if (!report || !selectedReason) {
       alert("Please complete all inputs");
       return;
     }
-
+  
+    // Append form data
     formData.append("blogname", blogname);
     formData.append("selectedReason", selectedReason);
     formData.append("report", report);
     formData.append("author", session.user.name);
-    formData.append("blogid", blogid);
-    formData.append("blogEmail",blogEmail);
-
+    formData.append("blogid", postData._id); // Set blogid from postData directly
+    formData.append("blogEmail", postData.email); // Set blogEmail from postData directly
+  
     try {
       const res = await fetch("http://localhost:3000/api/reportblog", {
         method: "POST",
-        body: formData, // Don't manually set the Content-Type header
+        body: formData, // Body is formData, no need to set Content-Type manually
       });
-
+  
       if (res.ok) {
         router.push(`/blog/${postData._id}`);
         setIsPopupOpen(false);
+      } else {
+        console.error("Error:", res.statusText);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error submitting the form:", error);
     }
   };
 
