@@ -75,7 +75,9 @@
         "by" : "By",
         "hidden" : "Hide review",
         "download" : "Download All",
-        "file" : "File"
+        "file" : "File",
+        "alreadyOwned" : "Already have a project",
+        "alreadyOwnedDescription" : "Please see the projects on my projects page."
       }
     },
     "blog": {

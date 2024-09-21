@@ -78,9 +78,12 @@ const ProductList: React.FC = () => {
       if (status === "authenticated" && session) {
         try {
           // Fetch projects by status
-          const statusResponse = await fetch(`/api/project/getProjects/notpermission?status=${currentStatus}`, {
-            method: "GET",
-          });
+          const statusResponse = await fetch(
+            `/api/project/getProjects/notpermission?status=${currentStatus}`,
+            {
+              method: "GET",
+            }
+          );
           if (statusResponse.ok) {
             const statusData = await statusResponse.json();
             console.log("Fetched projects by status:", statusData);
@@ -90,9 +93,12 @@ const ProductList: React.FC = () => {
           }
 
           // Fetch published projects
-          const publishedResponse = await fetch("/api/project/getProjects/user", {
-            method: "GET",
-          });
+          const publishedResponse = await fetch(
+            "/api/project/getProjects/user",
+            {
+              method: "GET",
+            }
+          );
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
             console.log("Published Data:", publishedData);
@@ -123,15 +129,25 @@ const ProductList: React.FC = () => {
     if (projectToDelete) {
       console.log("Attempting to delete project:", projectToDelete._id);
       try {
-        const response = await fetch(`/api/project/delete/${projectToDelete._id}`, {
-          method: "DELETE",
-        });
+        const response = await fetch(
+          `/api/project/delete/${projectToDelete._id}`,
+          {
+            method: "DELETE",
+          }
+        );
         const data = await response.json();
-
+  
         if (response.ok) {
           console.log(data.message);
           setPublishedProjects((prevProjects) =>
-            prevProjects.filter((project) => project._id !== projectToDelete._id)
+            prevProjects.filter(
+              (project) => project._id !== projectToDelete._id
+            )
+          );
+          setFilteredProjects((prevProjects) =>
+            prevProjects.filter(
+              (project) => project._id !== projectToDelete._id
+            )
           );
         } else {
           console.error("Failed to delete project:", data.message);
@@ -184,13 +200,15 @@ const ProductList: React.FC = () => {
 
   if (status === "loading") {
     return (
-      <div style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        textAlign: "center",
-      }}>
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
         <OrbitProgress
           variant="track-disc"
           dense
@@ -202,7 +220,6 @@ const ProductList: React.FC = () => {
       </div>
     );
   }
-
 
   return (
     <div className="flex-grow">
@@ -230,65 +247,79 @@ const ProductList: React.FC = () => {
           </div>
           <h1 className="text-[24px] font-bold mt-10">{t("nav.sell.wait")}</h1>
           <StatusStepper
-           initialStatus={currentStatus}
+            initialStatus={currentStatus}
             onStatusChange={handleStatusChange}
           />
           {filteredProjects.length > 0 ? (
             <div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-            {filteredProjects.map((project, index) => (
-                <Link
-                  key={index}
-                  href={`/project/projectreceive/${project._id}`}
-                  passHref
-                >
-                  <div className="relative mt-5">
-                    <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
-                      <div className="w-auto h-auto flex flex-col">
-                        <img
-                          src={`/api/project/images/${project.imageUrl[0]}`}
-                          alt="Product Image"
-                          className="w-full h-[150px] rounded-md object-cover mb-4"
-                        />
-                        <div className="flex flex-col h-full">
-                          <p className="text-lg font-semibold mb-2 truncate">
-                            {project.projectname}
-                          </p>
-                          <div className="flex items-center mb-2">
-                            <span className="text-gray-500 mr-2 text-2xl">
-                              <MdAccountCircle />
-                            </span>
-                            <p className="text-sm text-gray-600 truncate">
-                              {project.author}
-                            </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+                {filteredProjects.map((project, index) => (
+                  <div key={project._id} className="flex flex-col">
+                    <div className="relative mt-5">
+                      <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
+                        <Link
+                          href={`/project/projectreceive/${project._id}`}
+                          passHref
+                        >
+                          <div className="w-auto h-auto flex flex-col">
+                            <img
+                              src={`/api/project/images/${project.imageUrl[0]}`}
+                              alt="Product Image"
+                              className="w-full h-[150px] rounded-md object-cover mb-4"
+                            />
+                            <div className="flex flex-col h-full">
+                              <p className="text-lg font-semibold mb-2 truncate">
+                                {project.projectname}
+                              </p>
+                              <div className="flex items-center mb-2">
+                                <span className="text-gray-500 mr-2 text-2xl">
+                                  <MdAccountCircle />
+                                </span>
+                                <p className="text-sm text-gray-600 truncate">
+                                  {project.author}
+                                </p>
+                              </div>
+                              <div className="flex items-center mb-2">
+                                <span className="text-yellow-500 mr-2 text-lg">
+                                  <IoIosStar />
+                                </span>
+                                <span className="text-gray-600 text-xs lg:text-sm">
+                                  {project.rathing || "N/A"} ({project.review})
+                                  | {t("nav.project.projectdetail.sold")}{" "}
+                                  {project.sold}
+                                </span>
+                              </div>
+                              <p className="text-lg font-bold text-[#33529B]">
+                                {project.price} THB
+                              </p>
+                            </div>
+                            {project.status === "rejected" && (
+                              <div className="mt-2 p-2 bg-red-100 rounded-md">
+                                <p className="text-sm text-red-600 text-center">
+                                  {project.rejecttext}
+                                </p>
+                              </div>
+                            )}
                           </div>
-                          <div className="flex items-center mb-2">
-                            <span className="text-yellow-500 mr-2 text-lg">
-                              <IoIosStar />
-                            </span>
-                            <span className="text-gray-600 text-xs lg:text-sm">
-                              {project.rathing || "N/A"} ({project.review}) |{" "}
-                              {t("nav.project.projectdetail.sold")}{" "}
-                              {project.sold}
-                            </span>
-                          </div>
-                          <p className="text-lg font-bold text-[#33529B]">
-                            {project.price} THB
-                          </p>
+                        </Link>
+                        <div className="reletive flex justify-between lg:px-10 md:px-[50px] px-5 my-2">
+                          <Link href={`/Sell/Edit?edit=${project._id}`}>
+                            <VscEdit
+                              size={20}
+                              className="text-gray-500 hover:text-[#33539B] cursor-pointer"
+                            />
+                          </Link>
+                          <MdDeleteOutline
+                            size={20}
+                            className="text-gray-500 hover:text-red-500 cursor-pointer"
+                            onClick={() => handleDeleteClick(project)}
+                          />
                         </div>
-                        {project.status === "rejected" && (
-              <div className="mt-2 p-2 bg-red-100 rounded-md">
-                <p className="text-sm text-red-600">
-                  {project.rejecttext}
-                </p>
-              </div>
-            )}
                       </div>
                     </div>
                   </div>
-                </Link>
-              ))}
-            </div>
+                ))}
+              </div>
             </div>
           ) : (
             <p className="text-center text-gray-500 mt-5">
@@ -424,8 +455,8 @@ const StatusStepper: React.FC<StatusStepperProps> = ({
               className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-lg
                 ${
                   currentStatus === status.key
-                    ? 'bg-blue-500 text-white border-blue-500'
-                    : 'bg-white text-gray-500 border-gray-300'
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-white text-gray-500 border-gray-300"
                 }`}
             >
               {status.id}
@@ -440,10 +471,10 @@ const StatusStepper: React.FC<StatusStepperProps> = ({
                 className={`h-1 w-full ${
                   currentStatus === statuses[index + 1].key ||
                   statuses.findIndex((s) => s.key === currentStatus) > index
-                    ? 'bg-blue-500'
-                    : 'bg-gray-300'
+                    ? "bg-blue-500"
+                    : "bg-gray-300"
                 }`}
-                style={{ transform: 'translateY(-15px)' }}
+                style={{ transform: "translateY(-15px)" }}
               />
             </div>
           )}
@@ -452,4 +483,3 @@ const StatusStepper: React.FC<StatusStepperProps> = ({
     </div>
   );
 };
-

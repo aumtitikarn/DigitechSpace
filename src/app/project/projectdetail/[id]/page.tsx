@@ -58,6 +58,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [similarProjects, setSimilarProjects] = useState<ProjectData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -206,6 +207,33 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       </div>
     );
   }
+
+  const checkAndBuyProject = async () => {
+    setIsLoading(true);
+    try {
+      const userEmail = session?.user.email;
+      // ตรวจสอบว่าผู้ใช้ได้ซื้อโครงงานนี้แล้วหรือยัง
+      const response = await axios.get("/api/payment/checkOrder", {
+        params: {
+          email: userEmail,
+          productId: project._id,
+        },
+      });
+
+      if (response.data.hasOrder) {
+        Swal.fire({
+          title: t("nav.project.projectdetail.alreadyOwned"),
+          text: t("nav.project.projectdetail.alreadyOwnedDescription"),
+          icon: "info",
+          confirmButtonText: "Ok",
+        });
+      } else {
+        handleBuyClick();
+      }
+    } catch (error) {
+      console.error("Error checking order:", error);
+    }
+  };
 
   const handlePrevClick = () => {
     setCurrentIndex(
@@ -394,22 +422,31 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     }
   };
 
-  const url = typeof window !== 'undefined' ? window.location.href : '';
+  const url = typeof window !== "undefined" ? window.location.href : "";
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(url).then(() => {
-      alert('URL copied to clipboard!');
-    }).catch(err => {
-      console.error('Failed to copy URL: ', err);
-    });
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        alert("URL copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy URL: ", err);
+      });
   };
 
   const handleFacebookShare = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      "_blank"
+    );
   };
 
   const handleTwitterShare = () => {
-    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank');
+    window.open(
+      `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`,
+      "_blank"
+    );
   };
 
   return (
@@ -482,9 +519,18 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       {/* Share Popup */}
                       {isSharePopupOpen && (
                         <div className="absolute bottom-full mb-[10px] w-[121px] h-[46px] flex-shrink-0 rounded-[30px] border border-gray-300 bg-white flex items-center justify-center space-x-4 shadow-lg">
-                          <FaLink className="text-gray-600 cursor-pointer" onClick={handleCopyLink}/>
-                          <FaFacebook className="text-gray-600 cursor-pointer" onClick={handleFacebookShare}/>
-                          <RiTwitterXLine className="text-gray-600 cursor-pointer" onClick={handleTwitterShare}/>
+                          <FaLink
+                            className="text-gray-600 cursor-pointer"
+                            onClick={handleCopyLink}
+                          />
+                          <FaFacebook
+                            className="text-gray-600 cursor-pointer"
+                            onClick={handleFacebookShare}
+                          />
+                          <RiTwitterXLine
+                            className="text-gray-600 cursor-pointer"
+                            onClick={handleTwitterShare}
+                          />
                         </div>
                       )}
                     </div>
@@ -506,9 +552,9 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                   {session ? (
                     <button
                       className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-11"
-                      onClick={handleBuyClick}
+                      onClick={checkAndBuyProject}
                     >
-                      {t("nav.project.projectdetail.buy")}
+                    {t("nav.project.projectdetail.buy")}
                     </button>
                   ) : (
                     <Link href="/auth/preauth">
