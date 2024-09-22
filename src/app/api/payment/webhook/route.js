@@ -21,11 +21,13 @@ export async function POST(request) {
           name: charge.metadata.name,
           product: charge.metadata.product,
           amount: charge.amount / 100,
+          servicefee,
           withdrawable,
           net: charge.net / 100,
           typec: charge.metadata.typec,
           chargeId: charge.id,
-          status: charge.status
+          status: charge.status,
+          check: false
         });
   
         await newOrder.save();
@@ -34,17 +36,7 @@ export async function POST(request) {
           { $inc: { sold: 1 } },
           { new: true }
         );
-        await StudentUser.findOneAndUpdate(
-          { email: charge.metadata.email }, 
-          { 
-            $inc: { 
-              net: charge.net / 100,
-              amount: charge.amount / 100 ,
-              withdrawable,
-            }
-          },
-          { new: true }
-        );
+       
         console.log('Order saved to MongoDB:', newOrder);
   
         return NextResponse.json({ message: 'Order saved successfully' }, { status: 200 });

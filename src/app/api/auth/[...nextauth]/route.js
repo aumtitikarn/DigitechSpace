@@ -6,6 +6,7 @@ import GithubProvider from "next-auth/providers/github";
 import { connectMongoDB } from "../../../../../lib/mongodb";
 import StudentUser from "../../../../../models/StudentUser";
 import NormalUser from "../../../../../models/NormalUser";
+import Order from "../../../../../models/order";
 import bcrypt from "bcryptjs";
 
 const authOption = {
@@ -97,8 +98,8 @@ const authOption = {
       }
       return session;
     },
-    
   },
+  
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/signin",

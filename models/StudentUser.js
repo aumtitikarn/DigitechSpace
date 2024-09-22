@@ -37,6 +37,10 @@ const studentUserSchema = new mongoose.Schema({
         type: Number, 
         get: (v) => parseFloat(v.toFixed(2))
     },
+    servicefee: { 
+        type: Number, 
+        get: (v) => parseFloat(v.toFixed(2))
+    },
     net: { 
         type: Number, 
         get: (v) => parseFloat(v.toFixed(2))

@@ -48,10 +48,12 @@ export async function POST(request) {
           product,
           net: charge.net / 100,
           amount: charge.amount / 100,
+          servicefee,
           withdrawable,
           typec,
           chargeId: charge.id,
           status: charge.status,
+          check: false,
         });
 
         await newOrder.save();
@@ -61,17 +63,7 @@ export async function POST(request) {
           { $inc: { sold: 1 } },
           { new: true }
         );
-        await StudentUser.findOneAndUpdate(
-          { email: email },  // เปลี่ยนจาก email เป็น { email: email }
-          { 
-            $inc: { 
-              net: charge.net / 100,
-              amount: charge.amount / 100,
-              withdrawable,
-            }
-          },
-          { new: true }
-        );
+       
         console.log('Project sold count incremented');
         console.log('Order saved to MongoDB:', newOrder);
       }

@@ -17,19 +17,22 @@ export async function GET(req) {
     const userEmail = session.user.email;
     const query = { email: userEmail };
 
-    const user = await Studentuser.findOne(query).select('amount net SellInfo');
+    const user = await Studentuser.findOne(query).select('amount withdrawable servicefee SellInfo');
 
     if (user) {
-      const amount = user.amount || 0; 
-      const net = user.net || 0;
+      const amount = user.amount || 0;
+      const withdrawable = user.withdrawable || 0;
+      const servicefee = user.servicefee || 0;
+
       const response = {
         amount: amount,
-        net: net,
+        withdrawable: withdrawable,
+        servicefee: servicefee,
         fullname: user.SellInfo?.fullname || ''
       };
       return NextResponse.json(response, { status: 200 });
     } else {
-      return NextResponse.json({ amount: 0, fullname: '' }, { status: 200 });
+      return NextResponse.json({ amount: 0, withdrawable: 0, servicefee: 0, fullname: '' }, { status: 200 });
     }
   } catch (error) {
     console.error('Error in GET /api/getAmount:', error);

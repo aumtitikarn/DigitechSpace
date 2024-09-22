@@ -332,7 +332,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
 
   const handleTwitterShare = () => {
     const url = encodeURIComponent(getShareUrl());
-    const text = encodeURIComponent(`project: ${project.projectname} by: ${project.author}`);
+    const text = encodeURIComponent(`Digitech Space project: ${project.projectname} by: ${project.author}`);
     window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
   };
   return (

@@ -76,8 +76,10 @@
         "hidden" : "Hide review",
         "download" : "Download All",
         "file" : "File",
-        "alreadyOwned" : "Already have a project",
-        "alreadyOwnedDescription" : "Please see the projects on my projects page."
+        "alreadyOwned" : "You have placed an order for this project.",
+        "alreadyOwnedDescription" : "You can see more details on my project page.",
+        "your" : "This project is yours.",
+        "your2" : "You cannot purchase your own project."
       }
     },
     "blog": {
@@ -179,7 +181,8 @@
       "title" : "My Project",
       "wait" : "Waiting to check the project",
       "check" : "Check the project",
-      "desCheck" : "* Please inspect the product and press the 'Check the project' button before 7 days. If you do not press the button, you will not be able to file a complaint and refund."
+      "desCheck" : "Please inspect the product and press the 'Check the project' button before 7 days. If you do not press the button, you will not be able to file a complaint and refund.",
+      "noproject" : "You do not have a project at this time."
     },
     "review": {
       "title" : "Review",
@@ -238,7 +241,16 @@
       "username" : "Username",
       "email" : "Email",
       "password" : "Password",
-      "confirm" : "Confirm Password"
+      "confirm" : "Confirm Password",
+      "status" : {
+        "email" : "Email Already Used",
+        "emaildes" : "This email has already been registered.",
+        "username" : "Username Already Used",
+        "usernamedes" : "This username has already been registered.",
+        "pass" : "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.",
+        "passmatch" : "Passwords do not match!",
+        "success" : "Success"
+      }
     }
   },
   "report" : {

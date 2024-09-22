@@ -9,6 +9,7 @@ import Navbar from "./../../components/Navbar";
 import Footer from "./../../components/Footer";
 import { useSession } from "next-auth/react";
 import { OrbitProgress } from "react-loading-indicators";
+import Swal from 'sweetalert2';
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -48,56 +49,93 @@ function SignUp() {
     setFormData({ ...formData, [name]: value });
   };
 
+  
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // ตรวจสอบความถูกต้องของรหัสผ่าน
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
+        Swal.fire({
+            icon: 'error',
+            text: t("authen.signup.status.pass"),
+        });
+        return;
+    }
+
     if (formData.password !== formData.confirmpassword) {
-      setError("Passwords do not match");
-      return;
+        Swal.fire({
+            icon: 'error',
+            title: t("authen.signup.status.passmatch")
+        });
+        return;
     }
 
     try {
-      // Check if email exists in the system
-      const resCheckUser = await fetch("/api/usercheck", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: formData.email }),
-      });
-
-      if (resCheckUser.ok) {
-        const data = await resCheckUser.json();
-        if (data.message === "Email has already been used.") {
-          setError("Email has already been used.");
-          return;
-        }
-
-        // If email is available, proceed with signup
-        const res = await fetch("/api/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
+        // ตรวจสอบทั้ง email และ username
+        const resCheckUser = await fetch("/api/usercheck", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: formData.email, username: formData.username }),
         });
 
-        if (res.ok) {
-          router.push("/Ai/role"); //ต้องทำครั้งเดียวเข้าสู่ระบบครั้งแรก
-        } else {
-          const data = await res.json();
-          setError(data.message || "Email has already been used.");
+        if (!resCheckUser.ok) {
+            throw new Error(`Error checking user: ${resCheckUser.status} ${resCheckUser.statusText}`);
         }
-      } else {
-        setError("An error occurred while checking the email");
-      }
+
+        const data = await resCheckUser.json();
+        if (data.emailExists) {
+            Swal.fire({
+                icon: 'warning',
+                title: t("authen.signup.status.email"),
+                text: t("authen.signup.status.emaildes")
+            });
+            return;
+        }
+        if (data.usernameExists) {
+            Swal.fire({
+                icon: 'warning',
+                title: t("authen.signup.status.username"),
+                text: t("authen.signup.status.usernamedes")
+            });
+            return;
+        }
+
+        // ถ้าทั้ง email และ username ไม่ซ้ำ ดำเนินการสมัครสมาชิก
+        const res = await fetch("/api/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.message || `Error during signup: ${res.status} ${res.statusText}`);
+        }
+
+        // ลงทะเบียนสำเร็จ
+        Swal.fire({
+            icon: 'success',
+            title: t("authen.signup.status.success"),
+            showConfirmButton: false,
+            timer: 1500
+        }).then(() => {
+            router.push("/auth/signin");
+        });
     } catch (error) {
-      console.error("Error:", error);
-      setError("Something went wrong");
+        console.error("Error:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: error instanceof Error ? error.message : "An unexpected error occurred"
+        });
     }
-  };
-
-
+};
 
   return (
     <div>
@@ -226,7 +264,6 @@ function SignUp() {
           >
             {t("Sign Up")}
           </button>
-          {error && <p className="text-red-500">{error}</p>}
         </form>
         <div className="flex items-center my-3">
           <div className="flex-grow border-t border-gray-300"></div>

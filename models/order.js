@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
   email: {
@@ -20,8 +20,13 @@ const orderSchema = new mongoose.Schema({
   net: {
     type: Number,
     required: true,
-    get: (v) => parseFloat(v.toFixed(2))
-},
+    get: (v) => parseFloat(v.toFixed(2)),
+  },
+  servicefee: {
+    type: Number,
+    required: true,
+    get: (v) => parseFloat(v.toFixed(2)),
+  },
   typec: {
     type: String,
     required: true,
@@ -34,12 +39,16 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  check: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
+const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 
 export default Order;

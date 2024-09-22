@@ -136,7 +136,7 @@ const ProductList: React.FC = () => {
           }
         );
         const data = await response.json();
-  
+
         if (response.ok) {
           console.log(data.message);
           setPublishedProjects((prevProjects) =>
@@ -179,11 +179,8 @@ const ProductList: React.FC = () => {
           icon: "info",
           title: "Information",
           text: "User does not have Seller Information",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.href = "/Sell/AddProject";
-          }
-        });
+        })
+        
       }
     } catch (error) {
       Swal.fire({
@@ -222,9 +219,9 @@ const ProductList: React.FC = () => {
   }
 
   return (
-    <div className="flex-grow">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
+      <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
         <h1 className="text-[24px] font-bold">{t("nav.sell.title")}</h1>
         <div>
           <div className="mt-5">
@@ -302,19 +299,22 @@ const ProductList: React.FC = () => {
                             )}
                           </div>
                         </Link>
-                        <div className="reletive flex justify-between lg:px-10 md:px-[50px] px-5 my-2">
-                          <Link href={`/Sell/Edit?edit=${project._id}`}>
-                            <VscEdit
+
+                        {project.status === "rejected" && (
+                          <div className="relative flex justify-between lg:px-10 md:px-[50px] px-5 my-2">
+                            <Link href={`/Sell/Edit?edit=${project._id}`}>
+                              <VscEdit
+                                size={20}
+                                className="text-gray-500 hover:text-[#33539B] cursor-pointer"
+                              />
+                            </Link>
+                            <MdDeleteOutline
                               size={20}
-                              className="text-gray-500 hover:text-[#33539B] cursor-pointer"
+                              className="text-gray-500 hover:text-red-500 cursor-pointer"
+                              onClick={() => handleDeleteClick(project)}
                             />
-                          </Link>
-                          <MdDeleteOutline
-                            size={20}
-                            className="text-gray-500 hover:text-red-500 cursor-pointer"
-                            onClick={() => handleDeleteClick(project)}
-                          />
-                        </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -409,9 +409,9 @@ const ProductList: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
+const Main: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="">
       <main className="flex-grow">
         <ProductList />
       </main>
@@ -419,7 +419,7 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default Main;
 
 type StatusStepperProps = {
   initialStatus: string;

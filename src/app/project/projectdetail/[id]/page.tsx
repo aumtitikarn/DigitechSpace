@@ -212,6 +212,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     setIsLoading(true);
     try {
       const userEmail = session?.user.email;
+  
       // ตรวจสอบว่าผู้ใช้ได้ซื้อโครงงานนี้แล้วหรือยัง
       const response = await axios.get("/api/payment/checkOrder", {
         params: {
@@ -219,22 +220,39 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           productId: project._id,
         },
       });
-
-      if (response.data.hasOrder) {
+  
+      // ถ้าผู้ใช้เป็นเจ้าของโครงงานนี้
+      if (response.data.projectOwned) {
+        Swal.fire({
+          title: t("nav.project.projectdetail.your"),
+          text: t("nav.project.projectdetail.your2"),
+          icon: "info",
+          confirmButtonText: "ตกลง",
+        });
+      }
+  
+      // ถ้าผู้ใช้ได้ทำการสั่งซื้อแล้ว
+      else if (response.data.hasOrder) {
         Swal.fire({
           title: t("nav.project.projectdetail.alreadyOwned"),
           text: t("nav.project.projectdetail.alreadyOwnedDescription"),
           icon: "info",
-          confirmButtonText: "Ok",
+          confirmButtonText: "ตกลง",
         });
-      } else {
+      }
+  
+      // ถ้าไม่มีการสั่งซื้อและไม่ใช่โครงงานของผู้ใช้ ให้ดำเนินการสั่งซื้อ
+      else {
         handleBuyClick();
       }
     } catch (error) {
-      console.error("Error checking order:", error);
+      console.error("Error checking order or project:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  
+  
   const handlePrevClick = () => {
     setCurrentIndex(
       (prevIndex) =>
@@ -441,7 +459,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   };
 
   const handleTwitterShare = () => {
-    const text = encodeURIComponent(`project: ${project.projectname} by: ${project.author}`);
+    const text = encodeURIComponent(`Digitech Space project: ${project.projectname} by: ${project.author}`);
     window.open(
       `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`,
       "_blank"
