@@ -76,8 +76,8 @@ interface Purchase {
   date: string;
   projectName: string;
   price: number;
-  fee: number;
-  netAmount: number;
+  serviceFee: number;
+  balance: number;
 }
 
 const Wallet = () => {
@@ -93,13 +93,50 @@ const Wallet = () => {
   const [error, setError] = useState<string | null>(null);
   const [billData, setBillData] = useState<BillData | null>(null);
   const [purchaseHistory, setPurchaseHistory] = useState<Purchase[]>([]);
+  const [withdrawalAmount, setWithdrawalAmount] = useState<string>('0');
+  const [showBill, setShowBill] = useState<boolean>(false);
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("th-TH", {
-      day: "numeric",
-      month: "long",
+
+  const formatDate = (dateString: any): string => {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      timeZone: "Asia/Bangkok",
       year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    const [day, month, year] = new Intl.DateTimeFormat("th-TH", options)
+      .format(date)
+      .split("/");
+    const buddhistYear = parseInt(year) - 543;
+    return `${day}/${month}/${buddhistYear}`;
+  };
+
+  const createDateTimeForAPI = (): string => {
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    };
+
+    const formatter = new Intl.DateTimeFormat("th-TH", options);
+    const parts = formatter.formatToParts(now);
+
+    const partValues: { [key: string]: string } = {};
+    parts.forEach((part) => {
+      partValues[part.type] = part.value;
     });
+
+    const formattedDate = `${partValues.day}/${partValues.month}/${parseInt(partValues.year) - 543}`;
+    const formattedTime = `${partValues.hour}:${partValues.minute}:${partValues.second}`;
+
+    return `${formattedDate} ${formattedTime}`;
   };
 
   useEffect(() => {
@@ -110,7 +147,7 @@ const Wallet = () => {
   const fetchPurchaseHistory = async () => {
     if (status === "authenticated") {
       try {
-        const response = await fetch("/api/getPurchaseHistory");
+        const response = await fetch("/api/withdrawal/getHistory");
         if (response.ok) {
           const data: Purchase[] = await response.json();
           setPurchaseHistory(data);
@@ -171,68 +208,82 @@ const Wallet = () => {
       return;
     }
 
-    try {
-      const response = await fetch("/api/withdrawal", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: session?.user?.id,
-          amount: withdrawableAmount,
-          fullname: billData?.fullname || "",
-          date: formatDate(new Date()),
-          servicefee: serviceFee,
-          email: session?.user?.email || "",
-          balance: withdrawableAmount.toString(),
-        }),
-      });
+    const amountToWithdraw = withdrawableAmount;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Withdrawal failed");
-      }
+    const result = await Swal.fire({
+      title: "Confirm Withdrawal",
+      text: `คุณต้องการถอนเงินจำนวน ${formatAmount(amountToWithdraw)} THB หรือไม่?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ใช่, ถอนเงิน",
+      cancelButtonText: "ยกเลิก",
+    });
 
-      const result = await response.json();
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch("/api/withdrawal", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: session?.user?.id,
+            amount: amountToWithdraw,
+            fullname: billData?.fullname || "",
+            date: createDateTimeForAPI(),
+            servicefee: serviceFee,
+            email: session?.user?.email || "",
+            balance: "0.00",
+          }),
+        });
 
-      // อัปเดตสถานะโดยใช้ข้อมูลที่ได้รับจาก server
-      setGrossIncome(result.updatedAmount);
-      setWithdrawableAmount(result.updatedWithdrawable);
-      setServiceFee(result.updatedServiceFee);
-      setNet(result.updatedNet);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Withdrawal failed");
+        }
 
-      if (billData) {
-        setBillData({
-          ...billData,
-          date: formatDate(new Date()),
-          amount: withdrawableAmount.toFixed(2),
-          balance: "0.00",
+        const result = await response.json();
+
+        setGrossIncome(result.updatedAmount);
+        setWithdrawableAmount(0);
+        setServiceFee(result.updatedServiceFee);
+        setNet(result.updatedNet);
+
+        // Set the withdrawal amount
+        setWithdrawalAmount(amountToWithdraw.toFixed(2));
+
+        // Show the bill
+        setShowBill(true);
+
+        await fetchAmount();
+      } catch (error) {
+        console.error("Withdrawal error:", error);
+        let errorMessage =
+          "There was an error processing your withdrawal. Please try again later.";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        Swal.fire({
+          icon: "error",
+          title: "Withdrawal Failed",
+          text: errorMessage,
         });
       }
-
-      // แสดง Swal alert เมื่อถอนสำเร็จ
-      Swal.fire({
-        icon: "success",
-        title: "Withdrawal Successful",
-        text: `You have successfully withdrawn ${formatAmount(withdrawableAmount)} THB.`,
-      });
-
-      // เรียกใช้ fetchAmount เพื่ออัปเดตข้อมูลทั้งหมดใหม่
-      await fetchAmount();
-    } catch (error) {
-      console.error("Withdrawal error:", error);
-      let errorMessage =
-        "There was an error processing your withdrawal. Please try again later.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      Swal.fire({
-        icon: "error",
-        title: "Withdrawal Failed",
-        text: errorMessage,
-      });
     }
   };
+  useEffect(() => {
+    if (showBill) {
+      setBillData({
+        fullname: billData?.fullname || "",
+        date: createDateTimeForAPI(),
+        amount: withdrawalAmount,
+        balance: "0.00",
+        email: session?.user?.email || "",
+      });
+    }
+  }, [showBill, withdrawalAmount]);
 
   if (status === "loading" || isLoading) {
     return (
@@ -256,14 +307,31 @@ const Wallet = () => {
       </div>
     );
   }
+  // const formatCurrencyShort = (amount: number): string => {
+  //   if (amount >= 1000000) {
+  //     return (amount / 1000000).toFixed(1) + "m";
+  //   } else if (amount >= 1000) {
+  //     return (amount / 1000).toFixed(1) + "k";
+  //   } else {
+  //     return amount.toFixed(0);
+  //   }
+  // };
+
+  // const formatCurrency = (amount: number, short: boolean = true): string => {
+  //   if (short) {
+  //     return formatCurrencyShort(amount);
+  //   } else {
+  //     return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  //   }
+  // };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
       <Navbar />
-      <main className="flex-grow p-6">
+      <main className="flex-grow p-6 lg:mx-[90px] lg:my-[90px]">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left Side */}
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-[950px]">
             <div className="flex gap-4 mb-6">
               {/* Total Income Box */}
               <div className="flex-1 bg-white rounded-lg p-4 shadow-md">
@@ -302,7 +370,7 @@ const Wallet = () => {
           </div>
 
           {/* Right Side - Purchase History Table */}
-          <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-md p-4">
+          <div className="w-full lg:w-70 bg-white rounded-lg shadow-md p-4">
             <h2 className="text-xl font-bold text-[#515151] mb-4">
               {t("nav.wallet.purchaseHistory")}
             </h2>
@@ -332,10 +400,10 @@ const Wallet = () => {
                         {formatAmount(purchase.price)} THB
                       </td>
                       <td className="p-2 text-right">
-                        {formatAmount(purchase.fee)} THB
+                        {formatAmount(purchase.serviceFee)} THB
                       </td>
                       <td className="p-2 text-right">
-                        {formatAmount(purchase.netAmount)} THB
+                        {formatAmount(purchase.balance)} THB
                       </td>
                     </tr>
                   ))}
@@ -364,14 +432,14 @@ const Wallet = () => {
       )}
 
       {/* Popup สำหรับใบเสร็จ */}
-      {isBillVisible && billData && (
-        <Bill
-          name={billData.fullname}
-          amount={billData.amount} // จำนวนเงินที่กรอกในการถอน
-          balance={billData.balance} // ยอดคงเหลือใหม่หลังจากหักถอน
-          onClose={() => setIsBillVisible(false)}
-        />
-      )}
+      {showBill && billData && (
+      <Bill
+        name={billData.fullname}
+        amount={withdrawalAmount}
+        balance={billData.balance}
+        onClose={() => setShowBill(false)}
+      />
+    )}
     </div>
   );
 };

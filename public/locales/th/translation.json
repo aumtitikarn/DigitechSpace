@@ -114,6 +114,11 @@
       "gross" : "รายได้รวม : ",
       "servicefee" : "ค่าธรรมเนียม : ",
       "withdrawable" : "ถอนออกได้ : ",
+      "purchaseHistory" : "ประวัติการขาย",
+      "projectName" : "โครงงาน",
+      "netAmount" : "เงินคงเหลือ",
+      "date" : "วันที่",
+      "price" : "ราคา",
       "bill": {
         "title": "การถอนเงิน",
         "fullname": "ชื่อ-นามสกุล",

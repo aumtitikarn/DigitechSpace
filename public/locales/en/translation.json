@@ -114,6 +114,11 @@
       "gross" : "Gross Income : ",
       "servicefee" : "Service Fee : ",
       "withdrawable" : "Withdrawable : ",
+      "purchaseHistory" : "Sales history",
+      "projectName" : "Project",
+      "netAmount" : "Balance",
+      "price" : "Price",
+      "date" : "Date",
       "bill" : {
         "title" : "Withdraw",
         "fullname" : "Full name",
