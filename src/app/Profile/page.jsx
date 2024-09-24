@@ -385,7 +385,7 @@ function page() {
             <Link href={`/Profile/EditProfile/${session?.user?.id}`} className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center" style={{ backgroundColor: "#33539B" }}>
               <p>{t("nav.profile.edit")}</p>
             </Link>
-            <Link href="/Profile/QRshare" className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center" style={{ backgroundColor: "#33539B" }}>
+            <Link href={`/Profile/QRshare/${session?.user?.id}`} className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center" style={{ backgroundColor: "#33539B" }}>
               {t("nav.profile.share")}
             </Link>
           </div>
@@ -496,7 +496,14 @@ function page() {
                         </div>
                       </div>
                       <div className="flex flex-row mb-3">
-                        <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
+                        {/* <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" /> */}
+                        <Image
+                          width={200}
+                          height={200}
+                          src={`/api/posts/images/${blog.userprofile}`}
+                          alt={blog.topic}
+                          className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500"
+                        />
                         <p className="mt-2 truncate text-gray-500 text-xs">
                           {blog.author || session?.user?.name} {/* ใช้ชื่อผู้ใช้ที่โพสต์ */}
                         </p>
