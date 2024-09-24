@@ -112,13 +112,19 @@
       "input3" : "Enter the amount",
       "income" : "Income Summary",
       "gross" : "Gross Income : ",
-      "servicefee" : "Service Fee : ",
+      "servicefee" : "Service Fee",
       "withdrawable" : "Withdrawable : ",
       "purchaseHistory" : "Sales history",
+      "hisdes" : "Currency : THB/Bath",
       "projectName" : "Project",
       "netAmount" : "Balance",
       "price" : "Price",
       "date" : "Date",
+      "confirm" : "Confirm Withdrawal",
+      "condes1" : "Do you want to withdraw ",
+      "condes2" : " THB?",
+      "yes" : "Yes",
+      "no" : "No",
       "bill" : {
         "title" : "Withdraw",
         "fullname" : "Full name",
@@ -282,5 +288,20 @@
       "r5" : "Other",
       "add" : "Additional message (200 Characters)"
     }
+  },
+  "months" : {
+    "all" : "All",
+    "january" : "January",
+    "february" : "February",
+    "march" : "March",
+    "april" : "April",
+    "may" : "May",
+    "june" : "June",
+    "july" : "July",
+    "august" : "August",
+    "september" : "September",
+    "october" : "October",
+    "november" : "November",
+    "december" : "December"
   }
 }

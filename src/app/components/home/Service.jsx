@@ -148,7 +148,7 @@ function Service() {
         )}
 
         <div className="flex flex-col justify-center w-full mt-10">
-          <h1 className="text-lg font-bold" style={{fontSize:"24px"}}>Service</h1>
+          <h1 className="text-lg font-bold" style={{fontSize:"24px"}}>{t("nav.home.service.title")}</h1>
           <p className="mt-2 text-lg">
           {t("nav.home.service.des")}
           </p>

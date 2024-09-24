@@ -25,7 +25,6 @@ const useAutoCheck = (session: any) => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email: session.user.email }),
           });
 
           if (!response.ok) {

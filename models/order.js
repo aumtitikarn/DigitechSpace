@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { getThaiDateTime } from './date';
 
 const orderSchema = new mongoose.Schema({
   email: {
@@ -45,7 +46,7 @@ const orderSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now,
+    default: getThaiDateTime,
   },
 });
 

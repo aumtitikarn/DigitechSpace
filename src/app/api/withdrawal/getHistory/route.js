@@ -12,6 +12,7 @@ export async function GET(req) {
 
     // Get the user's session
     const session = await getServerSession(authOption);
+    
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -25,10 +26,10 @@ export async function GET(req) {
     // Get order details for each project
     const purchaseHistory = await Promise.all(
       projects.map(async (project) => {
-        const order = await Order.findOne({ product: project._id });
+        const order = await Order.findOne({ product: project._id, check: true });
 
         if (!order) {
-          console.warn(`Order not found for project: ${project._id}`);
+          
           return null;
         }
 

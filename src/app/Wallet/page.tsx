@@ -9,6 +9,7 @@ import Bill from "./bill";
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 import Swal from "sweetalert2";
+import { IoAlertCircleOutline } from "react-icons/io5";
 
 interface BillData {
   fullname: string;
@@ -37,6 +38,7 @@ const GradientCardSummary: React.FC<GradientCardSummaryProps> = ({
   serviceFee,
 }) => {
   const { t } = useTranslation("translation");
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   return (
     <div className="bg-white rounded-lg p-6 text-white shadow-lg px-4 w-full  h-auto flex-shrink-0 rounded-t-[20px] border border-white bg-[#E3F8FF6B] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] py-5">
@@ -53,8 +55,17 @@ const GradientCardSummary: React.FC<GradientCardSummaryProps> = ({
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="font-medium text-[#515151]">
-            {t("nav.wallet.servicefee")}
+          <span className="font-medium text-[#515151] ">
+            <span className="font-medium text-[#515151]">
+              <p className="flex items-center">
+                {t("nav.wallet.servicefee")}
+                <IoAlertCircleOutline
+                  className="inline-block ml-1 mr-1"
+                  onClick={() => setIsPopupVisible(true)}
+                />
+                :
+              </p>
+            </span>
           </span>
           <span className="font-bold text-[#515151]">
             {formatAmount(serviceFee)} THB
@@ -69,6 +80,21 @@ const GradientCardSummary: React.FC<GradientCardSummaryProps> = ({
           </span>
         </div>
       </div>
+      {/* Popup สำหรับ Service fee */}
+      {isPopupVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="relative bg-white rounded-lg shadow-lg p-8 w-[90%] max-w-[400px]">
+            <MdClose
+              className="absolute top-3 right-3 text-gray-600 cursor-pointer"
+              size={24}
+              onClick={() => setIsPopupVisible(false)}
+            />
+            <p className="text-gray-600">
+              <b>{t("nav.wallet.service")}</b> {t("nav.wallet.desser")}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -83,7 +109,6 @@ interface Purchase {
 const Wallet = () => {
   const { data: session, status } = useSession();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [isBillVisible, setIsBillVisible] = useState(false);
   const { t } = useTranslation("translation");
   const [grossIncome, setGrossIncome] = useState<number>(0);
   const [withdrawableAmount, setWithdrawableAmount] = useState<number>(0);
@@ -93,23 +118,36 @@ const Wallet = () => {
   const [error, setError] = useState<string | null>(null);
   const [billData, setBillData] = useState<BillData | null>(null);
   const [purchaseHistory, setPurchaseHistory] = useState<Purchase[]>([]);
-  const [withdrawalAmount, setWithdrawalAmount] = useState<string>('0');
+  const [withdrawalAmount, setWithdrawalAmount] = useState<string>("0");
   const [showBill, setShowBill] = useState<boolean>(false);
+  const [selectedMonth, setSelectedMonth] = useState<string>('All');
+  const [selectedYear, setSelectedYear] = useState<string>('All');
 
+  const formatDate = (input: string | Date): string => {
+    try {
+      const date = input instanceof Date ? input : new Date(input);
 
-  const formatDate = (dateString: any): string => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-      timeZone: "Asia/Bangkok",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    };
-    const [day, month, year] = new Intl.DateTimeFormat("th-TH", options)
-      .format(date)
-      .split("/");
-    const buddhistYear = parseInt(year) - 543;
-    return `${day}/${month}/${buddhistYear}`;
+      if (isNaN(date.getTime())) {
+        throw new Error("Invalid date");
+      }
+
+      const options: Intl.DateTimeFormatOptions = {
+        timeZone: "Asia/Bangkok",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      };
+
+      const [day, month, year] = new Intl.DateTimeFormat("th-TH", options)
+        .format(date)
+        .split("/");
+
+      const buddhistYear = parseInt(year) - 543;
+      return `${day}/${month}/${buddhistYear}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
+    }
   };
 
   const createDateTimeForAPI = (): string => {
@@ -138,6 +176,40 @@ const Wallet = () => {
 
     return `${formattedDate} ${formattedTime}`;
   };
+
+  const months = [
+    { value: 'all', label: t('months.all') },
+    { value: '01', label: t('months.january') },
+    { value: '02', label: t('months.february') },
+    { value: '03', label: t('months.march') },
+    { value: '04', label: t('months.april') },
+    { value: '05', label: t('months.may') },
+    { value: '06', label: t('months.june') },
+    { value: '07', label: t('months.july') },
+    { value: '08', label: t('months.august') },
+    { value: '09', label: t('months.september') },
+    { value: '10', label: t('months.october') },
+    { value: '11', label: t('months.november') },
+    { value: '12', label: t('months.december') },
+  ];
+
+  const currentYear = new Date().getFullYear();
+  const years = ['All', ...Array.from({ length: 5 }, (_, i) => (currentYear - i).toString())];
+
+  const filteredPurchaseHistory = purchaseHistory.filter((purchase) => {
+    const purchaseDate = new Date(purchase.date);
+    const purchaseMonth = (purchaseDate.getMonth() + 1).toString().padStart(2, '0');
+    const purchaseYear = purchaseDate.getFullYear().toString();
+  
+    const matchMonth = selectedMonth === 'All' || purchaseMonth === selectedMonth;
+    const matchYear = selectedYear === 'All' || purchaseYear === selectedYear;
+  
+    return matchMonth && matchYear;
+  });
+
+  useEffect(() => {
+    console.log('Filtered history:', filteredPurchaseHistory);
+  }, [selectedMonth, selectedYear, purchaseHistory]);
 
   useEffect(() => {
     fetchAmount();
@@ -211,14 +283,14 @@ const Wallet = () => {
     const amountToWithdraw = withdrawableAmount;
 
     const result = await Swal.fire({
-      title: "Confirm Withdrawal",
-      text: `คุณต้องการถอนเงินจำนวน ${formatAmount(amountToWithdraw)} THB หรือไม่?`,
+      title: t("nav.wallet.confirm"),
+      text: `${t("nav.wallet.condes1")} ${formatAmount(amountToWithdraw)} ${t("nav.wallet.condes2")}`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ใช่, ถอนเงิน",
-      cancelButtonText: "ยกเลิก",
+      confirmButtonText: t("nav.wallet.yes"),
+      cancelButtonText: t("nav.wallet.no"),
     });
 
     if (result.isConfirmed) {
@@ -370,76 +442,79 @@ const Wallet = () => {
           </div>
 
           {/* Right Side - Purchase History Table */}
-          <div className="w-full lg:w-70 bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-xl font-bold text-[#515151] mb-4">
-              {t("nav.wallet.purchaseHistory")}
-            </h2>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="p-2 text-left">{t("nav.wallet.date")}</th>
-                    <th className="p-2 text-left">
-                      {t("nav.wallet.projectName")}
-                    </th>
-                    <th className="p-2 text-right">{t("nav.wallet.price")}</th>
-                    <th className="p-2 text-right">{t("nav.wallet.fee")}</th>
-                    <th className="p-2 text-right">
-                      {t("nav.wallet.netAmount")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {purchaseHistory.map((purchase: Purchase, index: number) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-2">
-                        {formatDate(new Date(purchase.date))}
-                      </td>
-                      <td className="p-2">{purchase.projectName}</td>
-                      <td className="p-2 text-right">
-                        {formatAmount(purchase.price)} THB
-                      </td>
-                      <td className="p-2 text-right">
-                        {formatAmount(purchase.serviceFee)} THB
-                      </td>
-                      <td className="p-2 text-right">
-                        {formatAmount(purchase.balance)} THB
-                      </td>
+          <div className="w-full lg:w-70 bg-white rounded-lg shadow-md p-4 flex flex-col lg:h-[400px] h-[500px]">
+            <div className="flex justify-between mb-4">
+              <h2 className="text-xl font-bold text-[#515151]">
+                {t("nav.wallet.purchaseHistory")}
+              </h2>
+              <p className="text-gray-500 text-[14px]">
+                {t("nav.wallet.hisdes")}
+              </p>
+            </div>
+            <div className="flex gap-4 mb-4">
+              <select
+                className="p-2 border rounded"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+              >
+                {months.map((month) => (
+                  <option key={month.value} value={month.value}>
+                    {month.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="p-2 border rounded"
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="overflow-x-auto flex-grow">
+              <div className="h-full overflow-y-auto">
+                <table className="w-full">
+                  <thead className="sticky top-0 bg-white">
+                    <tr className="bg-gray-100">
+                      <th className="p-2 text-left">{t("nav.wallet.date")}</th>
+                      <th className="p-2 text-left">{t("nav.wallet.projectName")}</th>
+                      <th className="p-2 text-right">{t("nav.wallet.price")}</th>
+                      <th className="p-2 text-right">{t("nav.wallet.fee")}</th>
+                      <th className="p-2 text-right">{t("nav.wallet.netAmount")}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredPurchaseHistory.map((purchase: Purchase, index: number) => (
+                      <tr key={index} className="border-b">
+                        <td className="p-2">{formatDate(purchase.date)}</td>
+                        <td className="p-2">{purchase.projectName}</td>
+                        <td className="p-2 text-right">{formatAmount(purchase.price)}</td>
+                        <td className="p-2 text-right">{formatAmount(purchase.serviceFee)}</td>
+                        <td className="p-2 text-right">{formatAmount(purchase.balance)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </main>
       <Footer />
 
-      {/* Popup สำหรับ Service fee */}
-      {isPopupVisible && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative bg-white rounded-lg shadow-lg p-8 w-[90%] max-w-[400px]">
-            <MdClose
-              className="absolute top-3 right-3 text-gray-600 cursor-pointer"
-              size={24}
-              onClick={() => setIsPopupVisible(false)}
-            />
-            <p className="text-gray-600">
-              <b>{t("nav.wallet.service")}</b> {t("nav.wallet.desser")}
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Popup สำหรับใบเสร็จ */}
       {showBill && billData && (
-      <Bill
-        name={billData.fullname}
-        amount={withdrawalAmount}
-        balance={billData.balance}
-        onClose={() => setShowBill(false)}
-      />
-    )}
+        <Bill
+          name={billData.fullname}
+          amount={withdrawalAmount}
+          balance={billData.balance}
+          onClose={() => setShowBill(false)}
+        />
+      )}
     </div>
   );
 };
