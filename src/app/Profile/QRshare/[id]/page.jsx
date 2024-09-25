@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import { FaLink } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
+import QRCode from 'react-qr-code';
 
 function page() {
     const { t, i18n } = useTranslation("translation");
@@ -27,7 +28,7 @@ function page() {
       const userId = currentURL.substring(currentURL.lastIndexOf("/") + 1);
   
       // Create new link in /Profile/ViewProfile/[id] format
-      const newLink = `/Profile/ViewProfile/${userId}`;
+      const newLink = `http://localhost:3000/Profile/ViewProfile/${userId}`;
   
       // Copy the new link to clipboard
       navigator.clipboard.writeText(newLink)
@@ -52,7 +53,9 @@ function page() {
   </div>;
   }
   
-
+  const currentURL = typeof window !== 'undefined' ? window.location.href : '';
+  const userId = currentURL.substring(currentURL.lastIndexOf("/") + 1);
+  const profileLink = `http://localhost:3000/Profile/ViewProfile/${userId}`;
 
   return (
     <Container>
@@ -64,12 +67,9 @@ function page() {
       {t("nav.profile.share")}!
     </p>
 
+
     <div className="w-64 h-64 relative flex items-center justify-center my-4">
-      <img
-        src="/Qr.png"
-        className="object-cover w-full h-full my-10"
-        alt="Blog Image"
-      />
+      <QRCode value={profileLink} size={256} /> {/* Generate QR code */}
     </div>
 
     <button
