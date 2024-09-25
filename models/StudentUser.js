@@ -3,31 +3,24 @@ import mongoose from 'mongoose';
 const studentUserSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
     },
     firstname: {
         type: String,
-        required: true
     },
     lastname: {
         type: String,
-        required: true
     },
     phonenumber: {
         type: String,
-        required: true
     },
     username: {
         type: String,
-        required: true
     },
     email: {
         type: String,
-        required: true
     },
     password: {
         type: String,
-        required: true
     },
     roleai: { 
         type: String, 
@@ -62,9 +55,9 @@ const studentUserSchema = new mongoose.Schema({
         province: { type: String },
         postalnumber: { type: String }
     },
-    line: { type: String, required: false },
-    facebook: { type: String, required: false },
-    imageUrl: { type: [String], required: true },
+    line: { type: String },
+    facebook: { type: String },
+    imageUrl: { type: [String] },
 }, { timestamps: true ,strict: false });
 
 

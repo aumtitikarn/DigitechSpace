@@ -2,20 +2,20 @@
 import mongoose, { Schema } from 'mongoose';
 
 const normalUserSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    firstname: { type: String, required: true },
-    lastname: { type: String, required: true },
-    phonenumber: { type: String, required: true },
-    username: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true },
+    name: { type: String},
+    firstname: { type: String },
+    lastname: { type: String },
+    phonenumber: { type: String },
+    username: { type: String },
+    email: { type: String },
+    password: { type: String },
     roleai: { type: String, default: '' },
     interests: { type: [String], default: [] },
     line: { type: String, required: false },
     facebook: { type: String, required: false },
-    imageUrl: { type: [String], required: true },
-    notification:{ type: [String], required: true },
-    favorite:{ type: [String], required: true },
+    imageUrl: { type: [String] },
+    notification:{ type: [String] },
+    favorite:{ type: [String] },
     // blogId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }], // Array of blog ObjectId references
 }, { timestamps: true });
 
