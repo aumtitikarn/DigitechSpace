@@ -260,8 +260,18 @@
         "usernamedes" : "This username has already been registered.",
         "pass" : "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.",
         "passmatch" : "Passwords do not match!",
-        "success" : "Success"
+        "success" : "Success",
+        "send" : "Email sent successfully"
       }
+    },
+    "forgot" : {
+      "title" : "Forgot Password",
+      "email" : "Email",
+      "send" : "Send",
+      "titlech" : "Change Passsword",
+      "pass1" : "New Passsword",
+      "pass2" : "Connfirm New Passsword",
+      "conti" : "Continue"
     }
   },
   "report" : {

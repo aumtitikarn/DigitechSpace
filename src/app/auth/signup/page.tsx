@@ -1,13 +1,13 @@
 //./auth/signup
 "use client";
-import React, { Suspense } from 'react';
+import React, { useEffect } from 'react';
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from 'react-i18next';
 import Navbar from "./../../components/Navbar";
 import Footer from "./../../components/Footer";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { OrbitProgress } from "react-loading-indicators";
 import Swal from 'sweetalert2';
 
@@ -39,6 +39,60 @@ function SignUp() {
     <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
   </div>;
   }
+
+  useEffect(() => {
+    const checkSession = async () => {
+      if (status === 'authenticated') {
+        try {
+          const sessionResponse = await fetch("/api/auth/session");
+          const sessionData = await sessionResponse.json();
+          console.log('interests : ', sessionData.user?.interests);
+          
+          if (sessionData.user?.roleaii) {
+            if (sessionData.user?.interests) {
+              router.replace("/Home");
+            } else {
+              router.replace("/Ai/interest");
+            }
+          } else {
+            router.replace("/Ai/role");
+          }
+        } catch (error) {
+          console.error("Error checking session:", error);
+          setError("An error occurred while checking your session.");
+        }
+      }
+    };
+
+    checkSession();
+  }, [status, router]);
+
+  const handleSocialSignIn = async (provider:any) => {
+    try {
+      const result = await signIn(provider, { redirect: false });
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      // ดึงข้อมูล session หลังจากการเข้าสู่ระบบสำเร็จ
+      const sessionResponse = await fetch("/api/auth/session");
+      const sessionData = await sessionResponse.json();
+      
+      console.log('interests : ', sessionData.user?.interests);
+      
+      if (sessionData.user?.roleaii) {
+        if (sessionData.user?.interests) {
+          router.replace("/Home");
+        } else {
+          router.replace("/Ai/interest");
+        }
+      } else {
+        router.replace("/Ai/role");
+      }
+    } catch (error) {
+      console.error("Error during social sign in:", error);
+    }
+  };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleConfirmPasswordVisibility = () =>
@@ -271,7 +325,7 @@ function SignUp() {
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
         <div className="flex flex-row space-x-4">
-          <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
+          <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => handleSocialSignIn('google')}>
             <Image
               width={20}
               height={20}
@@ -280,14 +334,14 @@ function SignUp() {
               className="flex-shrink-0 mr-4 ml-5"
             />
           </button>
-          <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
+          <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => handleSocialSignIn('facebook')}>
             <img
               className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
               alt="Facebook"
             />
           </button>
-          <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
+          <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => handleSocialSignIn('github')}>
             <img
               className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
               src="/github.png"

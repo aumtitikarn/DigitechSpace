@@ -201,12 +201,64 @@ const authOption = {
       return true; // For other providers
     },
   },
+  async signup({ account, profile }) {
+    if (account.provider === "google" || account.provider === "facebook" || account.provider === "github") {
+      console.log("Sign in attempt:", { account, profile });
+      const email = profile.email.toLowerCase();
+      try {
+        await connectMongoDB();
+
+        // ตรวจสอบว่ามีผู้ใช้ที่มีอีเมลนี้อยู่แล้วหรือไม่
+        let existingUser;
+        if (email.endsWith("@g.sut.ac.th")) {
+          existingUser = await StudentUser.findOne({ email });
+        } else {
+          existingUser = await NormalUser.findOne({ email });
+        }
+
+        // ถ้าไม่มีผู้ใช้ที่มีอีเมลนี้ ให้สร้างใหม่
+        if (!existingUser) {
+          let imageUrl;
+          if (account.provider === "facebook") {
+            imageUrl = profile.picture.data.url;
+          } else if (account.provider === "github") {
+            imageUrl = profile.avatar_url;
+          } else {
+            imageUrl = profile.picture;
+          }
+
+          if (email.endsWith("@g.sut.ac.th")) {
+            await StudentUser.create({
+              email,
+              name: profile.name,
+              imageUrl: imageUrl,
+            });
+          } else {
+            await NormalUser.create({
+              email,
+              name: profile.name,
+              imageUrl: imageUrl,
+            });
+          }
+        }
+        // ถ้ามีผู้ใช้อยู่แล้ว ไม่ต้องทำอะไร
+        
+        return true;
+      } catch (error) {
+        console.error("Error checking/creating user in database:", error);
+        return false;
+      }
+    }
+    return true; // For other providers
+  },
+
   session: {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/signin",
+    signUp: "/auth/signup",
     error: '/auth/error',
     newUser: "/Ai/role"
   },

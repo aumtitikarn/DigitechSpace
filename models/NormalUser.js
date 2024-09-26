@@ -16,6 +16,8 @@ const normalUserSchema = new mongoose.Schema({
     imageUrl: { type: [String] },
     notification:{ type: [String] },
     favorite:{ type: [String] },
+    resetPasswordToken: { type: String, select: false },
+    resetPasswordExpires: { type: Date, select: false },
     // blogId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }], // Array of blog ObjectId references
 }, { timestamps: true });
 
