@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -17,6 +17,34 @@ export default function SignIn() {
   const { data: session, status } = useSession();
   const { t, i18n } = useTranslation('translation');
 
+
+  useEffect(() => {
+    const checkSession = async () => {
+      if (status === 'authenticated') {
+        try {
+          const sessionResponse = await fetch("/api/auth/session");
+          const sessionData = await sessionResponse.json();
+          console.log('interests : ', sessionData.user?.interests);
+          
+          if (sessionData.user?.roleaii) {
+            if (sessionData.user?.interests) {
+              router.replace("/Home");
+            } else {
+              router.replace("/Ai/interest");
+            }
+          } else {
+            router.replace("/Ai/role");
+          }
+        } catch (error) {
+          console.error("Error checking session:", error);
+          setError("An error occurred while checking your session.");
+        }
+      }
+    };
+
+    checkSession();
+  }, [status, router]);
+
   if (status === "loading") {
     return <div style={{
       position: "absolute",
@@ -31,10 +59,10 @@ export default function SignIn() {
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    const lowercaseEmail = email.toLowerCase();
     try {
       const res = await signIn("credentials", {
-        email,
+        lowercaseEmail ,
         password,
         redirect: false,
       });
@@ -141,14 +169,14 @@ export default function SignIn() {
               className="flex-shrink-0 mr-4 ml-5" 
             />
             </button>
-            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
+            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => signIn('facebook')}>
             <img
               className="w-6 h-6 flex-shrink-0 mr-4 ml-5 " 
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
               alt="Facebook"
             />
             </button>
-            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2">
+            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => signIn('github')}>
             <img
               className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
               src="/github.png"

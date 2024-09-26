@@ -150,9 +150,11 @@ function Blog() {
                 ))) : (<p>you don't have</p>)}
         </div>
         <div className="flex-grow text-center mt-3">
+        <Link href={`/listblog`}>
           <p className="text-[#33529B] font-bold text-[18px]">
           {t("nav.home.seemore")} ({postData.length})
           </p>
+        </Link>
         </div>
       </div>
     </main>

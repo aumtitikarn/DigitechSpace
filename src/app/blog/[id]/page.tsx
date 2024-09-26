@@ -62,7 +62,7 @@ function Blog({ params, initialComments }) {
   const [replyingTo, setReplyingTo] = useState(null); // เก็บ ID ของ comment ที่กำลังตอบกลับ
 
   const [blogid, setBlogid] = useState("");
-  const [blogEmail,setBlogEmail] = useState("");
+  const [blogEmail, setBlogEmail] = useState("");
 
   const [profileUser, setProfileUser] = useState([]);
   const [profileUserN, setProfileUserN] = useState([]);
@@ -111,7 +111,7 @@ function Blog({ params, initialComments }) {
       text: isReply ? replyInput : commentInput,
       action: isReply ? "reply" : "comment",
       author: session?.user?.name || "Anonymous", // เพิ่มชื่อผู้แสดงความคิดเห็น
-      profile: imageUrl,
+      profile: isReply ? imageUrl : imageUrl,
       timestamp: new Date(),
       ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
     };
@@ -139,7 +139,7 @@ function Blog({ params, initialComments }) {
   useEffect(() => {
     console.log("Updated Profile URL:", profileUser);
   }, [profileUser]);
-  
+
 
 
   ////////////////////////////////
@@ -193,11 +193,20 @@ function Blog({ params, initialComments }) {
   }, []);
 
   const handlePopupSubmit = async (e) => {
+    e.preventDefault(); // Prevent form default behavior
+
+    // Set blogid and blogEmail from postData
     setBlogEmail(postData.email);
     setBlogid(postData._id);
 
+    // Debugging: check the values
+    console.log("Blog Email:", postData.email);
+    console.log("Blog ID:", postData._id);
+
+    // Create a new FormData object
     const formData = new FormData();
 
+    // Check if the user is authenticated
     if (!session || !session.user || !session.user.name) {
       Swal.fire({
         position: "center",
@@ -209,30 +218,34 @@ function Blog({ params, initialComments }) {
       return;
     }
 
+    // Check if all required fields are filled
     if (!report || !selectedReason) {
       alert("Please complete all inputs");
       return;
     }
 
+    // Append form data
     formData.append("blogname", blogname);
     formData.append("selectedReason", selectedReason);
     formData.append("report", report);
     formData.append("author", session.user.name);
-    formData.append("blogid", blogid);
-    formData.append("blogEmail",blogEmail);
+    formData.append("blogid", postData._id); // Set blogid from postData directly
+    formData.append("blogEmail", postData.email); // Set blogEmail from postData directly
 
     try {
       const res = await fetch("http://localhost:3000/api/reportblog", {
         method: "POST",
-        body: formData, // Don't manually set the Content-Type header
+        body: formData, // Body is formData, no need to set Content-Type manually
       });
 
       if (res.ok) {
         router.push(`/blog/${postData._id}`);
         setIsPopupOpen(false);
+      } else {
+        console.error("Error:", res.statusText);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error submitting the form:", error);
     }
   };
 
@@ -341,6 +354,7 @@ function Blog({ params, initialComments }) {
     selectedCategory: string;
     heart: number;
     email: string;
+    userprofile: string;
   }
 
   return (
@@ -393,7 +407,17 @@ function Blog({ params, initialComments }) {
             </div>
 
             <div className="flex flex-row mt-5 mb-5 items-center">
-              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
+              {postData.userprofile && postData.userprofile[0] ? (
+                <Image
+                  width={200}
+                  height={200}
+                  src={`/api/posts/images/${postData.userprofile}`}
+                  alt={`${postData.author}'s profile picture`}
+                  className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                />
+              ) : (
+                <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
+              )}
               <div className="flex flex-col justify-center">
                 {postData && postData.author ? (
                   <h1 className="font-bold">{postData.author}</h1>
@@ -454,7 +478,7 @@ function Blog({ params, initialComments }) {
                     onClick={handleSubmitCiHeart}
                   />
                   {postData && postData.heart !== undefined ? (
-                    <p>Hearts: {postData.heart}</p>
+                    <p>{postData.heart}</p>
                   ) : (
                     <p>No Heart Data Available</p>
                   )}
@@ -535,14 +559,18 @@ function Blog({ params, initialComments }) {
                   <div key={comment._id} className="flex flex-col m-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
-
-                        <Image
-                          width={200}
-                          height={200}
-                          src={`/api/posts/images/${comment.profile}`}
-                          alt={`${comment.author}'s profile picture`}
-                          className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
-                        />
+                      
+                        {comment.profile && comment.profile[0] ? (
+                          <Image
+                            width={200}
+                            height={200}
+                            src={`/api/posts/images/${comment.profile}`}
+                            alt={`${comment.author}'s profile picture`}
+                            className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                          />
+                        ) : (
+                          <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+                        )}
 
                         {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
 
@@ -590,9 +618,21 @@ function Blog({ params, initialComments }) {
                           <div>
                             <p key={reply._id}></p>
                             <p className="flex flex-row">
+                              
+                              {reply.profile && reply.profile[0] ? (
+                              <Image
+                                width={200}
+                                height={200}
+                                src={`/api/posts/images/${reply.profile}`}
+                                alt={`${reply.author}'s profile picture`}
+                                className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                              />
+                            ) : (
                               <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
-                              <strong className="flex flex-col justify-center text-lg">{reply.author} : </strong>
+                            )}
+                              <strong className="flex flex-col justify-center text-lg">{reply.author} : reply</strong>
                             </p>
+                            <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
                             <p className="ml-4 text-lg">{reply.text}</p>
                           </div>
                         ))}

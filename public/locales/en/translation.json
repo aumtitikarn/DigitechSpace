@@ -75,7 +75,11 @@
         "by" : "By",
         "hidden" : "Hide review",
         "download" : "Download All",
-        "file" : "File"
+        "file" : "File",
+        "alreadyOwned" : "You have placed an order for this project.",
+        "alreadyOwnedDescription" : "You can see more details on my project page.",
+        "your" : "This project is yours.",
+        "your2" : "You cannot purchase your own project."
       }
     },
     "blog": {
@@ -108,8 +112,19 @@
       "input3" : "Enter the amount",
       "income" : "Income Summary",
       "gross" : "Gross Income : ",
-      "servicefee" : "Service Fee : ",
+      "servicefee" : "Service Fee",
       "withdrawable" : "Withdrawable : ",
+      "purchaseHistory" : "Sales history",
+      "hisdes" : "Currency : THB/Bath",
+      "projectName" : "Project",
+      "netAmount" : "Balance",
+      "price" : "Price",
+      "date" : "Date",
+      "confirm" : "Confirm Withdrawal",
+      "condes1" : "Do you want to withdraw ",
+      "condes2" : " THB?",
+      "yes" : "Yes",
+      "no" : "No",
       "bill" : {
         "title" : "Withdraw",
         "fullname" : "Full name",
@@ -177,7 +192,8 @@
       "title" : "My Project",
       "wait" : "Waiting to check the project",
       "check" : "Check the project",
-      "desCheck" : "* Please inspect the product and press the 'Check the project' button before 7 days. If you do not press the button, you will not be able to file a complaint and refund."
+      "desCheck" : "Please inspect the product and press the 'Check the project' button before 7 days. If you do not press the button, you will not be able to file a complaint and refund.",
+      "noproject" : "You do not have a project at this time."
     },
     "review": {
       "title" : "Review",
@@ -236,7 +252,16 @@
       "username" : "Username",
       "email" : "Email",
       "password" : "Password",
-      "confirm" : "Confirm Password"
+      "confirm" : "Confirm Password",
+      "status" : {
+        "email" : "Email Already Used",
+        "emaildes" : "This email has already been registered.",
+        "username" : "Username Already Used",
+        "usernamedes" : "This username has already been registered.",
+        "pass" : "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.",
+        "passmatch" : "Passwords do not match!",
+        "success" : "Success"
+      }
     }
   },
   "report" : {
@@ -263,5 +288,20 @@
       "r5" : "Other",
       "add" : "Additional message (200 Characters)"
     }
+  },
+  "months" : {
+    "all" : "All",
+    "january" : "January",
+    "february" : "February",
+    "march" : "March",
+    "april" : "April",
+    "may" : "May",
+    "june" : "June",
+    "july" : "July",
+    "august" : "August",
+    "september" : "September",
+    "october" : "October",
+    "november" : "November",
+    "december" : "December"
   }
 }

@@ -67,38 +67,46 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
     { group: "Data and AI", categories: ["ai", "datasets", "document"] },
     { group: "Hardware and IoT", categories: ["iot", "program", "document"] },
-    { group: "Content and Design", categories: ["document", "photo", "document"] },
+    {
+      group: "Content and Design",
+      categories: ["document", "photo", "document"],
+    },
     {
       group: "3D and Modeling",
       categories: ["model", "photo", "document"],
     },
   ];
 
- useEffect(() => {
+  useEffect(() => {
     const fetchSimilarProjects = async () => {
       if (project && project.category) {
         try {
           // Find the group that contains the current project's category
-          const currentGroup = projectGroups.find(group => 
+          const currentGroup = projectGroups.find((group) =>
             group.categories.includes(project.category)
           );
 
           if (currentGroup) {
-            const categories = currentGroup.categories.join(',');
-            const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
+            const categories = currentGroup.categories.join(",");
+            const response = await fetch(
+              `/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`
+            );
             if (response.ok) {
               const data = await response.json();
               setSimilarProjects(data);
             } else {
               const errorData = await response.json();
-              setError(errorData.error || `Failed to fetch similar projects: ${response.status} ${response.statusText}`);
+              setError(
+                errorData.error ||
+                  `Failed to fetch similar projects: ${response.status} ${response.statusText}`
+              );
             }
           } else {
-            setError('No matching category group found');
+            setError("No matching category group found");
           }
         } catch (error) {
           console.error("Error fetching similar projects:", error);
-          setError('An error occurred while fetching similar projects');
+          setError("An error occurred while fetching similar projects");
         }
       }
     };
@@ -267,8 +275,6 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const handleShowLessClick = () => {
     setVisibleReviewsCount(3); // กลับไปแสดงผลรีวิว 5 รีวิวแรก
   };
-  
- 
   const handleDownload = async (fileName: string) => {
     try {
       if (!project || !project.filesUrl.length) {
@@ -302,7 +308,32 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  
+
+  const getShareUrl = () => {
+    // ใช้ window.location.origin เพื่อให้ได้ URL เต็มรูปแบบ
+    return `${window.location.origin}/project/projectdetail/${params.id}`;
+  };
+
+  const handleCopyLink = () => {
+    const url = getShareUrl();
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Link copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  };
+
+  const handleFacebookShare = () => {
+    const url = encodeURIComponent(getShareUrl());
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+  };
+
+  const handleTwitterShare = () => {
+    const url = encodeURIComponent(getShareUrl());
+    const text = encodeURIComponent(`Digitech Space project: ${project.projectname} by: ${project.author}`);
+    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+  };
+
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar />
@@ -375,25 +406,38 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       {/* Share Popup */}
                       {isSharePopupOpen && (
                         <div className="absolute bottom-full mb-[10px] w-[121px] h-[46px] flex-shrink-0 rounded-[30px] border border-gray-300 bg-white flex items-center justify-center space-x-4 shadow-lg">
-                          <FaLink className="text-gray-600 cursor-pointer" />
-                          <FaFacebook className="text-gray-600 cursor-pointer" />
-                          <RiTwitterXLine className="text-gray-600 cursor-pointer" />
+                          <FaLink
+                            className="text-gray-600 cursor-pointer"
+                            onClick={handleCopyLink}
+                          />
+                          <FaFacebook
+                            className="text-gray-600 cursor-pointer"
+                            onClick={handleFacebookShare}
+                          />
+                          <RiTwitterXLine
+                            className="text-gray-600 cursor-pointer"
+                            onClick={handleTwitterShare}
+                          />
                         </div>
                       )}
                     </div>
                     {session ? (
-                      <><button
-                        onClick={handleFavoriteClick}
-                        className="cursor-pointer"
-                      >
-                        {isFavorited ? (
-                          <GoHeartFill className="text-gray-600 text-2xl" />
-                        ) : (
-                          <GoHeart className="text-gray-600 text-2xl" />
-                        )}
-                      </button><AiOutlineNotification
+                      <>
+                        <button
+                          onClick={handleFavoriteClick}
+                          className="cursor-pointer"
+                        >
+                          {isFavorited ? (
+                            <GoHeartFill className="text-gray-600 text-2xl" />
+                          ) : (
+                            <GoHeart className="text-gray-600 text-2xl" />
+                          )}
+                        </button>
+                        <AiOutlineNotification
                           onClick={handleNotificationClick}
-                          className="text-gray-600 cursor-pointer text-2xl" /></>
+                          className="text-gray-600 cursor-pointer text-2xl"
+                        />
+                      </>
                     ) : (
                       <>
                         <Link href="/auth/preauth">
@@ -572,51 +616,51 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                   {t("nav.project.projectdetail.otherproject")}
                 </p>
                 {publishedProjects.length > 0 ? (
-                <div className="flex overflow-x-auto gap-[17px] mt-10">
-                  {similarProjects.map((product, index) => (
-                    <Link
-                      key={index}
-                      href={`/project/projectdetail/${product._id}`}
-                    >
-                      <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
-                        <div className="w-full h-auto flex flex-col">
-                          <img
-                            src={`/api/project/images/${product.imageUrl[0]}`}
-                            alt="Product Image"
-                            className="w-full h-[150px] rounded-md object-cover mb-4"
-                          />
-                          <div className="flex flex-col justify-between h-full">
-                            <p className="text-lg font-semibold mb-2 truncate w-[150px]">
-                              {product.projectname}
-                            </p>
-                            <div className="flex items-center mb-2">
-                              <span className="text-gray-500 mr-2 text-2xl">
-                                <MdAccountCircle />
-                              </span>
-                              <p className="text-sm text-gray-600 truncate w-[150px]">
-                                {product.author}
+                  <div className="flex overflow-x-auto gap-[17px] mt-10">
+                    {similarProjects.map((product, index) => (
+                      <Link
+                        key={index}
+                        href={`/project/projectdetail/${product._id}`}
+                      >
+                        <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
+                          <div className="w-full h-auto flex flex-col">
+                            <img
+                              src={`/api/project/images/${product.imageUrl[0]}`}
+                              alt="Product Image"
+                              className="w-full h-[150px] rounded-md object-cover mb-4"
+                            />
+                            <div className="flex flex-col justify-between h-full">
+                              <p className="text-lg font-semibold mb-2 truncate w-[150px]">
+                                {product.projectname}
+                              </p>
+                              <div className="flex items-center mb-2">
+                                <span className="text-gray-500 mr-2 text-2xl">
+                                  <MdAccountCircle />
+                                </span>
+                                <p className="text-sm text-gray-600 truncate w-[150px]">
+                                  {product.author}
+                                </p>
+                              </div>
+                              <div className="flex items-center mb-2">
+                                <span className="text-yellow-500 mr-2">
+                                  <IoIosStar />
+                                </span>
+                                <span className="text-sm text-gray-600 truncate w-[150px]">
+                                  {product.rathing || "N/A"} ({product.review})
+                                  | {t("nav.project.projectdetail.sold")}{" "}
+                                  {product.sold}
+                                </span>
+                              </div>
+                              <p className="text-lg font-bold text-[#33529B]">
+                                {product.price} THB
                               </p>
                             </div>
-                            <div className="flex items-center mb-2">
-                              <span className="text-yellow-500 mr-2">
-                                <IoIosStar />
-                              </span>
-                              <span className="text-sm text-gray-600 truncate w-[150px]">
-                                {product.rathing || "N/A"} ({product.review}) |{" "}
-                                {t("nav.project.projectdetail.sold")}{" "}
-                                {product.sold}
-                              </span>
-                            </div>
-                            <p className="text-lg font-bold text-[#33529B]">
-                              {product.price} THB
-                            </p>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-                 ) : (
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
                   <p className="text-center text-gray-500 mt-5">
                     {t("nav.sell.noproject")}
                   </p>
@@ -685,8 +729,10 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
           </div>
         </div>
       </div>
+
       {isModalOpen &&(
         <Report project={project} onClose={closeModal} />
+
       )}
       <Footer />
     </main>

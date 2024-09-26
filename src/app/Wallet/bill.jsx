@@ -5,6 +5,7 @@ import { Checkmark } from "react-checkmark";
 import { useTranslation } from "react-i18next";
 
 const Bill = ({ name, amount, balance, onClose }) => {
+  console.log("Bill received amount:", amount);
   const { t } = useTranslation("translation");
 
   // ใช้ toLocaleString() เพื่อ format ตัวเลขให้มี , คั่นหลักพัน
@@ -12,14 +13,19 @@ const Bill = ({ name, amount, balance, onClose }) => {
     return parseFloat(num).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('th-TH', {
-      day: 'numeric',
-      month: 'numeric',
-      year: 'numeric',
-    });
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    const formatter = new Intl.DateTimeFormat("th-TH", options);
+    const [{ value: day }, , { value: month }, , { value: year }] = formatter.formatToParts(date);
+    const buddhistYear = parseInt(year) - 543;
+    return `${day}/${month}/${buddhistYear}`;
   };
-
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

@@ -117,7 +117,7 @@ const Project: React.FC = () => {
         Swal.fire({
           position: "center",
           icon: "success",
-          title: data.msg, 
+          title: t("authen.signup.status.success"), 
           showConfirmButton: false,
           timer: 3000,
         });

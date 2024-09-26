@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectMongoDB } from '../../../../lib/mongodb';
 import Order from '../../../../models/order';
-import Project from '../../../../models/project';
 import { getServerSession } from "next-auth";
 import { authOption } from '../../../app/api/auth/[...nextauth]/route';
 
@@ -28,9 +27,7 @@ export async function GET(req) {
       {
         $lookup: {
           from: 'projects',
-          let: { 
-            orderProduct: "$product"
-          },
+          let: { orderProduct: "$product" },
           pipeline: [
             {
               $match: {
@@ -55,6 +52,7 @@ export async function GET(req) {
           createdAt: 1,
           status: 1,
           product: 1,
+          check: 1, // Include the check field
           'projectDetails._id': 1,
           'projectDetails.projectname': 1,
           'projectDetails.description': 1,
@@ -78,11 +76,7 @@ export async function GET(req) {
     const orders = await Order.aggregate(pipeline);
 
     console.log("Orders found:", orders.length);
-    if (orders.length > 0) {
-      console.log("First order:", JSON.stringify(orders[0], null, 2));
-    } else {
-      console.log("No orders found");
-    }
+    console.log("Sample order:", orders.length > 0 ? JSON.stringify(orders[0], null, 2) : "No orders");
 
     return NextResponse.json(orders, {
       status: 200,

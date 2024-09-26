@@ -15,10 +15,39 @@ import { redirect } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { OrbitProgress } from "react-loading-indicators";
 
+const useAutoCheck = (session: any) => {
+  useEffect(() => {
+    const performAutoCheck = async () => {
+      if (session?.user?.email) {
+        try {
+          const response = await fetch('/api/myproject/autocheck', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to perform auto-check');
+          }
+
+          const result = await response.json();
+          console.log('Auto-check result:', result);
+        } catch (error) {
+          console.error('Error performing auto-check:', error);
+        }
+      }
+    };
+
+    performAutoCheck();
+  }, [session]);
+};
+
+
 export default function Home() {
   const { data: session, status } = useSession();
   const { t, i18n } = useTranslation('translation');
-
+  useAutoCheck(session);
   if (status === "loading") {
     return <div style={{
       position: "absolute",

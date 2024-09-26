@@ -1,10 +1,10 @@
+
 "use client";
 
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { GoX } from "react-icons/go";
 import { useTranslation } from "react-i18next";
-import Email from "next-auth/providers/email";
 
 
 // กำหนด ReportProps interface
@@ -15,6 +15,7 @@ interface ReportProps {
 
 
 const Report: React.FC<ReportProps> = ({ project, onClose }) => {
+
   const [review, setReview] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
@@ -30,21 +31,19 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
     setReview(event.target.value);
   };
 
+  
   const handleSubmit = async () => {
     if (!session) return;
-
+  
     const data = {
-      name: project.projectname,
-      projectId: project._id, // Project ID
-      email: project.email, // Correctly accessing the email property
+      name: project,
       report: selectedReason,
       more: review,
       username: session.user?.name,
-      author: project.author,
     };
-
+  
     console.log("Data to be sent:", data);
-
+  
     try {
       const response = await fetch("/api/reportproject", {
         method: "POST",
@@ -53,7 +52,7 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
         },
         body: JSON.stringify(data),
       });
-
+  
       if (response.ok) {
         setSubmissionStatus("success");
         setTimeout(onClose, 2000);
@@ -67,10 +66,13 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
       setSubmissionStatus("error");
     }
   };
-
   const handleReasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedReason(event.target.value);
   };
+  
+  console.log("Selected reason:", selectedReason); // ตรวจสอบค่าที่เลือก
+  
+  
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -85,7 +87,7 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
         />
         <h2 className="text-2xl font-bold mb-4 text-center">{t("report.title")}</h2>
         <p className="text-lg font-medium mb-4">
-          {t("report.project.topic")} : {project.projectname}
+          {t("report.project.topic")} : {project}
         </p>
         <div className="border-b border-gray-300 my-3"></div>
 
@@ -122,6 +124,7 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
         >
           {t("report.send")}
         </button>
+        {/* Display success or error message */}
         {submissionStatus === "success" && (
           <p className="mt-4 text-green-500 text-center">
             {t("report.successMessage")}

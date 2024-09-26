@@ -12,6 +12,7 @@ export async function POST(req) {
       if (!firstname || !lastname || !phonenumber || !username || !email || !password) {
           return NextResponse.json({ message: "All fields are required." }, { status: 400 });
       }
+      const lowercaseEmail = email.toLowerCase();
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -26,7 +27,7 @@ export async function POST(req) {
           lastname,
           phonenumber,
           username,
-          email,
+          email: lowercaseEmail,
           password: hashedPassword
       });
 
