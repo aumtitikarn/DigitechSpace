@@ -64,7 +64,7 @@ const NotificationPage = () => {
             </div>
         );
     }
-
+    
     return (
         <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
             <main className="flex-grow">
@@ -73,24 +73,32 @@ const NotificationPage = () => {
                     <div className="container mt-3">
                         <h1 className="text-[24px] font-bold">{t("nav.notification")}</h1>
                     </div>
+                    {notifications.map((notification, index) => (
                     <div className="flex flex-col lg:items-start space-y-4 mt-5">
-                        {notifications.map((notification, index) => (
+                        {notification.notifications.map((message, msgIndex) => (
                             <Card key={index} className="flex flex-col md:flex-row border-2 border-gray-300 rounded-lg shadow-md p-3 bg-[#E8F9FD] w-full">
                                 <CardBody className="flex flex-col justify-between">
-                                    <p className="text-sm md:text-xs mb-2 md:mb-3 font-bold">{notification.notification}</p>
-                                    <p className="text-sm md:text-xs mt-auto">{new Date(notification.addedAt).toLocaleDateString('th-TH', {
-                                        year: 'numeric', month: '2-digit', day: '2-digit'
-                                    })}</p>
+                                    {/* Map through multiple notifications for each user */}
+                                    
+                                        <div key={msgIndex} className="mb-4">
+                                            <p className="text-sm md:text-xs mb-2 md:mb-3 font-bold">{message}</p>
+                                            <p className="text-sm md:text-xs mt-auto">
+                                                {new Date(notification.addedAt).toLocaleDateString('th-TH', {
+                                                    year: 'numeric', month: '2-digit', day: '2-digit'
+                                                })}
+                                            </p>
+                                        </div>
+                                    
                                 </CardBody>
                             </Card>
                         ))}
                     </div>
+                    ))}
                 </div>
             </main>
             <Footer />
         </div>
     );
 };
-
 
 export default NotificationPage;
