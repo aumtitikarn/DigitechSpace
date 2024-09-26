@@ -21,6 +21,7 @@ import { AiOutlineNotification } from "react-icons/ai";
 import { useTranslation } from "react-i18next";
 import { MdOutlineFileDownload } from "react-icons/md";
 
+
 interface ProjectData {
   _id: string;
   projectname: string;
@@ -34,6 +35,14 @@ interface ProjectData {
   imageUrl: string[];
   author: string;
   filesUrl: string[];
+}
+
+interface Review {
+  username: string;
+  userEmail: string;
+  rathing: number;
+  review: string;
+  projectId: string; // Ensure this matches your database structure
 }
 
 const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
@@ -50,7 +59,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [similarProjects, setSimilarProjects] = useState<ProjectData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [reviews, setReviews] = useState<Review[]>([]);
   const projectGroups = [
     {
       group: "Software Development",
@@ -157,6 +166,48 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
     fetchData();
   }, [params.id]);
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch('/api/review');
+        const result = await response.json();
+
+        console.log('Fetched reviews:', result.data); // Log fetched reviews
+
+        setReviews(result.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+  
+  const updateProjectRating = async (projectId: string) => {
+    try {
+      const response = await fetch('/api/project/updateRating', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ projectId }),
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        console.log('Rating updated:', result.updatedProject);
+      } else {
+        console.error('Error updating rating:', result.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  
+
   if (!project) {
     return <div></div>;
   }
@@ -224,60 +275,6 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const handleShowLessClick = () => {
     setVisibleReviewsCount(3); // กลับไปแสดงผลรีวิว 5 รีวิวแรก
   };
-
-  const reviews = [
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "Aumti",
-      rating: "5.0",
-      comment: "ช่วยเรื่องโปรเจกต์ได้ดีมากเลยค่ะ",
-    },
-    {
-      name: "Stamp",
-      rating: "3.5",
-      comment: "ไฟล์แอบไม่เป็นระเบียนนิดนึง",
-    },
-    {
-      name: "สมชาย",
-      rating: "1.0",
-      comment: "ไม่ค่อยตรงปก",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "สมชาย",
-      rating: "1.0",
-      comment: "ไม่ค่อยตรงปก",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-  ];
-
   const handleDownload = async (fileName: string) => {
     try {
       if (!project || !project.filesUrl.length) {
@@ -311,6 +308,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
   const getShareUrl = () => {
     // ใช้ window.location.origin เพื่อให้ได้ URL เต็มรูปแบบ
     return `${window.location.origin}/project/projectdetail/${params.id}`;
@@ -335,6 +333,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
     const text = encodeURIComponent(`Digitech Space project: ${project.projectname} by: ${project.author}`);
     window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
   };
+
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar />
@@ -390,7 +389,9 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       <IoIosStar className="text-2xl" />
                     </span>
                     <span className="text-sm text-gray-600 ">
-                      {project.rathing || "N/A"} ({project.review}) |{" "}
+                    {project.rathing ? project.rathing.toFixed(1) : "N/A"} {/* แสดงค่า rating หรือ N/A */}
+  ({project.rathing ? project.rathing : 0}) {/* แสดงจำนวนรีวิว */}
+  {" "} | 
                       {t("nav.project.projectdetail.sold")} {project.sold}
                     </span>
                   </div>
@@ -506,29 +507,27 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul>
-                  {reviews
-                    .slice(0, visibleReviewsCount)
-                    .map((review, index) => (
-                      <li key={index} className="mb-4">
-                        <div className="flex items-center">
-                          <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
-                          <div className="flex flex-col">
-                            <div className="flex items-center">
-                              <p className="text-sm font-bold mr-2">
-                                {review.name}
-                              </p>
-                              <span className="flex items-center">
-                                <IoIosStar className="text-yellow-500 mr-1" />
-                                <span className="text-sm">{review.rating}</span>
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-600 mt-1">
-                              {review.comment}
-                            </p>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
+                {reviews.length > 0 ? (
+  reviews.slice(0, visibleReviewsCount).map((review, index) => (
+    <li key={index} className="mb-4">
+      <div className="flex items-center">
+        <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
+        <div className="flex flex-col">
+          <div className="flex items-center">
+            <p className="text-sm font-bold mr-2">{review.username}</p>
+            <span className="flex items-center">
+              <IoIosStar className="text-yellow-500 mr-1" />
+              <span className="text-sm">{review.rathing}</span>
+            </span>
+          </div>
+          <p className="text-sm text-gray-600 mt-1">{review.review}</p>
+        </div>
+      </div>
+    </li>
+  ))
+) : (
+  <p>No reviews available</p>
+)}
                 </ul>
                 <div className="flex justify-center">
                   {visibleReviewsCount < reviews.length && (
@@ -730,8 +729,10 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
           </div>
         </div>
       </div>
-      {isModalOpen && (
-        <Report project="Facebook Website" onClose={closeModal} />
+
+      {isModalOpen &&(
+        <Report project={project} onClose={closeModal} />
+
       )}
       <Footer />
     </main>

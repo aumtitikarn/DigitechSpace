@@ -328,7 +328,7 @@ function page() {
         {session?.user?.role == "NormalUser" && (
           <div className="flex flex-row justify-center">
             <div className="relative">
-              {postData && postData.imageUrl ? (
+            {postData && postData.imageUrl && postData.imageUrl !== "" && postData.imageUrl !== "undefined"? (
                 <Image
                   width={200}
                   height={200}

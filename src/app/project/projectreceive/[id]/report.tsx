@@ -6,12 +6,16 @@ import { useSession } from "next-auth/react";
 import { GoX } from "react-icons/go";
 import { useTranslation } from "react-i18next";
 
-interface ReportProject {
-  project: string;
+
+// กำหนด ReportProps interface
+interface ReportProps {
+  project: project; // ใช้ ProjectData แทน
   onClose: () => void;
 }
 
-const Report: React.FC<ReportProject> = ({ project, onClose }) => {
+
+const Report: React.FC<ReportProps> = ({ project, onClose }) => {
+
   const [review, setReview] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
