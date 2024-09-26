@@ -8,12 +8,13 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 import { useSearchParams } from 'next/navigation';
+
 interface ReviewProject {
-  project: string; // Assuming this is the project ID
+  project: string;
 }
 
 const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
-  const [rating, setRating] = useState<number>(0);
+  const [rathing, setRating] = useState<number>(0);
   const [review, setReview] = useState("");
   const { t } = useTranslation("translation");
   const router = useRouter();
@@ -21,7 +22,6 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   const searchParams = useSearchParams();
   const projectId = searchParams.get("id");
   const name = searchParams.get("name");
-  
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
@@ -32,8 +32,23 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   };
 
   const handleSubmit = async () => {
-    if (!rating || !review || !projectId) { // ตรวจสอบ project ด้วย
-      alert("Please provide rating, review, and project ID.");
+    // Ensure session is loaded and contains user data
+    if (!session || !session.user) {
+      alert("You must be logged in to submit a review.");
+      return;
+    }
+  
+    const username = session.user.name || session.user.email;
+  
+    // Check for required fields
+    if (!rathing || !review || !projectId || !username) {
+      console.error({
+        rathing,
+        review,
+        projectId,
+        username,
+      });
+      alert("Missing data: Ensure all fields are filled.");
       return;
     }
   
@@ -44,22 +59,26 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          rating,
+          rathing,
           review,
-          projectId, // ตรวจสอบว่า project มีค่า
+          projectId,
+          username, // ส่ง username
         }),
       });
   
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message);
-        router.push('/project');
-      } else {
-        alert(data.message);
+      // ตรวจสอบการตอบสนองจาก API
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error:', errorData);
+        alert(`Error: ${errorData.message}`);
+        return;
       }
+  
+      const data = await response.json();
+      alert(data.message); // แจ้งผลลัพธ์
     } catch (error) {
       console.error('Error submitting review:', error);
-      alert('Failed to submit review.');
+      alert('Failed to submit review');
     }
   };
   
@@ -85,14 +104,14 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h1 className="text-3xl md:text-4xl font-bold mb-6">{t("nav.review.topic")}</h1>
           <div className="border-b border-gray-500 my-4 lg:max-w-[950px]"></div>
-          <p className="text-lg font-medium mb-4">{t("nav.review.project")} :{name || ""} </p>
+          <p className="text-lg font-medium mb-4">{t("nav.review.project")} :{name || ""}</p>
           <p className="text-lg font-medium mb-2">{t("nav.review.point")}:</p>
           <div className="flex justify-left mb-4">
             {[...Array(5)].map((_, i) => (
               <span
                 key={i}
                 onClick={() => handleRatingChange(i + 1)}
-                className={`text-2xl cursor-pointer ${rating >= i + 1 ? 'text-orange-400' : 'text-gray-400'}`}
+                className={`text-2xl cursor-pointer ${rathing >= i + 1 ? 'text-orange-400' : 'text-gray-400'}`}
               >
                 ★
               </span>
@@ -100,7 +119,7 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
           </div>
           <div className="relative mx-auto w-full lg:max-w-[950px] lg:ml-1">
             <textarea
-              placeholder="text"
+              placeholder="Write your review here..."
               value={review}
               onChange={handleReviewChange}
               className="w-full h-40 p-3 border-2 border-gray-300 rounded-md mb-5"

@@ -43,7 +43,13 @@ declare global {
     OmiseCard: any;
   }
 }
-
+interface Review {
+  username: string;
+  userEmail: string;
+  rathing: number;
+  review: string;
+  projectId: string; // Ensure this matches your database structure
+}
 const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -58,7 +64,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [similarProjects, setSimilarProjects] = useState<ProjectData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState(false);
-
+  const [reviews, setReviews] = useState<Review[]>([]);
   const router = useRouter();
 
   const projectGroups = [
@@ -79,93 +85,32 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   ];
 
   useEffect(() => {
-    const fetchSimilarProjects = async () => {
-      if (project && project.category) {
-        try {
-          let categories;
-
-          if (project.category.toLowerCase() === "all") {
-            // If category is 'All', include all unique categories from all groups
-            categories = Array.from(
-              new Set(projectGroups.flatMap((group) => group.categories))
-            ).join(",");
-          } else {
-            // Find all groups that contain the current project's category
-            const relevantGroups = projectGroups.filter((group) =>
-              group.categories.includes(project.category)
-            );
-
-            console.log("Relevant groups:", relevantGroups);
-
-            // Collect all unique categories from relevant groups
-            categories = Array.from(
-              new Set(relevantGroups.flatMap((group) => group.categories))
-            ).join(",");
-          }
-
-          console.log("Categories being sent:", categories);
-
-          const response = await fetch(
-            `/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`
-          );
-
-          if (response.ok) {
-            const data = await response.json();
-            setSimilarProjects(data);
-          } else {
-            const errorData = await response.json();
-            setError(
-              errorData.error ||
-                `Failed to fetch similar projects: ${response.status} ${response.statusText}`
-            );
-          }
-        } catch (error) {
-          console.error("Error fetching similar projects:", error);
-          setError("An error occurred while fetching similar projects");
-        }
-      }
-    };
-
-    console.log("project :", project);
-    fetchSimilarProjects();
-  }, [project]);
-
-  useEffect(() => {
     const fetchData = async () => {
       if (params.id) {
         try {
           setLoading(true);
-          // ดึงข้อมูลโปรเจกต์
+          // ดึงข้อมูลโปรเจกต์ตาม ID
           const projectResponse = await fetch(`/api/project/${params.id}`);
           if (projectResponse.ok) {
             const projectData = await projectResponse.json();
             setProject(projectData.post);
             console.log("Project data:", projectData.post);
-
+            
+            // ดึงรีวิวที่ตรงกับ projectId
+            const reviewsResponse = await fetch('/api/review');
+            const reviewsData = await reviewsResponse.json();
+            const filteredReviews = reviewsData.data.filter((review: Review) => review.projectId === params.id);
+            setReviews(filteredReviews);
+            
             // ดึงโปรเจกต์อื่นๆ ของผู้ใช้คนเดียวกัน
             if (projectData.post && projectData.post.email) {
-              console.log(
-                "Fetching projects for email:",
-                projectData.post.email
-              );
-              const publishedResponse = await fetch(
-                `/api/project/getProjects/by?email=${encodeURIComponent(projectData.post.email)}`,
-                {
-                  method: "GET",
-                }
-              );
-              console.log("Response status:", publishedResponse.status);
+              const publishedResponse = await fetch(`/api/project/getProjects/by?email=${encodeURIComponent(projectData.post.email)}`);
               if (publishedResponse.ok) {
                 const publishedData = await publishedResponse.json();
-                console.log("Published Data:", publishedData);
                 setPublishedProjects(publishedData);
               } else {
                 console.error("Failed to fetch published projects");
-                const errorData = await publishedResponse.text();
-                console.error("Error data:", errorData);
               }
-            } else {
-              console.log("Email not found in project data");
             }
           } else {
             console.error("Failed to fetch project data");
@@ -177,9 +122,42 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         }
       }
     };
-
+  
     fetchData();
   }, [params.id]);
+  
+  useEffect(() => {
+    const fetchSimilarProjects = async () => {
+      if (project && project.category) {
+        try {
+          let categories;
+          if (project.category.toLowerCase() === "all") {
+            categories = Array.from(new Set(projectGroups.flatMap((group) => group.categories))).join(",");
+          } else {
+            const relevantGroups = projectGroups.filter((group) =>
+              group.categories.includes(project.category)
+            );
+            categories = Array.from(new Set(relevantGroups.flatMap((group) => group.categories))).join(",");
+          }
+  
+          const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
+          if (response.ok) {
+            const data = await response.json();
+            setSimilarProjects(data);
+          } else {
+            const errorData = await response.json();
+            setError(errorData.error || `Failed to fetch similar projects: ${response.status} ${response.statusText}`);
+          }
+        } catch (error) {
+          console.error("Error fetching similar projects:", error);
+          setError("An error occurred while fetching similar projects");
+        }
+      }
+    };
+  
+    fetchSimilarProjects();
+  }, [project]);
+  
 
   if (!project) {
     return <div></div>;
@@ -302,59 +280,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     setVisibleReviewsCount(3); // กลับไปแสดงผลรีวิว 5 รีวิวแรก
   };
 
-  const reviews = [
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "Aumti",
-      rating: "5.0",
-      comment: "ช่วยเรื่องโปรเจกต์ได้ดีมากเลยค่ะ",
-    },
-    {
-      name: "Stamp",
-      rating: "3.5",
-      comment: "ไฟล์แอบไม่เป็นระเบียนนิดนึง",
-    },
-    {
-      name: "สมชาย",
-      rating: "1.0",
-      comment: "ไม่ค่อยตรงปก",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "สมชาย",
-      rating: "1.0",
-      comment: "ไม่ค่อยตรงปก",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-    {
-      name: "Phornthi",
-      rating: "4.5",
-      comment: "ดีมากๆเลยค่ะ",
-    },
-  ];
-
+  
   const createInternetBankingCharge = async (
     amount: number,
     token: string,
@@ -552,30 +478,29 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul>
-                  {reviews
-                    .slice(0, visibleReviewsCount)
-                    .map((review, index) => (
-                      <li key={index} className="mb-4">
-                        <div className="flex items-center">
-                          <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
-                          <div className="flex flex-col">
-                            <div className="flex items-center">
-                              <p className="text-sm font-bold mr-2">
-                                {review.name}
-                              </p>
-                              <span className="flex items-center">
-                                <IoIosStar className="text-yellow-500 mr-1" />
-                                <span className="text-sm">{review.rating}</span>
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-600 mt-1">
-                              {review.comment}
-                            </p>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                </ul>
+      {reviews.length > 0 ? (
+        reviews.map((review, index) => (
+          <li key={index} className="mb-4">
+            <div className="flex items-center">
+              <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <p className="text-sm font-bold mr-2">{review.username}</p>
+                  <span className="flex items-center">
+                    <IoIosStar className="text-yellow-500 mr-1" />
+                    <span className="text-sm">{review.rathing}</span>
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mt-1">{review.review}</p>
+              </div>
+            </div>
+          </li>
+        ))
+      ) : (
+        <p>No reviews available</p>
+      )}
+    </ul>
+
                 <div className="flex justify-center">
                   {visibleReviewsCount < reviews.length && (
                     <button

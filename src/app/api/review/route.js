@@ -5,35 +5,57 @@ import { getServerSession } from "next-auth";
 import { authOptions } from '../../../app/api/auth/[...nextauth]/route'; // ตรวจสอบชื่อให้ถูกต้อง
 
 export async function POST(req) {
-  // ดึงเซสชัน
   const session = await getServerSession(authOptions);
-  const userEmail = session?.user?.email;
+  
+  // Handle unauthorized access
+  if (!session) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
+  const username = session.user?.name;
+  const userEmail = session.user?.email;
 
   try {
     await connectMongoDB();
-    const data = await req.json(); // อ่านข้อมูลจาก req หนึ่งครั้ง
+    const data = await req.json();
     
-    console.log("Received data:", data); // Log received data to check its correctness
+    console.log("Received data:", JSON.stringify(data, null, 2));
 
-    const { rating, review, projectId } = data; // ใช้ข้อมูลที่อ่านได้
+    const { rathing, review, projectId } = data;
 
-    // ตรวจสอบข้อมูลที่ขาดหาย
-    if (!rating || !review || !projectId || !userEmail) {
+    if (!rathing || !review || !projectId || !userEmail || !username) {
       return NextResponse.json({ message: 'Missing data' }, { status: 400 });
     }
 
-    // สร้างรีวิวใหม่
     const newReview = new Review({
-      rating,
+      rathing,
       review,
       projectId,
-      userEmail, // ใช้อีเมลผู้ใช้จากเซสชัน
+      userEmail,
+      username
     });
-
-    await newReview.save(); // บันทึกรีวิว
+    
+    console.log("New Review to save:", newReview); // ตรวจสอบค่าก่อนบันทึก
+    
+    await newReview.save();
     return NextResponse.json({ message: 'Review saved successfully' });
   } catch (error) {
     console.error('Error saving review:', error);
     return NextResponse.json({ message: 'Failed to save review', error: error.message }, { status: 500 });
+  }
+}
+
+
+export async function GET(req) {
+  try {
+    await connectMongoDB(); // เชื่อมต่อกับ MongoDB
+    const reviews = await Review.find(); // ดึงข้อมูลทั้งหมดจากฐานข้อมูล
+
+    console.log('Fetched reviews:', reviews); // Log the reviews to check if they are fetched
+
+    return NextResponse.json({ message: 'Reviews fetched successfully', data: reviews });
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return NextResponse.json({ message: 'Failed to fetch reviews', error: error.message }, { status: 500 });
   }
 }
