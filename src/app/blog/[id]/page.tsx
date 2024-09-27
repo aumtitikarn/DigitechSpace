@@ -196,10 +196,12 @@ function Blog({ params, initialComments }) {
     e.preventDefault(); // Prevent form default behavior
 
     // Set blogid and blogEmail from postData
+    setBlogname(postData.topic)
     setBlogEmail(postData.email);
     setBlogid(postData._id);
 
     // Debugging: check the values
+    console.log("Blog name:", postData.topic);
     console.log("Blog Email:", postData.email);
     console.log("Blog ID:", postData._id);
 
@@ -225,7 +227,7 @@ function Blog({ params, initialComments }) {
     }
 
     // Append form data
-    formData.append("blogname", blogname);
+    formData.append("blogname", postData.topic);
     formData.append("selectedReason", selectedReason);
     formData.append("report", report);
     formData.append("author", session.user.name);
@@ -671,12 +673,12 @@ function Blog({ params, initialComments }) {
                   </p>
                   <div className="border-b border-gray-300 my-3"></div>
                   <p className="text-lg font-medium mb-3">หัวข้อที่รายงาน</p>
-                  <input
+                  {/* <input
                     placeholder="หัวข้อที่ต้องการรายงาน"
                     onChange={(e) => setBlogname(e.target.value)}
                     className="w-full p-3 border-2 border-gray-300 rounded-md resize-none mb-3"
                     maxLength={maxLength}
-                  />
+                  /> */}
                   <p className="text-lg font-medium mb-2">{t("report.blog.reason")}</p>
                   <select
                     value={selectedReason}
