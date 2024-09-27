@@ -66,7 +66,6 @@ function SignUp() {
     <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
   </div>;
   }
-
   
 
   const handleSocialSignIn = async (provider:any) => {

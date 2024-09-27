@@ -140,49 +140,45 @@ function CustomNavbar() {
                 className="text-white focus:outline-none"
               >
                 {session?.user?.role == "NormalUser" && (
-                  <>
-                    {postData?.imageUrl?.[0] ? (
-                      <Image
-                        width={200}
-                        height={200}
-                        src={postData.imageUrl[0].startsWith('http')
-                          ? postData.imageUrl[0] // If it's a full URL, use it as is
-                          : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
-                        alt="Profile"
-                        style={{
-                          objectFit: "cover",
-                          borderRadius: "50%",
-                          width: "40px",
-                          height: "40px",
-                        }}
-                      />
-                    ) : (
-                      <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                    )}
-                  </>
-                )}
-                {session?.user?.role !== "NormalUser" && (
-                  <>
-                    {postData?.imageUrl?.[0] ? (
-                      <Image
-                        width={200}
-                        height={200}
-                        src={postData.imageUrl[0].startsWith('http')
-                          ? postData.imageUrl[0] // If it's a full URL, use it as is
-                          : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
-                        alt="Profile"
-                        style={{
-                          objectFit: "cover",
-                          borderRadius: "50%",
-                          width: "40px",
-                          height: "40px",
-                        }}
-                      />
-                    ) : (
-                      <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                    )}
-                  </>
-                )}
+                          <>
+                            {postData?.imageUrl ? (
+                              <Image
+                                width={200}
+                                height={200}
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
+                                alt="Profile"
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                                  width: "40px",
+                                  height: "40px",
+                                }}
+                              />
+                            ) : (
+                              <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                            )}
+                          </>
+                          )}
+                          {session?.user?.role !== "NormalUser" && (
+                            <>
+                              {postData?.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "40px",
+                                    height: "40px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                              )}
+                            </>
+                          )}
               </button>
               {isAccountBoxVisible && (
                 <div className="">
@@ -192,15 +188,13 @@ function CustomNavbar() {
                     {/* Account Box Content */}
                     <div className="">
                       <div className="flex items-center ">
-                        {session?.user?.role == "NormalUser" && (
+                      {session?.user?.role == "NormalUser" && (
                           <>
-                            {postData?.imageUrl?.[0] ? (
+                            {postData?.imageUrl ? (
                               <Image
                                 width={200}
                                 height={200}
-                                src={postData.imageUrl[0].startsWith('http')
-                                  ? postData.imageUrl[0] // If it's a full URL, use it as is
-                                  : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
                                 alt="Profile"
                                 style={{
                                   objectFit: "cover",
@@ -214,30 +208,28 @@ function CustomNavbar() {
                               <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
                             )}
                           </>
-                        )}
-                        {session?.user?.role !== "NormalUser" && (
-                          <>
-                            {postData?.imageUrl?.[0] ? (
-                              <Image
-                                width={200}
-                                height={200}
-                                src={postData.imageUrl[0].startsWith('http')
-                                  ? postData.imageUrl[0] // If it's a full URL, use it as is
-                                  : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
-                                alt="Profile"
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "50%",
-                                  width: "55px",
-                                  height: "55px",
-                                  margin: "15px",
-                                }}
-                              />
-                            ) : (
-                              <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
-                            )}
-                          </>
-                        )}
+                          )}
+                          {session?.user?.role !== "NormalUser" && (
+                            <>
+                              {postData?.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "55px",
+                                    height: "55px",
+                                    margin: "15px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                              )}
+                            </>
+                          )}
                         <span>
                           <p className="text-[20px] mt-3 text-semibold">
                             {session?.user?.name}
@@ -414,13 +406,11 @@ function CustomNavbar() {
                     </button>
                     {session?.user?.role == "NormalUser" && (
                       <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                        {postData?.imageUrl?.[0] ? (
+                        {postData?.imageUrl ? (
                           <Image
                             width={200}
                             height={200}
-                            src={postData.imageUrl[0].startsWith('http')
-                              ? postData.imageUrl[0] // If it's a full URL, use it as is
-                              : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
+                            src={`/api/editprofile/images/${postData.imageUrl}`}
                             alt="Profile"
                             style={{
                               objectFit: "cover",
@@ -430,19 +420,17 @@ function CustomNavbar() {
                             }}
                           />
                         ) : (
-                          <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                          <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
                         )}
                       </button>
                     )}
                     {session?.user?.role !== "NormalUser" && (
                       <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                        {postData?.imageUrl?.[0] ? (
+                        {postData?.imageUrl ? (
                           <Image
                             width={200}
                             height={200}
-                            src={postData.imageUrl[0].startsWith('http')
-                              ? postData.imageUrl[0] // If it's a full URL, use it as is
-                              : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
+                            src={`/api/editprofile/images/${postDataS.imageUrl}`}
                             alt="Profile"
                             style={{
                               objectFit: "cover",
@@ -452,7 +440,7 @@ function CustomNavbar() {
                             }}
                           />
                         ) : (
-                          <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                          <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
                         )}
                       </button>
                     )}
@@ -463,15 +451,13 @@ function CustomNavbar() {
                     >
                       <div className="">
                         <div className="flex items-center">
-                          {session?.user?.role == "NormalUser" && (
-                            <>
-                            {postData?.imageUrl?.[0] ? (
+                        {session?.user?.role == "NormalUser" && (
+                          <>
+                            {postData?.imageUrl ? (
                               <Image
                                 width={200}
                                 height={200}
-                                src={postData.imageUrl[0].startsWith('http')
-                                  ? postData.imageUrl[0] // If it's a full URL, use it as is
-                                  : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
                                 alt="Profile"
                                 style={{
                                   objectFit: "cover",
@@ -484,29 +470,27 @@ function CustomNavbar() {
                             ) : (
                               <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
                             )}
-                            </>
+                          </>
                           )}
                           {session?.user?.role !== "NormalUser" && (
                             <>
-                            {postData?.imageUrl?.[0] ? (
-                              <Image
-                                width={200}
-                                height={200}
-                                src={postData.imageUrl[0].startsWith('http')
-                                  ? postData.imageUrl[0] // If it's a full URL, use it as is
-                                  : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
-                                alt="Profile"
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "50%",
-                                  width: "55px",
-                                  height: "55px",
-                                  margin: "15px",
-                                }}
-                              />
-                            ) : (
-                              <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
-                            )}
+                              {postData?.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "55px",
+                                    height: "55px",
+                                    margin: "15px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                              )}
                             </>
                           )}
                           <span>
@@ -708,48 +692,44 @@ function CustomNavbar() {
                       >
                         {session?.user?.role == "NormalUser" && (
                           <>
-                        {postData?.imageUrl?.[0] ? (
-                          <Image
-                            width={200}
-                            height={200}
-                            src={postData.imageUrl[0].startsWith('http')
-                              ? postData.imageUrl[0] // If it's a full URL, use it as is
-                              : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
-                            alt="Profile"
-                            style={{
-                              objectFit: "cover",
-                              borderRadius: "50%",
-                              width: "40px",
-                              height: "40px",
-                            }}
-                          />
-                        ) : (
-                          <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                        )}
+                            {postData?.imageUrl ? (
+                              <Image
+                                width={200}
+                                height={200}
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
+                                alt="Profile"
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                                  width: "40px",
+                                  height: "40px",
+                                }}
+                              />
+                            ) : (
+                              <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                            )}
                           </>
-                        )}
-                        {session?.user?.role !== "NormalUser" && (
-                          <>
-                        {postData?.imageUrl?.[0] ? (
-                          <Image
-                            width={200}
-                            height={200}
-                            src={postData.imageUrl[0].startsWith('http')
-                              ? postData.imageUrl[0] // If it's a full URL, use it as is
-                              : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
-                            alt="Profile"
-                            style={{
-                              objectFit: "cover",
-                              borderRadius: "50%",
-                              width: "40px",
-                              height: "40px",
-                            }}
-                          />
-                        ) : (
-                          <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                        )}
-                          </>
-                        )}
+                          )}
+                          {session?.user?.role !== "NormalUser" && (
+                            <>
+                              {postData?.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "40px",
+                                    height: "40px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
+                              )}
+                            </>
+                          )}
                       </button>
                     </div>
                     {isAccountBoxVisible && (
@@ -761,14 +741,12 @@ function CustomNavbar() {
                           <div className="flex items-center">
                             <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
                             {session?.user?.role == "NormalUser" && (
-                              <>
-                            {postData?.imageUrl?.[0] ? (
+                          <>
+                            {postData?.imageUrl ? (
                               <Image
                                 width={200}
                                 height={200}
-                                src={postData.imageUrl[0].startsWith('http')
-                                  ? postData.imageUrl[0] // If it's a full URL, use it as is
-                                  : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
+                                src={`/api/editprofile/images/${postData.imageUrl}`}
                                 alt="Profile"
                                 style={{
                                   objectFit: "cover",
@@ -779,33 +757,31 @@ function CustomNavbar() {
                                 }}
                               />
                             ) : (
-                              <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
+                              <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
                             )}
-                              </>
-                            )}
-                            {session?.user?.role !== "NormalUser" && (
-                              <>
-                            {postData?.imageUrl?.[0] ? (
-                              <Image
-                                width={200}
-                                height={200}
-                                src={postData.imageUrl[0].startsWith('http')
-                                  ? postData.imageUrl[0] // If it's a full URL, use it as is
-                                  : `/api/editprofile/images/${postData.imageUrl[0]}`} // If it's a file path, prepend the base path
-                                alt="Profile"
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "50%",
-                                  width: "55px",
-                                  height: "55px",
-                                  margin: "15px",
-                                }}
-                              />
-                            ) : (
-                              <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
-                            )}
-                              </>
-                            )}
+                          </>
+                          )}
+                          {session?.user?.role !== "NormalUser" && (
+                            <>
+                              {postData?.imageUrl ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                                  alt="Profile"
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    width: "55px",
+                                    height: "55px",
+                                    margin: "15px",
+                                  }}
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
+                              )}
+                            </>
+                          )}
                             <span>
                               <p className="text-[20px] mt-3 text-semibold">
                                 {session?.user?.name}

@@ -2,10 +2,10 @@ import { connectMongoDB } from "../../../../lib/mongodb"; // Update with your Mo
 import Review from '../../../../models/review'; 
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth";
-import { authOptions } from '../../../app/api/auth/[...nextauth]/route'; // ตรวจสอบชื่อให้ถูกต้อง
+import { authOption } from '../../../app/api/auth/[...nextauth]/route'; // ตรวจสอบชื่อให้ถูกต้อง
 
 export async function POST(req) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOption);
   
   // Handle unauthorized access
   if (!session) {
