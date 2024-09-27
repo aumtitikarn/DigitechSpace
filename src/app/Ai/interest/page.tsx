@@ -17,13 +17,24 @@ import { IoTerminalOutline } from "react-icons/io5";
 import { HiOutlineComputerDesktop } from "react-icons/hi2";
 import { MdOutlinePhotoFilter } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import { OrbitProgress } from "react-loading-indicators";
 
 export default function Interest() {
   const router = useRouter();
   const { data: session } = useSession();
   const [selected, setSelected] = useState<string[]>([]);
   const { t, i18n } = useTranslation("translation");
-
+  if (status === "loading") {
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
+  }
   const handleButtonClick = (type: string) => {
     setSelected((prevSelected) => {
       if (prevSelected.includes(type)) {

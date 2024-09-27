@@ -58,6 +58,8 @@ const studentUserSchema = new mongoose.Schema({
     line: { type: String },
     facebook: { type: String },
     imageUrl: { type: [String] },
+    resetPasswordToken: { type: String, select: false },
+    resetPasswordExpires: { type: Date, select: false },
 }, { timestamps: true ,strict: false });
 
 

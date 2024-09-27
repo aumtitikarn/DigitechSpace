@@ -87,19 +87,7 @@ const ProductList = ({ products, titles }) => {
   );
 };
 
-const productCategories = [
-  {
-    group: "Software Development",
-    categories: ["Website", "MobileApp", "Program"],
-  },
-  { group: "Data and AI", categories: ["Ai", "Datasets"] },
-  { group: "Hardware and IoT", categories: ["IOT", "Program"] },
-  { group: "Content and Design", categories: ["Document", "photo"] },
-  {
-    group: "3D and Modeling",
-    categories: ["model", "photo", "Document"],
-  },
-];
+
 
 
 const Aigenproject = () => {
@@ -108,7 +96,19 @@ const Aigenproject = () => {
   const { data: session, status } = useSession();
   const [error, setError] = useState(null);
   const { t } = useTranslation("translation");
-
+  const productCategories = [
+    {
+      group: "Software Development",
+      categories: [t("nav.project.website"), t("nav.project.mobileapp"), t("nav.project.program")],
+    },
+    { group: "Data and AI", categories: [t("nav.project.ai"), t("nav.project.datasets")] },
+    { group: "Hardware and IoT", categories: [t("nav.project.iot"), t("nav.project.program")] },
+    { group: "Content and Design", categories: [t("nav.project.document"), t("nav.project.photo")] },
+    {
+      group: "3D and Modeling",
+      categories: [t("nav.project.model"), t("nav.project.photo"), t("nav.project.document")],
+    },
+  ];
   useEffect(() => {
     const fetchData = async () => {
       try {

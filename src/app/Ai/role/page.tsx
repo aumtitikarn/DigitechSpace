@@ -5,13 +5,25 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
+import { OrbitProgress } from "react-loading-indicators";
 
 export default function Role() {
   const router = useRouter();
   const { t } = useTranslation("translation");
   const { data: session, status } = useSession();
-  console.log("role:", session?.user?.roleaii);
+
+  if (status === "loading") {
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
+  }
   const handleButtonClick = async (roleai: string) => {
     if (session) {
       // Call API to update roleai in database
@@ -38,9 +50,10 @@ export default function Role() {
   };
   
   return (
+    <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">
+      <Navbar />
     <main>
       <Container>
-        <Navbar />
         <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <div className="text-center">
             <h3 className="text-3xl">{t("nav.ai.role.title")}</h3>
@@ -98,9 +111,9 @@ export default function Role() {
             </div>
           </div>
         </div>
-
         <Footer />
       </Container>
     </main>
+    </div>
   );
 }
