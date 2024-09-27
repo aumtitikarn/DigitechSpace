@@ -15,11 +15,11 @@ const reportprojetsSchema = new mongoose.Schema({
   report: {
     type: String,
     enum: [
-      'profanity',
-      'off-topic',
-      'illegal-ads',
-      'unrelated',
-      'other',
+      'ได้รับไฟล์ไม่ครบตามที่กำหนด',
+      'ไฟล์ไม่ทำงานตามที่ควรจะเป็น',
+      'เข้าใจยาก ไม่มีคู่มือการใช้',
+      'โครงงานมีการละเมิดลิขสิทธิ์',
+      'อื่นๆ',
     ],
     required: true,
   },

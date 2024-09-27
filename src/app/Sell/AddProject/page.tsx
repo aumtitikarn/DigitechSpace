@@ -121,7 +121,16 @@ const Project: React.FC = () => {
           showConfirmButton: false,
           timer: 3000,
         });
-  
+        await fetch("/api/notification", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: "โปรเจ็คได้ส่งไปยังเว็บไซค์แล้ว รอตตรวจสอบ",
+            email: session.user.email,
+          }),
+        });
         // Redirect to the project detail page using the ID from the response
         setTimeout(() => {
           router.push(`/project/projectdetail/${data._id}`);

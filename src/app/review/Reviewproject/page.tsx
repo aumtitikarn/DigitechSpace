@@ -76,6 +76,8 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   
       const data = await response.json();
       alert(data.message); // แจ้งผลลัพธ์
+
+    router.push(`/project/projectdetail/${projectId}`);
     } catch (error) {
       console.error('Error submitting review:', error);
       alert('Failed to submit review');
