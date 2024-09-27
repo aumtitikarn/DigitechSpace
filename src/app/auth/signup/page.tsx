@@ -46,8 +46,8 @@ function SignUp() {
         try {
           const sessionResponse = await fetch("/api/auth/session");
           const sessionData = await sessionResponse.json();
-          console.log('interests : ', sessionData.user?.interests);
-          
+          console.log('interests:', sessionData.user?.interests);
+  
           if (sessionData.user?.roleaii) {
             if (sessionData.user?.interests) {
               router.replace("/Home");
@@ -63,9 +63,10 @@ function SignUp() {
         }
       }
     };
-
-    checkSession();
-  }, [status, router]);
+  
+    checkSession(); // Always call this regardless of status.
+  }, [status, router]); // Dependencies remain the same to avoid changing behavior between renders.
+  
 
   const handleSocialSignIn = async (provider:any) => {
     try {
