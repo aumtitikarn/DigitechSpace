@@ -99,14 +99,14 @@ const Aigenproject = () => {
   const productCategories = [
     {
       group: "Software Development",
-      categories: [t("nav.project.website"), t("nav.project.mobileapp"), t("nav.project.program")],
+      categories: ["website", "mobileapp", "program"],
     },
-    { group: "Data and AI", categories: [t("nav.project.ai"), t("nav.project.datasets")] },
-    { group: "Hardware and IoT", categories: [t("nav.project.iot"), t("nav.project.program")] },
-    { group: "Content and Design", categories: [t("nav.project.document"), t("nav.project.photo")] },
+    { group: "Data and AI", categories: ["ai", "datasets"] },
+    { group: "Hardware and IoT", categories: ["iot", "program"] },
+    { group: "Content and Design", categories: ["document", "photo"] },
     {
       group: "3D and Modeling",
-      categories: [t("nav.project.model"), t("nav.project.photo"), t("nav.project.document")],
+      categories: ["model", "photo", "document"],
     },
   ];
   useEffect(() => {
@@ -143,40 +143,37 @@ const Aigenproject = () => {
               "Content-Type": "application/json",
             },
           });
-
+  
           if (interestsResponse.ok) {
             const userData = await interestsResponse.json();
             if (userData.interests && userData.interests.length > 0) {
               userTitles = Array.isArray(userData.interests)
                 ? userData.interests
-                : userData.interests.split(",");
+                : userData.interests.split(",").map(interest => interest.trim());
             }
           }
         }
         console.log("User titles:", userTitles);
-
-        if (userTitles.length === 0) {
-          userTitles = getTopCategories(categoryCounts, 3);
-        }
         console.log("Final user titles:", userTitles);
-
+  
         // Process titles, replace with related categories if needed, and filter out those without products
-        const finalTitles = userTitles.reduce((acc, title) => {
-          const lowercaseTitle = title.toLowerCase();
-          if (categoryCounts[lowercaseTitle] > 0) {
-            acc.push(lowercaseTitle);
+        const titleSet = new Set();
+        userTitles.forEach(title => {
+          const normalizedTitle = normalizeCategory(title);
+          if (categoryCounts[normalizedTitle] > 0) {
+            titleSet.add(normalizedTitle);
           }
         
-          const relatedCategories = findRelatedCategories(lowercaseTitle);
+          const relatedCategories = findRelatedCategories(normalizedTitle);
           relatedCategories.forEach(category => {
-            if (categoryCounts[category.toLowerCase()] > 0 && !acc.includes(category.toLowerCase())) {
-              acc.push(category.toLowerCase());
+            const normalizedCategory = normalizeCategory(category);
+            if (categoryCounts[normalizedCategory] > 0) {
+              titleSet.add(normalizedCategory);
             }
           });
-        
-          return acc;
-        }, []);
-
+        });
+  
+        const finalTitles = Array.from(titleSet);
         console.log("Processed titles:", finalTitles);
         setTitles(finalTitles);
       } catch (error) {
@@ -184,25 +181,33 @@ const Aigenproject = () => {
         setError("An error occurred while fetching data");
       }
     };
-
-    const getTopCategories = (categoryCounts, count) => {
-      return Object.entries(categoryCounts)
-        .sort((a, b) => b[1] - a[1])
-        .filter(([_, count]) => count > 0)
-        .slice(0, count)
-        .map(([category]) => category);
+  
+    const normalizeCategory = (category) => {
+      // แปลงหมวดหมู่ภาษาไทยเป็นภาษาอังกฤษ
+      const thaiToEnglishMap = {
+        'โมเดล/3มิติ': 'model',
+        'เว็บไซต์': 'website',
+        'แอพพลิเคชัน': 'mobileapp',
+        'เอกสาร': 'document',
+        'เอไอ': 'ai',
+        'ชุดข้อมูล': 'datasets',
+        'ไอโอที': 'iot',
+        'โปรแกรม': 'program',
+        'รูปภาพ': 'photo',       
+      };
+      return thaiToEnglishMap[category.toLowerCase()] || category.toLowerCase();
     };
-
+  
     const findRelatedCategories = (title) => {
       const relatedCategories = new Set();
       productCategories.forEach((group) => {
         if (
           group.categories.some(
-            (cat) => cat.toLowerCase() === title.toLowerCase()
+            (cat) => normalizeCategory(cat) === normalizeCategory(title)
           )
         ) {
           group.categories.forEach((category) => {
-            if (category.toLowerCase() !== title.toLowerCase()) {
+            if (normalizeCategory(category) !== normalizeCategory(title)) {
               relatedCategories.add(category);
             }
           });
@@ -210,9 +215,10 @@ const Aigenproject = () => {
       });
       return Array.from(relatedCategories);
     };
+  
 
     fetchData();
-  }, [status, session]);
+  }, [status, session, t]);
 
   if (error) {
     return (

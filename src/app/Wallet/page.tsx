@@ -178,7 +178,7 @@ const Wallet = () => {
   };
 
   const months = [
-    { value: 'all', label: t('months.all') },
+    { value: 'All', label: t('months.all') },
     { value: '01', label: t('months.january') },
     { value: '02', label: t('months.february') },
     { value: '03', label: t('months.march') },
@@ -478,7 +478,7 @@ const Wallet = () => {
             <div className="overflow-x-auto flex-grow">
               <div className="h-full overflow-y-auto">
                 <table className="w-full">
-                  <thead className="sticky top-0 bg-white">
+                  <thead className=" top-0 bg-white">
                     <tr className="bg-gray-100">
                       <th className="p-2 text-left">{t("nav.wallet.date")}</th>
                       <th className="p-2 text-left">{t("nav.wallet.projectName")}</th>

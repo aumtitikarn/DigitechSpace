@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { connectMongoDB } from "../../../../lib/mongodb";
 import  Order  from "../../../../models/order"
 import  Project  from "../../../../models/project"
-import  StudentUser  from "../../../../models/StudentUser"
+import Notification from "../../../../models/notification";
 
 const omise = new Omise({
   secretKey: process.env.OMISE_SECRET_KEY,
@@ -14,7 +14,6 @@ export async function POST(request) {
   try {
     const body = await request.json();
     console.log('Received request body:', body);
-
     const { token, amount, description, typec, product, btype, email, name, net } = body;
 
     if (!token || !amount || !description || !typec) {
@@ -55,17 +54,30 @@ export async function POST(request) {
           status: charge.status,
           check: false,
         });
-
+  
         await newOrder.save();
-
-        await Project.findByIdAndUpdate(
+  
+        const updatedProject = await Project.findByIdAndUpdate(
           product,
           { $inc: { sold: 1 } },
           { new: true }
         );
-       
+  
         console.log('Project sold count incremented');
         console.log('Order saved to MongoDB:', newOrder);
+  
+        // Find the project owner's email
+        const projectOwner = await Project.findById(product);
+        if (projectOwner) {
+          // Create or update the notification
+          const notificationMessage = `Project: ${updatedProject.projectname} has been sold for ${charge.amount / 100} THB.`;
+          await Notification.findOneAndUpdate(
+            { email: projectOwner.email },
+            { $push: { notifications: notificationMessage } },
+            { upsert: true, new: true }
+          );
+          console.log('Notification added for project owner');
+        }
       }
     } else {
      
