@@ -28,18 +28,6 @@ function SignUp() {
   const { t, i18n } = useTranslation('translation');
   const { data: session, status } = useSession();
 
-  if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
-  }
-
   useEffect(() => {
     const checkSession = async () => {
       if (status === 'authenticated') {
@@ -66,6 +54,19 @@ function SignUp() {
   
     checkSession(); // Always call this regardless of status.
   }, [status, router]); // Dependencies remain the same to avoid changing behavior between renders.
+
+  if (status === "loading") {
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
+  }
+
   
 
   const handleSocialSignIn = async (provider:any) => {
