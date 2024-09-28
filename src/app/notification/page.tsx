@@ -13,26 +13,15 @@ interface NotificationCardProps {
   updatedAt: string; // เพิ่มการแสดงวันที่
 }
 
-const NotificationCard: React.FC<NotificationCardProps> = ({
-  notificationValue,
-  updatedAt,
-}) => {
-  return (
-    <Card className="flex flex-col md:flex-row border-2 border-gray-300 rounded-lg shadow-md p-3 bg-[#E8F9FD] w-full">
-      <CardBody className="flex flex-col justify-between">
-        <p className="text-sm md:text-xs mb-2 md:mb-3 font-bold">
-          {notificationValue}
-        </p>
-        <p className="text-xs text-gray-500">
-          {new Date(updatedAt).toLocaleString("th-TH", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })}
-        </p>
-      </CardBody>
-    </Card>
-  );
+const NotificationCard: React.FC<NotificationCardProps> = ({ notificationValue, updatedAt }) => {
+    return (
+        <Card className="flex flex-col md:flex-row border-2 border-gray-300 rounded-lg shadow-md p-3 bg-[#E8F9FD] w-full">
+            <CardBody className="flex flex-col justify-between">
+                <p className="text-sm md:text-xs mb-2 md:mb-3 font-bold">{notificationValue}</p>
+                <p className="text-xs text-gray-500">{new Date(updatedAt).toLocaleString('th-TH')}</p> 
+            </CardBody>
+        </Card>
+    );
 };
 
 const NotificationPage: React.FC = () => {

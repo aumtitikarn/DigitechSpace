@@ -4,7 +4,7 @@ import { GoX } from "react-icons/go";
 import { useTranslation } from "react-i18next";
 
 interface ReportProps {
-  project: { projectname: string; _id: string; author: string };
+  project: { projectname: string; _id: string; author: string; email:string;};
   onClose: () => void;
 }
 
@@ -26,7 +26,7 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
     if (!session) return;
 
     // Ensure all required fields are populated
-    if (!project || !report || !review || !session.user?.email) {
+    if (!project || !report || !review ) {
       console.error("All fields are required");
       return; // Prevent submission if fields are missing
     }
@@ -34,7 +34,7 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
     const data = {
       name: project.projectname,
       projectId: project._id,
-      email: session.user.email,
+      email: project.email,
       report: report, // Ensure this is a valid enum value
       more: review,
       username: session.user?.name,

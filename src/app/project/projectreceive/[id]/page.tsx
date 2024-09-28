@@ -36,6 +36,7 @@ interface ProjectData {
   imageUrl: string[];
   author: string;
   filesUrl: string[];
+  email: string;
 }
 
 interface Review {
@@ -62,7 +63,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const router = useRouter();
-  
+
   const projectGroups = [
     {
       group: "Software Development",

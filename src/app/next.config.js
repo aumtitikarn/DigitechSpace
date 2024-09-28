@@ -11,4 +11,7 @@ module.exports = {
   },
   useSuspense: false,
   reactStrictMode: true,
+  images: {
+    domains: ['lh3.googleusercontent.com'], // Add the external domain here
+  },
 };
