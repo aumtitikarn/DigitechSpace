@@ -248,28 +248,11 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const handleFavoriteClick = async () => {
     if (session) {
       try {
-        // ตรวจสอบสถานะโปรเจกต์ใน favorites
-        const response = await fetch(`/api/favorites?email=${session.user.email}&projectId=${project._id}`);
-        const result = await response.json();
-
-        const isCurrentlyFavorited = result.isFavorited;
-
-        // เตรียมข้อมูลที่ต้องการส่ง
         const data = {
-          email: session.user.email, // ใช้อีเมลจาก session
-          projectId: project._id, // ID ของโปรเจกต์
-          projectname: project.projectname, // ชื่อโปรเจกต์
-          description: project.description, // คำบรรยายโปรเจกต์
-          receive: project.receive, // รายการที่ได้รับ (เป็น array)
-          price: project.price, // ราคา
-          review: project.review, // จำนวนรีวิว
-          sold: project.sold, // จำนวนที่ขายไป
-          rathing: project.rathing, // การให้คะแนน
-          imageUrl: project.imageUrl, // URL ของรูปภาพ (เป็น array)
-          author: project.author // ผู้เขียน
+          email: session.user.email,
+          projectId: project._id, // แปลงเป็น string ที่นี่
         };
-        
-        // ส่ง request เพื่อเพิ่มหรือลบจาก favorites
+  
         const favoriteResponse = await fetch("/api/favorites", {
           method: "POST",
           headers: {
@@ -277,17 +260,18 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           },
           body: JSON.stringify(data),
         });
-
+  
         if (favoriteResponse.ok) {
-          // อัปเดตสถานะ favorite
-          const newFavoritedStatus = !isCurrentlyFavorited;
-          setIsFavorited(newFavoritedStatus);
-
-          // แสดงข้อความตามสถานะ
-          const message = newFavoritedStatus
-            ? "Added to favorites!"
-            : "Removed from favorites!";
-          alert(message);
+          const result = await favoriteResponse.json();
+          
+          // อัปเดตสถานะ favorite และสถานะของโปรเจกต์ตาม response
+          if (result.status === "favorites") {
+            setIsFavorited(true);
+            alert("Added to favorites!");
+          } else if (result.status === "deletefavorite") {
+            setIsFavorited(false);
+            alert("Removed from favorites!");
+          }
         } else {
           const result = await favoriteResponse.json();
           alert(`Error: ${result.error}`);
@@ -300,6 +284,8 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       alert("Please log in to save favorites");
     }
   };
+  
+  
 
   const handleBuyClick = () => {
     setIsPopupOpen(true);
@@ -481,19 +467,20 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       )}
                     </div>
                     {session ? (
-                      <button
-                        onClick={handleFavoriteClick}
-                        className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`} // Change color based on favorite status
-                      >
-                        {isFavorited ? <GoHeartFill /> : <GoHeart />}
-                      </button>
-                    ) : (
-                      <Link href="/auth/preauth">
-                        <button className="cursor-pointer text-gray-600 text-2xl">
-                          <GoHeart />
-                        </button>
-                      </Link>
-                    )}
+  <button
+    onClick={handleFavoriteClick}
+    className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`} // เปลี่ยนสีตามสถานะ
+  >
+    {isFavorited ? <GoHeartFill /> : <GoHeart />}
+  </button>
+) : (
+  <Link href="/auth/preauth">
+    <button className="cursor-pointer text-gray-600 text-2xl">
+      <GoHeart />
+    </button>
+  </Link>
+)}
+
                   </div>
                   {session ? (
                     <button

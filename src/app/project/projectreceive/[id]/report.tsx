@@ -4,7 +4,7 @@ import { GoX } from "react-icons/go";
 import { useTranslation } from "react-i18next";
 
 interface ReportProps {
-  project: { projectname: string; _id: string; author: string; email:string;};
+  project: { projectname: string; _id: string; author: string; email?: string;};
   onClose: () => void;
 }
 

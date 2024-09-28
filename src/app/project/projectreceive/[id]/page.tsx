@@ -169,21 +169,28 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch('/api/review');
-        const result = await response.json();
-
-        console.log('Fetched reviews:', result.data); // Log fetched reviews
-
-        setReviews(result.data);
-        setLoading(false);
+        if (project && project._id) {
+          const response = await fetch('/api/review');
+          const result = await response.json();
+  
+          // กรองเฉพาะ reviews ที่มี projectId ตรงกับ _id ของ project
+          const filteredReviews = result.data.filter((review: Review) => review.projectId === params.id);
+  
+          console.log('Fetched reviews:', filteredReviews); // Log filtered reviews
+  
+          setReviews(filteredReviews);
+          setLoading(false);
+        }
       } catch (error) {
         console.error('Error fetching reviews:', error);
         setLoading(false);
       }
     };
-
-    fetchReviews();
-  }, []);
+  
+    if (project) {
+      fetchReviews();
+    }
+  }, [project]);
   
   const updateProjectRating = async (projectId: string) => {
     try {

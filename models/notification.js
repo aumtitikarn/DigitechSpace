@@ -1,10 +1,24 @@
 import mongoose from 'mongoose';
 
-// สร้าง schema สำหรับ notification
 const notificationSchema = new mongoose.Schema({
-  email: { type: String, required: true }, 
-  notifications: { type: [String], default: [] }, // ใช้ default เป็นอาเรย์ว่าง
-  addedAt: { type: Date, default: Date.now }, 
-}, { timestamps: true }); // เพิ่ม timestamps
+  email: {
+      type: String,
+      required: true,
+      unique: true,
+  },
+  notifications: {
+      message: {
+          type: [String], // เปลี่ยนเป็น Array ของ String
+          required: true,
+      },
+      times: {
+          type: [Date], // เปลี่ยนเป็น Array ของ Date
+          required: true,
+      },
+  },
+}, {
+  timestamps: true,
+});
+
 
 export default mongoose.models.Notification || mongoose.model('Notification', notificationSchema);

@@ -80,42 +80,53 @@ const MyProject: React.FC = () => {
 
   const renderProject = (project: Project, showCheckButton: boolean) => (
     <div key={project._id} className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
-      <Link href={`/project/projectreceive/${project.projectDetails._id}`}>
-        <div className="w-auto h-auto flex flex-col">
-          <img
-            src={`/api/project/images/${project.projectDetails.imageUrl[0]}`}
-            alt="Product Image"
-            className="w-full h-[150px] rounded-md object-cover mb-4"
-          />
-          <div className="flex flex-col h-full">
-            <p className="text-lg font-semibold mb-2 truncate">
-              {project.projectDetails.projectname}
-            </p>
-            <div className="flex items-center mb-2">
-              <span className="text-gray-500 mr-2 text-2xl">
-                <MdAccountCircle />
-              </span>
-              <p className="text-sm text-gray-600 truncate">
-                {project.projectDetails.author}
+      {/* Ensure projectDetails is defined before accessing its properties */}
+      {project.projectDetails ? (
+        <Link href={`/project/projectreceive/${project.projectDetails._id}`}>
+          <div className="w-auto h-auto flex flex-col">
+            <img
+              src={
+                project.projectDetails.imageUrl?.length > 0
+                  ? `/api/project/images/${project.projectDetails.imageUrl[0]}`
+                  : '/path/to/default/image.jpg' // เปลี่ยนให้เป็นเส้นทางของภาพเริ่มต้น
+              }
+              alt="Product Image"
+              className="w-full h-[150px] rounded-md object-cover mb-4"
+            />
+            <div className="flex flex-col h-full">
+              <p className="text-lg font-semibold mb-2 truncate">
+                {project.projectDetails.projectname}
+              </p>
+              <div className="flex items-center mb-2">
+                <span className="text-gray-500 mr-2 text-2xl">
+                  <MdAccountCircle />
+                </span>
+                <p className="text-sm text-gray-600 truncate">
+                  {project.projectDetails.author}
+                </p>
+              </div>
+              <div className="flex items-center mb-2">
+                <span className="text-yellow-500 mr-2 text-lg">
+                  <IoIosStar />
+                </span>
+                <span className="text-gray-600 text-xs lg:text-sm truncate">
+                  {project.projectDetails.rathing || "N/A"} (
+                  {project.projectDetails.review}) |{" "}
+                  {t("nav.project.projectdetail.sold")}{" "}
+                  {project.projectDetails.sold}
+                </span>
+              </div>
+              <p className="text-lg font-bold text-[#33529B]">
+                {project.projectDetails.price} THB
               </p>
             </div>
-            <div className="flex items-center mb-2">
-              <span className="text-yellow-500 mr-2 text-lg">
-                <IoIosStar />
-              </span>
-              <span className="text-gray-600 text-xs lg:text-sm truncate">
-                {project.projectDetails.rathing || "N/A"} (
-                {project.projectDetails.review}) |{" "}
-                {t("nav.project.projectdetail.sold")}{" "}
-                {project.projectDetails.sold}
-              </span>
-            </div>
-            <p className="text-lg font-bold text-[#33529B]">
-              {project.projectDetails.price} THB
-            </p>
           </div>
+        </Link>
+      ) : (
+        <div className="text-center text-red-500">
+          <p>Project details are not available.</p>
         </div>
-      </Link>
+      )}
       {showCheckButton && (
         <div className="flex flex-col items-center my-2">
           <button 
@@ -128,6 +139,7 @@ const MyProject: React.FC = () => {
       )}
     </div>
   );
+  
 
   const renderProjectList = (projects: Project[], showCheckButton: boolean, title: string) => (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">

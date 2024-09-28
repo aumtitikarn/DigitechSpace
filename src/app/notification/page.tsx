@@ -7,17 +7,25 @@ import { useSession } from "next-auth/react";
 import { OrbitProgress } from "react-loading-indicators";
 import { useTranslation } from "react-i18next";
 
-interface NotificationCardProps {
-    notificationValue: string;
-    updatedAt: string; // เพิ่มการแสดงวันที่
+interface Notification {
+    message: string;  
+    timestamp: string; 
 }
 
-const NotificationCard: React.FC<NotificationCardProps> = ({ notificationValue, updatedAt }) => {
+interface NotificationData {
+    notifications: {
+        message: string[]; 
+        times: string[];   
+    };
+    updatedAt: string | null; 
+}
+
+const NotificationCard: React.FC<Notification> = ({ message, timestamp }) => {
     return (
         <Card className="flex flex-col md:flex-row border-2 border-gray-300 rounded-lg shadow-md p-3 bg-[#E8F9FD] w-full">
             <CardBody className="flex flex-col justify-between">
-                <p className="text-sm md:text-xs mb-2 md:mb-3 font-bold">{notificationValue}</p>
-                <p className="text-xs text-gray-500">{new Date(updatedAt).toLocaleString('th-TH')}</p> 
+                <p className="text-sm md:text-xs mb-2 md:mb-3 font-bold">{message}</p>
+                <p className="text-xs text-gray-500">{new Date(timestamp).toLocaleString('th-TH')}</p> 
             </CardBody>
         </Card>
     );
@@ -26,11 +34,9 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notificationValue, 
 const NotificationPage: React.FC = () => {
     const { data: session } = useSession();
     const { t } = useTranslation("translation");
-    const [notificationData, setNotificationData] = useState<{ notifications: string[], updatedAt: string }>({
-        notifications: [],
-        updatedAt: ''
-    });
+    const [notificationData, setNotificationData] = useState<NotificationData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null); // Add error state
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -46,12 +52,12 @@ const NotificationPage: React.FC = () => {
 
                     const data = await response.json();
                     if (response.ok) {
-                        setNotificationData(data); // Now we are getting both notifications and updatedAt
+                        setNotificationData(data);
                     } else {
-                        console.error(data.message);
+                        setError(data.message || "Failed to fetch notifications.");
                     }
                 } catch (error) {
-                    console.error("Error fetching notifications:", error);
+                    setError("Error fetching notifications");
                 } finally {
                     setLoading(false);
                 }
@@ -70,32 +76,40 @@ const NotificationPage: React.FC = () => {
                 transform: "translate(-50%, -50%)",
                 textAlign: "center",
             }}>
-                <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+                <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" />
             </div>
         );
     }
-    
+
     return (
         <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
             <Navbar />
             <main className="flex-grow">
                 <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-
                     <h1 className="text-[24px] font-bold">{t("nav.notification")}</h1>
                     {session?.user?.email ? (
                         <div className="flex flex-col lg:items-start space-y-4 mt-5">
-                            {notificationData.notifications.length > 0 ? (
-                                notificationData.notifications.map((notification, index) => (
-                                    <NotificationCard key={index} notificationValue={notification} updatedAt={notificationData.updatedAt} />
-                                ))
+                            {error ? (
+                                <p className="text-red-500">{error}</p>
                             ) : (
-                                <p>{t("noNotificationsFound")}</p>
+                                notificationData && 
+                                notificationData.notifications.message.length > 0 && 
+                                notificationData.notifications.times.length > 0 ? (
+                                    notificationData.notifications.message.map((message, index) => (
+                                        <NotificationCard 
+                                            key={index} 
+                                            message={message} 
+                                            timestamp={notificationData.notifications.times[index]} 
+                                        />
+                                    ))
+                                ) : (
+                                    <p>{t("noNotificationsFound")}</p>
+                                )
                             )}
                         </div>
                     ) : (
-                        <p>You need to log in to see your notifications.</p>
+                        <p>{t("auth.requireLogin")}</p> 
                     )}
-
                 </div>
             </main>
             <Footer />
@@ -104,4 +118,3 @@ const NotificationPage: React.FC = () => {
 };
 
 export default NotificationPage;
-
