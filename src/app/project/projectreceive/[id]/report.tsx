@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { GoX } from "react-icons/go";
 import { useTranslation } from "react-i18next";
+import Swal from 'sweetalert2';
 
 interface ReportProps {
   project: { projectname: string; _id: string; author: string; email:string;};
@@ -10,7 +11,7 @@ interface ReportProps {
 
 const Report: React.FC<ReportProps> = ({ project, onClose }) => {
   const [review, setReview] = useState("");
-  const [report, setSelectedReason] = useState<string>("profanity");
+  const [report, setSelectedReason] = useState<string>("ได้รับไฟล์ไม่ครบตามที่กำหนด");
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
   const maxLength = 200;
   const { t } = useTranslation("translation");
@@ -54,11 +55,23 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
 
       if (response.ok) {
         setSubmissionStatus("success");
-        setTimeout(onClose, 2000);
+        Swal.fire({
+          icon: 'success',
+          title: t("report.successMessage"),
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          onClose();
+        });
       } else {
         const responseData = await response.json();
         console.error("Error response data:", responseData);
         setSubmissionStatus("error");
+        Swal.fire({
+          icon: 'error',
+          title: t("report.errorMessage"),
+          text: responseData.message || 'An unexpected error occurred',
+        });
       }
     } catch (error) {
       console.error("Fetch error:", error);
@@ -114,12 +127,6 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
         >
           {t("report.send")}
         </button>
-        {submissionStatus === "success" && (
-          <p className="mt-4 text-green-500 text-center">{t("report.successMessage")}</p>
-        )}
-        {submissionStatus === "error" && (
-          <p className="mt-4 text-red-500 text-center">{t("report.errorMessage")}</p>
-        )}
       </div>
     </div>
   );

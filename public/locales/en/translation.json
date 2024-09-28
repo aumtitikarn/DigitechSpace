@@ -277,6 +277,8 @@
   "report" : {
     "title" : "Report",
     "send" : "Send Report",
+    "successMessage" : "Report sent successfully",
+    "errorMessage" : "Report failed to send",
     "text" : "Text",
     "project" : {
       "topic" : "Project",
