@@ -38,6 +38,18 @@ export async function POST(request) {
         );
        
         console.log('Order saved to MongoDB:', newOrder);
+        if (Project) {
+          // Create or update the notification
+          const notificationMessage = `Project: ${Project.projectname || 'Unknown'} has been sold for ${charge.amount / 100} THB.`;
+          await Notification.findOneAndUpdate(
+            { email: Project.email },
+            { $push: { notifications: notificationMessage } },
+            { upsert: true, new: true }
+          );
+          console.log('Notification added for project owner');
+        } else {
+          console.error('Project not found for ID:', charge.metadata.product);
+        }
   
         return NextResponse.json({ message: 'Order saved successfully' }, { status: 200 });
       }
