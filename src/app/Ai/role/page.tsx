@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Container from "../../components/Container";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -12,6 +13,12 @@ export default function Role() {
   const router = useRouter();
   const { t } = useTranslation("translation");
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
 
   if (status === "loading") {
     return <div style={{

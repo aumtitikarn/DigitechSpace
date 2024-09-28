@@ -15,14 +15,15 @@ import { OrbitProgress } from "react-loading-indicators";
 
 function page() {
   const { t, i18n } = useTranslation("translation");
+  const { data: session, status } = useSession();
+
+
 
   const handleSubmit = () => {
     alert(`Input 1: ${input1}`);
     setInput1("");
 
     };
-
-  const { data: session, status } = useSession();
     
   if (status === "loading") {
     return <div style={{

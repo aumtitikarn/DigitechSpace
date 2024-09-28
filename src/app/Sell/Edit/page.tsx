@@ -37,6 +37,9 @@ const ProjectEdit: React.FC = () => {
 
   // Fetch existing project data
   useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
     const fetchProjectData = async () => {
       const id = searchParams.get("edit");
       if (id) {
@@ -88,7 +91,7 @@ const ProjectEdit: React.FC = () => {
     };
 
     fetchProjectData();
-  }, [searchParams]);
+  }, [searchParams, status, router]);
 
   if (status === "loading") {
     return (

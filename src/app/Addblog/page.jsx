@@ -29,6 +29,7 @@ export default function Page() {
 
   const [email,setEmail] = useState("");
   const [profileUserT, setProfileUserT] = useState("");
+  const [profileUserId, setProfileUserId] = useState("");
 
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -97,6 +98,7 @@ export default function Page() {
       const post = data.combinedData;
       setPostData(post);
       setProfileUserT(post.imageUrl);
+      setProfileUserId(post._id)
       setEmail(post.email);
     } catch (error) {
       console.log(error);
@@ -109,6 +111,9 @@ export default function Page() {
 
       console.log("อันนี้set"+setProfileUserT)
       console.log("อันนี้p"+profileUserT)
+
+      console.log("อันนี้setid"+setProfileUserId)
+      console.log("อันนี้userid"+profileUserId)
 
   const handleSudmit = async (e) => {
     console.log(file);
@@ -137,6 +142,7 @@ export default function Page() {
     formData.append("heart", heart);
     formData.append("selectedCategory", selectedCategory);
     formData.append("author", session.user.name);
+    formData.append("userprofileid", profileUserId)
     formData.append("userprofile", profileUserT);
     formData.append("email", email);
     img.forEach((img) => formData.append("imageUrl", img));

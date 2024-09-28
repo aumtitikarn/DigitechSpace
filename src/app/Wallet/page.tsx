@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 import Swal from "sweetalert2";
 import { IoAlertCircleOutline } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 interface BillData {
   fullname: string;
@@ -122,6 +123,13 @@ const Wallet = () => {
   const [showBill, setShowBill] = useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = useState<string>('All');
   const [selectedYear, setSelectedYear] = useState<string>('All');
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
 
   const formatDate = (input: string | Date): string => {
     try {

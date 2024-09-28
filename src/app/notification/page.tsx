@@ -57,7 +57,7 @@ const NotificationPage: React.FC = () => {
                         setError(data.message || "Failed to fetch notifications.");
                     }
                 } catch (error) {
-                    setError("Error fetching notifications");
+                    setError;
                 } finally {
                     setLoading(false);
                 }

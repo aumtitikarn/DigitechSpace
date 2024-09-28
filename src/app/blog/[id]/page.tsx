@@ -25,6 +25,9 @@ import { OrbitProgress } from "react-loading-indicators";
 import { text } from "stream/consumers";
 import Swal from 'sweetalert2';
 import { profile } from "console";
+import { FaLink } from "react-icons/fa";
+import { FaFacebook } from "react-icons/fa";
+import { RiTwitterXLine } from "react-icons/ri";
 
 
 function Blog({ params, initialComments }) {
@@ -40,6 +43,7 @@ function Blog({ params, initialComments }) {
   const router = useRouter();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
   const [popupInput, setPopupInput] = useState("");
 
   const [postData, setPostData] = useState<PostData[]>([]);
@@ -66,6 +70,11 @@ function Blog({ params, initialComments }) {
 
   const [profileUser, setProfileUser] = useState([]);
   const [profileUserN, setProfileUserN] = useState([]);
+
+  const handleShareClick = () => {
+    setIsSharePopupOpen(!isSharePopupOpen); // Toggle popup open/close
+  };
+
 
   const getPostByIdprofile = async () => {
     if (!session?.user?.id) {
@@ -255,6 +264,35 @@ function Blog({ params, initialComments }) {
     setIsPopupOpen(!isPopupOpen);
   };
 
+  const url = typeof window !== "undefined" ? window.location.href : "";
+
+  const handleCopyLink = () => {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        alert("URL copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy URL: ", err);
+      });
+  };
+
+  const handleFacebookShare = () => {
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      "_blank"
+    );
+  };
+
+  const handleTwitterShare = () => {
+    const text = encodeURIComponent(`Digitech Space project: ${postData.topic} by: ${postData.author}`);
+    window.open(
+      `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`,
+      "_blank"
+    );
+  };
+
+
   // const handlePopupSubmit = () => {
   //   alert(`Popup Input: ${popupInput}`);
   //   setPopupInput("");
@@ -266,48 +304,39 @@ function Blog({ params, initialComments }) {
     setInput1("");
   };
 
+  const UserId = session?.user?.id;
+
+  console.log("UserId :", UserId);
+
   const handleSubmitCiHeart = async (e) => {
     e.preventDefault();
 
+    // ตรวจสอบว่าใน likedByUsers มี userId อยู่หรือไม่
+    const isLiked = Array.isArray(postData.likedByUsers) && postData.likedByUsers.includes(UserId);
+
     try {
-      // Update the blog post heart count
-      const blogRes = await fetch(`http://localhost:3000/api/posts/${id}`, {
+      const actionheart = isLiked ? 'unlike' : 'like'; // กำหนด actionheart ว่าจะเป็นการ like หรือ unlike
+      const heart = isLiked ? postData.heart - 1 : postData.heart + 1; // ถ้าเคยกดแล้วจะลบ 1 ถ้ายังไม่เคยจะเพิ่ม 1
+
+      // ส่งข้อมูลไปยัง backend
+      const blogRes = await fetch(`http://localhost:3000/api/posts/${postData._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ setheart: setheart + 1 }),
+        body: JSON.stringify({ userId: UserId, actionheart, setheart: heart }),
       });
 
       if (!blogRes.ok) {
         throw new Error("Failed to update blog post");
       }
 
-      // Prepare FormData to send blogId as multipart/form-data
-      const favBlog = {
-        blogId: postData._id,
-        imageUrl: postData.imageUrl,
-        topic: postData.topic,
-      };
+      // อัปเดต state
+      setHeart(heart); // อัปเดตค่าของ heart ใน state
+      setIsHeartClicked(!isLiked); // เปลี่ยนสถานะของ isHeartClicked ตามค่า isLiked
 
-      // Prepare FormData to send the favblog data as multipart/form-data
-      const formData = new FormData();
-      formData.append("favblog", JSON.stringify(favBlog)); // Append the favblog data
-
-      // Update the user's profile with the favblog data
-      const profileRes = await fetch(`/api/editprofile/${session?.user?.id}`, {
-        method: "PUT",
-        body: formData,
-      });
-
-      if (!profileRes.ok) {
-        throw new Error("Failed to update user profile with favblog");
-      }
-
-      // Update the heart state locally and refresh the page
-      setHeart((prevHeart) => prevHeart + 1);
-      setIsHeartClicked(true);
-      router.refresh();
+      // ดึงข้อมูลโพสต์ใหม่
+      await getPostById(postData._id);
     } catch (error) {
       console.error("Error updating:", error);
       Swal.fire({
@@ -319,6 +348,7 @@ function Blog({ params, initialComments }) {
       });
     }
   };
+
 
 
   if (status === "loading") {
@@ -407,28 +437,28 @@ function Blog({ params, initialComments }) {
                 <FaChevronRight />
               </button>
             </div>
-
-            <div className="flex flex-row mt-5 mb-5 items-center">
-              {postData.userprofile && postData.userprofile[0] ? (
-                <Image
-                  width={200}
-                  height={200}
-                  src={`/api/posts/images/${postData.userprofile}`}
-                  alt={`${postData.author}'s profile picture`}
-                  className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
-                />
-              ) : (
-                <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
-              )}
-              <div className="flex flex-col justify-center">
-                {postData && postData.author ? (
-                  <h1 className="font-bold">{postData.author}</h1>
+            <Link href={`/Profile/ViewProfile/${postData.userprofileid}`}>
+              <div className="flex flex-row mt-5 mb-5 items-center">
+                {postData.userprofile && postData.userprofile[0] ? (
+                  <Image
+                    width={200}
+                    height={200}
+                    src={`/api/posts/images/${postData.userprofile}`}
+                    alt={`${postData.author}'s profile picture`}
+                    className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                  />
                 ) : (
-                  <h1 className="font-bold">Anonymous</h1> // กรณีที่ไม่มีข้อมูลผู้เขียน
+                  <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
                 )}
+                <div className="flex flex-col justify-center">
+                  {postData && postData.author ? (
+                    <h1 className="font-bold">{postData.author}</h1>
+                  ) : (
+                    <h1 className="font-bold">Anonymous</h1> // กรณีที่ไม่มีข้อมูลผู้เขียน
+                  )}
+                </div>
               </div>
-            </div>
-
+            </Link>
             <div className="flex flex-wrap my-2">
               <Link
                 href=""
@@ -476,7 +506,8 @@ function Blog({ params, initialComments }) {
               <div className="flex space-x-4">
                 <div className="flex items-center">
                   <CiHeart
-                    className={`text-3xl cursor-pointer ${isHeartClicked ? 'text-red-500' : ''}`}
+                    className={`text-3xl cursor-pointer ${Array.isArray(postData.likedByUsers) && postData.likedByUsers.includes(UserId) ? 'text-red-500' : 'text-gray-500'
+                      }`} // ถ้าผู้ใช้คนนี้เคยกด ให้แสดงเป็นสีแดง ถ้าไม่เคยกด ให้เป็นสีเทา
                     onClick={handleSubmitCiHeart}
                   />
                   {postData && postData.heart !== undefined ? (
@@ -487,11 +518,31 @@ function Blog({ params, initialComments }) {
                 </div>
                 <div className="flex items-center">
                   <BsChatDots className="text-2xl" />
-                  <p className="ml-1">1</p>
+                  <p className="ml-1">{postData.comments?.length || 0}</p>
                 </div>
               </div>
               <div className="flex space-x-4">
-                <IoShareOutline className="text-2xl" />
+                <div className="relative flex justify-center">
+                <IoShareOutline className="text-2xl cursor-pointer" onClick={handleShareClick} />
+
+                {isSharePopupOpen && (
+                <div className="absolute bottom-full mb-[10px] w-[121px] h-[46px] flex-shrink-0 rounded-[30px] border border-gray-300 bg-white flex items-center justify-center space-x-4 shadow-lg">
+                  <FaLink
+                    className="text-gray-600 cursor-pointer"
+                    onClick={handleCopyLink}
+                  />
+                  <FaFacebook
+                    className="text-gray-600 cursor-pointer"
+                    onClick={handleFacebookShare}
+                  />
+                  <RiTwitterXLine
+                    className="text-gray-600 cursor-pointer"
+                    onClick={handleTwitterShare}
+                  />
+                </div>
+                )}
+                </div>
+
                 <AiOutlineNotification
                   className="text-2xl cursor-pointer"
                   onClick={togglePopup}
@@ -561,7 +612,7 @@ function Blog({ params, initialComments }) {
                   <div key={comment._id} className="flex flex-col m-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
-                      
+
                         {comment.profile && comment.profile[0] ? (
                           <Image
                             width={200}
@@ -578,11 +629,9 @@ function Blog({ params, initialComments }) {
 
                         <strong className="flex flex-col justify-center text-lg">{comment.author}</strong>
                       </p>
+                      <div className="flex flex-row">
                       <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
-                      <p className="text-lg ml-10">{comment.text}</p>
-                      <div className="flex flex-col ml-10">
-
-                        <div className="flex flex-row">
+                      <div className="flex flex-row">
                           {replyingTo === comment._id ? (
                             <div className="flex flex-col ml-4">
 
@@ -611,6 +660,9 @@ function Blog({ params, initialComments }) {
                             <button onClick={() => setReplyingTo(comment._id)} className="font-bold text-[#0E6FFF] ml-4">Reply</button>
                           )}
                         </div>
+                        </div>
+                      <p className="text-lg ml-10">{comment.text}</p>
+                      <div className="flex flex-col ml-10">
                       </div>
                     </div>
                     {/* Handle replies if they exist */}
@@ -620,18 +672,18 @@ function Blog({ params, initialComments }) {
                           <div>
                             <p key={reply._id}></p>
                             <p className="flex flex-row">
-                              
+
                               {reply.profile && reply.profile[0] ? (
-                              <Image
-                                width={200}
-                                height={200}
-                                src={`/api/posts/images/${reply.profile}`}
-                                alt={`${reply.author}'s profile picture`}
-                                className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
-                              />
-                            ) : (
-                              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
-                            )}
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={`/api/posts/images/${reply.profile}`}
+                                  alt={`${reply.author}'s profile picture`}
+                                  className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+                              )}
                               <strong className="flex flex-col justify-center text-lg">{reply.author} : reply</strong>
                             </p>
                             <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
@@ -672,7 +724,7 @@ function Blog({ params, initialComments }) {
                     {t("report.blog.topic")} : {postData.topic}
                   </p>
                   <div className="border-b border-gray-300 my-3"></div>
-                  <p className="text-lg font-medium mb-3">หัวข้อที่รายงาน</p>
+                  {/* <p className="text-lg font-medium mb-3">หัวข้อที่รายงาน</p> */}
                   {/* <input
                     placeholder="หัวข้อที่ต้องการรายงาน"
                     onChange={(e) => setBlogname(e.target.value)}

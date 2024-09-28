@@ -171,7 +171,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     return starIcons;
   };
 
-  const defaultCategoriesToShow = 5;
+
 
   return (
     <div className="flex flex-col md:flex-row w-full">
