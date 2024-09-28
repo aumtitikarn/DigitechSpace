@@ -20,6 +20,7 @@ import Report from "./report";
 import { AiOutlineNotification } from "react-icons/ai";
 import { useTranslation } from "react-i18next";
 import { MdOutlineFileDownload } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 
 interface ProjectData {
@@ -60,6 +61,8 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const router = useRouter();
+  
   const projectGroups = [
     {
       group: "Software Development",
@@ -77,7 +80,11 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
     },
   ];
 
+
   useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
     const fetchSimilarProjects = async () => {
       if (project && project.category) {
         try {
@@ -112,7 +119,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
     };
     console.log("project :", project);
     fetchSimilarProjects();
-  }, [project]);
+  }, [status, router,project]);
 
   // const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
   useEffect(() => {

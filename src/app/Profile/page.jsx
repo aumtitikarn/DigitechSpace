@@ -15,27 +15,80 @@ import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { FaPlus } from "react-icons/fa6";
 import { OrbitProgress } from "react-loading-indicators";
+import { useRouter } from "next/navigation";
 
 function page() {
   const [activeButton, setActiveButton] = useState("button1");  // Set initial state to "button1"
   const { t, i18n } = useTranslation("translation");
   const [activeButton1] = useState("button1");
-
+  const router = useRouter();
   const [postData, setPostData] = useState([]);
   const [postDataS, setPostDataS] = useState([]);
   const [postDataProject, setPostDataProject] = useState([]);
   const [postDataBlog, setPostDataBlog] = useState([]);
   const [publishedProject,setPublishedProjects] = useState([]);
+  const { data: session, status } = useSession();
+
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
   };
 
-  const { data: session, status } = useSession();
 
   console.log("User ID:", session?.user?.id);
 
-  console.log("this is id kub " + session._id)
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+    
+    if (status === "authenticated" && session) {
+      const fetchData = async () => {
+        try {
+          // Fetch published projects
+          const publishedResponse = await fetch("/api/project/getProjects/user", {
+            method: "GET",
+          });
+          if (publishedResponse.ok) {
+            const publishedData = await publishedResponse.json();
+            console.log("Published Data:", publishedData);
+            setPublishedProjects(publishedData);
+          } else {
+            console.error("Failed to fetch published projects");
+          }
+
+          // Fetch blog posts
+          const blogResponse = await fetch("/api/posts/getposts/user", {
+            cache: "no-store"
+          });
+          if (blogResponse.ok) {
+            const blogData = await blogResponse.json();
+            setPostDataBlog(blogData);
+          } else {
+            console.error("Failed to fetch blog posts");
+          }
+
+          // Fetch user profile
+          const profileResponse = await fetch(`/api/editprofile/${session.user.id}`, {
+            method: "GET",
+            cache: "no-store",
+          });
+          if (profileResponse.ok) {
+            const profileData = await profileResponse.json();
+            console.log("Edit post: ", profileData);
+            setPostData(profileData.post);
+            setPostDataS(profileData.posts);
+          } else {
+            console.error("Failed to fetch user profile");
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [status, session, router]);
 
   if (status === "loading") {
     return <div style={{
@@ -49,53 +102,6 @@ function page() {
     </div>;
   }
 
-  const getPosts = async () => {
-    try {
-      const res = await fetch("api/project/getProjects/user", {
-        cache: "no-store"
-      });
-  
-      if (!res.ok) {
-        throw new Error("Failed to fetch posts");
-      }
-  
-      const data = await res.json();
-      console.log("Fetched Data: ", data); // Log the data to inspect its structure
-  
-      // Update the state with the data
-      // setPublishedProjects(data); // Assuming the API returns an array of projects
-      console.log("เช็คข้อมูลโครงงาน",data)
-    } catch (error) {
-      console.log("Error loading posts: ", error);
-    }
-  };
-
-  useEffect(() => {
-    getPosts();
-  }, []);
-  
-
-  const getPostsblog = async () => {
-    try {
-      const res = await fetch("/api/posts/getposts/user", {
-        cache: "no-store"
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch posts");
-      }
-
-      const data = await res.json();
-      setPostDataBlog(data); // บันทึกข้อมูลใน state
-    } catch (error) {
-      console.log("Error loading posts: ", error);
-    }
-  };
-
-  // ใช้ useEffect เพื่อเรียกฟังก์ชัน getPostsblog เมื่อ component โหลด
-  useEffect(() => {
-    getPostsblog();
-  }, []);
 
 
   // const getPosts = async () => {
@@ -120,155 +126,6 @@ function page() {
   //   }
   // }
 
-  useEffect(() => {
-    const getPosts = async () => {
-      if (status === "authenticated" && session) {
-        try {
-          // Fetch published projects
-          const publishedResponse = await fetch(
-            "/api/project/getProjects/user",
-            {
-              method: "GET",
-            }
-          );
-          if (publishedResponse.ok) {
-            const publishedData = await publishedResponse.json();
-            console.log("Published Data:", publishedData); // Debug log
-            setPublishedProjects(publishedData);
-          } else {
-            console.error("Failed to fetch published projects");
-          }
-        } catch (error) {
-          console.error("Error fetching projects:", error);
-        }
-      }
-    };
-
-    getPosts();
-  }, [status, session]);
-
-  const products = [
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-    {
-      image:
-        "https://cdn.stock2morrow.com/upload/book/1555_s2m-standard-banner-5.jpg",
-      name: "Hi5 Website",
-      author: "Titikarn Waitayasuwan",
-      rating: "4.8",
-      reviews: 28,
-      sold: 29,
-      price: "50,000",
-    },
-  ];
 
   const getPostById = async () => {
     try {
@@ -291,9 +148,6 @@ function page() {
     }
   };
 
-  useEffect(() => {
-    getPostById();
-  }, []);
 
   const getPostByIdS = async () => {
     try {
@@ -315,10 +169,8 @@ function page() {
       console.log(error);
     }
   };
+  
 
-  useEffect(() => {
-    getPostByIdS();
-  }, []);
 
   return (
     <Container>

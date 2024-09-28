@@ -1,6 +1,6 @@
 //Sell/Addproject
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Upload from "./upload";
@@ -26,6 +26,12 @@ const Project: React.FC = () => {
   const [img, setImg] = useState<File[]>([]);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
 
   if (status === "loading") {
     return <div style={{

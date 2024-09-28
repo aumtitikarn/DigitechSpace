@@ -12,9 +12,19 @@ import { useSession } from "next-auth/react";
 import { FaLink } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
+import { useRouter } from "next/navigation";
+
 
 function page() {
   const { t, i18n } = useTranslation("translation");
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
 
   const handleSubmit = () => {
     alert(`Input 1: ${input1}`);
@@ -22,7 +32,6 @@ function page() {
 
     };
 
-  const { data: session, status } = useSession();
     
   if (status === "loading") {
     return <div style={{

@@ -16,6 +16,13 @@ const SellInfo = () => {
   const { t } = useTranslation("translation");
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
+  
   const [formData, setFormData] = useState({
     fullname: "",
     phonenumber: "",

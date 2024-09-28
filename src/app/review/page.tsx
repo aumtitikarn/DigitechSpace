@@ -7,6 +7,7 @@ import { MdAccountCircle } from "react-icons/md";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 
 // Define types for project data
 interface Project {
@@ -35,13 +36,17 @@ interface Project {
 
 // Main Review Component
 const Review: React.FC = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { t } = useTranslation("translation");
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
     const fetchProjects = async () => {
       try {
         const response = await fetch("/api/myproject");
@@ -60,7 +65,7 @@ const Review: React.FC = () => {
     };
 
     fetchProjects();
-  }, []);
+  }, [status, router]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;

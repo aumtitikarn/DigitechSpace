@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useSession } from "next-auth/react";
@@ -22,6 +22,12 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   const searchParams = useSearchParams();
   const projectId = searchParams.get("id");
   const name = searchParams.get("name");
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);

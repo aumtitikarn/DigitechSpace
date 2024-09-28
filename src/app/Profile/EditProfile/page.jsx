@@ -15,10 +15,19 @@ import { MdAccountCircle } from "react-icons/md";
 import { FaPlus } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
+import { useRouter } from "next/navigation";
 
 function page() {
   const { data: session, status } = useSession();
   const { t, i18n } = useTranslation("translation");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
+  
   if (status === "loading") {
     return <div style={{
       position: "absolute",

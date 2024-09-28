@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useRouter } from "next/navigation";
 // Define the Project interface
 interface Project {
   _id: string;
@@ -27,9 +28,15 @@ const ReviewCard: React.FC<{ projectId: string }> = ({ projectId }) => {
   const { t } = useTranslation("translation");
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
+
   useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
     const fetchData = async () => {
       if (!projectId) {
         console.error("Invalid projectId");
@@ -56,7 +63,7 @@ const ReviewCard: React.FC<{ projectId: string }> = ({ projectId }) => {
     };
 
     fetchData();
-  }, [projectId]);
+  }, [status, router,projectId]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;

@@ -21,9 +21,16 @@ import { OrbitProgress } from "react-loading-indicators";
 
 export default function Interest() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [selected, setSelected] = useState<string[]>([]);
   const { t, i18n } = useTranslation("translation");
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
+  
   if (status === "loading") {
     return <div style={{
       position: "absolute",
