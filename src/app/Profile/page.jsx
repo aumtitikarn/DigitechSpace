@@ -90,8 +90,6 @@ function page() {
     }
   }, [status, session, router]);
 
-  console.log("this is id photo " + session.user.image)
-
   if (status === "loading") {
     return <div style={{
       position: "absolute",
@@ -172,7 +170,7 @@ function page() {
     }
   };
   
-
+  console.log(postData);
 
   return (
     <Container>
@@ -185,10 +183,10 @@ function page() {
                 {postData && postData.imageUrl && postData.imageUrl.length > 0 ? (
                   postData.imageUrl[0].includes('http') ? (
                     // If the imageUrl is an external URL (starting with http)
-                    <img
+                    <Image
                       width={200}
                       height={200}
-                      src={session.user.image}
+                      src= {postData.imageUrl[0]}
                       alt="Getgmail"
                       style={{
                         objectFit: "cover",
@@ -197,6 +195,7 @@ function page() {
                         height: "95px",
                         margin: "15px",
                       }}
+                      unoptimized={true}
                     />
                   ) : (
                     // If the imageUrl is a local file (stored in the system)

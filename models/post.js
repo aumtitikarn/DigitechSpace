@@ -25,10 +25,15 @@ const postSchema = new mongoose.Schema(
     description: { type: String, required: true },
     heart: { type: Number, default: 0 },
     imageUrl: { type: [String], required: true }, // Array of strings
+    userprofileid: { type: [String], required: true },
     userprofile: { type: [String], required: true },
     author: { type: String, required: true },
     email: { type: String, required: true },
     comments: { type: [commentSchema], default: [] },
+    likedByUsers: {
+      type: [String], // เก็บ array ของ user IDs ที่กดไลค์โพสต์นี้
+      required: true,
+    },
     selectedCategory: {
       type: String,
       enum: [

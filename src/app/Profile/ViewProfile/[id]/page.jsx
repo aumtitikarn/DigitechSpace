@@ -146,20 +146,7 @@ function page() {
           </div>
 
           <div className="flex flex-row justify-center mt-10 mb-10">
-            <Link
-              href={`/Profile/EditProfile/${session?.user?.id}`}
-              className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center"
-              style={{ backgroundColor: "#33539B" }}
-            >
-              <p>{t("nav.profile.edit")}</p>
-            </Link>
-            <Link
-              href="/Profile/QRshare"
-              className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center"
-              style={{ backgroundColor: "#33539B" }}
-            >
-              {t("nav.profile.share")}
-            </Link>
+
           </div>
 
           <div className="flex flex-row justify-center space-x-4 mt-4 w-full">

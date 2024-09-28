@@ -72,8 +72,10 @@ export async function POST(req) {
     let email = "";
     let heart = 0;
     let userprofile = "";
+    let userprofileid = "";
     let comments = [];
     let imageUrl = [];
+    let likedByUsers = [];
 
     for (const [key, value] of formData.entries()) {
       switch (key) {
@@ -95,6 +97,9 @@ export async function POST(req) {
         case "userprofile":
           userprofile = value.toString();
           break;
+        case "userprofileid":
+            userprofileid = value.toString();
+          break;
         case "email":
             email = value.toString();
           break;
@@ -103,6 +108,9 @@ export async function POST(req) {
           break;
           case "comments":
             comments = value.toString();
+            break;
+            case "likedByUsers":
+              likedByUsers = value.toString();
             break;
         case "imageUrl":
           if (value instanceof Blob) {
@@ -130,10 +138,12 @@ export async function POST(req) {
       heart,
       selectedCategory,
       userprofile, // รูปภาพที่เก็บใน userprofile
+      userprofileid,
       author,
       email,
       imageUrl,
       comments: [],
+      likedByUsers: [],
     });
     
     const savedProject = await newItem.save();
@@ -154,6 +164,54 @@ export async function GET() {
     const { db } = await connectMongoDB();
     const posts = await Post.find({});
     return NextResponse.json({ posts });
+}
+
+export async function PUT(req, { params }) {
+  try {
+    const { id } = params; // ดึง post ID จาก params
+    const body = await req.json(); // อ่าน request body
+    const {  userId, setheart: heart, actionheart } = body; // ดึงค่า heart จาก body
+
+    await connectMongoDB(); // เชื่อมต่อกับ MongoDB
+
+    // ค้นหา post ตาม ID
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return NextResponse.json({ message: 'Post not found' }, { status: 404 });
+    }
+
+    // อัปเดตค่า heart
+    if (heart !== undefined) {
+      post.heart = heart; // อัปเดตจำนวนหัวใจใน post
+    }
+
+        // ตรวจสอบ action ถ้าเป็น 'like' ให้เพิ่ม userId ไปใน likedByUsers
+        if (actionheart === 'like') {
+          if (!post.likedByUsers) {
+            post.likedByUsers = [];
+            console.log('post.likedByUsers (before update):', post.likedByUsers);
+          }
+        
+          if (!post.likedByUsers.includes(userId)) {
+            post.likedByUsers.push(userId);
+            console.log('User added to likedByUsers:', post.likedByUsers);
+          }
+        } else if (actionheart === 'unlike') {
+          if (post.likedByUsers) {
+            post.likedByUsers = post.likedByUsers.filter((user) => user !== userId);
+            console.log('User removed from likedByUsers:', post.likedByUsers);
+          }
+        }
+
+    // บันทึกการอัปเดตลง MongoDB
+    await post.save();
+
+    return NextResponse.json({ post }, { status: 200 }); // ส่งข้อมูล post กลับไป
+  } catch (error) {
+    console.error('Error updating post:', error);
+    return NextResponse.json({ message: 'Error updating post' }, { status: 500 });
+  }
 }
 
 
