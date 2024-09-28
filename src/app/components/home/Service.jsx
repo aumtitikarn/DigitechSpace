@@ -5,7 +5,7 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useTranslation } from 'react-i18next';
 import { useRouter } from "next/navigation";
 import { redirect } from "next/navigation";
-
+import { useSession } from "next-auth/react";
 
 function Service() {
   const [showtext, setShowtext] = useState(false);
@@ -13,7 +13,7 @@ function Service() {
   const [showtext2, setShowtext2] = useState(false);
   const [showtext3, setShowtext3] = useState(false);
   const { t, i18n } = useTranslation('translation');
-
+  const { data: session, status } = useSession();
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");
 
@@ -43,34 +43,41 @@ function Service() {
   // };
 
   const router = useRouter();
-
-  const handleSudmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!report || !email) {
-      alert("Please complete all inputs")
-      return;
+    if (!session || !session.user) {
+        console.error("Session not loaded or user not logged in");
+        return;
     }
 
-    try  {
+    try {
+        const response = await fetch("/api/postservice", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                report,
+                email,
+                username: session.user?.name || session.user?.email,  // ดึง username หรือ email จาก session
+            }),
+        });
 
-      const res = await fetch("http://localhost:3000/api/postservice",{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body: JSON.stringify({report,email})
-      })
-
-      if (res.ok) {
-        // Optionally redirect or show a success message
-        router.push("/");
-      }
-
-    } catch(error){
-      console.log(error);
+        const data = await response.json();
+        if (response.ok) {
+            console.log("Data sent successfully:", data);
+            router.push(`/Home`);  // Redirect ไปที่หน้า Home
+        } else {
+            console.error("Error sending data:", data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
     }
-  }
+};
+
+  
+
 
   return (
     <main className="flex flex-col md:flex-row w-full justify-center p-4">
@@ -152,28 +159,28 @@ function Service() {
           <p className="mt-2 text-lg">
           {t("nav.home.service.des")}
           </p>
-          <form onSubmit={handleSudmit}>
-          <div className="mt-4">
-            <input
-              type="text"
-              onChange={(e) => setReport(e.target.value)}
-              placeholder={t("nav.home.service.problem")}
-              className="w-full p-2 mb-2 border border-gray-300 rounded"
-            />
-            <input
-              type="text"
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t("nav.home.service.email")}
-              className="w-full p-2 mb-2 border border-gray-300 rounded"
-            />
-            <button
-              className="w-full p-2 text-white rounded mt-3"
-              style={{backgroundColor:"#33539B"}}
-            >
-              {t("nav.home.service.send")}
-            </button>
-          </div>
-          </form>
+          <form onSubmit={handleSubmit}>
+      <div className="mt-4">
+        <input
+          type="text"
+          onChange={(e) => setReport(e.target.value)}
+          placeholder={t("nav.home.service.problem")}
+          className="w-full p-2 mb-2 border border-gray-300 rounded"
+        />
+        <input
+          type="text"
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={t("nav.home.service.email")}
+          className="w-full p-2 mb-2 border border-gray-300 rounded"
+        />
+        <button
+          className="w-full p-2 text-white rounded mt-3"
+          style={{ backgroundColor: "#33539B" }}
+        >
+          {t("nav.home.service.send")}
+        </button>
+      </div>
+    </form>
         </div>
       </div>
     </main>

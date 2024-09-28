@@ -23,8 +23,8 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   const projectId = searchParams.get("id");
   const name = searchParams.get("name");
 
-  const handleRatingChange = (newRating: number) => {
-    setRating(newRating);
+  const handleRatingChange = (newRathing: number) => {
+    setRating(newRathing);
   };
 
   const handleReviewChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
