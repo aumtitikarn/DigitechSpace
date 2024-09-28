@@ -4,6 +4,7 @@ import { connectMongoDB } from "../../../../lib/mongodb";
 import  Order  from "../../../../models/order"
 import  Project  from "../../../../models/project"
 import Notification from "../../../../models/notification";
+import { getThaiDateTime } from '../../../../models/date';
 
 const omise = new Omise({
   secretKey: process.env.OMISE_SECRET_KEY,
@@ -68,12 +69,18 @@ export async function POST(request) {
   
         // Find the project owner's email
         const projectOwner = await Project.findById(product);
+        const thaiTime = getThaiDateTime();
         if (projectOwner) {
           // Create or update the notification
           const notificationMessage = `Project: ${updatedProject.projectname} has been sold for ${charge.amount / 100} THB.`;
           await Notification.findOneAndUpdate(
             { email: projectOwner.email },
-            { $push: { notifications: notificationMessage } },
+            { 
+              $push: { 
+                'notifications.messages': notificationMessage,
+                'notifications.times': thaiTime
+              } 
+            },
             { upsert: true, new: true }
           );
           console.log('Notification added for project owner');
