@@ -90,22 +90,29 @@ const NotificationPage: React.FC = () => {
                     {session?.user?.email ? (
                         <div className="flex flex-col lg:items-start space-y-4 mt-5">
                             {error ? (
-                                <p className="text-red-500">{error}</p>
-                            ) : (
-                                notificationData && 
-                                notificationData.notifications.message.length > 0 && 
-                                notificationData.notifications.times.length > 0 ? (
-                                    notificationData.notifications.message.map((message, index) => (
-                                        <NotificationCard 
-                                            key={index} 
-                                            message={message} 
-                                            timestamp={notificationData.notifications.times[index]} 
-                                        />
-                                    ))
-                                ) : (
-                                    <p>{t("noNotificationsFound")}</p>
-                                )
-                            )}
+    <p className="text-red-500">{error}</p>
+) : (
+    notificationData && 
+    notificationData.notifications.message.length > 0 && 
+    notificationData.notifications.times.length > 0 ? (
+        notificationData.notifications.message
+            .map((message, index) => ({
+                message,
+                timestamp: notificationData.notifications.times[index],
+            }))
+            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // เรียงจากใหม่ไปเก่า
+            .map((notification, index) => (
+                <NotificationCard 
+                    key={index} 
+                    message={notification.message} 
+                    timestamp={notification.timestamp} 
+                />
+            ))
+    ) : (
+        <p>{t("noNotificationsFound")}</p>
+    )
+)}
+
                         </div>
                     ) : (
                         <p>{t("auth.requireLogin")}</p> 

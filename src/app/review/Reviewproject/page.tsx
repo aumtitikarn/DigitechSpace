@@ -38,7 +38,6 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   };
 
   const handleSubmit = async () => {
-    // Ensure session is loaded and contains user data
     if (!session || !session.user) {
       alert("You must be logged in to submit a review.");
       return;
@@ -46,14 +45,7 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   
     const username = session.user.name || session.user.email;
   
-    // Check for required fields
     if (!rathing || !review || !projectId || !username) {
-      console.error({
-        rathing,
-        review,
-        projectId,
-        username,
-      });
       alert("Missing data: Ensure all fields are filled.");
       return;
     }
@@ -68,27 +60,27 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
           rathing,
           review,
           projectId,
-          username, // ส่ง username
+          username,
         }),
       });
   
-      // ตรวจสอบการตอบสนองจาก API
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Error:', errorData);
         alert(`Error: ${errorData.message}`);
         return;
       }
   
       const data = await response.json();
-      alert(data.message); // แจ้งผลลัพธ์
-
-    router.push(`/project/projectdetail/${projectId}`);
+      alert(data.message);
+  
+      // ย้อนกลับไปยังหน้ารายละเอียด project
+      router.push(`/project/projectdetail/${projectId}`);
     } catch (error) {
       console.error('Error submitting review:', error);
       alert('Failed to submit review');
     }
   };
+  
   
 
   if (status === "loading") {

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 function Footer() {
   const { t, i18n } = useTranslation('translation');
   return (
-    <footer className="bg-[#0B1E48] shadow-md  p-5 text-white">
+    <footer className="bg-[#0B1E48] shadow-md p-5 text-white">
       <div className="flex flex-col lg:flex-row lg:px-[250px]">
         <div className="">
           <p className="font-semibold text-[20px]">{t("footer.contact")}</p>

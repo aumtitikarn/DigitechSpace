@@ -175,7 +175,7 @@ function page() {
   return (
     <Container>
       <Navbar session={session} />
-      <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20">
+      <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20 mb-10">
         <div className="flex flex-col w-full max-w-auto mb-20">
           {session?.user?.role == "NormalUser" && (
             <div className="flex flex-row justify-center">
@@ -217,7 +217,7 @@ function page() {
                   // If no imageUrl is provided, show the default icon
                   <MdAccountCircle
                     className="rounded-full text-gray-500"
-                    style={{ width: "95px", height: "95px" }}
+                    style={{ width: "95px", height: "95px", margin: "15px", }}
                   />
                 )}
                 {/* {postData && postData.imageUrl && postData.imageUrl !== "" && postData.imageUrl !== "undefined" ? (
@@ -318,7 +318,7 @@ function page() {
             </div>
           </div>
           {activeButton1 === "button1" && activeButton === "button1" && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center mt-10 w-full">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 justify-items-center mt-10 w-full">
               {publishedProject && publishedProject.length > 0 ? (
                 publishedProject.map((project, index) => (
                   <Link key={index} href={`/project/projectdetail/${project._id}`}>
