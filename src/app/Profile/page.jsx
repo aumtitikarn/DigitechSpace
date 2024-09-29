@@ -26,7 +26,7 @@ function page() {
   const [postDataS, setPostDataS] = useState([]);
   const [postDataProject, setPostDataProject] = useState([]);
   const [postDataBlog, setPostDataBlog] = useState([]);
-  const [publishedProject,setPublishedProjects] = useState([]);
+  const [publishedProject, setPublishedProjects] = useState([]);
   const { data: session, status } = useSession();
 
 
@@ -41,7 +41,7 @@ function page() {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
     }
-    
+
     if (status === "authenticated" && session) {
       const fetchData = async () => {
         try {
@@ -169,7 +169,7 @@ function page() {
       console.log(error);
     }
   };
-  
+
   console.log(postData);
 
   return (
@@ -183,10 +183,22 @@ function page() {
                 {postData && postData.imageUrl && postData.imageUrl.length > 0 ? (
                   postData.imageUrl[0].includes('http') ? (
                     // If the imageUrl is an external URL (starting with http)
-                    <Image
-                      width={200}
-                      height={200}
-                      src= {postData.imageUrl[0]}
+                    // <Image
+                    //   width={200}
+                    //   height={200}
+                    //   src= {postData.imageUrl[0]}
+                    //   alt="Getgmail"
+                    //   style={{
+                    //     objectFit: "cover",
+                    //     borderRadius: "50%",
+                    //     width: "95px",
+                    //     height: "95px",
+                    //     margin: "15px",
+                    //   }}
+                    //   unoptimized={true}
+                    // />
+                    <img
+                      src={postData.imageUrl[0]}
                       alt="Getgmail"
                       style={{
                         objectFit: "cover",
@@ -195,7 +207,6 @@ function page() {
                         height: "95px",
                         margin: "15px",
                       }}
-                      unoptimized={true}
                     />
                   ) : (
                     // If the imageUrl is a local file (stored in the system)
