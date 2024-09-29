@@ -405,7 +405,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                     </span>
                     <span className="text-sm text-gray-600 ">
                     {project.rathing ? project.rathing.toFixed(1) : "N/A"} {/* แสดงค่า rating หรือ N/A */}
-  ({project.rathing ? project.rathing : 0}) {/* แสดงจำนวนรีวิว */}
+  ({project.review ? project.review : 0}) {/* แสดงจำนวนรีวิว */}
   {" "} | 
                       {t("nav.project.projectdetail.sold")} {project.sold}
                     </span>

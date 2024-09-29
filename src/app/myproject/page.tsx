@@ -7,7 +7,6 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
 
 interface Project {
   _id: string;
@@ -39,17 +38,11 @@ const MyProject: React.FC = () => {
   const { t } = useTranslation("translation");
   const [projects, setProjects] = useState<Project[]>([]);
   const [isClient, setIsClient] = useState(false);
-  const router = useRouter();
-  
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/signin");
-    }
     setIsClient(true);
     fetchProjects();
-  }, [status, router]);
- 
+  }, []);
 
   const fetchProjects = async () => {
     try {
