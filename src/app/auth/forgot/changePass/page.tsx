@@ -115,8 +115,8 @@ export default function changePass() {
   return (
     <div className="flex flex-col h-screen">
       <Navbar />
-      <main className="flex-grow flex items-center justify-center bg-[#FBFBFB] px-6">
-        <div className="w-full max-w-sm">
+      <main className="flex-grow flex items-center justify-center bg-[#FBFBFB] px-6 ">
+        <div className="w-full max-w-sm my-20">
           <div className="text-center">
             <img
               className="mx-auto h-24 w-auto"
