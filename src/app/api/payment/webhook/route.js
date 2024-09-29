@@ -4,6 +4,7 @@ import { connectMongoDB } from "../../../../../lib/mongodb";
 import  Order  from "../../../../../models/order"
 import  Project  from "../../../../../models/project"
 import  StudentUser  from "../../../../../models/StudentUser"
+import { getThaiDateTime } from '../../../../models/date';
 
 export async function POST(request) {
     try {
@@ -40,10 +41,17 @@ export async function POST(request) {
         console.log('Order saved to MongoDB:', newOrder);
         if (Project) {
           // Create or update the notification
+          const thaiTime = getThaiDateTime();
           const notificationMessage = `Project: ${Project.projectname || 'Unknown'} has been sold for ${charge.amount / 100} THB.`;
+
           await Notification.findOneAndUpdate(
             { email: Project.email },
-            { $push: { notifications: notificationMessage } },
+            { 
+              $push: { 
+                'notifications.messages': notificationMessage,
+                'notifications.times': thaiTime
+              } 
+            },
             { upsert: true, new: true }
           );
           console.log('Notification added for project owner');

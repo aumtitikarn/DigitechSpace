@@ -183,10 +183,10 @@ export default function Page() {
                                     target.onerror = null;
                                     target.src = "/default-profile-icon.png";
                                   }}
-                                  className="object-cover rounded-full mr-2"
+                                  className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500"
                                 />
                               ) : (
-                                <MdAccountCircle className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500" />
+                                <MdAccountCircle className="w-9 h-9 rounded-full mr-2 mt-1 text-gray-500" />
                               )}
                               <p className="mt-2 truncate text-gray-500 text-xs">
                                 {val.author}

@@ -318,7 +318,7 @@ function page() {
             </div>
           </div>
           {activeButton1 === "button1" && activeButton === "button1" && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center mt-10 w-full">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 justify-items-center mt-10 w-full">
               {publishedProject && publishedProject.length > 0 ? (
                 publishedProject.map((project, index) => (
                   <Link key={index} href={`/project/projectdetail/${project._id}`}>
