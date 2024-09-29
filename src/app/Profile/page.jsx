@@ -175,7 +175,7 @@ function page() {
   return (
     <Container>
       <Navbar session={session} />
-      <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20">
+      <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20 mb-10">
         <div className="flex flex-col w-full max-w-auto mb-20">
           {session?.user?.role == "NormalUser" && (
             <div className="flex flex-row justify-center">
@@ -217,7 +217,7 @@ function page() {
                   // If no imageUrl is provided, show the default icon
                   <MdAccountCircle
                     className="rounded-full text-gray-500"
-                    style={{ width: "95px", height: "95px" }}
+                    style={{ width: "95px", height: "95px", margin: "15px", }}
                   />
                 )}
                 {/* {postData && postData.imageUrl && postData.imageUrl !== "" && postData.imageUrl !== "undefined" ? (
