@@ -20,7 +20,7 @@ interface PostData {
   course: string;
   heart: string;
   imageUrl: string[];
-  selectedCategory : string;
+  selectedCategory: string;
   author: string;
   description: string;
   userprofile?: string[]; // ทำให้ userprofile เป็น optional
@@ -34,8 +34,6 @@ export default function Page() {
   const [filteredPosts, setFilteredPosts] = useState<PostData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
-
-  
   const getPosts = async () => {
     try {
       const res = await fetch("/api/posts", {
@@ -59,21 +57,21 @@ export default function Page() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
-  
+
   const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       setIsSearching(true);
       const value = searchTerm.toLowerCase();
-      
-      const filtered = postData.filter(post =>
-        post.topic.toLowerCase().includes(value) ||
-        post.course.toLowerCase().includes(value) ||
-        post.selectedCategory.toLowerCase().includes(value) ||
-        post.description.toLowerCase().includes(value) ||
-        post.author.toLowerCase().includes(value)
 
+      const filtered = postData.filter(
+        (post) =>
+          post.topic.toLowerCase().includes(value) ||
+          post.course.toLowerCase().includes(value) ||
+          post.selectedCategory.toLowerCase().includes(value) ||
+          post.description.toLowerCase().includes(value) ||
+          post.author.toLowerCase().includes(value)
       );
-      
+
       setFilteredPosts(filtered);
       setIsSearching(false);
     }
@@ -82,7 +80,6 @@ export default function Page() {
   useEffect(() => {
     getPosts();
   }, []);
-
 
   if (status === "loading") {
     return (
@@ -107,6 +104,32 @@ export default function Page() {
     );
   }
 
+  const getImageSource = (post: PostData): string => {
+    const useProxy = (url: string): string => `/api/proxy?url=${encodeURIComponent(url)}`;
+  
+    const isValidHttpUrl = (string: string): boolean => {
+      let url;
+      try {
+        url = new URL(string);
+      } catch (_) {
+        return false;
+      }
+      return url.protocol === "http:" || url.protocol === "https:";
+    };
+  
+    if (post.userprofile && post.userprofile.length > 0) {
+      const profileImage = post.userprofile[0];
+      if (isValidHttpUrl(profileImage)) {
+        return useProxy(profileImage);
+      } else {
+        return `/api/posts/images/${profileImage}`;
+      }
+    }
+  
+    // Fallback to default image if no userprofile is available
+    return "/default-profile-icon.png";
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -126,10 +149,17 @@ export default function Page() {
                 />
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
-  
+
               {isSearching ? (
                 <div className="flex justify-center items-center mt-10">
-                  <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+                  <OrbitProgress
+                    variant="track-disc"
+                    dense
+                    color="#33539B"
+                    size="medium"
+                    text=""
+                    textColor=""
+                  />
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
@@ -176,9 +206,14 @@ export default function Page() {
                                 <Image
                                   width={30}
                                   height={30}
-                                  src={`/api/posts/images/${val.userprofile[0]}`}
+                                  src={getImageSource(val)}
                                   alt="Profile"
-                                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                  onError={(
+                                    e: React.SyntheticEvent<
+                                      HTMLImageElement,
+                                      Event
+                                    >
+                                  ) => {
                                     const target = e.target as HTMLImageElement;
                                     target.onerror = null;
                                     target.src = "/default-profile-icon.png";
@@ -197,19 +232,21 @@ export default function Page() {
                       </Link>
                     ))
                   ) : (
-                    <p className="col-span-full text-center">{t("nav.project.noresult")}</p>
+                    <p className="col-span-full text-center">
+                      {t("nav.project.noresult")}
+                    </p>
                   )}
                 </div>
               )}
-  
+
               <div className="sticky bottom-8 w-full max-w-screen-lg mx-auto px-4 mt-8">
                 <div className="flex justify-end">
-                {session && (
-                  <Link href="/Addblog">
-                    <div className="w-14 h-14 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110">
-                      <FaPlus size={24} />
-                    </div>
-                  </Link>
+                  {session && (
+                    <Link href="/Addblog">
+                      <div className="w-14 h-14 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110">
+                        <FaPlus size={24} />
+                      </div>
+                    </Link>
                   )}
                 </div>
               </div>

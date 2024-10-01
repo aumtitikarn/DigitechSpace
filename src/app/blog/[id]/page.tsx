@@ -36,6 +36,7 @@ interface BlogProps {
 }
 
 
+
 function Blog({ params, initialComments }: BlogProps) {
   const [review, setReview] = useState("");
   const [report, setreport] = useState("");
@@ -54,20 +55,6 @@ function Blog({ params, initialComments }: BlogProps) {
 
   const [postData, setPostData] = useState<PostData>([]);
 
-  interface PostData {
-    topic: string;
-    course: string;
-    description: string;
-    heart: number;
-    imageUrl: string[];
-    userprofileid: string[];
-    userprofile: string[];
-    author: string;
-    email: string;
-    comments: any[]; // หรือกำหนด type ที่เฉพาะเจาะจงมากขึ้น
-    likedByUsers: any[]; // หรือกำหนด type ที่เฉพาะเจาะจงมากขึ้น
-    selectedCategory: string;
-  }
 
 
 
@@ -99,6 +86,21 @@ function Blog({ params, initialComments }: BlogProps) {
 
   interface ProfileUser {
     imageUrl: string[];
+  }
+  interface PostData {
+    _id: string;
+    topic: string;
+    course: string;
+    description: string;
+    heart: number;
+    imageUrl: string[];
+    userprofileid: string[];
+    userprofile: string[];
+    author: string;
+    email: string;
+    comments: any[]; // You might want to define a more specific type for comments
+    likedByUsers: any[]; // You might want to define a more specific type for likedByUsers
+    selectedCategory: string;
   }
 
   const handleShareClick = () => {
