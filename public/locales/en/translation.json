@@ -212,6 +212,9 @@
       "name" : "Name",
       "email" : "Email",
       "save" : "Save",
+      "success" : "Completed data update!",
+      "error" : "An error occurred.",
+      "errordes" : "Unable to update information Please try again.",
       "editprofile" : {
         "name" : "Name",
         "email" : "Email",

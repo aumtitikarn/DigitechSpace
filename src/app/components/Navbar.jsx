@@ -33,6 +33,7 @@ function CustomNavbar() {
   // const accountBoxMarginTop =
   //   session?.user?.role === "StudentUser" ? "mt-[451px]" : "mt-[390px]";
 
+  
   useEffect(() => {
     if (session?.user?.imageUrl) {
       setProfileImage(session.user.imageUrl); // Set the initial image from session data
@@ -93,6 +94,37 @@ function CustomNavbar() {
   useEffect(() => {
     getPostByIdS();
   }, []);
+  const getImageSource = () => {
+    const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+  
+    
+    const isValidHttpUrl = (string) => {
+      let url;
+      try {
+        url = new URL(string);
+      } catch (_) {
+        return false;
+      }
+      return url.protocol === "http:" || url.protocol === "https:";
+    };
+    if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
+      const imageUrl = postData.imageUrl[0];
+      if (isValidHttpUrl(imageUrl)) {
+        return useProxy(imageUrl);
+      } else {
+        return `/api/editprofile/images/${imageUrl}`;
+      }
+    }
+    if (postDataS && postDataS.imageUrl) {
+      return `/api/editprofile/images/${postDataS.imageUrl}`;
+    }
+    if (session?.user?.image) {
+      return useProxy(session.user.image);
+    }
+    return null;
+  };
+
+  const imageSource = getImageSource();
 
   return (
     <nav className="bg-[#0B1E48] shadow-md p-5 relative z-50 sticky top-0">
@@ -139,137 +171,64 @@ function CustomNavbar() {
                 onClick={toggleAccountBox}
                 className="text-white focus:outline-none"
               >
-                {session?.user?.role == "NormalUser" && (
-                  <>
-                    {postData?.imageUrl ? (
-                      <Image
-                        width={200}
-                        height={200}
-                        src={`/api/editprofile/images/${postData.imageUrl}`}
-                        alt="Profile"
-                        style={{
-                          objectFit: "cover",
-                          borderRadius: "50%",
-                          width: "40px",
-                          height: "40px",
-                        }}
-                      />
-                    ) : (
-                      <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                    )}
-                  </>
-                )}
-                {session?.user?.role !== "NormalUser" && (
-                  <>
-                    {postData?.imageUrl ? (
-                      <Image
-                        width={200}
-                        height={200}
-                        src={`/api/editprofile/images/${postDataS.imageUrl}`}
-                        alt="Profile"
-                        style={{
-                          objectFit: "cover",
-                          borderRadius: "50%",
-                          width: "40px",
-                          height: "40px",
-                        }}
-                      />
-                    ) : (
-                      <MdAccountCircle className="text-white text-4xl mt-3 hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                    )}
-                  </>
+                {imageSource ? (
+                  <Image
+                    width={35}
+                    height={35}
+                    src={imageSource}
+                    alt="Profile Image"
+                    unoptimized={true}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                    }}
+                    style={{
+                      objectFit: "cover",
+                      borderRadius: "50%",
+                    }}
+                  />
+                ) : (
+                  <MdAccountCircle
+                    className="rounded-full "
+                    style={{
+                      width: "35px",
+                      height: "35px",
+                    }}
+                  />
                 )}
               </button>
               {isAccountBoxVisible && (
                 <div className="">
-                  <div
-                    className="p-4 absolute right-0 top-full mr-5 border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] shadow-lg z-50"
-                  >
+                  <div className="p-4 absolute right-0 top-full mr-5 border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] shadow-lg z-50">
                     {/* Account Box Content */}
                     <div className="">
                       <div className="flex items-center ">
-                        {session?.user?.role == "NormalUser" && (
-                          <>
-                            {/* {postData?.imageUrl ? (
-                              <Image
-                                width={200}
-                                height={200}
-                                src={`/api/editprofile/images/${postData.imageUrl}`}
-                                alt="Profile"
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "50%",
-                                  width: "55px",
-                                  height: "55px",
-                                  margin: "15px",
-                                }}
-                              />
-                            ) : (
-                              <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
-                            )} */}
-                            {postData && postData.imageUrl && postData.imageUrl.length > 0 ? (
-                              postData.imageUrl[0].includes('http') ? (
-                                // If the imageUrl is an external URL (starting with http)
-                                <Image
-                                  width={200}
-                                  height={200}
-                                  src={postData.imageUrl[0]}
-                                  alt="Getgmail"
-                                  style={{
-                                    objectFit: "cover",
-                                    borderRadius: "50%",
-                                    width: "55px",
-                                    height: "55px",
-                                    margin: "15px",
-                                  }}
-                                  unoptimized={true}
-                                />
-                              ) : (
-                                // If the imageUrl is a local file (stored in the system)
-                                <Image
-                                  width={200}
-                                  height={200}
-                                  src={`/api/editprofile/images/${postData.imageUrl[0]}`}
-                                  alt="Profile"
-                                  style={{
-                                    objectFit: "cover",
-                                    borderRadius: "50%",
-                                    width: "55px",
-                                    height: "55px",
-                                    margin: "15px",
-                                  }}
-                                />
-                              )
-                            ) : (
-                              // If no imageUrl is provided, show the default icon
-                              <MdAccountCircle
-                                className="rounded-full text-gray-500"
-                                style={{ width: "95px", height: "95px" }}
-                              />
-                            )}
-                          </>
+                        {imageSource ? (
+                          <Image
+                            width={55}
+                            height={55}
+                            src={imageSource}
+                            alt="Profile Image"
+                            unoptimized={true}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                            }}
+                            style={{
+                              objectFit: "cover",
+                              borderRadius: "50%",
+                              margin: "10px"
+        
+                            }}
+                          />
+                        ) : (
+                          <MdAccountCircle
+                            className="rounded-full text-gray-600"
+                            style={{
+                              width: "60px",
+                              height: "60px",
+                            }}
+                          />
                         )}
-                        {session?.user?.role !== "NormalUser" && (
-                          <>
-                            {postData?.imageUrl ? (
-                              <Image
-                                width={200}
-                                height={200}
-                                src={`/api/editprofile/images/${postDataS.imageUrl}`}
-                                alt="Profile"
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "50%",
-                                  width: "55px",
-                                  height: "55px",
-                                  margin: "15px",
-                                }}
-                              />
-                            ) : (
-                              <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
-                            )}
-                          </>
-                        )}
+
                         <span>
                           <p className="text-[20px] mt-3 text-semibold">
                             {session?.user?.name}
@@ -432,7 +391,7 @@ function CustomNavbar() {
               </>
             )}
 
-            {/* ปุ่มบัญชีสำหรับเดสทอป */}
+            {/* ปุ่มบัญชีสำหรับเดสทอป ของจริง */}
             <div className="flex-none flex items-center relative">
               {session ? (
                 <>
@@ -440,205 +399,79 @@ function CustomNavbar() {
                   <div className="space-x-5">
                     <button
                       onClick={toggleLanguage}
-                      className="ml-8 text-white text-xl hover:text-[#FFC92B] focus:outline-none"
+                      className=" text-white text-xl hover:text-[#FFC92B] focus:outline-none"
                     >
-                      <MdGTranslate className="text-3xl" />
+                      <MdGTranslate
+                        style={{
+                          width: "35px",
+                          height: "35px",
+                        }}
+                      />
                     </button>
-                    {session?.user?.role == "NormalUser" && (
-                      <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                        {/* {postData?.imageUrl ? (
-                          <Image
-                            width={200}
-                            height={200}
-                            src={`/api/editprofile/images/${postData.imageUrl}`}
-                            alt="Profile"
-                            style={{
-                              objectFit: "cover",
-                              borderRadius: "50%",
-                              width: "40px",
-                              height: "40px",
-                            }}
-                          />
-                        ) : (
-                          <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                        )} */}
-                        {postData && postData.imageUrl && postData.imageUrl.length > 0 ? (
-                          postData.imageUrl[0].includes('http') ? (
-                            // If the imageUrl is an external URL (starting with http)
-                            <Image
-                              width={200}
-                              height={200}
-                              src={postData.imageUrl[0]}
-                              alt="Getgmail"
-                              style={{
-                                objectFit: "cover",
-                                borderRadius: "50%",
-                                width: "40px",
-                                height: "40px",
-                              }}
-                              unoptimized={true}
-                            />
-                          ) : (
-                            // If the imageUrl is a local file (stored in the system)
-                            <Image
-                              width={200}
-                              height={200}
-                              src={`/api/editprofile/images/${postData.imageUrl[0]}`}
-                              alt="Profile"
-                              style={{
-                                objectFit: "cover",
-                                borderRadius: "50%",
-                                width: "40px",
-                                height: "40px",
-                              }}
-                            />
-                          )
-                        ) : (
-                          // If no imageUrl is provided, show the default icon
-                          <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                        )}
-                      </button>
-                    )}
-                    {session?.user?.role !== "NormalUser" && (
-                      <button onClick={toggleAccountBox} className="text-white focus:outline-none">
-                        {/* {postData?.imageUrl ? (
-                          <Image
-                            width={200}
-                            height={200}
-                            src={`/api/editprofile/images/${postDataS.imageUrl}`}
-                            alt="Profile"
-                            style={{
-                              objectFit: "cover",
-                              borderRadius: "50%",
-                              width: "40px",
-                              height: "40px",
-                            }}
-                          />
-                        ) : (
-                          <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                        )} */}
-                        {postData && postData.imageUrl && postData.imageUrl.length > 0 ? (
-                          postData.imageUrl[0].includes('http') ? (
-                            // If the imageUrl is an external URL (starting with http)
-                            <Image
-                              width={200}
-                              height={200}
-                              src={postData.imageUrl[0]}
-                              alt="Getgmail"
-                              style={{
-                                objectFit: "cover",
-                                borderRadius: "50%",
-                                width: "40px",
-                                height: "40px",
-                              }}
-                              unoptimized={true}
-                            />
-                          ) : (
-                            // If the imageUrl is a local file (stored in the system)
-                            <Image
-                              width={200}
-                              height={200}
-                              src={`/api/editprofile/images/${postData.imageUrl[0]}`}
-                              alt="Profile"
-                              style={{
-                                objectFit: "cover",
-                                borderRadius: "50%",
-                                width: "40px",
-                                height: "40px",
-                              }}
-                            />
-                          )
-                        ) : (
-                          // If no imageUrl is provided, show the default icon
-                          <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                        )}
-                      </button>
-                    )}
+
+                    <button
+                      onClick={toggleAccountBox}
+                      className="text-white focus:outline-none"
+                    >
+                      {imageSource ? (
+                        <Image
+                          width={35}
+                          height={35}
+                          src={imageSource}
+                          alt="Profile Image"
+                          unoptimized={true}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                          }}
+                          style={{
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                  
+                          }}
+                        />
+                      ) : (
+                        <MdAccountCircle
+                          className="rounded-full "
+                          style={{
+                            width: "35px",
+                            height: "35px",
+                          }}
+                        />
+                      )}
+                    </button>
                   </div>
                   {isAccountBoxVisible && (
                     <div
-                      className={"p-4 absolute right-0 top-full mt-7  border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] shadow-lg z-50"}
+                      className={
+                        "p-4 absolute right-0 top-full mt-7  border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] shadow-lg z-50"
+                      }
                     >
                       <div className="">
                         <div className="flex items-center">
-                          {session?.user?.role == "NormalUser" && (
-                            <>
-                              {/* {postData?.imageUrl ? (
-                                <Image
-                                  width={200}
-                                  height={200}
-                                  src={`/api/editprofile/images/${postData.imageUrl}`}
-                                  alt="Profile"
-                                  style={{
-                                    objectFit: "cover",
-                                    borderRadius: "50%",
-                                    width: "55px",
-                                    height: "55px",
-                                    margin: "15px",
-                                  }}
-                                />
-                              ) : (
-                                <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
-                              )} */}
-                              {postData && postData.imageUrl && postData.imageUrl.length > 0 ? (
-                          postData.imageUrl[0].includes('http') ? (
-                            // If the imageUrl is an external URL (starting with http)
+                          {imageSource ? (
                             <Image
-                              width={200}
-                              height={200}
-                              src={postData.imageUrl[0]}
-                              alt="Getgmail"
+                              width={55}
+                              height={55}
+                              src={imageSource}
+                              alt="Profile Image"
+                              unoptimized={true}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                              }}
                               style={{
                                 objectFit: "cover",
                                 borderRadius: "50%",
-                                width: "55px",
-                                height: "55px",
-                                margin: "15px",
+                                margin: "10px"
                               }}
-                              unoptimized={true}
                             />
                           ) : (
-                            // If the imageUrl is a local file (stored in the system)
-                            <Image
-                              width={200}
-                              height={200}
-                              src={`/api/editprofile/images/${postData.imageUrl[0]}`}
-                              alt="Profile"
+                            <MdAccountCircle
+                              className="rounded-full text-gray-600"
                               style={{
-                                objectFit: "cover",
-                                borderRadius: "50%",
-                                width: "55px",
-                                height: "55px",
-                                margin: "15px",
+                                width: "60px",
+                                height: "60px",
                               }}
                             />
-                          )
-                        ) : (
-                          // If no imageUrl is provided, show the default icon
-                          <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
-                        )}
-                            </>
-                          )}
-                          {session?.user?.role !== "NormalUser" && (
-                            <>
-                              {postData?.imageUrl ? (
-                                <Image
-                                  width={200}
-                                  height={200}
-                                  src={`/api/editprofile/images/${postDataS.imageUrl}`}
-                                  alt="Profile"
-                                  style={{
-                                    objectFit: "cover",
-                                    borderRadius: "50%",
-                                    width: "55px",
-                                    height: "55px",
-                                    margin: "15px",
-                                  }}
-                                />
-                              ) : (
-                                <MdAccountCircle className="text-gray-600 text-6xl mt-3" />
-                              )}
-                            </>
                           )}
                           <span>
                             <p className="text-[20px] mt-3 text-semibold">
@@ -822,7 +655,7 @@ function CustomNavbar() {
               )}
 
               {/* ปุ่มบัญชีสำหรับเดสทอป */}
-              <div className="flex-none flex items-center">
+              <div className=" flex items-center">
                 {session ? (
                   <>
                     {/* ปุ่มเปลี่ยนภาษา */}
@@ -836,48 +669,7 @@ function CustomNavbar() {
                       <button
                         onClick={toggleAccountBox}
                         className="text-white focus:outline-none "
-                      >
-                        {session?.user?.role == "NormalUser" && (
-                          <>
-                            {postData?.imageUrl ? (
-                              <Image
-                                width={200}
-                                height={200}
-                                src={`/api/editprofile/images/${postData.imageUrl}`}
-                                alt="Profile"
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "50%",
-                                  width: "40px",
-                                  height: "40px",
-                                }}
-                              />
-                            ) : (
-                              <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                            )}
-                          </>
-                        )}
-                        {session?.user?.role !== "NormalUser" && (
-                          <>
-                            {postData?.imageUrl ? (
-                              <Image
-                                width={200}
-                                height={200}
-                                src={`/api/editprofile/images/${postDataS.imageUrl}`}
-                                alt="Profile"
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "50%",
-                                  width: "40px",
-                                  height: "40px",
-                                }}
-                              />
-                            ) : (
-                              <MdAccountCircle className="text-white text-4xl hover:text-[#FFC92B] focus:text-[#FFC92B]" />
-                            )}
-                          </>
-                        )}
-                      </button>
+                      ></button>
                     </div>
                     {isAccountBoxVisible && (
                       <div
@@ -886,48 +678,30 @@ function CustomNavbar() {
                         {/* เนื้อหาภายในกล่องข้อมูลบัญชี */}
                         <div className="px-3 py-3">
                           <div className="flex items-center">
-                            <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
-                            {session?.user?.role == "NormalUser" && (
-                              <>
-                                {postData?.imageUrl ? (
-                                  <Image
-                                    width={200}
-                                    height={200}
-                                    src={`/api/editprofile/images/${postData.imageUrl}`}
-                                    alt="Profile"
-                                    style={{
-                                      objectFit: "cover",
-                                      borderRadius: "50%",
-                                      width: "55px",
-                                      height: "55px",
-                                      margin: "15px",
-                                    }}
-                                  />
-                                ) : (
-                                  <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
-                                )}
-                              </>
-                            )}
-                            {session?.user?.role !== "NormalUser" && (
-                              <>
-                                {postData?.imageUrl ? (
-                                  <Image
-                                    width={200}
-                                    height={200}
-                                    src={`/api/editprofile/images/${postDataS.imageUrl}`}
-                                    alt="Profile"
-                                    style={{
-                                      objectFit: "cover",
-                                      borderRadius: "50%",
-                                      width: "55px",
-                                      height: "55px",
-                                      margin: "15px",
-                                    }}
-                                  />
-                                ) : (
-                                  <MdAccountCircle className="text-gray-600 text-6xl mt-3 " />
-                                )}
-                              </>
+                            {imageSource ? (
+                              <Image
+                                width={60}
+                                height={60}
+                                src={imageSource}
+                                alt="Profile Image"
+                                unoptimized={true}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                }}
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "50%",
+                      
+                                }}
+                              />
+                            ) : (
+                              <MdAccountCircle
+                                className="rounded-full "
+                                style={{
+                                  width: "60px",
+                                  height: "60px",
+                                }}
+                              />
                             )}
                             <span>
                               <p className="text-[20px] mt-3 text-semibold">
@@ -1152,7 +926,8 @@ function CustomNavbar() {
             )}
           </div>
         )}
-      </div>    </nav>
+      </div>{" "}
+    </nav>
   );
 }
 

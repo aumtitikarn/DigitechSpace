@@ -36,6 +36,7 @@ interface BlogProps {
 }
 
 
+
 function Blog({ params, initialComments }: BlogProps) {
   const [review, setReview] = useState("");
   const [report, setreport] = useState("");
@@ -101,6 +102,21 @@ function Blog({ params, initialComments }: BlogProps) {
 
   interface ProfileUser {
     imageUrl: string[];
+  }
+  interface PostData {
+    _id: string;
+    topic: string;
+    course: string;
+    description: string;
+    heart: number;
+    imageUrl: string[];
+    userprofileid: string[];
+    userprofile: string[];
+    author: string;
+    email: string;
+    comments: any[]; // You might want to define a more specific type for comments
+    likedByUsers: any[]; // You might want to define a more specific type for likedByUsers
+    selectedCategory: string;
   }
 
   const handleShareClick = () => {

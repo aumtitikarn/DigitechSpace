@@ -187,27 +187,41 @@ function page() {
   const getImageSource = () => {
     const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
   
+    
+    const isValidHttpUrl = (string) => {
+      let url;
+      try {
+        url = new URL(string);
+      } catch (_) {
+        return false;
+      }
+      return url.protocol === "http:" || url.protocol === "https:";
+    };
     if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
-      return postData.imageUrl[0].includes("http")
-        ? useProxy(postData.imageUrl[0])
-        : `/api/editprofile/images/${postData.imageUrl[0]}`;
-    } else if (session?.user?.image) {
-      // ใช้ session.user.image แทน session.user.picture
+      const imageUrl = postData.imageUrl[0];
+      if (isValidHttpUrl(imageUrl)) {
+        return useProxy(imageUrl);
+      } else {
+        return `/api/editprofile/images/${imageUrl}`;
+      }
+    }
+    if (postDataS && postDataS.imageUrl) {
+      return `/api/editprofile/images/${postDataS.imageUrl}`;
+    }
+    if (session?.user?.image) {
       return useProxy(session.user.image);
     }
     return null;
   };
-  
-  // ใช้ฟังก์ชันนี้
+
   const imageSource = getImageSource();
-  console.log("Image Source:", imageSource);
+  
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar session={session} />
       <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20 mb-10">
         <div className="flex flex-col w-full max-w-auto mb-20">
-          {session?.user?.role == "NormalUser" && (
             <div className="flex flex-row justify-center">
               <div className="relative">
                 {imageSource ? (
@@ -236,8 +250,7 @@ function page() {
                 )}
               </div>
             </div>
-          )}
-          {session?.user?.role !== "NormalUser" && (
+          {/* {session?.user?.role !== "NormalUser" && (
             <div className="flex flex-row justify-center">
               <div className="relative">
                 {postDataS && postDataS.imageUrl ? (
@@ -262,7 +275,7 @@ function page() {
                 )}
               </div>
             </div>
-          )}
+          )} */}
           <div className="flex flex-row justify-center">
             <p
               style={{ fontSize: "24px", fontWeight: "bold" }}
