@@ -89,8 +89,17 @@ function Blog({ params, initialComments }: BlogProps) {
   const [blogid, setBlogid] = useState("");
   const [blogEmail, setBlogEmail] = useState("");
 
-  const [profileUser, setProfileUser] = useState([]);
-  const [profileUserN, setProfileUserN] = useState([]);
+  const [profileUser, setProfileUser] = useState<string[]>([]);
+
+  // interface Profile {
+  //   imageUrl: string;
+  // }
+
+  const [profileUserN, setProfileUserN] = useState<ProfileUser | null>(null);
+
+  interface ProfileUser {
+    imageUrl: string[];
+  }
 
   const handleShareClick = () => {
     setIsSharePopupOpen(!isSharePopupOpen); // Toggle popup open/close
@@ -131,12 +140,13 @@ function Blog({ params, initialComments }: BlogProps) {
       console.error("User ID not found in session.");
     }
   }, [session?.user?.id]);
+  
 
 
-  const handleAddCommentOrReply = async (isReply, commentId = null) => {
+  const handleAddCommentOrReply = async (isReply: boolean, commentId = null) => {
     if(session){
     const imageUrl = profileUserN?.imageUrl?.[0] || "/path/to/default-image.jpg"; // ใช้รูปภาพเริ่มต้นหากไม่มี
-    setProfileUser(imageUrl);
+    setProfileUser([imageUrl]);
 
     const requestBody = {
       text: isReply ? replyInput : commentInput,
@@ -167,9 +177,11 @@ function Blog({ params, initialComments }: BlogProps) {
       console.log(error);
     }
   }else {
-    alert("Please log in to save favorites");
+    // alert("Please log in to save favorites");
+    Swal.fire('Error', 'Please log in to comment.', 'error');
   }
   };
+
   useEffect(() => {
     console.log("Updated Profile URL:", profileUser);
   }, [profileUser]);
@@ -226,22 +238,21 @@ function Blog({ params, initialComments }: BlogProps) {
     getPostById(id);
   }, []);
 
-  const handlePopupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent form default behavior
-
+  const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent button's default behavior
+  
     // Set blogid and blogEmail from postData
-    setBlogname(postData.topic)
+    setBlogname(postData.topic);
     setBlogEmail(postData.email);
     setBlogid(postData._id);
-
+  
     // Debugging: check the values
     console.log("Blog name:", postData.topic);
     console.log("Blog Email:", postData.email);
     console.log("Blog ID:", postData._id);
-
-    // Create a new FormData object
+  
     const formData = new FormData();
-
+  
     // Check if the user is authenticated
     if (!session || !session.user || !session.user.name) {
       Swal.fire({
@@ -253,27 +264,27 @@ function Blog({ params, initialComments }: BlogProps) {
       });
       return;
     }
-
+  
     // Check if all required fields are filled
     if (!report || !selectedReason) {
       alert("Please complete all inputs");
       return;
     }
-
+  
     // Append form data
     formData.append("blogname", postData.topic);
     formData.append("selectedReason", selectedReason);
     formData.append("report", report);
     formData.append("author", session.user.name);
-    formData.append("blogid", postData._id); // Set blogid from postData directly
-    formData.append("blogEmail", postData.email); // Set blogEmail from postData directly
-
+    formData.append("blogid", postData._id);
+    formData.append("blogEmail", postData.email);
+  
     try {
       const res = await fetch("http://localhost:3000/api/reportblog", {
         method: "POST",
-        body: formData, // Body is formData, no need to set Content-Type manually
+        body: formData,
       });
-
+  
       if (res.ok) {
         router.push(`/blog/${postData._id}`);
         setIsPopupOpen(false);
@@ -289,7 +300,8 @@ function Blog({ params, initialComments }: BlogProps) {
     if (session) {
     setIsPopupOpen(!isPopupOpen);
     } else {
-      alert("Please log in to save favorites");
+      // alert("Please log in to save favorites");
+      Swal.fire('Error', 'Please log in to report.', 'error');
     }
   };
 
@@ -339,9 +351,8 @@ function Blog({ params, initialComments }: BlogProps) {
 
   console.log("UserId :", UserId);
 
-  const handleSubmitCiHeart = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitCiHeart = async (e: React.MouseEvent<SVGElement>) => {
     if(session){
-    e.preventDefault();
 
     // ตรวจสอบว่าใน likedByUsers มี userId อยู่หรือไม่
     const isLiked = Array.isArray(postData?.likedByUsers) && postData.likedByUsers.includes(UserId);
@@ -380,7 +391,8 @@ function Blog({ params, initialComments }: BlogProps) {
       });
     }
   }else {
-      alert("Please log in to save favorites");
+      // alert("Please log in to save favorites");
+      Swal.fire('Error', 'Please log in to save favorites.', 'error');
     }
   };
 
@@ -411,9 +423,18 @@ function Blog({ params, initialComments }: BlogProps) {
     // Add any other properties that are in your post data
   }
 
+  interface Reply {
+    _id: string;
+    profile?: string[];
+    author: string;
+    text: string;
+  }
+
+  
+
   return (
     <Container>
-      <Navbar session={session} />
+      <Navbar/>
       <main className="flex flex-col items-center w-full">
         <div className="w-full max-w-screen-lg p-4">
           <div className="flex flex-col">
@@ -640,7 +661,7 @@ function Blog({ params, initialComments }: BlogProps) {
                     {/* Handle replies if they exist */}
                     {comment.replies && comment.replies.length > 0 && (
                       <div style={{ marginLeft: '20px' }}>
-                        {comment.replies.map((reply) => (
+                        {comment.replies.map((reply: Reply) => (
                           <div>
                             <p key={reply._id}></p>
                             <p className="flex flex-row">
