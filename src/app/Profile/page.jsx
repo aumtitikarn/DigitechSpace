@@ -29,6 +29,8 @@ function page() {
   const [publishedProject, setPublishedProjects] = useState([]);
   const { data: session, status } = useSession();
 
+ 
+
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
   };
@@ -183,19 +185,22 @@ function page() {
 
   console.log(postData);
   const getImageSource = () => {
+    const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+  
     if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
-      if (postData.imageUrl[0].includes("http")) {
-        return postData.imageUrl[0];
-      } else {
-        return `/api/editprofile/images/${postData.imageUrl[0]}`;
-      }
-    } else if (session?.user?.picture?.[0]) {
-      return session.user.picture[0];
+      return postData.imageUrl[0].includes("http")
+        ? useProxy(postData.imageUrl[0])
+        : `/api/editprofile/images/${postData.imageUrl[0]}`;
+    } else if (session?.user?.image) {
+      // ใช้ session.user.image แทน session.user.picture
+      return useProxy(session.user.image);
     }
     return null;
   };
-
+  
+  // ใช้ฟังก์ชันนี้
   const imageSource = getImageSource();
+  console.log("Image Source:", imageSource);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -214,7 +219,6 @@ function page() {
                     unoptimized={true}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = "/path/to/fallback/image.jpg"; // ระบุ path ของรูปภาพสำรอง
                     }}
                     style={{
                       objectFit: "cover",
