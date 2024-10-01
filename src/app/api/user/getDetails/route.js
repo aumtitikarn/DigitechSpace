@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectMongoDB } from "../../../../../lib/mongodb";
 import StudentUser from "../../../../../models/StudentUser";
-import StudentUser from "../../../../../models/StudentUser";
+import NormalUser from "../../../../../models/NormalUser";
 
 export async function POST(request) {
   try {
