@@ -183,23 +183,12 @@ function page() {
                 {postData && postData.imageUrl && postData.imageUrl.length > 0 ? (
                   postData.imageUrl[0].includes('http') ? (
                     // If the imageUrl is an external URL (starting with http)
-                    // <Image
-                    //   width={200}
-                    //   height={200}
-                    //   src= {postData.imageUrl[0]}
-                    //   alt="Getgmail"
-                    //   style={{
-                    //     objectFit: "cover",
-                    //     borderRadius: "50%",
-                    //     width: "95px",
-                    //     height: "95px",
-                    //     margin: "15px",
-                    //   }}
-                    //   unoptimized={true}
-                    // />
-                    <img
-                      src={postData.imageUrl[0]}
+                    <Image
+                      width={200}
+                      height={200}
+                      src= {postData.imageUrl[0]}
                       alt="Getgmail"
+                      unoptimized={true}
                       style={{
                         objectFit: "cover",
                         borderRadius: "50%",
@@ -208,6 +197,19 @@ function page() {
                         margin: "15px",
                       }}
                     />
+                    // <img
+                    //   src={postData.imageUrl[0]}
+                    //   alt="Getgmail"
+                    //   style={{
+                    //     objectFit: "cover",
+                    //     borderRadius: "50%",
+                    //     width: "95px",
+                    //     height: "95px",
+                    //     margin: "15px",
+                    //   }}
+                    //   layout="responsive"
+                    //   unoptimized={true}
+                    // />
                   ) : (
                     // If the imageUrl is a local file (stored in the system)
                     <Image

@@ -204,11 +204,13 @@ export default function Page() {
   
               <div className="sticky bottom-8 w-full max-w-screen-lg mx-auto px-4 mt-8">
                 <div className="flex justify-end">
+                {session && (
                   <Link href="/Addblog">
                     <div className="w-14 h-14 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110">
                       <FaPlus size={24} />
                     </div>
                   </Link>
+                  )}
                 </div>
               </div>
             </div>

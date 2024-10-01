@@ -28,9 +28,15 @@ import { profile } from "console";
 import { FaLink } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa";
 import { RiTwitterXLine } from "react-icons/ri";
+import e from "express";
+
+interface BlogProps {
+  params: { id: string }; // ตัวอย่างการกำหนด type สำหรับ params
+  initialComments: string[]; // ตัวอย่างการกำหนด type สำหรับ initialComments
+}
 
 
-function Blog({ params, initialComments }) {
+function Blog({ params, initialComments }: BlogProps) {
   const [review, setReview] = useState("");
   const [report, setreport] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
@@ -46,7 +52,22 @@ function Blog({ params, initialComments }) {
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
   const [popupInput, setPopupInput] = useState("");
 
-  const [postData, setPostData] = useState<PostData[]>([]);
+  const [postData, setPostData] = useState<PostData>([]);
+
+  interface PostData {
+    topic: string;
+    course: string;
+    description: string;
+    heart: number;
+    imageUrl: string[];
+    userprofileid: string[];
+    userprofile: string[];
+    author: string;
+    email: string;
+    comments: any[]; // หรือกำหนด type ที่เฉพาะเจาะจงมากขึ้น
+    likedByUsers: any[]; // หรือกำหนด type ที่เฉพาะเจาะจงมากขึ้น
+    selectedCategory: string;
+  }
 
 
 
@@ -113,6 +134,7 @@ function Blog({ params, initialComments }) {
 
 
   const handleAddCommentOrReply = async (isReply, commentId = null) => {
+    if(session){
     const imageUrl = profileUserN?.imageUrl?.[0] || "/path/to/default-image.jpg"; // ใช้รูปภาพเริ่มต้นหากไม่มี
     setProfileUser(imageUrl);
 
@@ -144,6 +166,9 @@ function Blog({ params, initialComments }) {
     } catch (error) {
       console.log(error);
     }
+  }else {
+    alert("Please log in to save favorites");
+  }
   };
   useEffect(() => {
     console.log("Updated Profile URL:", profileUser);
@@ -201,7 +226,7 @@ function Blog({ params, initialComments }) {
     getPostById(id);
   }, []);
 
-  const handlePopupSubmit = async (e) => {
+  const handlePopupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent form default behavior
 
     // Set blogid and blogEmail from postData
@@ -261,7 +286,11 @@ function Blog({ params, initialComments }) {
   };
 
   const togglePopup = () => {
+    if (session) {
     setIsPopupOpen(!isPopupOpen);
+    } else {
+      alert("Please log in to save favorites");
+    }
   };
 
   const url = typeof window !== "undefined" ? window.location.href : "";
@@ -304,15 +333,18 @@ function Blog({ params, initialComments }) {
     setInput1("");
   };
 
-  const UserId = session?.user?.id;
+  // const UserId = session?.user?.id;
+
+  const UserId = session?.user?.id ?? "";
 
   console.log("UserId :", UserId);
 
-  const handleSubmitCiHeart = async (e) => {
+  const handleSubmitCiHeart = async (e: React.FormEvent<HTMLFormElement>) => {
+    if(session){
     e.preventDefault();
 
     // ตรวจสอบว่าใน likedByUsers มี userId อยู่หรือไม่
-    const isLiked = Array.isArray(postData.likedByUsers) && postData.likedByUsers.includes(UserId);
+    const isLiked = Array.isArray(postData?.likedByUsers) && postData.likedByUsers.includes(UserId);
 
     try {
       const actionheart = isLiked ? 'unlike' : 'like'; // กำหนด actionheart ว่าจะเป็นการ like หรือ unlike
@@ -343,9 +375,12 @@ function Blog({ params, initialComments }) {
         position: 'center',
         icon: 'error',
         title: 'An error occurred',
-        text: error.message,
+        text: 'error.message',
         showConfirmButton: true,
       });
+    }
+  }else {
+      alert("Please log in to save favorites");
     }
   };
 
@@ -374,19 +409,6 @@ function Blog({ params, initialComments }) {
     course: string;
     onClose: () => void;
     // Add any other properties that are in your post data
-  }
-
-  interface PostData {
-    _id: string;
-    topic: string;
-    course: string;
-    description: string;
-    imageUrl: string[];
-    author: string;
-    selectedCategory: string;
-    heart: number;
-    email: string;
-    userprofile: string;
   }
 
   return (
@@ -437,9 +459,9 @@ function Blog({ params, initialComments }) {
                 <FaChevronRight />
               </button>
             </div>
-            <Link href={`/Profile/ViewProfile/${postData.userprofileid}`}>
+            <Link href={postData?.userprofileid ? `/Profile/ViewProfile/${postData.userprofileid}` : '#'}>
               <div className="flex flex-row mt-5 mb-5 items-center">
-                {postData.userprofile && postData.userprofile[0] ? (
+                {postData?.userprofile && postData.userprofile[0] ? (
                   <Image
                     width={200}
                     height={200}
@@ -506,7 +528,7 @@ function Blog({ params, initialComments }) {
               <div className="flex space-x-4">
                 <div className="flex items-center">
                   <CiHeart
-                    className={`text-3xl cursor-pointer ${Array.isArray(postData.likedByUsers) && postData.likedByUsers.includes(UserId) ? 'text-red-500' : 'text-gray-500'
+                    className={`text-3xl cursor-pointer ${Array.isArray(postData?.likedByUsers) && postData.likedByUsers.includes(UserId) ? 'text-red-500' : 'text-gray-500'
                       }`} // ถ้าผู้ใช้คนนี้เคยกด ให้แสดงเป็นสีแดง ถ้าไม่เคยกด ให้เป็นสีเทา
                     onClick={handleSubmitCiHeart}
                   />
@@ -518,7 +540,7 @@ function Blog({ params, initialComments }) {
                 </div>
                 <div className="flex items-center">
                   <BsChatDots className="text-2xl" />
-                  <p className="ml-1">{postData.comments?.length || 0}</p>
+                  <p className="ml-1">{postData?.comments?.length || 0}</p>
                 </div>
               </div>
               <div className="flex space-x-4">
@@ -554,60 +576,10 @@ function Blog({ params, initialComments }) {
               <h1 className="font-bold text-2xl">{t("nav.blog.comment")}</h1>
             </div>
 
-            {/* <div className="flex flex-row mt-5 items-start">
-              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
-              <div className="flex flex-col justify-center">
-                <h1 className="font-bold">Titikarn Waitayasuwan</h1>
-                <div className="flex flex-row">
-                  <p className="font-thin text-sm mt-1">8/6/2024</p>
-                  <button>
-                    <p className="underline decoration-[#0E6FFF] decoration-2 underline-offset-2 ml-3 font-semibold text-[#0E6FFF]">
-                      {t("nav.blog.reply")}
-                    </p>
-                  </button>
-                </div>
-                <p>แจ่มแมวเลยครับพรี่</p>
-              </div>
-            </div>
-            <hr className="border-t border-gray-300 w-full m-2" />
-            <div className="flex flex-row ml-5 items-start">
-              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
-              <div className="flex flex-col justify-center">
-                <h1 className="font-bold">Titikarn Waitayasuwan</h1>
-                <p className="font-thin text-sm">8/6/2024</p>
-                <p>ดีงาม</p>
-              </div>
-            </div>
-
-            <div className="flex flex-row mt-5 items-start">
-              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
-              <div className="flex flex-col justify-center">
-                <h1 className="font-bold">Titikarn Waitayasuwan</h1>
-                <div className="flex flex-row">
-                  <p className="font-thin text-sm mt-1">8/6/2024</p>
-                  <button>
-                    <p className="underline decoration-[#0E6FFF] decoration-2 underline-offset-2 ml-3 font-semibold text-[#0E6FFF]">
-                      {t("nav.blog.reply")}
-                    </p>
-                  </button>
-                </div>
-                <p>แจ่มแมวเลยครับพรี่</p>
-              </div>
-            </div>
-            <hr className="border-t border-gray-300 w-full m-2" />
-            <div className="flex flex-row ml-5 items-start">
-              <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
-              <div className="flex flex-col justify-center">
-                <h1 className="font-bold">Titikarn Waitayasuwan</h1>
-                <p className="font-thin text-sm">8/6/2024</p>
-                <p>ดีงาม</p>
-              </div>
-            </div> */}
-
             {/* แสดงฟอร์มแสดงความคิดเห็น */}
 
             <div>
-              {Array.isArray(postData.comments) &&
+              {Array.isArray(postData?.comments) &&
                 postData.comments.map((comment) => (
                   <div key={comment._id} className="flex flex-col m-3 p-2">
                     <div className="flex flex-col">

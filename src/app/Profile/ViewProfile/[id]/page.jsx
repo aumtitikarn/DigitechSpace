@@ -42,7 +42,7 @@ function page() {
           }
 
           // Fetch profile data for the authenticated user
-          const profileResponse = await fetch(`/api/editprofile/${session?.user?.id}`);
+          const profileResponse = await fetch(`/api/editprofile/${id}`);
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
             setPostData(profileData.post || profileData.posts);
@@ -141,7 +141,7 @@ function page() {
 
           <div className="flex flex-row justify-center">
             <p style={{ fontSize: "24px", fontWeight: "bold" }} className="mt-6">
-              {session?.user?.name}
+              {postData.name}
             </p>
           </div>
 
