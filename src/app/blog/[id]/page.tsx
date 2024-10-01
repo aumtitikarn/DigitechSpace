@@ -53,8 +53,9 @@ function Blog({ params, initialComments }: BlogProps) {
   const [popupInput, setPopupInput] = useState("");
 
   const [postData, setPostData] = useState<PostData>([]);
-
+  
   interface PostData {
+    _id: string; // Assuming _id is a string
     topic: string;
     course: string;
     description: string;
@@ -64,9 +65,10 @@ function Blog({ params, initialComments }: BlogProps) {
     userprofile: string[];
     author: string;
     email: string;
-    comments: any[]; // หรือกำหนด type ที่เฉพาะเจาะจงมากขึ้น
-    likedByUsers: any[]; // หรือกำหนด type ที่เฉพาะเจาะจงมากขึ้น
+    comments: any[]; // Or a more specific type
+    likedByUsers: any[]; // Or a more specific type
     selectedCategory: string;
+    onClosets?: () => void;
   }
 
 
