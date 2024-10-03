@@ -1,40 +1,29 @@
 import { NextResponse } from 'next/server';
 import { connectMongoDB } from "../../../../../lib/mongodb";
+import Project from "../../../../../models/project";
 import StudentUser from "../../../../../models/StudentUser";
 import NormalUser from "../../../../../models/NormalUser";
 
-export async function POST(request) {
+export async function GET(request) {
   try {
-    const { author } = await request.json();
-
-    if (!author) {
-      return NextResponse.json({ message: 'Author is required' }, { status: 400 });
-    }
-
     await connectMongoDB();
 
-    let user = await StudentUser.findOne({ email: email });
-    let role = 'student';
+    const projects = await Project.find({}).lean();
 
-    if (!user) {
-      user = await NormalUser.findOne({ email: email });
-      role = 'normal';
-    }
+    const populatedProjects = await Promise.all(projects.map(async (project) => {
+      let user = await StudentUser.findOne({ email: project.author }, 'name').lean();
+      if (!user) {
+        user = await NormalUser.findOne({ email: project.author }, 'name').lean();
+      }
+      return {
+        ...project,
+        authorName: user ? user.name : 'Unknown Author'
+      };
+    }));
 
-    if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
-    }
-
-    return NextResponse.json({
-      name: user.name,
-      email: user.email,
-      role: role,
-      username: user.username,
-      imageUrl: user.imageUrl
-    });
-
+    return NextResponse.json(populatedProjects);
   } catch (error) {
-    console.error('Error fetching user details:', error);
+    console.error('Error fetching projects:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

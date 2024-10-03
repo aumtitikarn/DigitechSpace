@@ -7,9 +7,12 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
 import { OrbitProgress } from "react-loading-indicators";
+import Image from "next/image";
 
 const ProductList = ({ products, titles }) => {
   const { t } = useTranslation("translation");
+
+  
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
@@ -46,11 +49,21 @@ const ProductList = ({ products, titles }) => {
                           {product.projectname}
                         </p>
                         <div className="flex items-center mb-2">
-                          <span className="text-gray-500 mr-2 text-2xl">
-                            <MdAccountCircle />
-                          </span>
+                          {product.profileImage ? (
+                            <Image
+                              src={product.profileImage}
+                              alt="Author Profile"
+                              width={20}
+                              height={20}
+                              className="rounded-full mr-2"
+                            />
+                          ) : (
+                            <span className="text-gray-500 mr-2 text-2xl">
+                              <MdAccountCircle />
+                            </span>
+                          )}
                           <p className="text-sm text-gray-600 truncate">
-                            {product.author}
+                            {product.authorName}
                           </p>
                         </div>
                         <div className="flex items-center mb-2">
@@ -86,9 +99,6 @@ const ProductList = ({ products, titles }) => {
     </div>
   );
 };
-
-
-
 
 const Aigenproject = () => {
   const [titles, setTitles] = useState([]);
@@ -143,36 +153,38 @@ const Aigenproject = () => {
               "Content-Type": "application/json",
             },
           });
-  
+
           if (interestsResponse.ok) {
             const userData = await interestsResponse.json();
             if (userData.interests && userData.interests.length > 0) {
               userTitles = Array.isArray(userData.interests)
                 ? userData.interests
-                : userData.interests.split(",").map(interest => interest.trim());
+                : userData.interests
+                    .split(",")
+                    .map((interest) => interest.trim());
             }
           }
         }
         console.log("User titles:", userTitles);
         console.log("Final user titles:", userTitles);
-  
+
         // Process titles, replace with related categories if needed, and filter out those without products
         const titleSet = new Set();
-        userTitles.forEach(title => {
+        userTitles.forEach((title) => {
           const normalizedTitle = normalizeCategory(title);
           if (categoryCounts[normalizedTitle] > 0) {
             titleSet.add(normalizedTitle);
           }
-        
+
           const relatedCategories = findRelatedCategories(normalizedTitle);
-          relatedCategories.forEach(category => {
+          relatedCategories.forEach((category) => {
             const normalizedCategory = normalizeCategory(category);
             if (categoryCounts[normalizedCategory] > 0) {
               titleSet.add(normalizedCategory);
             }
           });
         });
-  
+
         const finalTitles = Array.from(titleSet);
         console.log("Processed titles:", finalTitles);
         setTitles(finalTitles);
@@ -181,23 +193,23 @@ const Aigenproject = () => {
         setError("An error occurred while fetching data");
       }
     };
-  
+
     const normalizeCategory = (category) => {
       // แปลงหมวดหมู่ภาษาไทยเป็นภาษาอังกฤษ
       const thaiToEnglishMap = {
-        'โมเดล/3มิติ': 'model',
-        'เว็บไซต์': 'website',
-        'แอพพลิเคชัน': 'mobileapp',
-        'เอกสาร': 'document',
-        'เอไอ': 'ai',
-        'ชุดข้อมูล': 'datasets',
-        'ไอโอที': 'iot',
-        'โปรแกรม': 'program',
-        'รูปภาพ': 'photo',       
+        "โมเดล/3มิติ": "model",
+        เว็บไซต์: "website",
+        แอพพลิเคชัน: "mobileapp",
+        เอกสาร: "document",
+        เอไอ: "ai",
+        ชุดข้อมูล: "datasets",
+        ไอโอที: "iot",
+        โปรแกรม: "program",
+        รูปภาพ: "photo",
       };
       return thaiToEnglishMap[category.toLowerCase()] || category.toLowerCase();
     };
-  
+
     const findRelatedCategories = (title) => {
       const relatedCategories = new Set();
       productCategories.forEach((group) => {
@@ -215,7 +227,6 @@ const Aigenproject = () => {
       });
       return Array.from(relatedCategories);
     };
-  
 
     fetchData();
   }, [status, session, t]);

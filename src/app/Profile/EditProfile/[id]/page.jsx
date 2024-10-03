@@ -211,7 +211,7 @@ function page() {
         await Swal.fire({
           title: t("nav.profile.success"),
           icon: "success",
-          confirmButtonText: "ตกลง",
+          confirmButtonText: "OK",
         });
 
         // นำทางไปยังหน้า Profile
@@ -222,7 +222,7 @@ function page() {
           title: t("nav.profile.error"),
           text: t("nav.profile.errordes"),
           icon: "error",
-          confirmButtonText: "ตกลง",
+          confirmButtonText: "OK",
         });
       }
     } catch (error) {
@@ -232,7 +232,7 @@ function page() {
         title: "เกิดข้อผิดพลาด!",
         text: "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง",
         icon: "error",
-        confirmButtonText: "ตกลง",
+        confirmButtonText: "OK",
       });
     }
   };
