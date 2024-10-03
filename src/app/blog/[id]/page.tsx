@@ -54,7 +54,23 @@ function Blog({ params, initialComments }: BlogProps) {
   const [popupInput, setPopupInput] = useState("");
 
   const [postData, setPostData] = useState<PostData>([]);
-
+  
+  interface PostData {
+    _id: string; // Assuming _id is a string
+    topic: string;
+    course: string;
+    description: string;
+    heart: number;
+    imageUrl: string[];
+    userprofileid: string[];
+    userprofile: string[];
+    author: string;
+    email: string;
+    comments: any[]; // Or a more specific type
+    likedByUsers: any[]; // Or a more specific type
+    selectedCategory: string;
+    onClosets?: () => void;
+  }
 
 
 
