@@ -4,6 +4,18 @@ import Order from '../../../../models/order';
 import { getServerSession } from "next-auth";
 import { authOption } from '../../../app/api/auth/[...nextauth]/route';
 
+const isValidHttpUrl = (string) => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+};
+
+const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+
 export async function GET(req) {
   try {
     const session = await getServerSession(authOption);
@@ -47,12 +59,40 @@ export async function GET(req) {
         }
       },
       {
+        $lookup: {
+          from: 'studentusers',
+          let: { authorEmail: "$projectDetails.email" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$email", "$$authorEmail"]
+                }
+              }
+            },
+            {
+              $project: {
+                name: 1,
+                imageUrl: 1
+              }
+            }
+          ],
+          as: 'authorDetails'
+        }
+      },
+      {
+        $unwind: {
+          path: '$authorDetails',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
         $project: {
           _id: 1,
           createdAt: 1,
           status: 1,
           product: 1,
-          check: 1, // Include the check field
+          check: 1,
           'projectDetails._id': 1,
           'projectDetails.projectname': 1,
           'projectDetails.description': 1,
@@ -68,12 +108,24 @@ export async function GET(req) {
           'projectDetails.category': 1,
           'projectDetails.filesUrl': 1,
           'projectDetails.status': 1,
+          'authorName': { $ifNull: ['$authorDetails.name', 'Unknown Author'] },
+          'authorImageUrl': '$authorDetails.imageUrl'
         }
       },
       { $sort: { createdAt: -1 } }
     ];
 
-    const orders = await Order.aggregate(pipeline);
+    let orders = await Order.aggregate(pipeline);
+
+    // Process the profile image URLs
+    orders = orders.map(order => ({
+      ...order,
+      profileImage: order.authorImageUrl 
+        ? (isValidHttpUrl(order.authorImageUrl) 
+            ? useProxy(order.authorImageUrl) 
+            : `/api/project/images/${order.authorImageUrl}`)
+        : null
+    }));
 
     console.log("Orders found:", orders.length);
     console.log("Sample order:", orders.length > 0 ? JSON.stringify(orders[0], null, 2) : "No orders");

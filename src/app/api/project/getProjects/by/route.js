@@ -1,6 +1,19 @@
 import { NextResponse } from "next/server";
 import { connectMongoDB } from '../../../../../../lib/mongodb';
 import Project from '../../../../../../models/project';
+import StudentUser from '../../../../../../models/StudentUser';
+
+const isValidHttpUrl = (string) => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+};
+
+const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
 export async function GET(req) {
   try {
@@ -16,14 +29,35 @@ export async function GET(req) {
     }
 
     const query = {
-      email: email, // ใช้ email แทน author
+      email: email,
       permission: true
     };
 
+    const projects = await Project.find(query).sort({ createdAt: -1 }).lean();
 
-    const projects = await Project.find(query).sort({ createdAt: -1 });
+    // Fetch author details
+    const author = await StudentUser.findOne({ email: email }, 'name imageUrl').lean();
 
-    return NextResponse.json(projects, {
+    let authorName = 'Unknown Author';
+    let profileImage = null;
+
+    if (author) {
+      authorName = author.name;
+      if (author.imageUrl) {
+        profileImage = isValidHttpUrl(author.imageUrl)
+          ? useProxy(author.imageUrl)
+          : `/api/project/images/${author.imageUrl}`;
+      }
+    }
+
+    // Add author details to each project
+    const projectsWithAuthorDetails = projects.map(project => ({
+      ...project,
+      authorName,
+      profileImage
+    }));
+
+    return NextResponse.json(projectsWithAuthorDetails, {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

@@ -1,7 +1,20 @@
 import { NextResponse } from 'next/server';
 import { connectMongoDB } from '../../../../../lib/mongodb';
 import Project from '../../../../../models/project';
+import StudentUser from '../../../../../models/StudentUser';
 import { ObjectId } from 'mongodb';
+
+const isValidHttpUrl = (string) => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+};
+
+const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -24,9 +37,32 @@ export async function GET(request) {
       category: { $in: categoriesArray },
       permission: true,
       _id: { $ne: new ObjectId(exclude) }
-    }).limit(10);
+    }).limit(10).lean();
     
-    return new Response(JSON.stringify(similarProjects), { status: 200 });
+    // Fetch author details for each project
+    const projectsWithAuthorDetails = await Promise.all(similarProjects.map(async (project) => {
+      const author = await StudentUser.findOne({ email: project.email }, 'name imageUrl').lean();
+      
+      let authorName = 'Unknown Author';
+      let profileImage = null;
+
+      if (author) {
+        authorName = author.name;
+        if (author.imageUrl) {
+          profileImage = isValidHttpUrl(author.imageUrl)
+            ? useProxy(author.imageUrl)
+            : `/api/project/images/${author.imageUrl}`;
+        }
+      }
+
+      return {
+        ...project,
+        authorName,
+        profileImage
+      };
+    }));
+    
+    return new Response(JSON.stringify(projectsWithAuthorDetails), { status: 200 });
   } catch (error) {
     console.error('Error in getSimilarProject API:', error);
     return new Response(JSON.stringify({ error: 'Unable to fetch similar projects', details: error.message }), { status: 500 });

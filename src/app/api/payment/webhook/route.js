@@ -20,7 +20,6 @@ export async function POST(request) {
         const withdrawable = (charge.amount / 100) - servicefee;
         const newOrder = new Order({
           email: charge.metadata.email,
-          name: charge.metadata.name,
           product: charge.metadata.product,
           amount: charge.amount / 100,
           servicefee,

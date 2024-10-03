@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
 interface Project {
   _id: string;
@@ -14,6 +15,8 @@ interface Project {
   status: string;
   createdAt: string;
   check: boolean;
+  profileImage: string;
+  authorName: string;
   projectDetails: {
     _id: string;
     projectname: string;
@@ -98,12 +101,22 @@ const MyProject: React.FC = () => {
                 {project.projectDetails.projectname}
               </p>
               <div className="flex items-center mb-2">
-                <span className="text-gray-500 mr-2 text-2xl">
-                  <MdAccountCircle />
-                </span>
-                <p className="text-sm text-gray-600 truncate">
-                  {project.projectDetails.author}
-                </p>
+              {project.profileImage ? (
+                        <Image
+                          src={project.profileImage}
+                          alt="Author Profile"
+                          width={20}
+                          height={20}
+                          className="rounded-full mr-2"
+                        />
+                      ) : (
+                        <span className="text-gray-500 mr-2 text-2xl">
+                          <MdAccountCircle />
+                        </span>
+                      )}
+                      <p className="text-sm text-gray-600 truncate">
+                        {project.authorName}
+                      </p>
               </div>
               <div className="flex items-center mb-2">
                 <span className="text-yellow-500 mr-2 text-lg">

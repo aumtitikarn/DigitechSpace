@@ -104,8 +104,8 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h1 className="text-3xl md:text-4xl font-bold mb-6">{t("nav.review.topic")}</h1>
           <div className="border-b border-gray-500 my-4 lg:max-w-[950px]"></div>
-          <p className="text-lg font-medium mb-4">{t("nav.review.project")} :{name || ""}</p>
-          <p className="text-lg font-medium mb-2">{t("nav.review.point")}:</p>
+          <p className="text-lg font-medium mb-4">{t("nav.review.project")} : {name || ""}</p>
+          <p className="text-lg font-medium mb-2">{t("nav.review.point")} : </p>
           <div className="flex justify-left mb-4">
             {[...Array(5)].map((_, i) => (
               <span

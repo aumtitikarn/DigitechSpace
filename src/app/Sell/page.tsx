@@ -14,6 +14,7 @@ import { OrbitProgress } from "react-loading-indicators";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { t } from "i18next";
+import Image from "next/image";
 
 // Define the Product type
 type Product = {
@@ -27,6 +28,8 @@ type Product = {
   price: string;
   status: "submitted" | "pending" | "reviewing" | "approved" | "rejected";
   rejecttext: string;
+  authorName: string;
+  profileImage: string;
 };
 
 // Modal Component for confirmation
@@ -179,8 +182,7 @@ const ProductList: React.FC = () => {
           icon: "info",
           title: "Information",
           text: "User does not have Seller Information",
-        })
-        
+        });
       }
     } catch (error) {
       Swal.fire({
@@ -269,11 +271,21 @@ const ProductList: React.FC = () => {
                                 {project.projectname}
                               </p>
                               <div className="flex items-center mb-2">
-                                <span className="text-gray-500 mr-2 text-2xl">
-                                  <MdAccountCircle />
-                                </span>
+                                {project.profileImage ? (
+                                  <Image
+                                    src={project.profileImage}
+                                    alt="Author Profile"
+                                    width={20}
+                                    height={20}
+                                    className="rounded-full mr-2"
+                                  />
+                                ) : (
+                                  <span className="text-gray-500 mr-2 text-2xl">
+                                    <MdAccountCircle />
+                                  </span>
+                                )}
                                 <p className="text-sm text-gray-600 truncate">
-                                  {project.author}
+                                  {project.authorName}
                                 </p>
                               </div>
                               <div className="flex items-center mb-2">
@@ -350,11 +362,21 @@ const ProductList: React.FC = () => {
                             {project.projectname}
                           </p>
                           <div className="flex items-center mb-2">
-                            <span className="text-gray-500 mr-2 text-2xl">
-                              <MdAccountCircle />
-                            </span>
+                            {project.profileImage ? (
+                              <Image
+                                src={project.profileImage}
+                                alt="Author Profile"
+                                width={20}
+                                height={20}
+                                className="rounded-full mr-2"
+                              />
+                            ) : (
+                              <span className="text-gray-500 mr-2 text-2xl">
+                                <MdAccountCircle />
+                              </span>
+                            )}
                             <p className="text-sm text-gray-600 truncate">
-                              {project.author}
+                              {project.authorName}
                             </p>
                           </div>
                           <div className="flex items-center mb-2">

@@ -77,7 +77,7 @@ export async function GET(req) {
     await connectMongoDB(); // เชื่อมต่อกับ MongoDB
     const reviews = await Review.find(); // ดึงข้อมูลทั้งหมดจากฐานข้อมูล
 
-    console.log('Fetched reviews:', reviews); // Log the reviews to check if they are fetched
+    // console.log('Fetched reviews:', reviews); // Log the reviews to check if they are fetched
 
     return NextResponse.json({ message: 'Reviews fetched successfully', data: reviews });
   } catch (error) {

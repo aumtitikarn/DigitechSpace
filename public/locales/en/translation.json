@@ -143,6 +143,7 @@
       "yes" : "Yes",
       "edit" : "Edit your project",
       "noproject" : "No projects to display",
+      "noreview" : "No reviews available",
       "status" : {
         "submitted" : "Submitted",
         "pending" : "Pending",

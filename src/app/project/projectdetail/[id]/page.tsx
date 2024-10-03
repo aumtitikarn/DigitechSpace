@@ -21,6 +21,7 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import OmisePaymentButtons from "./OmisePaymentButtons";
 import Swal from "sweetalert2";
 import axios from "axios";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface ProjectData {
@@ -37,6 +38,8 @@ interface ProjectData {
   author: string;
   filesUrl: string[];
   email: string;
+  profileImage: string;
+  authorName: string;
 }
 declare global {
   interface Window {
@@ -97,18 +100,22 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           const projectResponse = await fetch(`/api/project/${params.id}`);
           if (projectResponse.ok) {
             const projectData = await projectResponse.json();
-            setProject(projectData.post);
-            console.log("Project data:", projectData.post);
-            
+            setProject(projectData); // ไม่ต้องใช้ .post แล้ว
+            console.log("Project data:", projectData);
+
             // ดึงรีวิวที่ตรงกับ projectId
-            const reviewsResponse = await fetch('/api/review');
+            const reviewsResponse = await fetch("/api/review");
             const reviewsData = await reviewsResponse.json();
-            const filteredReviews = reviewsData.data.filter((review: Review) => review.projectId === params.id);
+            const filteredReviews = reviewsData.data.filter(
+              (review: Review) => review.projectId === params.id
+            );
             setReviews(filteredReviews);
-            
+
             // ดึงโปรเจกต์อื่นๆ ของผู้ใช้คนเดียวกัน
-            if (projectData.post && projectData.post.email) {
-              const publishedResponse = await fetch(`/api/project/getProjects/by?email=${encodeURIComponent(projectData.post.email)}`);
+            if (projectData && projectData.email) {
+              const publishedResponse = await fetch(
+                `/api/project/getProjects/by?email=${encodeURIComponent(projectData.email)}`
+              );
               if (publishedResponse.ok) {
                 const publishedData = await publishedResponse.json();
                 setPublishedProjects(publishedData);
@@ -126,31 +133,40 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         }
       }
     };
-  
+
     fetchData();
   }, [params.id]);
-  
+
   useEffect(() => {
     const fetchSimilarProjects = async () => {
       if (project && project.category) {
         try {
           let categories;
           if (project.category.toLowerCase() === "all") {
-            categories = Array.from(new Set(projectGroups.flatMap((group) => group.categories))).join(",");
+            categories = Array.from(
+              new Set(projectGroups.flatMap((group) => group.categories))
+            ).join(",");
           } else {
             const relevantGroups = projectGroups.filter((group) =>
               group.categories.includes(project.category)
             );
-            categories = Array.from(new Set(relevantGroups.flatMap((group) => group.categories))).join(",");
+            categories = Array.from(
+              new Set(relevantGroups.flatMap((group) => group.categories))
+            ).join(",");
           }
-  
-          const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
+
+          const response = await fetch(
+            `/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`
+          );
           if (response.ok) {
             const data = await response.json();
             setSimilarProjects(data);
           } else {
             const errorData = await response.json();
-            setError(errorData.error || `Failed to fetch similar projects: ${response.status} ${response.statusText}`);
+            setError(
+              errorData.error ||
+                `Failed to fetch similar projects: ${response.status} ${response.statusText}`
+            );
           }
         } catch (error) {
           console.error("Error fetching similar projects:", error);
@@ -158,10 +174,9 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         }
       }
     };
-  
+
     fetchSimilarProjects();
   }, [project]);
-  
 
   if (!project) {
     return <div></div>;
@@ -193,7 +208,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     setIsLoading(true);
     try {
       const userEmail = session?.user.email;
-  
+
       // ตรวจสอบว่าผู้ใช้ได้ซื้อโครงงานนี้แล้วหรือยัง
       const response = await axios.get("/api/payment/checkOrder", {
         params: {
@@ -201,7 +216,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           productId: project._id,
         },
       });
-  
+
       // ถ้าผู้ใช้เป็นเจ้าของโครงงานนี้
       if (response.data.projectOwned) {
         Swal.fire({
@@ -211,7 +226,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           confirmButtonText: "ตกลง",
         });
       }
-  
+
       // ถ้าผู้ใช้ได้ทำการสั่งซื้อแล้ว
       else if (response.data.hasOrder) {
         Swal.fire({
@@ -221,7 +236,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           confirmButtonText: "ตกลง",
         });
       }
-  
+
       // ถ้าไม่มีการสั่งซื้อและไม่ใช่โครงงานของผู้ใช้ ให้ดำเนินการสั่งซื้อ
       else {
         handleBuyClick();
@@ -232,8 +247,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       setIsLoading(false);
     }
   };
-  
-  
+
   const handlePrevClick = () => {
     setCurrentIndex(
       (prevIndex) =>
@@ -252,7 +266,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           email: session.user.email,
           projectId: project._id, // แปลงเป็น string ที่นี่
         };
-  
+
         const favoriteResponse = await fetch("/api/favorites", {
           method: "POST",
           headers: {
@@ -260,10 +274,10 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           },
           body: JSON.stringify(data),
         });
-  
+
         if (favoriteResponse.ok) {
           const result = await favoriteResponse.json();
-          
+
           // อัปเดตสถานะ favorite และสถานะของโปรเจกต์ตาม response
           if (result.status === "favorites") {
             setIsFavorited(true);
@@ -284,8 +298,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       alert("Please log in to save favorites");
     }
   };
-  
-  
 
   const handleBuyClick = () => {
     setIsPopupOpen(true);
@@ -315,7 +327,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     setVisibleReviewsCount(3); // กลับไปแสดงผลรีวิว 5 รีวิวแรก
   };
 
-  
   const createInternetBankingCharge = async (
     amount: number,
     token: string,
@@ -374,7 +385,9 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   };
 
   const handleTwitterShare = () => {
-    const text = encodeURIComponent(`Digitech Space project: ${project.projectname} by: ${project.author}`);
+    const text = encodeURIComponent(
+      `Digitech Space project: ${project.projectname} by: ${project.author}`
+    );
     window.open(
       `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`,
       "_blank"
@@ -419,11 +432,23 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                     <p className="text-sm text-gray-600 mr-2">
                       {t("nav.project.projectdetail.by")}
                     </p>
-                    <span className="text-gray-500 mr-2 text-2xl">
-                      <MdAccountCircle />
+                    <span className="text-gray-500  text-3xl mr-2">
+                      {project.profileImage ? (
+                        <Image
+                          src={project.profileImage}
+                          alt="Author Profile"
+                          width={30}
+                          height={30}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <span className="text-gray-500 text-3xl mr-2">
+                          <MdAccountCircle />
+                        </span>
+                      )}
                     </span>
                     <p className="text-sm text-gray-600 truncate w-[150px]">
-                      {project.author}
+                      {project.authorName}
                     </p>
                   </div>
                   <div>
@@ -467,27 +492,26 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       )}
                     </div>
                     {session ? (
-  <button
-    onClick={handleFavoriteClick}
-    className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`} // เปลี่ยนสีตามสถานะ
-  >
-    {isFavorited ? <GoHeartFill /> : <GoHeart />}
-  </button>
-) : (
-  <Link href="/auth/preauth">
-    <button className="cursor-pointer text-gray-600 text-2xl">
-      <GoHeart />
-    </button>
-  </Link>
-)}
-
+                      <button
+                        onClick={handleFavoriteClick}
+                        className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`} // เปลี่ยนสีตามสถานะ
+                      >
+                        {isFavorited ? <GoHeartFill /> : <GoHeart />}
+                      </button>
+                    ) : (
+                      <Link href="/auth/preauth">
+                        <button className="cursor-pointer text-gray-600 text-2xl">
+                          <GoHeart />
+                        </button>
+                      </Link>
+                    )}
                   </div>
                   {session ? (
                     <button
                       className="bg-[#33529B] text-white px-20 py-2 rounded-lg mt-11"
                       onClick={checkAndBuyProject}
                     >
-                    {t("nav.project.projectdetail.buy")}
+                      {t("nav.project.projectdetail.buy")}
                     </button>
                   ) : (
                     <Link href="/auth/preauth">
@@ -533,28 +557,36 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul>
-      {reviews.length > 0 ? (
-        reviews.map((review, index) => (
-          <li key={index} className="mb-4">
-            <div className="flex items-center">
-              <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
-              <div className="flex flex-col">
-                <div className="flex items-center">
-                  <p className="text-sm font-bold mr-2">{review.username}</p>
-                  <span className="flex items-center">
-                    <IoIosStar className="text-yellow-500 mr-1" />
-                    <span className="text-sm">{review.rathing}</span>
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 mt-1">{review.review}</p>
-              </div>
-            </div>
-          </li>
-        ))
-      ) : (
-        <p>No reviews available</p>
-      )}
-    </ul>
+                  {reviews.length > 0 ? (
+                    reviews.map((review, index) => (
+                      <li key={index} className="mb-4">
+                        <div className="flex items-center">
+                          <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
+                          <div className="flex flex-col">
+                            <div className="flex items-center">
+                              <p className="text-sm font-bold mr-2">
+                                {review.username}
+                              </p>
+                              <span className="flex items-center">
+                                <IoIosStar className="text-yellow-500 mr-1" />
+                                <span className="text-sm">
+                                  {review.rathing}
+                                </span>
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {review.review}
+                            </p>
+                          </div>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <p className=" text-gray-500 mt-5">
+                      {t("nav.sell.noreview")}
+                    </p>
+                  )}
+                </ul>
 
                 <div className="flex justify-center">
                   {visibleReviewsCount < reviews.length && (
@@ -575,6 +607,9 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       </p>
                     </button>
                   )}
+                  {visibleReviewsCount < 0 && (
+                    <></>
+                  )}
                 </div>
               </div>
               {/* Product List Section */}
@@ -584,7 +619,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                     {t("nav.project.projectdetail.projectby")}{" "}
                   </p>
                   <p className="text-[#33529B] ml-1 text-[20px] font-bold">
-                    {project.author}
+                    {project.authorName}
                   </p>
                 </div>
                 {publishedProjects.length > 0 ? (
@@ -606,11 +641,21 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                                 {product.projectname}
                               </p>
                               <div className="flex items-center mb-2">
-                                <span className="text-gray-500 mr-2 text-2xl">
-                                  <MdAccountCircle />
-                                </span>
-                                <p className="text-sm text-gray-600 truncate w-[150px]">
-                                  {product.author}
+                                {product.profileImage ? (
+                                  <Image
+                                    src={product.profileImage}
+                                    alt="Author Profile"
+                                    width={20}
+                                    height={20}
+                                    className="rounded-full mr-2"
+                                  />
+                                ) : (
+                                  <span className="text-gray-500 mr-2 text-2xl">
+                                    <MdAccountCircle />
+                                  </span>
+                                )}
+                                <p className="text-sm text-gray-600 truncate">
+                                  {product.authorName}
                                 </p>
                               </div>
                               <div className="flex items-center mb-2">
@@ -661,18 +706,28 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                                 {product.projectname}
                               </p>
                               <div className="flex items-center mb-2">
-                                <span className="text-gray-500 mr-2 text-2xl">
-                                  <MdAccountCircle />
-                                </span>
-                                <p className="text-sm text-gray-600 truncate w-[150px]">
-                                  {product.author}
+                                {product.profileImage ? (
+                                  <Image
+                                    src={product.profileImage}
+                                    alt="Author Profile"
+                                    width={20}
+                                    height={20}
+                                    className="rounded-full mr-2"
+                                  />
+                                ) : (
+                                  <span className="text-gray-500 mr-2 text-2xl">
+                                    <MdAccountCircle />
+                                  </span>
+                                )}
+                                <p className="text-sm text-gray-600 truncate">
+                                  {product.authorName}
                                 </p>
                               </div>
                               <div className="flex items-center mb-2">
                                 <span className="text-yellow-500 mr-2">
                                   <IoIosStar />
                                 </span>
-                                <span className="text-sm text-gray-600 truncate w-[150px]">
+                                <span className="text-sm text-gray-600 truncate w-[130px]">
                                   {product.rathing || "N/A"} ({product.review})
                                   | {t("nav.project.projectdetail.sold")}{" "}
                                   {product.sold}

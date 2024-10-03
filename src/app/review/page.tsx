@@ -8,13 +8,16 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
-
+import { OrbitProgress } from "react-loading-indicators";
+import Image from "next/image";
 // Define types for project data
 interface Project {
   _id: string;
   product: string;
   status: string;
   createdAt: string;
+  authorName: string;
+  profileImage: string;
   projectDetails: {
     _id: string;
     projectname: string;
@@ -43,10 +46,13 @@ const Review: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+
+  
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
     }
+   
     const fetchProjects = async () => {
       try {
         const response = await fetch("/api/myproject");
@@ -67,7 +73,28 @@ const Review: React.FC = () => {
     fetchProjects();
   }, [status, router]);
 
-  if (loading) return <p>Loading...</p>;
+  if (status === "loading" || loading) {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
+  }
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -98,12 +125,22 @@ const Review: React.FC = () => {
                         {project.projectDetails.projectname}
                       </p>
                       <div className="flex items-center mb-2">
-                        <span className="text-gray-500 mr-2 text-2xl">
-                          <MdAccountCircle />
-                        </span>
-                        <p className="text-sm text-gray-600 truncate">
-                          {project.projectDetails.author}
-                        </p>
+                      {project.profileImage ? (
+                                  <Image
+                                    src={project.profileImage}
+                                    alt="Author Profile"
+                                    width={20}
+                                    height={20}
+                                    className="rounded-full mr-2"
+                                  />
+                                ) : (
+                                  <span className="text-gray-500 mr-2 text-2xl">
+                                    <MdAccountCircle />
+                                  </span>
+                                )}
+                                <p className="text-sm text-gray-600 truncate">
+                                  {project.authorName}
+                                </p>
                       </div>
                       <div className="flex items-center mb-2">
                         <span className="text-yellow-500 mr-2 text-lg">
