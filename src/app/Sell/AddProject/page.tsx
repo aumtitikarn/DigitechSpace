@@ -99,7 +99,6 @@ const Project: React.FC = () => {
     formData.append("receive", JSON.stringify(inputs.map((input) => input.value)));
     formData.append("category", category);
     formData.append("price", price);
-    formData.append("author", session.user.name);
     formData.append("email", session.user.email);
     formData.append("rathing", rathingValue.toFixed(1));
     formData.append("sold", soldValue.toString());
