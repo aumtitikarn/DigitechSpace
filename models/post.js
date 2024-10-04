@@ -26,8 +26,8 @@ const postSchema = new mongoose.Schema(
     heart: { type: Number, default: 0 },
     imageUrl: { type: [String], required: true }, // Array of strings
     userprofileid: { type: [String], required: true },
-    userprofile: { type: [String], required: true },
-    author: { type: String, required: true },
+    // userprofile: { type: [String], required: true },
+    // author: { type: String, required: true },
     email: { type: String, required: true },
     comments: { type: [commentSchema], default: [] },
     likedByUsers: {

@@ -177,7 +177,7 @@ export default function Page() {
                             <Image
                               width={300}
                               height={300}
-                              src={`/api/posts/images/${val.imageUrl[currentIndex]}`}
+                              src={`/api/posts/images/${val.imageUrl}`}
                               alt={val.topic}
                               className="w-full object-cover rounded-lg h-full"
                               style={{ height: "220px" }}
@@ -224,7 +224,7 @@ export default function Page() {
                                 <MdAccountCircle className="w-9 h-9 rounded-full mr-2 mt-1 text-gray-500" />
                               )}
                               <p className="mt-2 truncate text-gray-500 text-xs">
-                                {val.author}
+                                {val.authorName}
                               </p>
                             </div>
                           </div>
@@ -242,7 +242,8 @@ export default function Page() {
               <div className="sticky bottom-8 w-full max-w-screen-lg mx-auto px-4 mt-8">
                 <div className="flex justify-end">
                   {session && (
-                    <Link href="/Addblog">
+                    <Link href={`/Addblog/${session?.user?.id}`}>
+                      {/* <Link href={`/Addblog`}> */}
                       <div className="w-14 h-14 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110">
                         <FaPlus size={24} />
                       </div>
