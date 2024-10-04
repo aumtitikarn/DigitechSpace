@@ -55,8 +55,20 @@ import { NextResponse } from "next/server";
 import { Readable } from "stream";
 import { connectMongoDB } from "../../../../lib/mongodb";
 import Post from "../../../../models/post";
+import NormalUser from "../../../../models/NormalUser";
+import StudentUser from "../../../../models/StudentUser";
 
 export const revalidate = 0;
+
+const isValidHttpUrl = (string) => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+};
 
 
 export async function POST(req) {
@@ -68,10 +80,10 @@ export async function POST(req) {
     let course = "";
     let description = "";
     let selectedCategory = "";
-    let author = "";
+    // let author = "";
     let email = "";
     let heart = 0;
-    let userprofile = "";
+    // let userprofile = "";
     let userprofileid = "";
     let comments = [];
     let imageUrl = [];
@@ -94,18 +106,18 @@ export async function POST(req) {
         case "selectedCategory":
           selectedCategory = value.toString();
           break;
-        case "userprofile":
-          userprofile = value.toString();
-          break;
+        // case "userprofile":
+        //   userprofile = value.toString();
+        //   break;
         case "userprofileid":
             userprofileid = value.toString();
           break;
         case "email":
             email = value.toString();
           break;
-        case "author":
-          author = value.toString();
-          break;
+        // case "author":
+        //   author = value.toString();
+        //   break;
           case "comments":
             comments = value.toString();
             break;
@@ -137,9 +149,9 @@ export async function POST(req) {
       description,
       heart,
       selectedCategory,
-      userprofile, // รูปภาพที่เก็บใน userprofile
+      // userprofile, // รูปภาพที่เก็บใน userprofile
       userprofileid,
-      author,
+      // author,
       email,
       imageUrl,
       comments: [],
@@ -158,12 +170,54 @@ export async function POST(req) {
   }
 }
 
-
+const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
 export async function GET() {
-    const { db } = await connectMongoDB();
-    const posts = await Post.find({});
-    return NextResponse.json({ posts });
+  try {
+    const { db } = await connectMongoDB();  // Assuming connectMongoDB is a valid function
+
+    const postblogs = await Post.find({});  // Fetch all posts
+
+    // Process all posts using Promise.all
+    const posts = await Promise.all(postblogs.map(async (blog) => {
+      console.log(`Processing project: ${blog._id}, Author email: ${blog.email}`);
+
+      // Find user in StudentUser or NormalUser collection
+      let studentuser = await StudentUser.findOne({ email: blog.email }, 'name imageUrl').lean();
+      let normaluser = await NormalUser.findOne({ email: blog.email }, 'name imageUrl').lean();
+
+      let user = studentuser || normaluser;  // Use studentuser if exists, otherwise normaluser
+
+      if (user) {
+        console.log(`Found user: ${user.name}`);
+        console.log(`ProfileImg: ${user.imageUrl}`);
+      } else {
+        console.log('User not found in both StudentUser and NormalUser collections');
+      }
+
+      // Determine profile image source
+      let profileImageSource = null;
+      if (user && user.imageUrl) {
+        if (isValidHttpUrl(user.imageUrl)) {
+          profileImageSource = useProxy(user.imageUrl);  // Proxy if valid URL
+        } else {
+          profileImageSource = `/api/posts/images/${user.imageUrl}`;  // Local image path
+        }
+      }
+
+      // Return the blog post with the author's information
+      return {
+        ...blog.toObject(),  // Ensure we convert the blog document to a plain object
+        authorName: user ? user.name : 'Unknown Author',
+        profileImage: profileImageSource
+      };
+    }));
+
+    return NextResponse.json({ posts, postblogs }, { status: 200 });
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    return NextResponse.json({ message: 'Error fetching posts' }, { status: 500 });
+  }
 }
 
 export async function PUT(req, { params }) {

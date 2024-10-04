@@ -35,8 +35,6 @@ interface BlogProps {
   initialComments: string[]; // ตัวอย่างการกำหนด type สำหรับ initialComments
 }
 
-
-
 function Blog({ params, initialComments }: BlogProps) {
   const [review, setReview] = useState("");
   const [report, setreport] = useState("");

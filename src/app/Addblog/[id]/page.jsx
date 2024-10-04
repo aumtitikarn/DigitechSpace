@@ -3,9 +3,9 @@
 import React, { useEffect,useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import Container from "../components/Container";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import Container from "../../components/Container";
 import { AiFillPlusCircle } from "react-icons/ai";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -36,6 +36,72 @@ export default function Page() {
   const router = useRouter();
 
   const { register, handleSubmit } = useForm();
+
+  const getPostByIdprofile = async () => {
+    try {
+      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch a post");
+      }
+
+      const data = await res.json();
+      console.log("Show Blog image: ", data);
+
+      const post = data.combinedData;
+      setPostData(post);
+      setProfileUserT(post.imageUrl);
+      setProfileUsername(post.name);
+      setProfileUserId(post._id);
+      setEmail(post.email);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostByIdprofile();
+  }, []);
+
+
+   
+  // const getPostByIdprofile = async (id) => {
+  //   try {
+  //     const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+  //       method: 'GET',
+  //       cache: 'no-store',
+  //     });
+
+  //     if (!res.ok) {
+  //       throw new Error('Failed to fetch a post');
+  //     }
+
+  //     const data = await res.json();
+  //     console.log('Show Blog image: ', data);
+
+  //     const post = data.combinedData;
+  //     setPostData(post);
+  //     setProfileUserT(post.imageUrl);
+  //     setProfileUsername(post.name);
+  //     setProfileUserId(post._id);
+  //     setEmail(post.email);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // // Single useEffect for fetching post by id once router is ready
+  // useEffect(() => {
+  //   if (!router.isReady) return; // Ensure router is ready
+
+  //   const { id } = router.query; // Safely destructure id from query once ready
+  //   if (id) {
+  //     getPostByIdprofile(id); // Fetch the post only when id is available
+  //   }
+  // }, [router.isReady, router.query]); // Depend on router.isReady and qu
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -82,35 +148,6 @@ export default function Page() {
     }
   };
 
-  const getPostByIdprofile = async () => {
-    try {
-      const res = await fetch(`/api/editprofile/${id}`, {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch a post");
-      }
-
-      const data = await res.json();
-      console.log("Show Blog image: ", data);
-
-      const post = data.combinedData;
-      setPostData(post);
-      setProfileUserT(post.imageUrl);
-      setProfileUsername(post.name);
-      setProfileUserId(post._id);
-      setEmail(post.email);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getPostByIdprofile();
-  }, []);
-
       console.log("อันนี้set"+setProfileUserT)
       console.log("อันนี้p"+profileUserT)
 
@@ -146,9 +183,9 @@ export default function Page() {
     formData.append("description", description);
     formData.append("heart", heart);
     formData.append("selectedCategory", selectedCategory);
-    // formData.append("author", profileUsername);
+    formData.append("author", profileUsername);
     formData.append("userprofileid", profileUserId)
-    // formData.append("userprofile", profileUserT);
+    formData.append("userprofile", profileUserT);
     formData.append("email", email);
     img.forEach((img) => formData.append("imageUrl", img));
   
