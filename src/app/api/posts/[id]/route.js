@@ -1,11 +1,63 @@
 import { connectMongoDB } from "../../../../../lib/mongodb";
 import Post from "../../../../../models/post";
+import NormalUser from "../../../../../models/NormalUser";
+import StudentUser from "../../../../../models/StudentUser";
 import { NextResponse } from "next/server";
+
+const isValidHttpUrl = (string) => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+};
+
+const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
 export async function GET(req, { params }) {
     const { id } = params;
     await connectMongoDB();
-    const post = await Post.findOne({ _id: id });
+    const postblog = await Post.findOne({ _id: id });
+
+    if (!postblog) {
+      return NextResponse.json({ message: 'Post not found' }, { status: 404 });
+  }
+
+  // Find the user associated with the blog
+  console.log(`Processing project: ${postblog._id}, Author email: ${postblog.email}`);
+
+  // Find user in StudentUser or NormalUser collection
+  let studentuser = await StudentUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
+  let normaluser = await NormalUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
+
+  let user = studentuser || normaluser;  // Use studentuser if exists, otherwise normaluser
+
+  if (user) {
+      console.log(`Found user: ${user.name}`);
+      console.log(`ProfileImg: ${user.imageUrl}`);
+  } else {
+      console.log('User not found in both StudentUser and NormalUser collections');
+  }
+
+  // Determine profile image source
+  let profileImageSource = null;
+  if (user && user.imageUrl) {
+      if (isValidHttpUrl(user.imageUrl)) {
+          profileImageSource = useProxy(user.imageUrl);  // Proxy if valid URL
+      } else {
+          profileImageSource = `/api/posts/images/${user.imageUrl}`;  // Local image path
+      }
+  }
+
+  // Return the blog post with the author's information
+  const post = {
+      ...postblog.toObject(),  // Convert the blog document to a plain object
+      authorName: user ? user.name : 'Unknown Author',
+      profileImage: profileImageSource
+  };
+
     return NextResponse.json({ post }, { status: 200 });
 }
 

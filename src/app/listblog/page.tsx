@@ -117,8 +117,8 @@ export default function Page() {
       return url.protocol === "http:" || url.protocol === "https:";
     };
   
-    if (post.userprofile && post.userprofile.length > 0) {
-      const profileImage = post.userprofile[0];
+    if (post.profileImage && post.profileImage.length > 0) {
+      const profileImage = post.profileImage[0];
       if (isValidHttpUrl(profileImage)) {
         return useProxy(profileImage);
       } else {
@@ -200,13 +200,13 @@ export default function Page() {
                               </div>
                             </div>
                             <div className="flex flex-row mb-3">
-                              {val.userprofile &&
-                              val.userprofile.length > 0 &&
-                              val.userprofile[0] ? (
+                              {val.profileImage &&
+                              val.profileImage.length > 0 &&
+                              val.profileImage[0] ? (
                                 <Image
                                   width={30}
                                   height={30}
-                                  src={getImageSource(val)}
+                                  src={val.profileImage}
                                   alt="Profile"
                                   onError={(
                                     e: React.SyntheticEvent<

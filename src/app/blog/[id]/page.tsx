@@ -511,7 +511,7 @@ function Blog({ params, initialComments }: BlogProps) {
                 )}
                 <div className="flex flex-col justify-center">
                   {postData && postData.author ? (
-                    <h1 className="font-bold">{postData.author}</h1>
+                    <h1 className="font-bold">{postData.authorName}</h1>
                   ) : (
                     <h1 className="font-bold">Anonymous</h1> // กรณีที่ไม่มีข้อมูลผู้เขียน
                   )}
