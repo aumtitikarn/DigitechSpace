@@ -17,7 +17,6 @@ export async function POST(req, res) {
     let category = "";
     let price = "";
     let imageUrl = [];
-    let author = "";
     let email = "";
     let permission = false;
     let filesUrl = [];
@@ -42,9 +41,6 @@ export async function POST(req, res) {
           break;
         case "price":
           price = parseInt(value, 10);
-          break;
-        case "author":
-          author = value.toString();
           break;
         case "email":
           email = value.toString();
@@ -108,7 +104,6 @@ export async function POST(req, res) {
       receive,
       category,
       price,
-      author,
       email,
       permission,
       status,

@@ -582,33 +582,34 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       </li>
                     ))
                   ) : (
-                    <p className=" text-gray-500 mt-5">
+                    <p className=" text-gray-500 mt-5 text-center">
                       {t("nav.sell.noreview")}
                     </p>
                   )}
                 </ul>
 
                 <div className="flex justify-center">
-                  {visibleReviewsCount < reviews.length && (
-                    <button
-                      onClick={handleSeeMoreClick}
-                      className="text-[#33529B] mt-2 font-bold"
-                    >
-                      <p className="text-center">{t("nav.home.seemore")}</p>
-                    </button>
-                  )}
-                  {visibleReviewsCount >= reviews.length && (
-                    <button
-                      onClick={handleShowLessClick}
-                      className="text-[#33529B] mt-2 font-bold"
-                    >
-                      <p className="text-center">
-                        {t("nav.project.projectdetail.hidden")}
-                      </p>
-                    </button>
-                  )}
-                  {visibleReviewsCount < 0 && (
-                    <></>
+                  {reviews.length > 0 && (
+                    <>
+                      {visibleReviewsCount < reviews.length && (
+                        <button
+                          onClick={handleSeeMoreClick}
+                          className="text-[#33529B] mt-2 font-bold"
+                        >
+                          <p className="text-center">{t("nav.home.seemore")}</p>
+                        </button>
+                      )}
+                      {visibleReviewsCount >= reviews.length && (
+                        <button
+                          onClick={handleShowLessClick}
+                          className="text-[#33529B] mt-2 font-bold"
+                        >
+                          <p className="text-center">
+                            {t("nav.project.projectdetail.hidden")}
+                          </p>
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
