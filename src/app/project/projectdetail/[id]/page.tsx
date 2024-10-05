@@ -258,7 +258,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % project.imageUrl.length);
   };
 
-
   const handleFavoriteClick = async () => {
     if (session) {
       try {
@@ -279,22 +278,42 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           const result = await favoriteResponse.json();
 
           // ตั้งค่าสถานะตามที่ได้รับจาก API
-          setIsFavorited(result.isFavorited); // จะได้รับการอัปเดตจาก API
-          // แสดงข้อความแจ้งเตือน
-          alert(result.isFavorited ? "Added to favorites!" : "Removed from favorites!");
+          setIsFavorited(result.isFavorited);
+
+          // แสดงข้อความแจ้งเตือนด้วย SweetAlert2
+          Swal.fire({
+            icon: "success",
+            title: result.isFavorited
+              ? t("nav.project.projectdetail.favadd")
+              : t("nav.project.projectdetail.favre"),
+            showConfirmButton: false,
+            timer: 1500,
+          });
         } else {
           const result = await favoriteResponse.json();
-          alert(`Error: ${result.error}`);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: `Error: ${result.error}`,
+          });
         }
       } catch (error) {
         console.error("Error during favorite request:", error);
-        alert("Error adding/removing favorite");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Error adding/removing favorite",
+        });
       }
     } else {
-      alert("Please log in to save favorites");
+      Swal.fire({
+        icon: "warning",
+        title: t("nav.project.projectdetail.favlog"),
+        text: t("nav.project.projectdetail.favlogdes"),
+      });
     }
   };
-  
+
   const handleBuyClick = () => {
     setIsPopupOpen(true);
   };
@@ -487,23 +506,13 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                         </div>
                       )}
                     </div>
-                    {session ? (
-                        <button
-                        onClick={handleFavoriteClick}
-                        className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`}
 
-                      >
-                        {isFavorited ? <GoHeartFill /> : <GoHeart />}
-                      </button>
-                      
-                    ) : (
-                      <Link href="/auth/preauth">
-                         <button className="cursor-pointer text-gray-600 text-2xl">
-                         <GoHeart />
-                       </button>
-                     </Link>
-                      )}
-
+                    <button
+                      onClick={handleFavoriteClick}
+                      className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`}
+                    >
+                      {isFavorited ? <GoHeartFill /> : <GoHeart />}
+                    </button>
                   </div>
                   {session ? (
                     <button
@@ -513,7 +522,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       {t("nav.project.projectdetail.buy")}
                     </button>
                   ) : (
-                    <Link href="/auth/preauth">
+                    <Link href="/auth/signin">
                       <button className="bg-[#33529B] text-white px-5  py-2 lg:px-10 lg:py-2 rounded-lg mt-11">
                         {t("authen.signin.title")}
                       </button>

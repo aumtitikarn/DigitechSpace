@@ -79,7 +79,11 @@
         "alreadyOwned" : "You have placed an order for this project.",
         "alreadyOwnedDescription" : "You can see more details on my project page.",
         "your" : "This project is yours.",
-        "your2" : "You cannot purchase your own project."
+        "your2" : "You cannot purchase your own project.",
+        "favadd" : "Added to favorites!",
+        "favree" : "Removed from favorites!",
+        "favlog" : "Login Required!",
+        "favlogdes" : "Please log in to save favorites."
       }
     },
     "blog": {

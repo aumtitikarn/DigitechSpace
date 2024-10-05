@@ -248,8 +248,60 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const handleNextClick = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % project.imageUrl.length);
   };
-  const handleFavoriteClick = () => {
-    setIsFavorited((prev) => !prev); // เปลี่ยนสถานะเมื่อคลิก
+  const handleFavoriteClick = async () => {
+    if (session) {
+      try {
+        const data = {
+          email: session.user.email,
+          projectId: project._id,
+        };
+
+        const favoriteResponse = await fetch("/api/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (favoriteResponse.ok) {
+          const result = await favoriteResponse.json();
+
+          // ตั้งค่าสถานะตามที่ได้รับจาก API
+          setIsFavorited(result.isFavorited);
+
+          // แสดงข้อความแจ้งเตือนด้วย SweetAlert2
+          Swal.fire({
+            icon: "success",
+            title: result.isFavorited
+              ? t("nav.project.projectdetail.favadd")
+              : t("nav.project.projectdetail.favre"),
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        } else {
+          const result = await favoriteResponse.json();
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: `Error: ${result.error}`,
+          });
+        }
+      } catch (error) {
+        console.error("Error during favorite request:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Error adding/removing favorite",
+        });
+      }
+    } else {
+      Swal.fire({
+        icon: "warning",
+        title: t("nav.project.projectdetail.favlog"),
+        text: t("nav.project.projectdetail.favlogdes"),
+      });
+    }
   };
 
   const handleBuyClick = () => {
@@ -449,32 +501,18 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                         </div>
                       )}
                     </div>
-                    {session ? (
                       <>
                         <button
                           onClick={handleFavoriteClick}
-                          className="cursor-pointer"
+                          className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`}
                         >
-                          {isFavorited ? (
-                            <GoHeartFill className="text-gray-600 text-2xl" />
-                          ) : (
-                            <GoHeart className="text-gray-600 text-2xl" />
-                          )}
+                          {isFavorited ? <GoHeartFill /> : <GoHeart />}
                         </button>
                         <AiOutlineNotification
                           onClick={handleNotificationClick}
                           className="text-gray-600 cursor-pointer text-2xl"
                         />
                       </>
-                    ) : (
-                      <>
-                        <Link href="/auth/preauth">
-                          <button className="cursor-pointer">
-                            <GoHeart className="text-gray-600 text-2xl" />
-                          </button>
-                        </Link>
-                      </>
-                    )}
                   </div>
                 </div>
               </div>

@@ -56,7 +56,7 @@ const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
           <div className="flex mb-2">
             <span className="text-yellow-500 mr-2"><IoIosStar /></span>
             <span className="lg:text-sm text-gray-600 text-[12px] truncate">
-              {project.rathing} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
+              {project.rathing || "N/A"} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
             </span>
           </div>
           <p className="text-lg font-bold text-[#33529B] mb-2">{project.price} THB</p>
