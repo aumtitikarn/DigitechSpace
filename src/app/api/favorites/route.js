@@ -3,6 +3,7 @@ import Favorites from '../../../../models/favorites'; // ตรวจสอบ�
 import { NextResponse } from 'next/server'; // Import NextResponse
 
 // POST handler to add or remove favorites
+// POST handler to add or remove favorites
 export async function POST(req) {
   try {
     await connectMongoDB(); // เชื่อมต่อกับ MongoDB
@@ -31,14 +32,14 @@ export async function POST(req) {
           { email },
           { $pull: { projectId: projectId } }
         );
-        return new NextResponse(JSON.stringify({ message: "ลบจากรายการโปรดแล้ว" }), { status: 200 });
+        return new NextResponse(JSON.stringify({ isFavorited: false }), { status: 200 }); // ส่งกลับเป็น false
       } else {
         // เพิ่ม projectId ลงในรายการโปรด
         await Favorites.updateOne(
           { email },
           { $addToSet: { projectId: projectId } }
         );
-        return new NextResponse(JSON.stringify({ message: "เพิ่มลงในรายการโปรดแล้ว" }), { status: 201 });
+        return new NextResponse(JSON.stringify({ isFavorited: true }), { status: 201 }); // ส่งกลับเป็น true
       }
     } else {
       // สร้างเอกสารใหม่หากยังไม่มีรายการโปรด
@@ -47,13 +48,14 @@ export async function POST(req) {
         projectId: [projectId], // เริ่มต้นด้วย array ที่มี projectId
       });
       await newFavorite.save();
-      return new NextResponse(JSON.stringify({ message: "เพิ่มลงในรายการโปรดแล้ว" }), { status: 201 });
+      return new NextResponse(JSON.stringify({ isFavorited: true }), { status: 201 }); // ส่งกลับเป็น true
     }
   } catch (error) {
     console.error('ข้อผิดพลาดในการจัดการคำร้อง POST:', error.message);
     return new NextResponse(JSON.stringify({ error: 'ข้อผิดพลาดภายในเซิร์ฟเวอร์' }), { status: 500 });
   }
 }
+
 
 // GET handler to fetch favorites
 export async function GET(req) {

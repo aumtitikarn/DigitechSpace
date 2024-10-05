@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useRouter } from "next/navigation";
+
 // Define the Project interface
 interface Project {
   _id: string;
@@ -18,72 +18,40 @@ interface Project {
   price: number;
   review: number;
   sold: number;
-  rathing: number;
+  rathing: number; // เปลี่ยนชื่อฟิลด์จาก 'rathing' เป็น 'rating'
   imageUrl: string[];
   author: string;
+  profileImage?: string; // เพิ่มฟิลด์ profileImage ที่อาจไม่มีค่า
+  authorName?: string; // เพิ่มฟิลด์ authorName ที่อาจไม่มีค่า
 }
 
 // ReviewCard Component
-const ReviewCard: React.FC<{ projectId: string }> = ({ projectId }) => {
+const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
   const { t } = useTranslation("translation");
-  const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/signin");
-    }
-    const fetchData = async () => {
-      if (!projectId) {
-        console.error("Invalid projectId");
-        return; // ถ้า projectId เป็น undefined หรือ null ให้หยุดการทำงานของ useEffect
-      }
-
-      try {
-        setLoading(true);
-        // ดึงข้อมูลโปรเจกต์ตาม projectId
-        const projectResponse = await fetch(`/api/project/${projectId}`);
-        if (projectResponse.ok) {
-          const projectData = await projectResponse.json();
-          setProject(projectData.post); // รับข้อมูล project
-          console.log("Project data:", projectData.post);
-        } else {
-          setError("Failed to fetch project data.");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setError("Error fetching project data.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [status, router,projectId]);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-  if (!project) return <p>Project not found.</p>;
 
   return (
     <div className="rounded-[10px] border border-[#BEBEBE] bg-white p-4" style={{ width: "100%", height: "auto" }}>
       <div className="w-full h-full flex flex-col mb-4">
-        {project.imageUrl.length > 0 && (
-          <img
-            src={`/api/favorites/images/${project.imageUrl[0]}`} // เลือกรูปภาพแรกใน array ของ imageUrl
-            alt="Product Image"
-            className="w-full h-[150px] rounded-md object-cover mb-4"
-          />
-        )}
+        <img
+          src={`/api/project/images/${project.imageUrl[0]}`}
+          alt="Project Image"
+          className="w-full h-[150px] rounded-md object-cover mb-4"
+        />
         <div className="flex flex-col h-full">
           <p className="text-lg font-semibold mb-2 truncate">{project.projectname}</p>
-          <div className="flex mb-2">
-            <span className="text-gray-500 mr-2 text-2xl"><MdAccountCircle /></span>
-            <p className="text-sm text-gray-600 truncate">{project.author}</p>
+          <div className="flex items-center mb-2">
+            {project.profileImage ? (
+              <img
+                src={project.profileImage}
+                alt="Author Profile"
+                className="rounded-full mr-2 w-5 h-5" // ใช้แทน Image สำหรับโปรไฟล์
+              />
+            ) : (
+              <span className="text-gray-500 mr-2 text-2xl">
+                <MdAccountCircle />
+              </span>
+            )}
+            <p className="text-sm text-gray-600 truncate">{project.authorName || t("unknownAuthor")}</p>
           </div>
           <div className="flex mb-2">
             <span className="text-yellow-500 mr-2"><IoIosStar /></span>
@@ -92,20 +60,17 @@ const ReviewCard: React.FC<{ projectId: string }> = ({ projectId }) => {
             </span>
           </div>
           <p className="text-lg font-bold text-[#33529B] mb-2">{project.price} THB</p>
-          <div>
-          </div>
         </div>
       </div>
     </div>
   );
 };
 
-
 // Favorite Component
 const Favorite: React.FC = () => {
   const { t } = useTranslation("translation");
   const { data: session } = useSession();
-  const [favoriteProjectIds, setFavoriteProjectIds] = useState<string[]>([]);
+  const [favoriteProjects, setFavoriteProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -115,38 +80,48 @@ const Favorite: React.FC = () => {
       setLoading(false);
       return;
     }
-  
+
     setLoading(true);
     setError(null);
-  
+
     try {
       const response = await fetch(`/api/favorites?email=${encodeURIComponent(session.user.email)}`, {
         method: "GET",
         cache: "no-store",
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch favorites.");
       }
-  
-      // Since the backend returns an array of project IDs, directly map them
-      const favoriteProjectIds = await response.json();
-      
-      // Set the favorite project IDs to state
-      setFavoriteProjectIds(favoriteProjectIds);
-    } catch (error) {
+
+      const favoriteProjectIds: string[] = await response.json();
+
+      if (favoriteProjectIds.length > 0) {
+        const projectPromises = favoriteProjectIds.map(id =>
+          fetch(`/api/project/${id}`).then(res => {
+            if (!res.ok) {
+              throw new Error(`Failed to fetch project with ID: ${id}`);
+            }
+            return res.json();
+          })
+        );
+        const projects = await Promise.all(projectPromises);
+        setFavoriteProjects(projects);
+      } else {
+        setFavoriteProjects([]);
+      }
+    } catch (error: any) {
       console.error("Error loading favorites:", error);
-      setError("Failed to load favorites.");
+      setError(error.message || "Failed to load favorites.");
     } finally {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchFavorites();
   }, [session?.user?.email]); // Re-fetch favorites when the email changes
-  
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">
       <Navbar />
@@ -158,10 +133,10 @@ const Favorite: React.FC = () => {
               <p>{t("loading")}</p>
             ) : error ? (
               <p>{error}</p>
-            ) : favoriteProjectIds.length > 0 ? (
-              favoriteProjectIds.map((projectId) => (
-                <Link key={projectId} href={`/project/projectdetail/${projectId}`} passHref>
-                   <ReviewCard projectId={projectId} />
+            ) : favoriteProjects.length > 0 ? (
+              favoriteProjects.map((project) => (
+                <Link key={project._id} href={`/project/projectdetail/${project._id}`} passHref>
+                  <ReviewCard project={project} />
                 </Link>
               ))
             ) : (
