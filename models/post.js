@@ -3,17 +3,17 @@ import { type } from "os";
 
 const replySchema = new mongoose.Schema({
   text: String,
-  author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
-  profile: { type: [String], required: true },
+  // author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
+  // profile: { type: [String], required: true },
   timestamp: String, // เพิ่ม timestamp
 });
 
 // สร้าง schema สำหรับ comment
 const commentSchema = new mongoose.Schema({
   text: String,
-  author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
+  // author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
   timestamp: String, // เพิ่ม timestamp
-  profile: { type: [String], required: true },
+  // profile: { type: [String], required: true },
   replies: [replySchema],
 });
 

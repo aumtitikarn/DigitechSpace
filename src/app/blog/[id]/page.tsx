@@ -63,6 +63,8 @@ function Blog({ params, initialComments }: BlogProps) {
     userprofileid: string[];
     userprofile: string[];
     author: string;
+    profileImage: string[];
+    authorName: string;
     email: string;
     comments: any[]; // Or a more specific type
     likedByUsers: any[]; // Or a more specific type
@@ -167,8 +169,8 @@ function Blog({ params, initialComments }: BlogProps) {
     const requestBody = {
       text: isReply ? replyInput : commentInput,
       action: isReply ? "reply" : "comment",
-      author: session?.user?.name || "Anonymous", // เพิ่มชื่อผู้แสดงความคิดเห็น
-      profile: isReply ? imageUrl : imageUrl,
+      // author: session?.user?.name || "Anonymous",
+      // profile: isReply ? imageUrl : imageUrl,
       timestamp: new Date(),
       ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
     };
@@ -266,7 +268,8 @@ function Blog({ params, initialComments }: BlogProps) {
     console.log("Blog name:", postData.topic);
     console.log("Blog Email:", postData.email);
     console.log("Blog ID:", postData._id);
-  
+    console.log("authorName:", comment.authorName);
+    
     const formData = new FormData();
   
     // Check if the user is authenticated
@@ -446,6 +449,32 @@ function Blog({ params, initialComments }: BlogProps) {
     text: string;
   }
 
+
+  const getImageSource = (post: PostData): string => {
+    const useProxy = (url: string): string => `/api/proxy?url=${encodeURIComponent(url)}`;
+  
+    const isValidHttpUrl = (string: string): boolean => {
+      let url;
+      try {
+        url = new URL(string);
+      } catch (_) {
+        return false;
+      }
+      return url.protocol === "http:" || url.protocol === "https:";
+    };
+  
+    if (post.profileImage && post.profileImage.length > 0) {
+      const profileImage = post.profileImage[0];
+      if (isValidHttpUrl(profileImage)) {
+        return useProxy(profileImage);
+      } else {
+        return `/api/posts/images/${profileImage}`;
+      }
+    }
+  
+    // Fallback to default image if no userprofile is available
+    return "/default-profile-icon.png";
+  };
   
 
   return (
@@ -498,19 +527,29 @@ function Blog({ params, initialComments }: BlogProps) {
             </div>
             <Link href={postData?.userprofileid ? `/Profile/ViewProfile/${postData.userprofileid}` : '#'}>
               <div className="flex flex-row mt-5 mb-5 items-center">
-                {postData?.userprofile && postData.userprofile[0] ? (
+                {postData?.profileImage && postData.profileImage[0] ? (
                   <Image
-                    width={200}
-                    height={200}
-                    src={`/api/posts/images/${postData.userprofile}`}
-                    alt={`${postData.author}'s profile picture`}
-                    className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
-                  />
+                  width={30}
+                  height={30}
+                  src={postData.profileImage}
+                  alt="Profile"
+                  onError={(
+                    e: React.SyntheticEvent<
+                      HTMLImageElement,
+                      Event
+                    >
+                  ) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = "/default-profile-icon.png";
+                  }}
+                  className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500"
+                />
                 ) : (
                   <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
                 )}
                 <div className="flex flex-col justify-center">
-                  {postData && postData.author ? (
+                  {postData && postData.authorName ? (
                     <h1 className="font-bold">{postData.authorName}</h1>
                   ) : (
                     <h1 className="font-bold">Anonymous</h1> // กรณีที่ไม่มีข้อมูลผู้เขียน
@@ -636,7 +675,7 @@ function Blog({ params, initialComments }: BlogProps) {
 
                         {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
 
-                        <strong className="flex flex-col justify-center text-lg">{comment.author}</strong>
+                        <strong className="flex flex-col justify-center text-lg">{comment.authorName}</strong>
                       </p>
                       <div className="flex flex-row">
                       <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>

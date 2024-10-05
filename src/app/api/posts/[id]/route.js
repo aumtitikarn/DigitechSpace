@@ -20,6 +20,7 @@ export async function GET(req, { params }) {
     const { id } = params;
     await connectMongoDB();
     const postblog = await Post.findOne({ _id: id });
+    const postcomments = await Post.findById({ comments: id });
 
     if (!postblog) {
       return NextResponse.json({ message: 'Post not found' }, { status: 404 });
@@ -32,7 +33,10 @@ export async function GET(req, { params }) {
   let studentuser = await StudentUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
   let normaluser = await NormalUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
 
-  let user = studentuser || normaluser;  // Use studentuser if exists, otherwise normaluser
+  let studentusercomment = await StudentUser.findOne({ email: postcomments.email }, 'name imageUrl').lean();
+  let normalusercomment = await NormalUser.findOne({ email: postcomments.email }, 'name imageUrl').lean();
+
+  let user = studentuser || normaluser || studentusercomment || normalusercomment;  // Use studentuser if exists, otherwise normaluser
 
   if (user) {
       console.log(`Found user: ${user.name}`);
@@ -66,13 +70,14 @@ export async function PUT(req, { params }) {
   try {
     const { id } = params; // Get the post ID from params
     const body = await req.json();
-    const { text, profile, action, commentId, author, setheart: heart, userId, actionheart } = body;
+    const { text, action, commentId, setheart: heart, userId, actionheart } = body;
 
     await connectMongoDB(); // Connect to MongoDB
 
     // Find the post by ID
-    const post = await Post.findById(id);
+    const post = await Post.findById({ _id: id });
 
+  // Return the blog post with the author's information
     if (!post) {
       return NextResponse.json({ message: 'Post not found' }, { status: 404 });
     }
@@ -118,7 +123,7 @@ export async function PUT(req, { params }) {
       // บันทึกความคิดเห็นใหม่พร้อมชื่อผู้ใช้ รูปโปรไฟล์ และเวลา
       post.comments.push({
         text,
-        author, // ชื่อผู้ใช้
+        // author, // ชื่อผู้ใช้
         profile: typeof profile === 'string' ? profile : '', // รูปโปรไฟล์ของผู้ใช้
         timestamp, // เวลา
         replies: [], // Array ว่างสำหรับการตอบกลับ
@@ -130,16 +135,49 @@ export async function PUT(req, { params }) {
         comment.replies.push({
           text,
           profile, // รูปโปรไฟล์ของผู้ตอบกลับ
-          author,
+          // author,
           timestamp, // เวลา
         });
       }
     }
 
-    // Save the updated post
-    await post.save();
+          // Save the updated post
+          await post.save();
 
-    return NextResponse.json({ post }, { status: 200 });
+  //         console.log(`Processing project: ${post._id}, Author email: ${post.email}`);
+
+  //             // Find user in StudentUser or NormalUser collection
+  // let studentuser = await StudentUser.findOne({ email: post.email }, 'name imageUrl').lean();
+  // let normaluser = await NormalUser.findOne({ email: post.email }, 'name imageUrl').lean();
+
+  // let user = studentuser || normaluser;  // Use studentuser if exists, otherwise normaluser
+
+  // if (user) {
+  //     console.log(`Found user comment: ${user.name}`);
+  //     console.log(`ProfileImg comment: ${user.imageUrl}`);
+  // } else {
+  //     console.log('User not found in both StudentUser and NormalUser collections');
+  // }
+
+  // // Determine profile image source
+  // let profileImageSource = null;
+  // if (user && user.imageUrl) {
+  //     if (isValidHttpUrl(user.imageUrl)) {
+  //         profileImageSource = useProxy(user.imageUrl);  // Proxy if valid URL
+  //     } else {
+  //         profileImageSource = `/api/posts/images/${user.imageUrl}`;  // Local image path
+  //     }
+  // }      
+
+
+  //   const posts = {
+  //     ...post.toObject(),  // Convert the blog document to a plain object
+  //     authorName: user ? user.name : 'Unknown Author',
+  //     profileImage: profileImageSource
+  // };
+
+
+    return NextResponse.json({ posts,post }, { status: 200 });
 }catch (error) {
   console.error('Error updating post:', error);
   return NextResponse.json({ message: 'Error updating post' }, { status: 500 });
