@@ -16,10 +16,10 @@ export async function GET(req) {
     // เชื่อมต่อกับ MongoDB
     await connectMongoDB();
 
-    const username = session.user.name; // ใช้ชื่อผู้ใช้จาก session
+    const username = session.user.email; // ใช้ชื่อผู้ใช้จาก session
 
     // ดึง Blog ที่โพสต์โดยผู้ใช้ที่มี username ตรงกับผู้ใช้ใน session
-    const allUserBlog = await Post.find({ author: username });
+    const allUserBlog = await Post.find({ email: username });
 
     return NextResponse.json(allUserBlog, { status: 200 });
   } catch (error) {

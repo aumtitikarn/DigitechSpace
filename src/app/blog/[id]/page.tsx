@@ -52,7 +52,7 @@ function Blog({ params, initialComments }: BlogProps) {
   const [popupInput, setPopupInput] = useState("");
 
   const [postData, setPostData] = useState<PostData>([]);
-  
+
   interface PostData {
     _id: string; // Assuming _id is a string
     topic: string;
@@ -158,47 +158,47 @@ function Blog({ params, initialComments }: BlogProps) {
       console.error("User ID not found in session.");
     }
   }, [session?.user?.id]);
-  
+
 
 
   const handleAddCommentOrReply = async (isReply: boolean, commentId = null) => {
-    if(session){
-    const imageUrl = profileUserN?.imageUrl?.[0] || "/path/to/default-image.jpg"; // ใช้รูปภาพเริ่มต้นหากไม่มี
-    setProfileUser([imageUrl]);
+    if (session) {
+      const imageUrl = profileUserN?.imageUrl?.[0] || "/path/to/default-image.jpg"; // ใช้รูปภาพเริ่มต้นหากไม่มี
+      setProfileUser([imageUrl]);
 
-    const requestBody = {
-      text: isReply ? replyInput : commentInput,
-      action: isReply ? "reply" : "comment",
-      // author: session?.user?.name || "Anonymous",
-      // profile: isReply ? imageUrl : imageUrl,
-      emailcomment: session?.user?.email || "Anonymous",
-      timestamp: new Date(),
-      ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
-    };
+      const requestBody = {
+        text: isReply ? replyInput : commentInput,
+        action: isReply ? "reply" : "comment",
+        // author: session?.user?.name || "Anonymous",
+        // profile: isReply ? imageUrl : imageUrl,
+        emailcomment: session?.user?.email || "Anonymous",
+        timestamp: new Date(),
+        ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
+      };
 
-    try {
-      const res = await fetch(`/api/posts/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
+      try {
+        const res = await fetch(`/api/posts/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestBody),
+        });
 
-      if (res.ok) {
-        const updatedData = await res.json();
-        setComments(updatedData.post.comments); // อัปเดตคอมเมนต์ใหม่
-        setCommentInput("");
-        setReplyInput("");
-        setReplyingTo(null);
-        router.refresh();
-        router.push(`/blog/${id}`);
+        if (res.ok) {
+          const updatedData = await res.json();
+          setComments(updatedData.post.comments); // อัปเดตคอมเมนต์ใหม่
+          setCommentInput("");
+          setReplyInput("");
+          setReplyingTo(null);
+          router.refresh();
+          router.push(`/blog/${id}`);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      // alert("Please log in to save favorites");
+      Swal.fire('Error', 'Please log in to comment.', 'error');
     }
-  }else {
-    // alert("Please log in to save favorites");
-    Swal.fire('Error', 'Please log in to comment.', 'error');
-  }
   };
 
   useEffect(() => {
@@ -259,20 +259,20 @@ function Blog({ params, initialComments }: BlogProps) {
 
   const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent button's default behavior
-  
+
     // Set blogid and blogEmail from postData
     setBlogname(postData.topic);
     setBlogEmail(postData.email);
     setBlogid(postData._id);
-  
+
     // Debugging: check the values
     console.log("Blog name:", postData.topic);
     console.log("Blog Email:", postData.email);
     console.log("Blog ID:", postData._id);
     console.log("authorName:", comments.authorName);
-    
+
     const formData = new FormData();
-  
+
     // Check if the user is authenticated
     if (!session || !session.user || !session.user.name) {
       Swal.fire({
@@ -284,13 +284,13 @@ function Blog({ params, initialComments }: BlogProps) {
       });
       return;
     }
-  
+
     // Check if all required fields are filled
     if (!report || !selectedReason) {
       alert("Please complete all inputs");
       return;
     }
-  
+
     // Append form data
     formData.append("blogname", postData.topic);
     formData.append("selectedReason", selectedReason);
@@ -298,13 +298,13 @@ function Blog({ params, initialComments }: BlogProps) {
     formData.append("author", session.user.name);
     formData.append("blogid", postData._id);
     formData.append("blogEmail", postData.email);
-  
+
     try {
       const res = await fetch("http://localhost:3000/api/reportblog", {
         method: "POST",
         body: formData,
       });
-  
+
       if (res.ok) {
         router.push(`/blog/${postData._id}`);
         setIsPopupOpen(false);
@@ -318,7 +318,7 @@ function Blog({ params, initialComments }: BlogProps) {
 
   const togglePopup = () => {
     if (session) {
-    setIsPopupOpen(!isPopupOpen);
+      setIsPopupOpen(!isPopupOpen);
     } else {
       // alert("Please log in to save favorites");
       Swal.fire('Error', 'Please log in to report.', 'error');
@@ -372,45 +372,45 @@ function Blog({ params, initialComments }: BlogProps) {
   console.log("UserId :", UserId);
 
   const handleSubmitCiHeart = async (e: React.MouseEvent<SVGElement>) => {
-    if(session){
+    if (session) {
 
-    // ตรวจสอบว่าใน likedByUsers มี userId อยู่หรือไม่
-    const isLiked = Array.isArray(postData?.likedByUsers) && postData.likedByUsers.includes(UserId);
+      // ตรวจสอบว่าใน likedByUsers มี userId อยู่หรือไม่
+      const isLiked = Array.isArray(postData?.likedByUsers) && postData.likedByUsers.includes(UserId);
 
-    try {
-      const actionheart = isLiked ? 'unlike' : 'like'; // กำหนด actionheart ว่าจะเป็นการ like หรือ unlike
-      const heart = isLiked ? postData.heart - 1 : postData.heart + 1; // ถ้าเคยกดแล้วจะลบ 1 ถ้ายังไม่เคยจะเพิ่ม 1
+      try {
+        const actionheart = isLiked ? 'unlike' : 'like'; // กำหนด actionheart ว่าจะเป็นการ like หรือ unlike
+        const heart = isLiked ? postData.heart - 1 : postData.heart + 1; // ถ้าเคยกดแล้วจะลบ 1 ถ้ายังไม่เคยจะเพิ่ม 1
 
-      // ส่งข้อมูลไปยัง backend
-      const blogRes = await fetch(`http://localhost:3000/api/posts/${postData._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: UserId, actionheart, setheart: heart }),
-      });
+        // ส่งข้อมูลไปยัง backend
+        const blogRes = await fetch(`http://localhost:3000/api/posts/${postData._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId: UserId, actionheart, setheart: heart }),
+        });
 
-      if (!blogRes.ok) {
-        throw new Error("Failed to update blog post");
+        if (!blogRes.ok) {
+          throw new Error("Failed to update blog post");
+        }
+
+        // อัปเดต state
+        setHeart(heart); // อัปเดตค่าของ heart ใน state
+        setIsHeartClicked(!isLiked); // เปลี่ยนสถานะของ isHeartClicked ตามค่า isLiked
+
+        // ดึงข้อมูลโพสต์ใหม่
+        await getPostById(postData._id);
+      } catch (error) {
+        console.error("Error updating:", error);
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: 'An error occurred',
+          text: 'error.message',
+          showConfirmButton: true,
+        });
       }
-
-      // อัปเดต state
-      setHeart(heart); // อัปเดตค่าของ heart ใน state
-      setIsHeartClicked(!isLiked); // เปลี่ยนสถานะของ isHeartClicked ตามค่า isLiked
-
-      // ดึงข้อมูลโพสต์ใหม่
-      await getPostById(postData._id);
-    } catch (error) {
-      console.error("Error updating:", error);
-      Swal.fire({
-        position: 'center',
-        icon: 'error',
-        title: 'An error occurred',
-        text: 'error.message',
-        showConfirmButton: true,
-      });
-    }
-  }else {
+    } else {
       // alert("Please log in to save favorites");
       Swal.fire('Error', 'Please log in to save favorites.', 'error');
     }
@@ -453,7 +453,7 @@ function Blog({ params, initialComments }: BlogProps) {
 
   const getImageSource = (post: PostData): string => {
     const useProxy = (url: string): string => `/api/proxy?url=${encodeURIComponent(url)}`;
-  
+
     const isValidHttpUrl = (string: string): boolean => {
       let url;
       try {
@@ -463,7 +463,7 @@ function Blog({ params, initialComments }: BlogProps) {
       }
       return url.protocol === "http:" || url.protocol === "https:";
     };
-  
+
     if (post.profileImage && post.profileImage.length > 0) {
       const profileImage = post.profileImage[0];
       if (isValidHttpUrl(profileImage)) {
@@ -472,15 +472,15 @@ function Blog({ params, initialComments }: BlogProps) {
         return `/api/posts/images/${profileImage}`;
       }
     }
-  
+
     // Fallback to default image if no userprofile is available
     return "/default-profile-icon.png";
   };
-  
+
 
   return (
     <Container>
-      <Navbar/>
+      <Navbar />
       <main className="flex flex-col items-center w-full">
         <div className="w-full max-w-screen-lg p-4">
           <div className="flex flex-col">
@@ -530,22 +530,22 @@ function Blog({ params, initialComments }: BlogProps) {
               <div className="flex flex-row mt-5 mb-5 items-center">
                 {postData?.profileImage && postData.profileImage[0] ? (
                   <Image
-                  width={30}
-                  height={30}
-                  src={postData.profileImage}
-                  alt="Profile"
-                  onError={(
-                    e: React.SyntheticEvent<
-                      HTMLImageElement,
-                      Event
-                    >
-                  ) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null;
-                    target.src = "/default-profile-icon.png";
-                  }}
-                  className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500"
-                />
+                    width={30}
+                    height={30}
+                    src={postData.profileImage}
+                    alt="Profile"
+                    onError={(
+                      e: React.SyntheticEvent<
+                        HTMLImageElement,
+                        Event
+                      >
+                    ) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = "/default-profile-icon.png";
+                    }}
+                    className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500"
+                  />
                 ) : (
                   <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
                 )}
@@ -622,24 +622,24 @@ function Blog({ params, initialComments }: BlogProps) {
               </div>
               <div className="flex space-x-4">
                 <div className="relative flex justify-center">
-                <IoShareOutline className="text-2xl cursor-pointer" onClick={handleShareClick} />
+                  <IoShareOutline className="text-2xl cursor-pointer" onClick={handleShareClick} />
 
-                {isSharePopupOpen && (
-                <div className="absolute bottom-full mb-[10px] w-[121px] h-[46px] flex-shrink-0 rounded-[30px] border border-gray-300 bg-white flex items-center justify-center space-x-4 shadow-lg">
-                  <FaLink
-                    className="text-gray-600 cursor-pointer"
-                    onClick={handleCopyLink}
-                  />
-                  <FaFacebook
-                    className="text-gray-600 cursor-pointer"
-                    onClick={handleFacebookShare}
-                  />
-                  <RiTwitterXLine
-                    className="text-gray-600 cursor-pointer"
-                    onClick={handleTwitterShare}
-                  />
-                </div>
-                )}
+                  {isSharePopupOpen && (
+                    <div className="absolute bottom-full mb-[10px] w-[121px] h-[46px] flex-shrink-0 rounded-[30px] border border-gray-300 bg-white flex items-center justify-center space-x-4 shadow-lg">
+                      <FaLink
+                        className="text-gray-600 cursor-pointer"
+                        onClick={handleCopyLink}
+                      />
+                      <FaFacebook
+                        className="text-gray-600 cursor-pointer"
+                        onClick={handleFacebookShare}
+                      />
+                      <RiTwitterXLine
+                        className="text-gray-600 cursor-pointer"
+                        onClick={handleTwitterShare}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <AiOutlineNotification
@@ -662,24 +662,24 @@ function Blog({ params, initialComments }: BlogProps) {
                     <div className="flex flex-col">
                       <p className="flex flex-row">
 
-                      {comment.profileImageSource ? (
-  <Image
-    width={200}
-    height={200}
-    src={comment.profileImageSource} // ใช้ commentProfileImageSource ที่ดึงมาจาก API
-    alt={`${comment.userName}'s profile picture`} // ใช้ userName แทน author
-    className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
-  />
-) : (
-  <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
-)}
+                        {comment.profileImageSource ? (
+                          <Image
+                            width={200}
+                            height={200}
+                            src={comment.profileImageSource} // ใช้ commentProfileImageSource ที่ดึงมาจาก API
+                            alt={`${comment.userName}'s profile picture`} // ใช้ userName แทน author
+                            className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                          />
+                        ) : (
+                          <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+                        )}
                         {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
 
                         <strong className="flex flex-col justify-center text-lg">{comment.userName}</strong>
                       </p>
                       <div className="flex flex-row">
-                      <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
-                      <div className="flex flex-row">
+                        <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
+                        <div className="flex flex-row">
                           {replyingTo === comment._id ? (
                             <div className="flex flex-col ml-4">
 
@@ -708,7 +708,7 @@ function Blog({ params, initialComments }: BlogProps) {
                             <button onClick={() => setReplyingTo(comment._id)} className="font-bold text-[#0E6FFF] ml-4">Reply</button>
                           )}
                         </div>
-                        </div>
+                      </div>
                       <p className="text-lg ml-10">{comment.text}</p>
                       <div className="flex flex-col ml-10">
                       </div>

@@ -12,7 +12,7 @@ export async function GET(req) {
         permission: true
       };
 
-      const projects = await Post.find(query).sort({ createdAt: -1 });
+      const posts = await Post.find(query).sort({ createdAt: -1 });
 
   try {
     await connectMongoDB();
