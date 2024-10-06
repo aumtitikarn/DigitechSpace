@@ -171,6 +171,7 @@ function Blog({ params, initialComments }: BlogProps) {
       action: isReply ? "reply" : "comment",
       // author: session?.user?.name || "Anonymous",
       // profile: isReply ? imageUrl : imageUrl,
+      emailcomment: session?.user?.email || "Anonymous",
       timestamp: new Date(),
       ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
     };
@@ -268,7 +269,7 @@ function Blog({ params, initialComments }: BlogProps) {
     console.log("Blog name:", postData.topic);
     console.log("Blog Email:", postData.email);
     console.log("Blog ID:", postData._id);
-    console.log("authorName:", comment.authorName);
+    console.log("authorName:", comments.authorName);
     
     const formData = new FormData();
   
@@ -661,21 +662,20 @@ function Blog({ params, initialComments }: BlogProps) {
                     <div className="flex flex-col">
                       <p className="flex flex-row">
 
-                        {comment.profile && comment.profile[0] ? (
-                          <Image
-                            width={200}
-                            height={200}
-                            src={`/api/posts/images/${comment.profile}`}
-                            alt={`${comment.author}'s profile picture`}
-                            className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
-                          />
-                        ) : (
-                          <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
-                        )}
-
+                      {comment.profileImageSource ? (
+  <Image
+    width={200}
+    height={200}
+    src={comment.profileImageSource} // ใช้ commentProfileImageSource ที่ดึงมาจาก API
+    alt={`${comment.userName}'s profile picture`} // ใช้ userName แทน author
+    className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+  />
+) : (
+  <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+)}
                         {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
 
-                        <strong className="flex flex-col justify-center text-lg">{comment.authorName}</strong>
+                        <strong className="flex flex-col justify-center text-lg">{comment.userName}</strong>
                       </p>
                       <div className="flex flex-row">
                       <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
