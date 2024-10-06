@@ -17,8 +17,8 @@ function page() {
   const [activeButton, setActiveButton] = useState("button1");
   const { t } = useTranslation("translation");
 
-  const [postData, setPostData] = useState(null);
-  const [postDataS, setPostDataS] = useState(null);
+  const [postData, setPostData] = useState([]);
+  const [postDataS, setPostDataS] = useState([]);
   const [postDataBlog, setPostDataBlog] = useState([]);
   const [publishedProjects, setPublishedProjects] = useState([]);
 
@@ -88,6 +88,39 @@ function page() {
     );
   }
 
+
+  const getImageSource = () => {
+    const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+  
+    
+    const isValidHttpUrl = (string) => {
+      let url;
+      try {
+        url = new URL(string);
+      } catch (_) {
+        return false;
+      }
+      return url.protocol === "http:" || url.protocol === "https:";
+    };
+    if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
+      const imageUrl = postData.imageUrl[0];
+      if (isValidHttpUrl(imageUrl)) {
+        return useProxy(imageUrl);
+      } else {
+        return `/api/editprofile/images/${imageUrl}`;
+      }
+    }
+    if (postDataS && postDataS.imageUrl) {
+      return `/api/editprofile/images/${postDataS.imageUrl}`;
+    }
+    if (session?.user?.image) {
+      return useProxy(session.user.image);
+    }
+    return null;
+  };
+
+  const imageSource = getImageSource();
+
   return (
     <Container>
       <Navbar session={session} />
@@ -96,11 +129,11 @@ function page() {
           {session?.user?.role === "NormalUser" ? (
             <div className="flex flex-row justify-center">
               <div className="relative">
-                {postData?.imageUrl ? (
+              {imageSource ? (
                   <Image
                     width={200}
                     height={200}
-                    src={`/api/editprofile/images/${postData.imageUrl}`}
+                    src={`/api/viewprofile/images/${imageSource}`}
                     alt="Profile"
                     style={{
                       objectFit: "cover",
@@ -118,11 +151,11 @@ function page() {
           ) : (
             <div className="flex flex-row justify-center">
               <div className="relative">
-                {postDataS?.imageUrl ? (
+                {imageSource ? (
                   <Image
                     width={200}
                     height={200}
-                    src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                    src={`/api/editprofile/images/${imageSource}`}
                     alt="Profile"
                     style={{
                       objectFit: "cover",
