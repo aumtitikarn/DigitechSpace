@@ -60,7 +60,7 @@ function page({ params, initialComments }) {
 
       // Fetch blog posts (not dependent on authentication status)
       try {
-        const blogResponse = await fetch("/api/posts/getposts/user", { cache: "no-store" });
+        const blogResponse = await fetch(`/api/posts/getposts/${id}`, { cache: "no-store" });
         if (blogResponse.ok) {
           const blogData = await blogResponse.json();
           setPostDataBlog(blogData);
@@ -240,17 +240,47 @@ function page({ params, initialComments }) {
               {postDataBlog.length > 0 ? (
                 postDataBlog.map((blog, index) => (
                   <Link key={index} href={`/blog/${blog._id}`}>
-                    <div className="w-[150px] sm:w-[180px] md:w-[190px] lg:w-[200px]">
-                      <div className="rounded-[10px] border border-[#BEBEBE] bg-white p-4 m-2">
+                    <div className="w-[150px] sm:w-[180px] md:w-[200px] h-auto flex flex-col">
+                      <div
+                        className="rounded w-full relative"
+                        style={{ height: "200px" }}
+                      >
                         <Image
                           width={100}
-                          height={150}
+                          height={400}
                           src={`/api/posts/images/${blog.imageUrl}`}
-                          alt="Blog Post Image"
-                          className="w-full h-[150px] rounded-md object-cover mb-4"
+                          alt={blog.topic}
+                          className="w-full object-cover rounded-lg h-full"
                         />
-                        <p className="text-base font-semibold mb-2 truncate">{blog.blogname}</p>
-                        <p className="text-sm text-gray-600 truncate">{blog.author || session?.user?.name}</p>
+                      </div>
+                      <div className="ml-2 mt-2">
+                        <div className="flex flex-col mt-1 justify-center">
+                          <div className="flex flex-row">
+                            <p className="truncate mt-1 text-sm font-bold w-full">
+                              {blog.topic || "Untitled Blog"}
+                            </p>
+                            <div className="flex items-center">
+                              <CiHeart style={{ fontSize: "20px" }} />
+                              <p className="text-gray-500 text-sm">
+                                {blog.heart || 0}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-row mb-3">
+                          {/* <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" /> */}
+                          <Image
+                            width={200}
+                            height={200}
+                            src={imageSource}
+                            alt={blog.topic}
+                            className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500"
+                          />
+                          <p className="mt-2 truncate text-gray-500 text-xs">
+                          {postData.name}
+                            {/* ใช้ชื่อผู้ใช้ที่โพสต์ */}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </Link>

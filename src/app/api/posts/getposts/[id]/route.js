@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth";
 import { connectMongoDB } from '../../../../../../lib/mongodb';
 import Post from '../../../../../../models/post'; // Model ของ Blog Post
-import NormalUser from "../../../../../models/NormalUser";
-import StudentUser from "../../../../../models/StudentUser";
+import NormalUser from "../../../../../../models/NormalUser";
+import StudentUser from "../../../../../../models/StudentUser";
 import { authOption } from '../../../auth/[...nextauth]/route';
 
-export async function GET(req) {
+export async function GET(req,{ params }) {
   const { id } = params;
 
   try {
@@ -18,15 +18,23 @@ export async function GET(req) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
+
+
     // เชื่อมต่อกับ MongoDB
     await connectMongoDB();
-    const postblog = await Post.findOne({ _id: id });
 
-    console.log("email id : ",postblog.email)
+    const normalUser = await NormalUser.findOne({ _id: id });
+    const studentUser = await StudentUser.findOne({ _id: id });
 
-    const username = postblog.email; // ใช้ชื่อผู้ใช้จาก session
+    const User = studentUser || normalUser;
 
-    console.log("set email id : ",username)
+    console.log("email id : ",User.email)
+
+    const username = User.email; // ใช้ชื่อผู้ใช้จาก session
+
+    const postblog = await Post.findOne({ email: username });
+
+    console.log("set email id : ",postblog)
 
     // ดึง Blog ที่โพสต์โดยผู้ใช้ที่มี username ตรงกับผู้ใช้ใน session
     const allUserBlog = await Post.find({ email: username });
