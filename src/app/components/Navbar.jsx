@@ -234,7 +234,7 @@ function CustomNavbar() {
 
                         <span>
                           <p className="text-[20px] mt-3 text-semibold">
-                            {postData.name}
+                          {postData?.name || "Default Name"}
                           </p>
                           <b>
                             <u className="text-[#0E6FFF]">
@@ -712,7 +712,7 @@ function CustomNavbar() {
                             )}
                             <span>
                               <p className="text-[20px] mt-3 text-semibold">
-                                {session?.user?.name}
+                              {postData?.name || "Default Name"}
                               </p>
                               <b>
                                 <u className="text-[#0E6FFF]">

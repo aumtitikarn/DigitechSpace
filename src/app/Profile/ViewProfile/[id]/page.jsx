@@ -13,7 +13,10 @@ import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 
-function page() {
+function page({ params, initialComments }) {
+
+  const { id } = params;
+
   const [activeButton, setActiveButton] = useState("button1");
   const { t } = useTranslation("translation");
 
@@ -133,7 +136,7 @@ function page() {
                   <Image
                     width={200}
                     height={200}
-                    src={`/api/viewprofile/images/${imageSource}`}
+                    src={imageSource}
                     alt="Profile"
                     style={{
                       objectFit: "cover",
