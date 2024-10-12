@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import Swal from 'sweetalert2';
 
 interface ReportProps {
-  project: { projectname: string; _id: string; author: string; email?: string;};
+  project: { projectname: string; _id: string; authorName: string; email?: string;};
   onClose: () => void;
 }
 
@@ -39,7 +39,7 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
       report: report, // Ensure this is a valid enum value
       more: review,
       username: session.user?.name,
-      author: project.author,
+      author: project.authorName,
     };
 
     console.log("Data to be sent:", data); // Log data to check its correctness
