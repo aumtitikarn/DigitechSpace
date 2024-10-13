@@ -17,60 +17,94 @@ const isValidHttpUrl = (string) => {
 const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
 export async function GET(req, { params }) {
-    const { id } = params;
-    await connectMongoDB();
-    const postblog = await Post.findOne({ _id: id });
-    const postcomments = await Post.findById({ comments: id });
+  const { id } = params;
+  await connectMongoDB();
+  const postblog = await Post.findOne({ _id: id });
 
-    if (!postblog) {
-      return NextResponse.json({ message: 'Post not found' }, { status: 404 });
+  if (!postblog) {
+    return NextResponse.json({ message: 'Post not found' }, { status: 404 });
   }
 
-  // Find the user associated with the blog
-  console.log(`Processing project: ${postblog._id}, Author email: ${postblog.email}`);
+  // Loop through comments and replies to access emailcomment
+  const commentsWithReplies = await Promise.all(postblog.comments.map(async (comment) => {
+    // Process replies
+    const repliesWithEmail = comment.replies.map(reply => ({
+      text: reply.text,
+      emailcomment: reply.emailcomment,
+      timestamp: reply.timestamp,
+    }));
 
-  // Find user in StudentUser or NormalUser collection
+    // Find user associated with comment emailcomment
+    let studentusercomment = await StudentUser.findOne({ email: comment.emailcomment }, 'name imageUrl').lean();
+    let normalusercomment = await NormalUser.findOne({ email: comment.emailcomment }, 'name imageUrl').lean();
+    let usercomment = studentusercomment || normalusercomment;
+
+    let commentProfileImageSource = null;
+    let commentUserName = 'Unknown User';  // Default user name
+
+    if (usercomment) {
+      console.log(`Found user: ${usercomment.name}`);
+      console.log(`ProfileImg: ${usercomment.imageUrl}`);
+      commentUserName = usercomment.name;
+
+      // Determine profile image source for the comment
+      if (isValidHttpUrl(usercomment.imageUrl)) {
+        commentProfileImageSource = useProxy(usercomment.imageUrl);
+      } else {
+        commentProfileImageSource = `/api/posts/images/${usercomment.imageUrl}`;
+      }
+    } else {
+      console.log('User not found in both StudentUser and NormalUser collections');
+    }
+
+    return {
+      text: comment.text,
+      emailcomment: comment.emailcomment,
+      timestamp: comment.timestamp,
+      userName: commentUserName,  // Add usercomment name here
+      profileImageSource: commentProfileImageSource,  // Add user profile image source
+      replies: repliesWithEmail,  // Include processed replies
+    };
+  }));
+
+  // Find the user associated with the blog post
   let studentuser = await StudentUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
   let normaluser = await NormalUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
+  let user = studentuser || normaluser;
 
-  let studentusercomment = await StudentUser.findOne({ email: postcomments.email }, 'name imageUrl').lean();
-  let normalusercomment = await NormalUser.findOne({ email: postcomments.email }, 'name imageUrl').lean();
-
-  let user = studentuser || normaluser || studentusercomment || normalusercomment;  // Use studentuser if exists, otherwise normaluser
-
+  let authorProfileImageSource = null;
   if (user) {
-      console.log(`Found user: ${user.name}`);
-      console.log(`ProfileImg: ${user.imageUrl}`);
+    console.log(`Found user: ${user.name}`);
+    console.log(`ProfileImg: ${user.imageUrl}`);
+
+    // Determine profile image source for the author
+    if (isValidHttpUrl(user.imageUrl)) {
+      authorProfileImageSource = useProxy(user.imageUrl);
+    } else {
+      authorProfileImageSource = `/api/posts/images/${user.imageUrl}`;
+    }
   } else {
-      console.log('User not found in both StudentUser and NormalUser collections');
+    console.log('User not found in both StudentUser and NormalUser collections');
   }
 
-  // Determine profile image source
-  let profileImageSource = null;
-  if (user && user.imageUrl) {
-      if (isValidHttpUrl(user.imageUrl)) {
-          profileImageSource = useProxy(user.imageUrl);  // Proxy if valid URL
-      } else {
-          profileImageSource = `/api/posts/images/${user.imageUrl}`;  // Local image path
-      }
-  }
-
-  // Return the blog post with the author's information
+  // Return the blog post with the author's information and comments with replies
   const post = {
-      ...postblog.toObject(),  // Convert the blog document to a plain object
-      authorName: user ? user.name : 'Unknown Author',
-      profileImage: profileImageSource
+    ...postblog.toObject(),
+    authorName: user ? user.name : 'Unknown Author',
+    profileImage: authorProfileImageSource,
+    comments: commentsWithReplies,  // Include comments with emailcomment and replies
   };
 
-    return NextResponse.json({ post }, { status: 200 });
+  return NextResponse.json({ post }, { status: 200 });
 }
+
 
 
 export async function PUT(req, { params }) {
   try {
     const { id } = params; // Get the post ID from params
     const body = await req.json();
-    const { text, action, commentId, setheart: heart, userId, actionheart } = body;
+    const { text, action, commentId, setheart: heart, userId, actionheart, emailcomment } = body;
 
     await connectMongoDB(); // Connect to MongoDB
 
@@ -123,6 +157,7 @@ export async function PUT(req, { params }) {
       // บันทึกความคิดเห็นใหม่พร้อมชื่อผู้ใช้ รูปโปรไฟล์ และเวลา
       post.comments.push({
         text,
+        emailcomment,
         // author, // ชื่อผู้ใช้
         profile: typeof profile === 'string' ? profile : '', // รูปโปรไฟล์ของผู้ใช้
         timestamp, // เวลา
@@ -134,6 +169,7 @@ export async function PUT(req, { params }) {
         // บันทึกการตอบกลับในความคิดเห็น
         comment.replies.push({
           text,
+          emailcomment,
           profile, // รูปโปรไฟล์ของผู้ตอบกลับ
           // author,
           timestamp, // เวลา
@@ -177,7 +213,7 @@ export async function PUT(req, { params }) {
   // };
 
 
-    return NextResponse.json({ posts,post }, { status: 200 });
+    return NextResponse.json({ post }, { status: 200 });
 }catch (error) {
   console.error('Error updating post:', error);
   return NextResponse.json({ message: 'Error updating post' }, { status: 500 });

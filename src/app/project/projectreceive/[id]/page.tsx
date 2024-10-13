@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Swal from "sweetalert2";
 
 interface ProjectData {
   _id: string;
@@ -506,7 +507,11 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                           onClick={handleFavoriteClick}
                           className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`}
                         >
-                          {isFavorited ? <GoHeartFill /> : <GoHeart />}
+                          {isFavorited ? (
+                            <GoHeartFill className="text-red-500 text-2xl" />
+                          ) : (
+                            <GoHeart className="text-gray-600 text-2xl" />
+                          )}
                         </button>
                         <AiOutlineNotification
                           onClick={handleNotificationClick}

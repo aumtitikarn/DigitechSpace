@@ -67,6 +67,7 @@ function page() {
           if (blogResponse.ok) {
             const blogData = await blogResponse.json();
             setPostDataBlog(blogData);
+            console.log("blogdata : ",blogData)
           } else {
             console.error("Failed to fetch blog posts");
           }
@@ -216,6 +217,7 @@ function page() {
 
   const imageSource = getImageSource();
   
+  console.log("postdata :",postDataBlog)
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -281,7 +283,7 @@ function page() {
               style={{ fontSize: "24px", fontWeight: "bold" }}
               className="mt-6"
             >
-              {session?.user?.name}
+              {postData.name}
             </p>
           </div>
 
@@ -433,12 +435,12 @@ function page() {
                           <Image
                             width={200}
                             height={200}
-                            src={`/api/posts/images/${blog.userprofile}`}
+                            src={imageSource}
                             alt={blog.topic}
                             className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500"
                           />
                           <p className="mt-2 truncate text-gray-500 text-xs">
-                            {blog.author || session?.user?.name}{" "}
+                          {postData.name}
                             {/* ใช้ชื่อผู้ใช้ที่โพสต์ */}
                           </p>
                         </div>

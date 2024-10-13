@@ -3,6 +3,7 @@ import { type } from "os";
 
 const replySchema = new mongoose.Schema({
   text: String,
+  emailcomment: String,
   // author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
   // profile: { type: [String], required: true },
   timestamp: String, // เพิ่ม timestamp
@@ -11,6 +12,7 @@ const replySchema = new mongoose.Schema({
 // สร้าง schema สำหรับ comment
 const commentSchema = new mongoose.Schema({
   text: String,
+  emailcomment: String,
   // author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
   timestamp: String, // เพิ่ม timestamp
   // profile: { type: [String], required: true },
