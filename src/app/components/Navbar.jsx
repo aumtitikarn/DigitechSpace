@@ -184,8 +184,6 @@ function CustomNavbar() {
                     style={{
                       objectFit: "cover",
                       borderRadius: "50%",
-                      width: "35px",
-                      height: "35px",
                     }}
                   />
                 ) : (
@@ -217,9 +215,8 @@ function CustomNavbar() {
                             style={{
                               objectFit: "cover",
                               borderRadius: "50%",
-                              margin: "10px",
-                              width: "60px",
-                              height: "60px",
+                              margin: "10px"
+        
                             }}
                           />
                         ) : (
@@ -234,7 +231,7 @@ function CustomNavbar() {
 
                         <span>
                           <p className="text-[20px] mt-3 text-semibold">
-                          {postData?.name || "Default Name"}
+                            {session?.user?.name || "Unknown"}
                           </p>
                           <b>
                             <u className="text-[#0E6FFF]">
@@ -429,8 +426,7 @@ function CustomNavbar() {
                           style={{
                             objectFit: "cover",
                             borderRadius: "50%",
-                            width: "35px",
-                            height: "35px",
+                  
                           }}
                         />
                       ) : (
@@ -465,8 +461,6 @@ function CustomNavbar() {
                               style={{
                                 objectFit: "cover",
                                 borderRadius: "50%",
-                                width: "60px",
-                                height: "60px",
                                 margin: "10px"
                               }}
                             />
@@ -481,7 +475,7 @@ function CustomNavbar() {
                           )}
                           <span>
                             <p className="text-[20px] mt-3 text-semibold">
-                            {postData.name}
+                              {session?.user?.name || "Unknown"}
                             </p>
                             <b>
                               <u className="text-[#0E6FFF]">
@@ -697,8 +691,7 @@ function CustomNavbar() {
                                 style={{
                                   objectFit: "cover",
                                   borderRadius: "50%",
-                                  width: "60px",
-                                  height: "60px",
+                      
                                 }}
                               />
                             ) : (
@@ -712,7 +705,7 @@ function CustomNavbar() {
                             )}
                             <span>
                               <p className="text-[20px] mt-3 text-semibold">
-                              {postData?.name || "Default Name"}
+                              {session?.user?.name || "Unknown"}
                               </p>
                               <b>
                                 <u className="text-[#0E6FFF]">
