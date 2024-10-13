@@ -252,32 +252,6 @@ function page() {
                 )}
               </div>
             </div>
-          {/* {session?.user?.role !== "NormalUser" && (
-            <div className="flex flex-row justify-center">
-              <div className="relative">
-                {postDataS && postDataS.imageUrl ? (
-                  <Image
-                    width={200}
-                    height={200}
-                    src={`/api/editprofile/images/${postDataS.imageUrl}`}
-                    alt="Profile"
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                      width: "95px",
-                      height: "95px",
-                      margin: "15px",
-                    }}
-                  />
-                ) : (
-                  <MdAccountCircle
-                    className="rounded-full text-gray-500"
-                    style={{ width: "95px", height: "95px" }}
-                  />
-                )}
-              </div>
-            </div>
-          )} */}
           <div className="flex flex-row justify-center">
             <p
               style={{ fontSize: "24px", fontWeight: "bold" }}
