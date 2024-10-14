@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 import { useSearchParams } from 'next/navigation';
+import Swal from "sweetalert2";
 
 interface ReviewProject {
   project: string;
@@ -39,14 +40,22 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
 
   const handleSubmit = async () => {
     if (!session || !session.user) {
-      alert("You must be logged in to submit a review.");
+      Swal.fire({
+        icon: "warning",
+        title: "Warning",
+        text: "You must be logged in to submit a review.",
+      });
       return;
     }
   
     const username = session.user.name || session.user.email;
   
     if (!rathing || !review || !projectId || !username) {
-      alert("Missing data: Ensure all fields are filled.");
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Data",
+        text: "Ensure all fields are filled.",
+      });
       return;
     }
   
@@ -66,18 +75,31 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
   
       if (!response.ok) {
         const errorData = await response.json();
-        alert(`Error: ${errorData.message}`);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: `Error: ${errorData.message}`,
+        });
         return;
       }
   
       const data = await response.json();
-      alert(data.message);
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        showConfirmButton: false,
+        timer: 1500,
+      });
   
       // ย้อนกลับไปยังหน้ารายละเอียด project
       router.push(`/project/projectdetail/${projectId}`);
     } catch (error) {
-      console.error('Error submitting review:', error);
-      alert('Failed to submit review');
+      console.error("Error submitting review:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Error submitting your review.",
+      });
     }
   };
   
