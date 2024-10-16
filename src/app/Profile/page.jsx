@@ -384,7 +384,13 @@ function page() {
                           </p>
                           <div className="flex items-center mb-2">
                             <span className="text-gray-500 mr-2 text-xl md:text-2xl">
-                              <MdAccountCircle />
+                            <Image
+                            width={200}
+                            height={200}
+                            src={project.profileImage}
+                            alt={project.topic}
+                            className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500"
+                          />
                             </span>
                             <p className="text-xs md:text-sm text-gray-600 truncate">
                               {project.author || session?.user?.name}{" "}
@@ -448,7 +454,7 @@ function page() {
                             className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500"
                           />
                           <p className="mt-2 truncate text-gray-500 text-xs">
-                            {postData.name}
+                            {session?.user?.name}
                             {/* ใช้ชื่อผู้ใช้ที่โพสต์ */}
                           </p>
                         </div>
