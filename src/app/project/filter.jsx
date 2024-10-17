@@ -185,7 +185,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row w-full">
+    <div className="flex flex-col md:flex-row w-full ">
       {/* Filter Section */}
       <div className="md:w-[300px] flex-shrink-0 mb-4 md:mb-0 md:mr-8">
         <div className="sticky top-4 p-4 border border-gray-300 rounded-lg shadow-sm">
