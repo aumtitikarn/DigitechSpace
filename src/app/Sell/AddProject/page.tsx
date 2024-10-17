@@ -44,6 +44,8 @@ const Project: React.FC = () => {
     <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
   </div>;
   }
+ 
+  console.log("idUser",session.user.id)
 
   const handleAdd = () => {
     setInputs([...inputs, { id: Date.now(), value: "" }]);
@@ -100,6 +102,7 @@ const Project: React.FC = () => {
     formData.append("category", category);
     formData.append("price", price);
     formData.append("email", session.user.email);
+    formData.append("iduser", session.user.id);
     formData.append("rathing", rathingValue.toFixed(1));
     formData.append("sold", soldValue.toString());
     formData.append("review", reviewValue.toString());

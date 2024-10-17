@@ -30,7 +30,7 @@ function page() {
   const { data: session, status } = useSession();
   
 
- 
+
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
@@ -68,7 +68,7 @@ function page() {
           if (blogResponse.ok) {
             const blogData = await blogResponse.json();
             setPostDataBlog(blogData);
-            console.log("blogdata : ",blogData)
+            console.log("blogdata : ", blogData)
           } else {
             console.error("Failed to fetch blog posts");
           }
@@ -188,8 +188,8 @@ function page() {
   console.log(postData);
   const getImageSource = () => {
     const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
-  
-    
+
+
     const isValidHttpUrl = (string) => {
       let url;
       try {
@@ -217,26 +217,51 @@ function page() {
   };
 
   const imageSource = getImageSource();
-  
-  console.log("postdata :",postDataBlog)
+
+  console.log("postdata :", postDataBlog)
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar session={session} />
       <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20 mb-10">
         <div className="flex flex-col w-full max-w-auto mb-20">
+          <div className="flex flex-row justify-center">
+            <div className="relative">
+              {imageSource ? (
+                <Image
+                  width={95}
+                  height={95}
+                  src={imageSource}
+                  alt="Profile Image"
+                  unoptimized={true}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                  }}
+                  style={{
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                    width: "95px",
+                    height: "95px",
+                    margin: "15px",
+                  }}
+                />
+              ) : (
+                <MdAccountCircle
+                  className="rounded-full text-gray-500"
+                  style={{ width: "95px", height: "95px", margin: "15px" }}
+                />
+              )}
+            </div>
+          </div>
+          {/* {session?.user?.role !== "NormalUser" && (
             <div className="flex flex-row justify-center">
               <div className="relative">
-                {imageSource ? (
+                {postDataS && postDataS.imageUrl ? (
                   <Image
-                    width={95}
-                    height={95}
-                    src={imageSource}
-                    alt="Profile Image"
-                    unoptimized={true}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                    }}
+                    width={200}
+                    height={200}
+                    src={`/api/editprofile/images/${postDataS.imageUrl}`}
+                    alt="Profile"
                     style={{
                       objectFit: "cover",
                       borderRadius: "50%",
@@ -248,18 +273,29 @@ function page() {
                 ) : (
                   <MdAccountCircle
                     className="rounded-full text-gray-500"
-                    style={{ width: "95px", height: "95px", margin: "15px" }}
+                    style={{ width: "95px", height: "95px" }}
                   />
                 )}
               </div>
             </div>
+          )} */}
           <div className="flex flex-row justify-center">
+            {session?.user?.role !== "NormalUser" && (
+              <p
+                style={{ fontSize: "24px", fontWeight: "bold" }}
+                className="mt-6"
+              >
+                {postDataS.name}
+              </p>
+            )}
+            {session?.user?.role == "NormalUser" && (
             <p
               style={{ fontSize: "24px", fontWeight: "bold" }}
               className="mt-6"
             >
               {postData.name}
             </p>
+            )}
           </div>
 
           <div className="flex flex-row justify-center mt-10 mb-10">
@@ -285,11 +321,10 @@ function page() {
                 <div className="flex flex-col" style={{ width: "100%" }}>
                   <button
                     onClick={() => handleClick("button1")}
-                    className={`flex flex-row justify-center p-2 bg-white flex-grow ${
-                      activeButton === "button1"
+                    className={`flex flex-row justify-center p-2 bg-white flex-grow ${activeButton === "button1"
                         ? "border-b-[#33539B] border-b-4 rounded-b-lg"
                         : ""
-                    }`}
+                      }`}
                   >
                     <div className="flex flex-col justify-center w-auto h-10">
                       <p className="font-bold text-[20px]">
@@ -303,11 +338,10 @@ function page() {
                 <div className="flex flex-col" style={{ width: "100%" }}>
                   <button
                     onClick={() => handleClick("button2")}
-                    className={`flex flex-row justify-center p-2 bg-white flex-grow ${
-                      activeButton === "button2"
+                    className={`flex flex-row justify-center p-2 bg-white flex-grow ${activeButton === "button2"
                         ? "border-b-[#33539B] border-b-4 rounded-b-lg"
                         : ""
-                    }`}
+                      }`}
                   >
                     <div className="flex flex-col justify-center w-auto h-10">
                       <p className="font-bold text-[20px]">
@@ -351,7 +385,13 @@ function page() {
                           </p>
                           <div className="flex items-center mb-2">
                             <span className="text-gray-500 mr-2 text-xl md:text-2xl">
-                              <MdAccountCircle />
+                            <Image
+                            width={200}
+                            height={200}
+                            src={project.profileImage}
+                            alt={project.topic}
+                            className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500"
+                          />
                             </span>
                             <p className="text-xs md:text-sm text-gray-600 truncate">
                               {project.author || session?.user?.name}{" "}
@@ -415,7 +455,7 @@ function page() {
                             className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500"
                           />
                           <p className="mt-2 truncate text-gray-500 text-xs">
-                          {postData.name}
+                            {session?.user?.name}
                             {/* ใช้ชื่อผู้ใช้ที่โพสต์ */}
                           </p>
                         </div>

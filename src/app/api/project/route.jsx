@@ -18,6 +18,7 @@ export async function POST(req, res) {
     let price = "";
     let imageUrl = [];
     let email = "";
+    let iduser = "";
     let permission = false;
     let filesUrl = [];
     let rathing = 0.0;
@@ -45,6 +46,9 @@ export async function POST(req, res) {
         case "email":
           email = value.toString();
           break;
+          case "iduser":
+            iduser = value.toString();
+            break;
         case "rathing":
           rathing = parseFloat(value);
           break;
@@ -105,6 +109,7 @@ export async function POST(req, res) {
       category,
       price,
       email,
+      iduser,
       permission,
       status,
       filesUrl,
