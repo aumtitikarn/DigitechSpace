@@ -36,6 +36,7 @@ interface ProjectData {
   rathing: number;
   imageUrl: string[];
   author: string;
+  iduser: string;
   filesUrl: string[];
   email: string;
   profileImage: string;
