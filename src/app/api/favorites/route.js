@@ -3,7 +3,6 @@ import Favorites from '../../../../models/favorites'; // ตรวจสอบ�
 import { NextResponse } from 'next/server'; // Import NextResponse
 
 // POST handler to add or remove favorites
-// POST handler to add or remove favorites
 export async function POST(req) {
   try {
     await connectMongoDB(); // เชื่อมต่อกับ MongoDB
@@ -32,6 +31,16 @@ export async function POST(req) {
           { email },
           { $pull: { projectId: projectId } }
         );
+      
+        // เช็คว่าหลังจากลบ projectId แล้ว รายการโปรดว่างเปล่าหรือไม่
+        const updatedFavorite = await Favorites.findOne({ email });
+        if (updatedFavorite.projectId.length === 0) {
+          await Favorites.updateOne(
+            { email },
+            { $set: { status: 'pending' } } // ถ้ารายการโปรดเป็นค่าว่าง ให้เปลี่ยน status เป็น 'pending'
+          );
+        }
+      
         return new NextResponse(JSON.stringify({ isFavorited: false }), { status: 200 }); // ส่งกลับเป็น false
       } else {
         // เพิ่ม projectId ลงในรายการโปรด
@@ -39,17 +48,16 @@ export async function POST(req) {
           { email },
           { $addToSet: { projectId: projectId } }
         );
+      
+        // กำหนด status ให้เป็น 'favorites' ถ้าโปรเจกต์ถูกเพิ่ม
+        await Favorites.updateOne(
+          { email },
+          { $set: { status: 'favorites' } }
+        );
+      
         return new NextResponse(JSON.stringify({ isFavorited: true }), { status: 201 }); // ส่งกลับเป็น true
       }
-    } else {
-      // สร้างเอกสารใหม่หากยังไม่มีรายการโปรด
-      const newFavorite = new Favorites({
-        email,
-        projectId: [projectId], // เริ่มต้นด้วย array ที่มี projectId
-      });
-      await newFavorite.save();
-      return new NextResponse(JSON.stringify({ isFavorited: true }), { status: 201 }); // ส่งกลับเป็น true
-    }
+    }      
   } catch (error) {
     console.error('ข้อผิดพลาดในการจัดการคำร้อง POST:', error.message);
     return new NextResponse(JSON.stringify({ error: 'ข้อผิดพลาดภายในเซิร์ฟเวอร์' }), { status: 500 });

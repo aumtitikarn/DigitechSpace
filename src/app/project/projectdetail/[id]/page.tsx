@@ -177,6 +177,23 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     fetchSimilarProjects();
   }, [project]);
 
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (session) {
+        try {
+          const response = await fetch(`/api/favorites?email=${session.user.email}`);
+          const favoriteProjects = await response.json();
+  
+          const isProjectFavorited = favoriteProjects.includes(params.id);
+          setIsFavorited(isProjectFavorited);
+        } catch (error) {
+          console.error('Error checking favorite status:', error);
+        }
+      }
+    };
+  
+    checkFavoriteStatus();
+  }, [session, params.id]);
   if (!project) {
     return <div></div>;
   }
@@ -265,7 +282,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           email: session.user.email,
           projectId: project._id,
         };
-
+  
         const favoriteResponse = await fetch("/api/favorites", {
           method: "POST",
           headers: {
@@ -273,13 +290,16 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           },
           body: JSON.stringify(data),
         });
-
+  
         if (favoriteResponse.ok) {
           const result = await favoriteResponse.json();
-
+  
           // ตั้งค่าสถานะตามที่ได้รับจาก API
           setIsFavorited(result.isFavorited);
-
+  
+          // ตั้งค่า status เป็น favorites ถ้าถูกเพิ่ม หรือ 'pending' ถ้าถูกลบ
+          const status = result.isFavorited ? 'favorites' : 'pending';
+          
           // แสดงข้อความแจ้งเตือนด้วย SweetAlert2
           Swal.fire({
             icon: "success",
@@ -313,6 +333,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       });
     }
   };
+  
 
   const handleBuyClick = () => {
     setIsPopupOpen(true);
