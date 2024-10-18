@@ -350,13 +350,16 @@ function page() {
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>{t("nav.profile.editprofile.email")}</p>
                 </div>
-                <input
+                {/* <input
                   type="email"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder={session?.user?.email}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
+                /> */}
+                <div className="w-full p-2 mb-4 text-zinc-400">
+                  {session?.user?.email}
+                </div>
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>{t("nav.profile.editprofile.pnum")}</p>
                 </div>

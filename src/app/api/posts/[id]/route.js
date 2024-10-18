@@ -25,77 +25,106 @@ export async function GET(req, { params }) {
     return NextResponse.json({ message: 'Post not found' }, { status: 404 });
   }
 
-  // Loop through comments and replies to access emailcomment
-  const commentsWithReplies = await Promise.all(postblog.comments.map(async (comment) => {
-    // Process replies
-    const repliesWithEmail = comment.replies.map(reply => ({
-      text: reply.text,
-      emailcomment: reply.emailcomment,
-      timestamp: reply.timestamp,
-    }));
+// Loop through comments and replies to access emailcomment
+const commentsWithReplies = await Promise.all(postblog.comments.map(async (comment) => {
+  // Process replies
+  const repliesWithEmail = await Promise.all(comment.replies.map(async (reply) => {
+    // Find user associated with reply emailcomment
+    let studentusercommentreply = await StudentUser.findOne({ email: reply.emailcomment }, 'name imageUrl').lean();
+    let normalusercommentreply = await NormalUser.findOne({ email: reply.emailcomment }, 'name imageUrl').lean();
+    let usercommentreply = studentusercommentreply || normalusercommentreply;
 
-    // Find user associated with comment emailcomment
-    let studentusercomment = await StudentUser.findOne({ email: comment.emailcomment }, 'name imageUrl').lean();
-    let normalusercomment = await NormalUser.findOne({ email: comment.emailcomment }, 'name imageUrl').lean();
-    let usercomment = studentusercomment || normalusercomment;
+    let commentProfileImageSourcereply = null;
+    let commentUserNamereply = 'Unknown User';  // Default user name
 
-    let commentProfileImageSource = null;
-    let commentUserName = 'Unknown User';  // Default user name
+    if (usercommentreply) {
+      console.log(`Found user: ${usercommentreply.name}`);
+      console.log(`ProfileImg: ${usercommentreply.imageUrl}`);
+      commentUserNamereply = usercommentreply.name;
 
-    if (usercomment) {
-      console.log(`Found user: ${usercomment.name}`);
-      console.log(`ProfileImg: ${usercomment.imageUrl}`);
-      commentUserName = usercomment.name;
-
-      // Determine profile image source for the comment
-      if (isValidHttpUrl(usercomment.imageUrl)) {
-        commentProfileImageSource = useProxy(usercomment.imageUrl);
+      // Determine profile image source for the reply
+      if (isValidHttpUrl(usercommentreply.imageUrl)) {
+        commentProfileImageSourcereply = useProxy(usercommentreply.imageUrl);
       } else {
-        commentProfileImageSource = `/api/posts/images/${usercomment.imageUrl}`;
+        commentProfileImageSourcereply = `/api/posts/images/${usercommentreply.imageUrl}`;
       }
     } else {
-      console.log('User not found in both StudentUser and NormalUser collections');
+      console.log('User not found in both StudentUser and NormalUser collections for reply');
     }
 
     return {
-      text: comment.text,
-      emailcomment: comment.emailcomment,
-      timestamp: comment.timestamp,
-      userName: commentUserName,  // Add usercomment name here
-      profileImageSource: commentProfileImageSource,  // Add user profile image source
-      replies: repliesWithEmail,  // Include processed replies
+      text: reply.text,
+      emailcomment: reply.emailcomment,
+      userName: commentUserNamereply,
+      profileImageSource: commentProfileImageSourcereply,
+      timestamp: reply.timestamp,
+      _id: reply._id
     };
   }));
 
-  // Find the user associated with the blog post
-  let studentuser = await StudentUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
-  let normaluser = await NormalUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
-  let user = studentuser || normaluser;
+  // Find user associated with comment emailcomment
+  let studentusercomment = await StudentUser.findOne({ email: comment.emailcomment }, 'name imageUrl').lean();
+  let normalusercomment = await NormalUser.findOne({ email: comment.emailcomment }, 'name imageUrl').lean();
+  let usercomment = studentusercomment || normalusercomment;
 
-  let authorProfileImageSource = null;
-  if (user) {
-    console.log(`Found user: ${user.name}`);
-    console.log(`ProfileImg: ${user.imageUrl}`);
+  let commentProfileImageSource = null;
+  let commentUserName = 'Unknown User';  // Default user name
 
-    // Determine profile image source for the author
-    if (isValidHttpUrl(user.imageUrl)) {
-      authorProfileImageSource = useProxy(user.imageUrl);
+  if (usercomment) {
+    console.log(`Found user: ${usercomment.name}`);
+    console.log(`ProfileImg: ${usercomment.imageUrl}`);
+    commentUserName = usercomment.name;
+
+    // Determine profile image source for the comment
+    if (isValidHttpUrl(usercomment.imageUrl)) {
+      commentProfileImageSource = useProxy(usercomment.imageUrl);
     } else {
-      authorProfileImageSource = `/api/posts/images/${user.imageUrl}`;
+      commentProfileImageSource = `/api/posts/images/${usercomment.imageUrl}`;
     }
   } else {
-    console.log('User not found in both StudentUser and NormalUser collections');
+    console.log('User not found in both StudentUser and NormalUser collections for comment');
   }
 
-  // Return the blog post with the author's information and comments with replies
-  const post = {
-    ...postblog.toObject(),
-    authorName: user ? user.name : 'Unknown Author',
-    profileImage: authorProfileImageSource,
-    comments: commentsWithReplies,  // Include comments with emailcomment and replies
+  return {
+    text: comment.text,
+    emailcomment: comment.emailcomment,
+    timestamp: comment.timestamp,
+    userName: commentUserName,
+    profileImageSource: commentProfileImageSource,
+    replies: repliesWithEmail,  // Include processed replies
+    _id: comment._id
   };
+}));
 
-  return NextResponse.json({ post }, { status: 200 });
+// Find the user associated with the blog post
+let studentuser = await StudentUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
+let normaluser = await NormalUser.findOne({ email: postblog.email }, 'name imageUrl').lean();
+let user = studentuser || normaluser;
+
+let authorProfileImageSource = null;
+if (user) {
+  console.log(`Found user: ${user.name}`);
+  console.log(`ProfileImg: ${user.imageUrl}`);
+
+  // Determine profile image source for the author
+  if (isValidHttpUrl(user.imageUrl)) {
+    authorProfileImageSource = useProxy(user.imageUrl);
+  } else {
+    authorProfileImageSource = `/api/posts/images/${user.imageUrl}`;
+  }
+} else {
+  console.log('User not found in both StudentUser and NormalUser collections');
+}
+
+// Return the blog post with the author's information and comments with replies
+const post = {
+  ...postblog.toObject(),
+  authorName: user ? user.name : 'Unknown Author',
+  profileImage: authorProfileImageSource,
+  comments: commentsWithReplies,  // Include comments with emailcomment and replies
+};
+
+return NextResponse.json({ post }, { status: 200 });
 }
 
 
@@ -104,7 +133,7 @@ export async function PUT(req, { params }) {
   try {
     const { id } = params; // Get the post ID from params
     const body = await req.json();
-    const { text, action, commentId, setheart: heart, userId, actionheart, emailcomment } = body;
+    const { text, action, commentId, setheart: heart, userId, actionheart, emailcomment, profile  } = body;
 
     await connectMongoDB(); // Connect to MongoDB
 
@@ -170,7 +199,7 @@ export async function PUT(req, { params }) {
         comment.replies.push({
           text,
           emailcomment,
-          profile, // รูปโปรไฟล์ของผู้ตอบกลับ
+          profile: typeof profile === 'string' ? profile : '', // รูปโปรไฟล์ของผู้ตอบกลับ
           // author,
           timestamp, // เวลา
         });

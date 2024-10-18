@@ -94,8 +94,8 @@ function page({ params, initialComments }) {
 
   const getImageSource = () => {
     const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
-  
-    
+
+
     const isValidHttpUrl = (string) => {
       let url;
       try {
@@ -132,12 +132,16 @@ function page({ params, initialComments }) {
           {session?.user?.role === "NormalUser" ? (
             <div className="flex flex-row justify-center">
               <div className="relative">
-              {imageSource ? (
+                {imageSource ? (
                   <Image
-                    width={200}
-                    height={200}
+                    width={95}
+                    height={95}
                     src={imageSource}
-                    alt="Profile"
+                    alt="Profile Image"
+                    unoptimized={true}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                    }}
                     style={{
                       objectFit: "cover",
                       borderRadius: "50%",
@@ -156,18 +160,22 @@ function page({ params, initialComments }) {
               <div className="relative">
                 {imageSource ? (
                   <Image
-                    width={200}
-                    height={200}
-                    src={`/api/editprofile/images/${imageSource}`}
-                    alt="Profile"
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                      width: "95px",
-                      height: "95px",
-                      margin: "15px",
-                    }}
-                  />
+                  width={95}
+                  height={95}
+                  src={imageSource}
+                  alt="Profile Image"
+                  unoptimized={true}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                  }}
+                  style={{
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                    width: "95px",
+                    height: "95px",
+                    margin: "15px",
+                  }}
+                />
                 ) : (
                   <MdAccountCircle className="rounded-full text-gray-500" style={{ width: "95px", height: "95px" }} />
                 )}
@@ -190,9 +198,8 @@ function page({ params, initialComments }) {
               <div className="flex flex-col mr-3" style={{ width: "100%" }}>
                 <button
                   onClick={() => handleClick("button1")}
-                  className={`flex flex-row justify-center p-2 bg-white flex-grow ${
-                    activeButton === "button1" ? "border-b-[#33539B] border-b-4 rounded-b-lg" : ""
-                  }`}
+                  className={`flex flex-row justify-center p-2 bg-white flex-grow ${activeButton === "button1" ? "border-b-[#33539B] border-b-4 rounded-b-lg" : ""
+                    }`}
                 >
                   <p className="font-bold text-[20px]">{t("nav.profile.project")}</p>
                 </button>
@@ -200,9 +207,8 @@ function page({ params, initialComments }) {
               <div className="flex flex-col ml-3" style={{ width: "100%" }}>
                 <button
                   onClick={() => handleClick("button2")}
-                  className={`flex flex-row justify-center p-2 bg-white flex-grow ${
-                    activeButton === "button2" ? "border-b-[#33539B] border-b-4 rounded-b-lg" : ""
-                  }`}
+                  className={`flex flex-row justify-center p-2 bg-white flex-grow ${activeButton === "button2" ? "border-b-[#33539B] border-b-4 rounded-b-lg" : ""
+                    }`}
                 >
                   <p className="font-bold text-[20px]">{t("nav.profile.blog")}</p>
                 </button>
@@ -277,7 +283,7 @@ function page({ params, initialComments }) {
                             className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500"
                           />
                           <p className="mt-2 truncate text-gray-500 text-xs">
-                          {postData.name}
+                            {postData.name}
                             {/* ใช้ชื่อผู้ใช้ที่โพสต์ */}
                           </p>
                         </div>

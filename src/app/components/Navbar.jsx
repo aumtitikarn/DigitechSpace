@@ -223,8 +223,8 @@ function CustomNavbar() {
                           <MdAccountCircle
                             className="rounded-full text-gray-600"
                             style={{
-                              width: "60px",
-                              height: "60px",
+                              width: "55px",
+                              height: "55px",
                             }}
                           />
                         )}
@@ -235,11 +235,20 @@ function CustomNavbar() {
                           </p>
                           <b>
                             <u className="text-[#0E6FFF]">
+                            {session?.user?.role !== "NormalUser" && (
                               <Link href="/Profile">
                                 <p className="text-[14px] ml-1 text-[#0E6FFF] ">
                                   {t("nav.viewprofile")}
                                 </p>
                               </Link>
+                              )}
+                              {session?.user?.role == "NormalUser" && (
+                              <Link href={`/Profile/EditProfile/${session?.user?.id}`}>
+                                <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                                  {t("nav.viewprofile")}
+                                </p>
+                              </Link>
+                              )}
                             </u>
                           </b>
                         </span>
@@ -468,8 +477,8 @@ function CustomNavbar() {
                             <MdAccountCircle
                               className="rounded-full text-gray-600"
                               style={{
-                                width: "60px",
-                                height: "60px",
+                                width: "55px",
+                                height: "55px",
                               }}
                             />
                           )}
@@ -479,11 +488,20 @@ function CustomNavbar() {
                             </p>
                             <b>
                               <u className="text-[#0E6FFF]">
-                                <Link href={`/Profile`}>
-                                  <p className="text-[14px] ml-1 text-[#0E6FFF]">
-                                    {t("nav.viewprofile")}
-                                  </p>
-                                </Link>
+                              {session?.user?.role !== "NormalUser" && (
+                              <Link href="/Profile">
+                                <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                                  {t("nav.viewprofile")}
+                                </p>
+                              </Link>
+                              )}
+                              {session?.user?.role == "NormalUser" && (
+                              <Link href={`/Profile/EditProfile/${session?.user?.id}`}>
+                                <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                                  {t("nav.viewprofile")}
+                                </p>
+                              </Link>
+                              )}
                               </u>
                             </b>
                           </span>
