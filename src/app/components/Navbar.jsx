@@ -223,8 +223,8 @@ function CustomNavbar() {
                           <MdAccountCircle
                             className="rounded-full text-gray-600"
                             style={{
-                              width: "60px",
-                              height: "60px",
+                              width: "55px",
+                              height: "55px",
                             }}
                           />
                         )}
@@ -477,8 +477,8 @@ function CustomNavbar() {
                             <MdAccountCircle
                               className="rounded-full text-gray-600"
                               style={{
-                                width: "60px",
-                                height: "60px",
+                                width: "55px",
+                                height: "55px",
                               }}
                             />
                           )}

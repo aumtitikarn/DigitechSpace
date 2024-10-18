@@ -81,7 +81,7 @@
         "your" : "This project is yours.",
         "your2" : "You cannot purchase your own project.",
         "favadd" : "Added to favorites!",
-        "favree" : "Removed from favorites!",
+        "favre" : "Removed from favorites!",
         "favlog" : "Login Required!",
         "favlogdes" : "Please log in to save favorites."
       }
