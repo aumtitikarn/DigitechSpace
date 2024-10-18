@@ -162,8 +162,8 @@ function Blog({ params, initialComments }: BlogProps) {
 
 
   const handleAddCommentOrReply = async (isReply: boolean, commentId = null) => {
-    console.log("idcoment",postData.comments)
-    console.log("Reply : ",{ isReply, commentId });
+    console.log("idcoment", postData.comments)
+    console.log("Reply : ", { isReply, commentId });
     if (session) {
       const imageUrl = profileUserN?.imageUrl?.[0] || "/path/to/default-image.jpg"; // ใช้รูปภาพเริ่มต้นหากไม่มี
       setProfileUser([imageUrl]);
@@ -172,7 +172,7 @@ function Blog({ params, initialComments }: BlogProps) {
         text: isReply ? replyInput : commentInput,
         action: isReply ? "reply" : "comment",
         // author: session?.user?.name || "Anonymous",
-        // profile: isReply ? imageUrl : imageUrl,
+        profile: isReply ? imageUrl : imageUrl,
         emailcomment: session?.user?.email || "Anonymous",
         timestamp: new Date(),
         commentId: isReply ? commentId : null,
@@ -372,7 +372,7 @@ function Blog({ params, initialComments }: BlogProps) {
 
   const UserId = session?.user?.id ?? "";
 
-  
+
 
   console.log("UserId :", UserId);
 
@@ -697,10 +697,10 @@ function Blog({ params, initialComments }: BlogProps) {
                               <div className="flex flex-row w-80">
                                 <div className="flex flex-row w-80 justify-end">
                                   <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm"
-                                      onClick={() => {
-                                        console.log('Comment ID:', comment._id);
-                                        handleAddCommentOrReply(true, comment._id);
-                                      }}
+                                    onClick={() => {
+                                      console.log('Comment ID:', comment.idcomment);
+                                      handleAddCommentOrReply(true, comment._id);
+                                    }}
                                   >
                                     Replyt
                                   </button>
@@ -723,13 +723,25 @@ function Blog({ params, initialComments }: BlogProps) {
                     </div>
                     {/* Handle replies if they exist */}
                     {comment.replies && comment.replies.length > 0 && (
-                      <div style={{ marginLeft: '20px' }}>
+                      <div style={{ marginLeft: '40px', marginTop: '10px'}}>
                         {comment.replies.map((reply: Reply) => (
                           <div>
                             <p key={reply._id}></p>
                             <p className="flex flex-row">
 
-                              {reply.profile && reply.profile[0] ? (
+                              {reply.profileImageSource ? (
+                                <Image
+                                  width={200}
+                                  height={200}
+                                  src={reply.profileImageSource} // ใช้ commentProfileImageSource ที่ดึงมาจาก API
+                                  alt={`${reply.userName}'s profile picture`} // ใช้ userName แทน author
+                                  className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                                />
+                              ) : (
+                                <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+                              )}
+
+                              {/* {reply.profile && reply.profile[0] ? (
                                 <Image
                                   width={200}
                                   height={200}
@@ -739,8 +751,8 @@ function Blog({ params, initialComments }: BlogProps) {
                                 />
                               ) : (
                                 <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
-                              )}
-                              <strong className="flex flex-col justify-center text-lg">{reply.author} : reply</strong>
+                              )} */}
+                              <strong className="flex flex-col justify-center text-lg">{reply.userName} : reply</strong>
                             </p>
                             <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
                             <p className="ml-4 text-lg">{reply.text}</p>
