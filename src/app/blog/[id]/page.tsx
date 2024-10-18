@@ -162,6 +162,8 @@ function Blog({ params, initialComments }: BlogProps) {
 
 
   const handleAddCommentOrReply = async (isReply: boolean, commentId = null) => {
+    console.log("idcoment",postData.comments)
+    console.log("Reply : ",{ isReply, commentId });
     if (session) {
       const imageUrl = profileUserN?.imageUrl?.[0] || "/path/to/default-image.jpg"; // ใช้รูปภาพเริ่มต้นหากไม่มี
       setProfileUser([imageUrl]);
@@ -173,6 +175,7 @@ function Blog({ params, initialComments }: BlogProps) {
         // profile: isReply ? imageUrl : imageUrl,
         emailcomment: session?.user?.email || "Anonymous",
         timestamp: new Date(),
+        commentId: isReply ? commentId : null,
         ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
       };
 
@@ -368,6 +371,8 @@ function Blog({ params, initialComments }: BlogProps) {
   // const UserId = session?.user?.id;
 
   const UserId = session?.user?.id ?? "";
+
+  
 
   console.log("UserId :", UserId);
 
@@ -692,7 +697,10 @@ function Blog({ params, initialComments }: BlogProps) {
                               <div className="flex flex-row w-80">
                                 <div className="flex flex-row w-80 justify-end">
                                   <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm"
-                                    onClick={() => handleAddCommentOrReply(true, comment._id)}
+                                      onClick={() => {
+                                        console.log('Comment ID:', comment._id);
+                                        handleAddCommentOrReply(true, comment._id);
+                                      }}
                                   >
                                     Replyt
                                   </button>
