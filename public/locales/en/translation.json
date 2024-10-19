@@ -93,6 +93,7 @@
       "send" : "Send",
       "code" : "Course code",
       "reply" : "Reply",
+      "cancel" : "Cancel",
       "addblog" : {
         "title" : "Add Blog",
         "topic" : "Topic",

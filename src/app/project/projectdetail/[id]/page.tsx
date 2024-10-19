@@ -501,7 +501,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                     </span>
                     <span className="text-sm text-gray-600 ">
                       {project.rathing || "N/A"} ({project.review}) |{" "}
-                      {t("nav.project.projectdetail.sold")} {project.sold}
+                       {t("nav.project.projectdetail.sold")} {project.sold}
                     </span>
                   </div>
                 </div>

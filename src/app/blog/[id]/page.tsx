@@ -691,7 +691,7 @@ function Blog({ params, initialComments }: BlogProps) {
                               <textarea className="border-2 rounded p-2"
                                 value={replyInput}
                                 onChange={(e) => setReplyInput(e.target.value)}
-                                placeholder="Reply to this comment"
+                                placeholder={t("nav.blog.comment")}
                               />
 
                               <div className="flex flex-row w-80">
@@ -702,12 +702,12 @@ function Blog({ params, initialComments }: BlogProps) {
                                       handleAddCommentOrReply(true, comment._id);
                                     }}
                                   >
-                                    Replyt
+                                    {t("nav.blog.reply")}
                                   </button>
                                   <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#9B3933] text-white text-sm"
                                     onClick={() => setReplyingTo(null)}
                                   >
-                                    Cancel
+                                    {t("nav.blog.cancel")}
                                   </button>
                                 </div>
                               </div>

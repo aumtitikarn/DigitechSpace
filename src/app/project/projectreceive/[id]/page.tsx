@@ -492,7 +492,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       {/* แสดงค่า rating หรือ N/A */}(
                       {project.review ? project.review : 0}){" "}
                       {/* แสดงจำนวนรีวิว */} |
-                      {t("nav.project.projectdetail.sold")} {project.sold}
+                      {" "} {t("nav.project.projectdetail.sold")} {project.sold}
                     </span>
                   </div>
                 </div>
