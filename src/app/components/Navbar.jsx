@@ -237,14 +237,14 @@ function CustomNavbar() {
                             <u className="text-[#0E6FFF]">
                             {session?.user?.role !== "NormalUser" && (
                               <Link href="/Profile">
-                                <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                                <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300 ">
                                   {t("nav.viewprofile")}
                                 </p>
                               </Link>
                               )}
                               {session?.user?.role == "NormalUser" && (
                               <Link href={`/Profile/EditProfile/${session?.user?.id}`}>
-                                <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                                <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
                                   {t("nav.viewprofile")}
                                 </p>
                               </Link>
@@ -258,15 +258,15 @@ function CustomNavbar() {
                           {session?.user?.role !== "NormalUser" && (
                             <>
                               <Link href="/Wallet">
-                                <li className="flex items-center ">
-                                  <FaWallet className="mr-5 text-2xl text-gray-600" />
+                                <li className="flex items-center hover:text-gray-300">
+                                  <FaWallet className="mr-5 text-2xl text-gray-600 " />
                                   <span className="text-[18px]">
                                     {t("nav.wallet.title")}
                                   </span>
                                 </li>
                               </Link>
                               <Link href="/Sell">
-                                <li className="flex items-center mt-2">
+                                <li className="flex items-center mt-2 hover:text-gray-300">
                                   <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
                                   <span className="text-[18px]">
                                     {t("nav.sell.title")}
@@ -276,7 +276,7 @@ function CustomNavbar() {
                             </>
                           )}
                           <Link href="/favorite">
-                            <li className="flex items-center mt-2">
+                            <li className="flex items-center mt-2 hover:text-gray-300">
                               <FaHeart className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">
                                 {t("nav.favorite")}
@@ -284,7 +284,7 @@ function CustomNavbar() {
                             </li>
                           </Link>
                           <Link href="/notification">
-                            <li className="flex items-center mt-2">
+                            <li className="flex items-center mt-2 hover:text-gray-300">
                               <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">
                                 {t("nav.notification")}
@@ -292,7 +292,7 @@ function CustomNavbar() {
                             </li>
                           </Link>
                           <Link href="/myproject">
-                            <li className="flex items-center mt-2">
+                            <li className="flex items-center mt-2 hover:text-gray-300">
                               <FaBoxOpen className="mr-5 text-2xl text-gray-600 sm:mt-3" />
                               <span className="text-[18px]">
                                 {t("nav.myproject.title")}
@@ -300,7 +300,7 @@ function CustomNavbar() {
                             </li>
                           </Link>
                           <Link href="/review">
-                            <li className="flex items-center mt-2 ">
+                            <li className="flex items-center mt-2 hover:text-gray-300">
                               <FaStar className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">
                                 {t("nav.review.title")}
@@ -313,7 +313,7 @@ function CustomNavbar() {
                           className="flex items-center w-full lg:w-auto border-t border-gray-300 lg:mt-0 lg:border-t-0 mt-3"
                         >
                           <BiSolidExit className="mr-5 mt-2 text-2xl text-gray-600" />
-                          <span className="text-[18px] mt-2">
+                          <span className="text-[18px] mt-2 hover:text-gray-300">
                             {t("nav.logout")}
                           </span>
                         </button>
@@ -490,14 +490,14 @@ function CustomNavbar() {
                               <u className="text-[#0E6FFF]">
                               {session?.user?.role !== "NormalUser" && (
                               <Link href="/Profile">
-                                <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                                <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
                                   {t("nav.viewprofile")}
                                 </p>
                               </Link>
                               )}
                               {session?.user?.role == "NormalUser" && (
                               <Link href={`/Profile/EditProfile/${session?.user?.id}`}>
-                                <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                                <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
                                   {t("nav.viewprofile")}
                                 </p>
                               </Link>
@@ -512,15 +512,15 @@ function CustomNavbar() {
                             {session?.user?.role !== "NormalUser" && (
                               <>
                                 <Link href="/Wallet">
-                                  <li className="flex items-center">
-                                    <FaWallet className="mr-5 text-2xl text-gray-600" />
+                                  <li className="flex items-center hover:text-gray-300">
+                                    <FaWallet className="mr-5 text-2xl text-gray-600 " />
                                     <span className="text-[18px]">
                                       {t("nav.wallet.title")}
                                     </span>
                                   </li>
                                 </Link>
                                 <Link href="/Sell">
-                                  <li className="flex items-center mt-2">
+                                  <li className="flex items-center mt-2 hover:text-gray-300">
                                     <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
                                     <span className="text-[18px]">
                                       {t("nav.sell.title")}
@@ -530,7 +530,7 @@ function CustomNavbar() {
                               </>
                             )}
                             <Link href="/favorite">
-                              <li className="flex items-center mt-2">
+                              <li className="flex items-center mt-2 hover:text-gray-300">
                                 <FaHeart className="mr-5 text-2xl text-gray-600" />
                                 <span className="text-[18px]">
                                   {t("nav.favorite")}
@@ -538,7 +538,7 @@ function CustomNavbar() {
                               </li>
                             </Link>
                             <Link href="/notification">
-                              <li className="flex items-center mt-2">
+                              <li className="flex items-center mt-2 hover:text-gray-300">
                                 <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
                                 <span className="text-[18px]">
                                   {t("nav.notification")}
@@ -546,7 +546,7 @@ function CustomNavbar() {
                               </li>
                             </Link>
                             <Link href="/myproject">
-                              <li className="flex items-center mt-2">
+                              <li className="flex items-center mt-2 hover:text-gray-300">
                                 <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
                                 <span className="text-[18px]">
                                   {t("nav.myproject.title")}
@@ -554,7 +554,7 @@ function CustomNavbar() {
                               </li>
                             </Link>
                             <Link href="/review">
-                              <li className="flex items-center mt-2">
+                              <li className="flex items-center mt-2 hover:text-gray-300">
                                 <FaStar className="mr-5 text-2xl text-gray-600" />
                                 <span className="text-[18px]">
                                   {t("nav.review.title")}
@@ -568,7 +568,7 @@ function CustomNavbar() {
                             className="flex items-center w-full lg:w-auto border-t border-gray-300 lg:mt-0 lg:border-t-0"
                           >
                             <BiSolidExit className="mr-5 mt-2 text-2xl text-gray-600" />
-                            <span className="text-[18px] mt-2">
+                            <span className="text-[18px] mt-2 hover:text-gray-300">
                               {t("nav.logout")}
                             </span>
                           </button>
@@ -728,7 +728,7 @@ function CustomNavbar() {
                               <b>
                                 <u className="text-[#0E6FFF]">
                                   <Link href="/Profile">
-                                    <p className="text-[14px] ml-1 text-[#0E6FFF] ">
+                                    <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
                                       {t("nav.viewprofile")}
                                     </p>
                                   </Link>
@@ -741,7 +741,7 @@ function CustomNavbar() {
                               {session?.user?.role !== "NormalUser" && (
                                 <>
                                   <Link href="/Wallet">
-                                    <li className="flex items-center">
+                                    <li className="flex items-center hover:text-gray-300">
                                       <FaWallet className="mr-5 text-2xl text-gray-600" />
                                       <span className="text-[18px]">
                                         {t("nav.wallet.title")}
@@ -749,7 +749,7 @@ function CustomNavbar() {
                                     </li>
                                   </Link>
                                   <Link href="/Sell">
-                                    <li className="flex items-center mt-2">
+                                    <li className="flex items-center mt-2 hover:text-gray-300">
                                       <FaMoneyBillTrendUp className="mr-5 text-2xl text-gray-600" />
                                       <span className="text-[18px]">
                                         {t("nav.sell.title")}
@@ -759,7 +759,7 @@ function CustomNavbar() {
                                 </>
                               )}
                               <Link href="/favorite">
-                                <li className="flex items-center mt-2">
+                                <li className="flex items-center mt-2 hover:text-gray-300">
                                   <FaHeart className="mr-5 text-2xl text-gray-600" />
                                   <span className="text-[18px]">
                                     {t("nav.favorite")}
@@ -767,7 +767,7 @@ function CustomNavbar() {
                                 </li>
                               </Link>
                               <Link href="/notification">
-                                <li className="flex items-center mt-2">
+                                <li className="flex items-center mt-2 hover:text-gray-300">
                                   <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
                                   <span className="text-[18px]">
                                     {t("nav.notification")}
@@ -775,7 +775,7 @@ function CustomNavbar() {
                                 </li>
                               </Link>
                               <Link href="/myproject">
-                                <li className="flex items-center mt-2">
+                                <li className="flex items-center mt-2 hover:text-gray-300">
                                   <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
                                   <span className="text-[18px]">
                                     {t("nav.myproject.title")}
@@ -783,7 +783,7 @@ function CustomNavbar() {
                                 </li>
                               </Link>
                               <Link href="/review">
-                                <li className="flex items-center mt-2">
+                                <li className="flex items-center mt-2 hover:text-gray-300">
                                   <FaStar className="mr-5 text-2xl text-gray-600" />
                                   <span className="text-[18px]">
                                     {t("nav.review.title")}
@@ -797,7 +797,7 @@ function CustomNavbar() {
                               className="flex items-center w-full lg:w-auto border-t border-gray-300 lg:mt-0 lg:border-t-0"
                             >
                               <BiSolidExit className="mr-5 mt-2 text-2xl text-gray-600" />
-                              <span className="text-[18px] mt-2">
+                              <span className="text-[18px] mt-2 hover:text-gray-300">
                                 {t("nav.logout")}
                               </span>
                             </button>
