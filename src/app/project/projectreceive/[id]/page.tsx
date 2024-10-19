@@ -190,7 +190,23 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
       fetchReviews();
     }
   }, [project]);
-
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (session) {
+        try {
+          const response = await fetch(`/api/favorites?email=${session.user.email}`);
+          const favoriteProjects = await response.json();
+  
+          const isProjectFavorited = favoriteProjects.includes(params.id);
+          setIsFavorited(isProjectFavorited);
+        } catch (error) {
+          console.error('Error checking favorite status:', error);
+        }
+      }
+    };
+  
+    checkFavoriteStatus();
+  }, [session, params.id]);
   const updateProjectRating = async (projectId: string) => {
     try {
       const response = await fetch("/api/project/updateRating", {
@@ -256,7 +272,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
           email: session.user.email,
           projectId: project._id,
         };
-
+  
         const favoriteResponse = await fetch("/api/favorites", {
           method: "POST",
           headers: {
@@ -264,13 +280,16 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
           },
           body: JSON.stringify(data),
         });
-
+  
         if (favoriteResponse.ok) {
           const result = await favoriteResponse.json();
-
+  
           // ตั้งค่าสถานะตามที่ได้รับจาก API
           setIsFavorited(result.isFavorited);
-
+  
+          // ตั้งค่า status เป็น favorites ถ้าถูกเพิ่ม หรือ 'pending' ถ้าถูกลบ
+          const status = result.isFavorited ? 'favorites' : 'pending';
+          
           // แสดงข้อความแจ้งเตือนด้วย SweetAlert2
           Swal.fire({
             icon: "success",
@@ -503,16 +522,12 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       )}
                     </div>
                       <>
-                        <button
-                          onClick={handleFavoriteClick}
-                          className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`}
-                        >
-                          {isFavorited ? (
-                            <GoHeartFill className="text-red-500 text-2xl" />
-                          ) : (
-                            <GoHeart className="text-gray-600 text-2xl" />
-                          )}
-                        </button>
+                      <button
+                      onClick={handleFavoriteClick}
+                      className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`}
+                    >
+                      {isFavorited ? <GoHeartFill /> : <GoHeart />}
+                    </button>
                         <AiOutlineNotification
                           onClick={handleNotificationClick}
                           className="text-gray-600 cursor-pointer text-2xl"

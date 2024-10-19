@@ -134,7 +134,7 @@ export default function Page() {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
-        <Container>
+        
           <div className="w-full max-w-screen-lg p-4 mx-auto">
             <div className="flex flex-col">
               <p className="mt-3 text-2xl font-bold">{t("nav.blog.title")}</p>
@@ -240,6 +240,7 @@ export default function Page() {
               )}
 
               <div className="sticky bottom-8 w-full max-w-screen-lg mx-auto px-4 mt-8">
+              {session?.user?.role !== "NormalUser" && (
                 <div className="flex justify-end">
                   {session && (
                     <Link href={`/Addblog/${session?.user?.id}`}>
@@ -250,10 +251,11 @@ export default function Page() {
                     </Link>
                   )}
                 </div>
+                )}
               </div>
             </div>
           </div>
-        </Container>
+        
       </main>
       <Footer />
     </div>
