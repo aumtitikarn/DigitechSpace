@@ -11,19 +11,6 @@ export default function Page() {
   const { data: session, status } = useSession();
   const router = useRouter(); // Use the useRouter hook to get the router instance
 
-  if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
-  }
-
-
   return (
     <div>
      <Home/>
