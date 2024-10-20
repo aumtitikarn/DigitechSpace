@@ -199,14 +199,16 @@
       "wait" : "Waiting to check the project",
       "check" : "Check the project",
       "desCheck" : "Please inspect the product and press the 'Check the project' button before 7 days. If you do not press the button, you will not be able to file a complaint and refund.",
-      "noproject" : "You do not have a project at this time."
+      "noproject" : "You do not have a project at this time.",
+      "ava" : "Project are not available."
     },
     "review": {
       "title" : "Review",
       "topic" : "Review Project",
       "project" : "Project",
       "point" : "Point",
-      "text" : "Text"
+      "text" : "Text",
+      "noreview" : "There are no projects to review at this time."
     },
     "logout": "Log out",
     "profile" : {

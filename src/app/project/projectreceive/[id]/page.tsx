@@ -468,7 +468,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                           alt="Author Profile"
                           width={30}
                           height={30}
-                          className="rounded-full"
+                          className="rounded-full w-[30px] h-[30px] object-cover"
                         />
                       ) : (
                         <span className="text-gray-500 text-3xl mr-2">
@@ -688,7 +688,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                                     alt="Author Profile"
                                     width={20}
                                     height={20}
-                                    className="rounded-full mr-2"
+                                    className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                                   />
                                 ) : (
                                   <span className="text-gray-500 mr-2 text-2xl">
@@ -751,9 +751,9 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                                   <Image
                                     src={product.profileImage}
                                     alt="Author Profile"
-                                    width={20}
-                                    height={20}
-                                    className="rounded-full mr-2"
+                                    width={30}
+                                    height={30}
+                                    className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                                   />
                                 ) : (
                                   <span className="text-gray-500 mr-2 text-2xl">

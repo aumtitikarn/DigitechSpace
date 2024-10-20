@@ -44,7 +44,7 @@ const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
               <img
                 src={project.profileImage}
                 alt="Author Profile"
-                className="rounded-full mr-2 w-5 h-5" // ใช้แทน Image สำหรับโปรไฟล์
+                className="rounded-full mr-2  w-[30px] h-[30px] object-cover" 
               />
             ) : (
               <span className="text-gray-500 mr-2 text-2xl">
@@ -140,7 +140,9 @@ const Favorite: React.FC = () => {
                 </Link>
               ))
             ) : (
-              <p>{t("noProjectsFound")}</p>
+              <p className="mt-2 text-gray-500 text-sm lg:text-base whitespace-nowrap">
+                {t("nav.sell.noproject")}
+              </p>
             )}
           </div>
         </div>
