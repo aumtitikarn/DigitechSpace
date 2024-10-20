@@ -22,6 +22,8 @@ interface PostData {
   imageUrl: string[];
   selectedCategory: string;
   author: string;
+  authorName: string;
+  profileImage: string;
   description: string;
   userprofile?: string[]; // ทำให้ userprofile เป็น optional
 }

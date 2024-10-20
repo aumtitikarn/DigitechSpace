@@ -40,6 +40,7 @@ interface ProjectData {
   email: string;
   profileImage: string;
   authorName: string;
+  iduser: string;
 }
 
 interface Review {
@@ -455,6 +456,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                   <p className="text-xl font-bold text-[28px] mt-3">
                     {project.projectname}
                   </p>
+                  <Link href={project?.iduser ? `/Profile/ViewProfile/${project.iduser}` : '#'}>
                   <div className="flex items-center mt-2">
                     <p className="text-sm text-gray-600 mr-2">
                       {t("nav.project.projectdetail.by")}
@@ -478,6 +480,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       {project.authorName}
                     </p>
                   </div>
+                  </Link>
                   <div>
                     <p className="text-lg font-bold mt-3 text-[#33529B] text-[26px]">
                       {project.price} THB
