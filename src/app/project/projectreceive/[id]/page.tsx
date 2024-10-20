@@ -48,6 +48,8 @@ interface Review {
   userEmail: string;
   rathing: number;
   review: string;
+  profileImage: string;
+  authorName: string;
   projectId: string; // Ensure this matches your database structure
 }
 
@@ -602,7 +604,19 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       .map((review, index) => (
                         <li key={index} className="mb-4">
                           <div className="flex items-center">
-                            <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
+                          {review.profileImage ? (
+                            <Image
+                              src={review.profileImage}
+                              alt="Author Profile"
+                              width={50}
+                              height={50}
+                              className="rounded-full w-[50px] h-[50px] object-cover mr-2"
+                            />
+                          ) : (
+                            <span className="text-gray-500 text-5xl mr-2">
+                              <MdAccountCircle />
+                            </span>
+                          )}
                             <div className="flex flex-col">
                               <div className="flex items-center">
                                 <p className="text-sm font-bold mr-2">
