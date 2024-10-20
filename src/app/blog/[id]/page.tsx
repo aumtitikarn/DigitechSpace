@@ -669,7 +669,7 @@ function Blog({ params, initialComments }: BlogProps) {
             <div>
               {Array.isArray(postData?.comments) &&
                 postData.comments.map((comment) => (
-                  <div key={comment._id} className="flex flex-col m-3 p-2">
+                  <div key={comment._id} className="flex flex-col mt-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
 
@@ -696,7 +696,7 @@ function Blog({ params, initialComments }: BlogProps) {
                           onClick={() => setReplyingTo(comment._id)}
                           className="font-bold text-[#0E6FFF] ml-4"
                         >
-                          Reply
+                          {t("nav.blog.reply")}
                         </button>
                         </div>
                         <p className="text-lg ml-10">{comment.text}</p>

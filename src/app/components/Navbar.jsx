@@ -181,10 +181,7 @@ function CustomNavbar() {
                     onError={(e) => {
                       e.target.onerror = null;
                     }}
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                    }}
+                    className="rounded-full w-[35px] h-[35px] object-cover "
                   />
                 ) : (
                   <MdAccountCircle
@@ -212,12 +209,7 @@ function CustomNavbar() {
                             onError={(e) => {
                               e.target.onerror = null;
                             }}
-                            style={{
-                              objectFit: "cover",
-                              borderRadius: "50%",
-                              margin: "10px"
-        
-                            }}
+                            className="rounded-full w-[55px] h-[55px] object-cover mr-2"
                           />
                         ) : (
                           <MdAccountCircle
@@ -432,11 +424,7 @@ function CustomNavbar() {
                           onError={(e) => {
                             e.target.onerror = null;
                           }}
-                          style={{
-                            objectFit: "cover",
-                            borderRadius: "50%",
-                  
-                          }}
+                          className="rounded-full w-[35px] h-[35px] object-cover mr-2"
                         />
                       ) : (
                         <MdAccountCircle
@@ -467,11 +455,7 @@ function CustomNavbar() {
                               onError={(e) => {
                                 e.target.onerror = null;
                               }}
-                              style={{
-                                objectFit: "cover",
-                                borderRadius: "50%",
-                                margin: "10px"
-                              }}
+                              className="rounded-full w-[55px] h-[55px] object-cover mr-2"
                             />
                           ) : (
                             <MdAccountCircle
@@ -706,11 +690,7 @@ function CustomNavbar() {
                                 onError={(e) => {
                                   e.target.onerror = null;
                                 }}
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "50%",
-                      
-                                }}
+                                className="rounded-full w-[60px] h-[60px] object-cover"
                               />
                             ) : (
                               <MdAccountCircle

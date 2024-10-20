@@ -223,6 +223,8 @@
       "success" : "Completed data update!",
       "error" : "An error occurred.",
       "errordes" : "Unable to update information Please try again.",
+      "noblog" : "No blogs found.",
+      "noproject" : "No projects found.",
       "editprofile" : {
         "name" : "Name",
         "email" : "Email",

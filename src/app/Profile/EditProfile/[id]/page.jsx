@@ -14,7 +14,7 @@ import Image from "next/image";
 import Swal from "sweetalert2";
 
 function page() {
-  const { data: session, status } = useSession(); // Initialize session
+  const { data: session, status, update } = useSession(); // Initialize session
   const { t } = useTranslation("translation");
 
   const [postData, setPostData] = useState([]);
@@ -28,7 +28,6 @@ function page() {
   const [newPhonenumber, setNewPhonenumber] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
@@ -186,7 +185,6 @@ function page() {
       setProfileImage(URL.createObjectURL(file));
     }
   };
-
   // Handle save profile updates
   const handleSave = async () => {
     const formData = new FormData();
@@ -207,13 +205,13 @@ function page() {
       });
 
       if (response.ok) {
+       
         // ใช้ SweetAlert2 เพื่อแสดงการแจ้งเตือน
         await Swal.fire({
           title: t("nav.profile.success"),
           icon: "success",
           confirmButtonText: "OK",
         });
-
         // นำทางไปยังหน้า Profile
         router.push("/Profile");
       } else {
@@ -424,13 +422,7 @@ function page() {
                       e.target.onerror = null;
                       e.target.src = "/path/to/fallback/image.jpg"; // ถ้าต้องการใช้รูปภาพ fallback
                     }}
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                      width: "95px",
-                      height: "95px",
-                      margin: "15px",
-                    }}
+                    className="rounded-full w-[95px] h-[95px] object-cover"
                   />
                 ) : (
                   <MdAccountCircle

@@ -234,7 +234,7 @@ export default function Page() {
                       </Link>
                     ))
                   ) : (
-                    <p className="col-span-full text-center">
+                    <p className="col-span-full text-center text-gray-500">
                       {t("nav.project.noresult")}
                     </p>
                   )}
