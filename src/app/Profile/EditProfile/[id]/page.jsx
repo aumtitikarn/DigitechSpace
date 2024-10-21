@@ -205,7 +205,7 @@ function page() {
       });
 
       if (response.ok) {
-       
+
         // ใช้ SweetAlert2 เพื่อแสดงการแจ้งเตือน
         await Swal.fire({
           title: t("nav.profile.success"),
@@ -326,46 +326,22 @@ function page() {
               </div>
 
               <div className="flex flex-row justify-center mb-4">
-              {session?.user?.role !== "NormalUser" && (
-                <p
-                  style={{ fontSize: "24px", fontWeight: "bold" }}
-                  className="mt-6"
-                >
-                  {postDataS.name}
+                <p style={{ fontSize: "24px", fontWeight: "bold" }} className="mt-6">
+                  {postDataS?.name || postData?.name}
                 </p>
-              )}
-              {session?.user?.role == "NormalUser" && (
-                <p
-                  style={{ fontSize: "24px", fontWeight: "bold" }}
-                  className="mt-6"
-                >
-                  {postData.name}
-                </p>
-              )}
               </div>
 
               <div className="flex flex-col items-center w-full mt-4">
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>{t("nav.profile.editprofile.name")}</p>
                 </div>
-                {session?.user?.role !== "NormalUser" && (
                 <input
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)} // Update state when input changes
-                placeholder={postDataS.name}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
-              />
-              )}
-              {session?.user?.role == "NormalUser" && (
-                <input
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)} // Update state when input changes
-                placeholder={postData.name}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
-              />
-              )}
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)} // Update state when input changes
+                  placeholder={postDataS?.name || postData?.name}
+                  className="w-full p-2 mb-4 border border-gray-300 rounded"
+                />
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>{t("nav.profile.editprofile.email")}</p>
                 </div>
@@ -468,6 +444,13 @@ function page() {
                   <FaPlus size={18} className="text-black" />
                 </label>
               </div>
+
+              <div className="flex flex-row justify-center mb-4">
+                <p style={{ fontSize: "24px", fontWeight: "bold" }} className="mt-6">
+                  {postDataS?.name || postData?.name}
+                </p>
+              </div>
+
               <div className="flex flex-col items-center w-full mt-4">
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>{t("nav.profile.editprofile.name")}</p>
@@ -477,7 +460,7 @@ function page() {
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)} // Update state when input changes
-                  placeholder={session?.user?.name}
+                  placeholder={postDataS?.name || postData?.name}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <div className="flex flex-row items-center w-full mt-4">
