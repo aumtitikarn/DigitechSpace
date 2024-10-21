@@ -52,6 +52,8 @@ interface Review {
   userEmail: string;
   rathing: number;
   review: string;
+  profileImage?: string;
+  authorName?: string;
   projectId: string; // Ensure this matches your database structure
 }
 const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
@@ -182,17 +184,19 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     const checkFavoriteStatus = async () => {
       if (session) {
         try {
-          const response = await fetch(`/api/favorites?email=${session.user.email}`);
+          const response = await fetch(
+            `/api/favorites?email=${session.user.email}`
+          );
           const favoriteProjects = await response.json();
-  
+
           const isProjectFavorited = favoriteProjects.includes(params.id);
           setIsFavorited(isProjectFavorited);
         } catch (error) {
-          console.error('Error checking favorite status:', error);
+          console.error("Error checking favorite status:", error);
         }
       }
     };
-  
+
     checkFavoriteStatus();
   }, [session, params.id]);
   if (!project) {
@@ -283,7 +287,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           email: session.user.email,
           projectId: project._id,
         };
-  
+
         const favoriteResponse = await fetch("/api/favorites", {
           method: "POST",
           headers: {
@@ -291,16 +295,16 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           },
           body: JSON.stringify(data),
         });
-  
+
         if (favoriteResponse.ok) {
           const result = await favoriteResponse.json();
-  
+
           // ตั้งค่าสถานะตามที่ได้รับจาก API
           setIsFavorited(result.isFavorited);
-  
+
           // ตั้งค่า status เป็น favorites ถ้าถูกเพิ่ม หรือ 'pending' ถ้าถูกลบ
-          const status = result.isFavorited ? 'favorites' : 'pending';
-          
+          const status = result.isFavorited ? "favorites" : "pending";
+
           // แสดงข้อความแจ้งเตือนด้วย SweetAlert2
           Swal.fire({
             icon: "success",
@@ -334,7 +338,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       });
     }
   };
-  
 
   const handleBuyClick = () => {
     setIsPopupOpen(true);
@@ -465,30 +468,36 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                   <p className="text-xl font-bold text-[28px] mt-3">
                     {project.projectname}
                   </p>
-                  <Link href={project?.iduser ? `/Profile/ViewProfile/${project.iduser}` : '#'}>
-                  <div className="flex items-center mt-2">
-                    <p className="text-sm text-gray-600 mr-2">
-                      {t("nav.project.projectdetail.by")}
-                    </p>
-                    <span className="text-gray-500  text-3xl mr-2">
-                      {project.profileImage ? (
-                        <Image
-                          src={project.profileImage}
-                          alt="Author Profile"
-                          width={30}
-                          height={30}
-                          className="rounded-full"
-                        />
-                      ) : (
-                        <span className="text-gray-500 text-3xl mr-2">
-                          <MdAccountCircle />
-                        </span>
-                      )}
-                    </span>
-                    <p className="text-sm text-gray-600 truncate w-[150px]">
-                      {project.authorName}
-                    </p>
-                  </div>
+                  <Link
+                    href={
+                      project?.iduser
+                        ? `/Profile/ViewProfile/${project.iduser}`
+                        : "#"
+                    }
+                  >
+                    <div className="flex items-center mt-2">
+                      <p className="text-sm text-gray-600 mr-2">
+                        {t("nav.project.projectdetail.by")}
+                      </p>
+                      <span className="text-gray-500  text-3xl mr-2">
+                        {project.profileImage ? (
+                          <Image
+                            src={project.profileImage}
+                            alt="Author Profile"
+                            width={30}
+                            height={30}
+                            className="rounded-full w-[30px] h-[30px] object-cover"
+                          />
+                        ) : (
+                          <span className="text-gray-500 text-3xl mr-2">
+                            <MdAccountCircle />
+                          </span>
+                        )}
+                      </span>
+                      <p className="text-sm text-gray-600 truncate w-[150px]">
+                        {project.authorName}
+                      </p>
+                    </div>
                   </Link>
                   <div>
                     <p className="text-lg font-bold mt-3 text-[#33529B] text-[26px]">
@@ -589,15 +598,27 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul>
-                  {reviews.length > 0 ? (
+                {reviews.length > 0 ? (
                     reviews.map((review, index) => (
                       <li key={index} className="mb-4">
                         <div className="flex items-center">
-                          <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
+                          {review.profileImage ? (
+                            <Image
+                              src={review.profileImage}
+                              alt="Author Profile"
+                              width={50}
+                              height={50}
+                              className="rounded-full w-[50px] h-[50px] object-cover mr-2"
+                            />
+                          ) : (
+                            <span className="text-gray-500 text-5xl mr-2">
+                              <MdAccountCircle />
+                            </span>
+                          )}
                           <div className="flex flex-col">
                             <div className="flex items-center">
                               <p className="text-sm font-bold mr-2">
-                                {review.username}
+                                {review.authorName}
                               </p>
                               <span className="flex items-center">
                                 <IoIosStar className="text-yellow-500 mr-1" />
@@ -680,7 +701,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                                     alt="Author Profile"
                                     width={20}
                                     height={20}
-                                    className="rounded-full mr-2"
+                                    className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                                   />
                                 ) : (
                                   <span className="text-gray-500 mr-2 text-2xl">
@@ -743,9 +764,9 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                                   <Image
                                     src={product.profileImage}
                                     alt="Author Profile"
-                                    width={20}
-                                    height={20}
-                                    className="rounded-full mr-2"
+                                    width={30}
+                                    height={30}
+                                    className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                                   />
                                 ) : (
                                   <span className="text-gray-500 mr-2 text-2xl">

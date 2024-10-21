@@ -40,6 +40,7 @@ interface ProjectData {
   email: string;
   profileImage: string;
   authorName: string;
+  iduser: string;
 }
 
 interface Review {
@@ -47,6 +48,8 @@ interface Review {
   userEmail: string;
   rathing: number;
   review: string;
+  profileImage: string;
+  authorName: string;
   projectId: string; // Ensure this matches your database structure
 }
 
@@ -455,6 +458,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                   <p className="text-xl font-bold text-[28px] mt-3">
                     {project.projectname}
                   </p>
+                  <Link href={project?.iduser ? `/Profile/ViewProfile/${project.iduser}` : '#'}>
                   <div className="flex items-center mt-2">
                     <p className="text-sm text-gray-600 mr-2">
                       {t("nav.project.projectdetail.by")}
@@ -466,7 +470,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                           alt="Author Profile"
                           width={30}
                           height={30}
-                          className="rounded-full"
+                          className="rounded-full w-[30px] h-[30px] object-cover"
                         />
                       ) : (
                         <span className="text-gray-500 text-3xl mr-2">
@@ -478,6 +482,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       {project.authorName}
                     </p>
                   </div>
+                  </Link>
                   <div>
                     <p className="text-lg font-bold mt-3 text-[#33529B] text-[26px]">
                       {project.price} THB
@@ -492,7 +497,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       {/* แสดงค่า rating หรือ N/A */}(
                       {project.review ? project.review : 0}){" "}
                       {/* แสดงจำนวนรีวิว */} |
-                      {t("nav.project.projectdetail.sold")} {project.sold}
+                      {" "} {t("nav.project.projectdetail.sold")} {project.sold}
                     </span>
                   </div>
                 </div>
@@ -599,7 +604,19 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       .map((review, index) => (
                         <li key={index} className="mb-4">
                           <div className="flex items-center">
-                            <MdAccountCircle className="text-gray-500 text-5xl mr-2" />
+                          {review.profileImage ? (
+                            <Image
+                              src={review.profileImage}
+                              alt="Author Profile"
+                              width={50}
+                              height={50}
+                              className="rounded-full w-[50px] h-[50px] object-cover mr-2"
+                            />
+                          ) : (
+                            <span className="text-gray-500 text-5xl mr-2">
+                              <MdAccountCircle />
+                            </span>
+                          )}
                             <div className="flex flex-col">
                               <div className="flex items-center">
                                 <p className="text-sm font-bold mr-2">
@@ -685,7 +702,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                                     alt="Author Profile"
                                     width={20}
                                     height={20}
-                                    className="rounded-full mr-2"
+                                    className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                                   />
                                 ) : (
                                   <span className="text-gray-500 mr-2 text-2xl">
@@ -748,9 +765,9 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                                   <Image
                                     src={product.profileImage}
                                     alt="Author Profile"
-                                    width={20}
-                                    height={20}
-                                    className="rounded-full mr-2"
+                                    width={30}
+                                    height={30}
+                                    className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                                   />
                                 ) : (
                                   <span className="text-gray-500 mr-2 text-2xl">

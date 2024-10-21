@@ -105,9 +105,9 @@ const MyProject: React.FC = () => {
                         <Image
                           src={project.profileImage}
                           alt="Author Profile"
-                          width={20}
-                          height={20}
-                          className="rounded-full mr-2"
+                          width={30}
+                          height={30}
+                          className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                         />
                       ) : (
                         <span className="text-gray-500 mr-2 text-2xl">
@@ -137,7 +137,7 @@ const MyProject: React.FC = () => {
         </Link>
       ) : (
         <div className="text-center text-red-500">
-          <p>Project details are not available.</p>
+          <p>{t("nav.myproject.ava")}</p>
         </div>
       )}
       {showCheckButton && (
@@ -159,7 +159,7 @@ const MyProject: React.FC = () => {
       {projects.length > 0 ? (
         projects.map(project => renderProject(project, showCheckButton))
       ) : (
-        <div className="col-span-full text-center">
+        <div className="col-span-full">
           <p className="text-gray-500">{t("nav.myproject.noproject")}</p>
         </div>
       )}

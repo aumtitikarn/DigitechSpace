@@ -22,6 +22,8 @@ interface PostData {
   imageUrl: string[];
   selectedCategory: string;
   author: string;
+  authorName: string;
+  profileImage: string;
   description: string;
   userprofile?: string[]; // ทำให้ userprofile เป็น optional
 }
@@ -223,7 +225,7 @@ export default function Page() {
                               ) : (
                                 <MdAccountCircle className="w-9 h-9 rounded-full mr-2 mt-1 text-gray-500" />
                               )}
-                              <p className="mt-2 truncate text-gray-500 text-xs">
+                              <p className="mt-2 truncate text-gray-500 text-xs font-semibold">
                                 {val.authorName}
                               </p>
                             </div>
@@ -232,7 +234,7 @@ export default function Page() {
                       </Link>
                     ))
                   ) : (
-                    <p className="col-span-full text-center">
+                    <p className="col-span-full text-center text-gray-500">
                       {t("nav.project.noresult")}
                     </p>
                   )}

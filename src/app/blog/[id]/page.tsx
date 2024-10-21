@@ -63,13 +63,19 @@ function Blog({ params, initialComments }: BlogProps) {
     userprofileid: string[];
     userprofile: string[];
     author: string;
-    profileImage: string[];
+    profileImage: string;
     authorName: string;
     email: string;
     comments: any[]; // Or a more specific type
     likedByUsers: any[]; // Or a more specific type
     selectedCategory: string;
     onClosets?: () => void;
+  }
+
+  interface Reply {
+
+    userName: string;
+    profileImageSource: string;
   }
 
 
@@ -272,7 +278,7 @@ function Blog({ params, initialComments }: BlogProps) {
     console.log("Blog name:", postData.topic);
     console.log("Blog Email:", postData.email);
     console.log("Blog ID:", postData._id);
-    console.log("authorName:", comments.authorName);
+    // console.log("authorName:", comments.authorName);
 
     const formData = new FormData();
 
@@ -663,7 +669,7 @@ function Blog({ params, initialComments }: BlogProps) {
             <div>
               {Array.isArray(postData?.comments) &&
                 postData.comments.map((comment) => (
-                  <div key={comment._id} className="flex flex-col m-3 p-2">
+                  <div key={comment._id} className="flex flex-col mt-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
 
@@ -683,47 +689,53 @@ function Blog({ params, initialComments }: BlogProps) {
                         <strong className="flex flex-col justify-center text-lg">{comment.userName}</strong>
                       </p>
                       <div className="flex flex-row">
-                        <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
+                        <div className="flex flex-col">
                         <div className="flex flex-row">
-                          {replyingTo === comment._id ? (
-                            <div className="flex flex-col ml-4">
+                        <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
+                        <button
+                          onClick={() => setReplyingTo(comment._id)}
+                          className="font-bold text-[#0E6FFF] ml-4"
+                        >
+                          {t("nav.blog.reply")}
+                        </button>
+                        </div>
+                        <p className="text-lg ml-10">{comment.text}</p>
+                        {replyingTo === comment._id && (
+                          <div className="flex flex-col ml-10 mt-2"> {/* จัดให้ช่องตอบกลับอยู่ใต้ข้อความคอมเมนต์ */}
+                            <textarea
+                              className="border-2 rounded p-2"
+                              value={replyInput}
+                              onChange={(e) => setReplyInput(e.target.value)}
+                              placeholder={t("nav.blog.comment")}
+                            />
 
-                              <textarea className="border-2 rounded p-2"
-                                value={replyInput}
-                                onChange={(e) => setReplyInput(e.target.value)}
-                                placeholder="Reply to this comment"
-                              />
-
-                              <div className="flex flex-row w-80">
-                                <div className="flex flex-row w-80 justify-end">
-                                  <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm"
-                                    onClick={() => {
-                                      console.log('Comment ID:', comment.idcomment);
-                                      handleAddCommentOrReply(true, comment._id);
-                                    }}
-                                  >
-                                    Replyt
-                                  </button>
-                                  <button className="m-2 border-2 rounded-md p-1 w-32 bg-[#9B3933] text-white text-sm"
-                                    onClick={() => setReplyingTo(null)}
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              </div>
+                            <div className="flex flex-row w-80 justify-end mt-2">
+                              <button
+                                className="m-2 border-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm"
+                                onClick={() => {
+                                  console.log('Comment ID:', comment.idcomment);
+                                  handleAddCommentOrReply(true, comment._id);
+                                }}
+                              >
+                                {t("nav.blog.reply")}
+                              </button>
+                              <button
+                                className="m-2 border-2 rounded-md p-1 w-32 bg-[#9B3933] text-white text-sm"
+                                onClick={() => setReplyingTo(null)}
+                              >
+                                {t("nav.blog.cancel")}
+                              </button>
                             </div>
-                          ) : (
-                            <button onClick={() => setReplyingTo(comment._id)} className="font-bold text-[#0E6FFF] ml-4">Reply</button>
-                          )}
+                          </div>
+                        )}
                         </div>
                       </div>
-                      <p className="text-lg ml-10">{comment.text}</p>
                       <div className="flex flex-col ml-10">
                       </div>
                     </div>
                     {/* Handle replies if they exist */}
                     {comment.replies && comment.replies.length > 0 && (
-                      <div style={{ marginLeft: '40px', marginTop: '10px'}}>
+                      <div style={{ marginLeft: '40px', marginTop: '10px' }}>
                         {comment.replies.map((reply: Reply) => (
                           <div>
                             <p key={reply._id}></p>
@@ -752,10 +764,10 @@ function Blog({ params, initialComments }: BlogProps) {
                               ) : (
                                 <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
                               )} */}
-                              <strong className="flex flex-col justify-center text-lg">{reply.userName} : reply</strong>
+                              <strong className="flex flex-col justify-center text-lg">{reply.userName}</strong>
                             </p>
                             <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
-                            <p className="ml-4 text-lg">{reply.text}</p>
+                            <p className="text-lg ml-10">{reply.text}</p>
                           </div>
                         ))}
                       </div>

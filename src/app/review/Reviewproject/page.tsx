@@ -141,7 +141,7 @@ const ProjectReview: React.FC<ReviewProject> = ({ project }) => {
           </div>
           <div className="relative mx-auto w-full lg:max-w-[950px] lg:ml-1">
             <textarea
-              placeholder="Write your review here..."
+              placeholder={t("nav.review.text")}
               value={review}
               onChange={handleReviewChange}
               className="w-full h-40 p-3 border-2 border-gray-300 rounded-md mb-5"

@@ -288,7 +288,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
                           alt="Author Profile"
                           width={20}
                           height={20}
-                          className="rounded-full mr-2"
+                          className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                         />
                       ) : (
                         <span className="text-gray-500 mr-2 text-2xl">
