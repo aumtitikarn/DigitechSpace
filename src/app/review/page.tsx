@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { OrbitProgress } from "react-loading-indicators";
 import Image from "next/image";
+
 // Define types for project data
 interface Project {
   _id: string;
@@ -62,6 +63,7 @@ const Review: React.FC = () => {
         setProjects(data);
       } catch (error) {
         console.error("Error fetching projects:", error);
+        setError("Failed to load projects");
       } finally {
         setLoading(false);
       }
@@ -92,6 +94,7 @@ const Review: React.FC = () => {
       </div>
     );
   }
+
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -99,11 +102,11 @@ const Review: React.FC = () => {
       <Navbar />
       <main className="flex-grow">
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <h1 className="font-bold mb-4 text-[24px]">
-            {t("nav.review.title")}
-          </h1>
-            {projects && projects.length > 0 ? (
-              projects
+          <h1 className="font-bold mb-4 text-[24px]">{t("nav.review.title")}</h1>
+          
+          {projects.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {projects
                 .filter(
                   (project) =>
                     project.projectDetails &&
@@ -111,9 +114,10 @@ const Review: React.FC = () => {
                     project.projectDetails.imageUrl.length > 0
                 )
                 .map((project) => (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   <Link
-                    href={`/review/Reviewproject?id=${project.projectDetails?._id}&name=${encodeURIComponent(project.projectDetails?.projectname)}`}
+                    href={`/review/Reviewproject?id=${project.projectDetails?._id}&name=${encodeURIComponent(
+                      project.projectDetails?.projectname
+                    )}`}
                     key={project._id}
                   >
                     <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
@@ -132,9 +136,9 @@ const Review: React.FC = () => {
                               <Image
                                 src={project.profileImage}
                                 alt="Author Profile"
-                                width={30}
-                                height={30}
-                                className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                                width={20}
+                                height={20}
+                                className="rounded-full mr-2"
                               />
                             ) : (
                               <span className="text-gray-500 mr-2 text-2xl">
@@ -150,10 +154,8 @@ const Review: React.FC = () => {
                               <IoIosStar />
                             </span>
                             <span className="text-gray-600 text-xs lg:text-sm truncate">
-                              {project.projectDetails?.rathing || "N/A"} (
-                              {project.projectDetails?.review}) |{" "}
-                              {t("nav.project.projectdetail.sold")}{" "}
-                              {project.projectDetails?.sold}
+                              {project.projectDetails?.rathing || "N/A"} ({project.projectDetails?.review}) |{" "}
+                              {t("nav.project.projectdetail.sold")} {project.projectDetails?.sold}
                             </span>
                           </div>
                           <p className="text-lg font-bold text-[#33529B]">
@@ -163,13 +165,11 @@ const Review: React.FC = () => {
                       </div>
                     </div>
                   </Link>
-                  </div>
-                ))
-            ) : (
-              <div className="text-gray-500">
-                <p>{t("nav.review.noreview")}</p>
-              </div>
-            )}
+                ))}
+            </div>
+          ) : (
+            <p>{t("noReviewFound")}</p> // Display message if no projects are found
+          )}
         </div>
       </main>
       <Footer />

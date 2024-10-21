@@ -325,26 +325,47 @@ function page() {
                 </label>
               </div>
 
-              <div className="flex flex-row justify-center">
+              <div className="flex flex-row justify-center mb-4">
+              {session?.user?.role !== "NormalUser" && (
                 <p
                   style={{ fontSize: "24px", fontWeight: "bold" }}
                   className="mt-6"
                 >
-                  {session?.user?.name}
+                  {postDataS.name}
                 </p>
+              )}
+              {session?.user?.role == "NormalUser" && (
+                <p
+                  style={{ fontSize: "24px", fontWeight: "bold" }}
+                  className="mt-6"
+                >
+                  {postData.name}
+                </p>
+              )}
               </div>
 
               <div className="flex flex-col items-center w-full mt-4">
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>{t("nav.profile.editprofile.name")}</p>
                 </div>
+                {session?.user?.role !== "NormalUser" && (
                 <input
-                  type="text"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)} // Update state when input changes
-                  placeholder={session?.user?.name}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)} // Update state when input changes
+                placeholder={postDataS.name}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+              />
+              )}
+              {session?.user?.role == "NormalUser" && (
+                <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)} // Update state when input changes
+                placeholder={postData.name}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+              />
+              )}
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>{t("nav.profile.editprofile.email")}</p>
                 </div>
