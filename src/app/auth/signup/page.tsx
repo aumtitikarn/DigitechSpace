@@ -9,6 +9,7 @@ import Navbar from "./../../components/Navbar";
 import Footer from "./../../components/Footer";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { OrbitProgress } from "react-loading-indicators";
+import Link from "next/link";
 import Swal from 'sweetalert2';
 
 function SignUp() {
@@ -351,20 +352,23 @@ function SignUp() {
           </button>
         </div>
         <div>
-          <p className="text-center mt-20">
-          {t("authen.p1")}
-            <u>
-              <b>{t("authen.p2")}</b>
-            </u>
-            {t("authen.p3")}
-            <u>
-              <b>{t("authen.p4")}</b>
-            </u>
-            {t("authen.p5")}
-            <u>
-              <b>{t("authen.p6")}</b>
-            </u>
-          </p>
+        <p className="text-center mt-20">
+              {t("authen.p1")}
+              <u>
+                <b>
+                  {" "}
+                  <Link href="/policy" className="hover:text-gray-500">{t("authen.p2")}</Link>
+                </b>
+              </u>
+              {t("authen.p3")}
+              <u>
+                <b><Link href="/policy" className="hover:text-gray-500">{t("authen.p4")}</Link></b>
+              </u>
+              {t("authen.p5")}
+              <u>
+                <b><Link href="/policy" className="hover:text-gray-500">{t("authen.p6")}</Link></b>
+              </u>
+            </p>
         </div>
       </div>
     </div>

@@ -1,8 +1,8 @@
-'use client';
-import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+"use client";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Navbar from "./../../components/Navbar";
@@ -13,19 +13,18 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter()
+  const router = useRouter();
   const { data: session, status } = useSession();
-  const { t, i18n } = useTranslation('translation');
-
+  const { t, i18n } = useTranslation("translation");
 
   useEffect(() => {
     const checkSession = async () => {
-      if (status === 'authenticated') {
+      if (status === "authenticated") {
         try {
           const sessionResponse = await fetch("/api/auth/session");
           const sessionData = await sessionResponse.json();
-          console.log('interests : ', sessionData.user?.interests);
-          
+          console.log("interests : ", sessionData.user?.interests);
+
           if (sessionData.user?.roleaii) {
             if (sessionData.user?.interests) {
               router.replace("/Home");
@@ -46,23 +45,34 @@ export default function SignIn() {
   }, [status, router]);
 
   if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
   }
-  
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const lowercaseEmail = email.toLowerCase();
     try {
       const res = await signIn("credentials", {
-        lowercaseEmail ,
+        lowercaseEmail,
         password,
         redirect: false,
       });
@@ -73,12 +83,12 @@ export default function SignIn() {
       }
       const sessionResponse = await fetch("/api/auth/session");
       const sessionData = await sessionResponse.json();
-      console.log('interests : ', sessionData.user?.interests)
+      console.log("interests : ", sessionData.user?.interests);
       if (sessionData.user?.roleaii) {
         if (sessionData.user?.interests) {
-          router.replace("/Home"); 
+          router.replace("/Home");
         } else {
-          router.replace("/Ai/interest"); 
+          router.replace("/Ai/interest");
         }
       } else {
         router.replace("/Ai/role");
@@ -88,11 +98,11 @@ export default function SignIn() {
       setError(t("authen.signin.error"));
     }
   };
-    return (
-      <div>
-        <Navbar/>
-      <div 
-        style={{ backgroundColor: "#FBFBFB", height: '100vh' }}
+  return (
+    <div>
+      <Navbar />
+      <div
+        style={{ backgroundColor: "#FBFBFB", height: "100vh" }}
         className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
       >
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -101,16 +111,21 @@ export default function SignIn() {
             src="https://m1r.ai/7ttM.png"
             alt="Digitech Space"
           />
-          <h2 
-            style={{ color: '#33539B', fontSize: '29px' }}
+          <h2
+            style={{ color: "#33539B", fontSize: "29px" }}
             className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight"
           >
             {t("authen.signin.title")}
           </h2>
         </div>
-  
+
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST" onSubmit={handleSubmit}>
+          <form
+            className="space-y-6"
+            action="#"
+            method="POST"
+            onSubmit={handleSubmit}
+          >
             <div>
               <div className="mt-3">
                 <input
@@ -136,7 +151,7 @@ export default function SignIn() {
                 <div className="text-sm mt-3">
                   <Link
                     href="/auth/forgot"
-                    style={{ color: '#33539B' }}
+                    style={{ color: "#33539B" }}
                     className="font-semibold text-indigo-600 hover:text-indigo-500"
                   >
                     {t("authen.signin.forgot")}
@@ -160,41 +175,61 @@ export default function SignIn() {
             <div className="flex-grow border-t border-gray-300"></div>
           </div>
           <div className="flex flex-row space-x-4">
-            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => signIn('google')}>
-            <Image
-              width={20}
-              height={20}
-              src="/google.png"
-              alt="Google"
-              className="flex-shrink-0 mr-4 ml-5" 
-            />
+            <button
+              className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2"
+              onClick={() => signIn("google")}
+            >
+              <Image
+                width={20}
+                height={20}
+                src="/google.png"
+                alt="Google"
+                className="flex-shrink-0 mr-4 ml-5"
+              />
             </button>
-            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => signIn('facebook')}>
-            <img
-              className="w-6 h-6 flex-shrink-0 mr-4 ml-5 " 
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
-              alt="Facebook"
-            />
+            <button
+              className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2"
+              onClick={() => signIn("facebook")}
+            >
+              <img
+                className="w-6 h-6 flex-shrink-0 mr-4 ml-5 "
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
+                alt="Facebook"
+              />
             </button>
-            <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => signIn('github')}>
-            <img
-              className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
-              src="/github.png"
-              alt="Github"
-            />
+            <button
+              className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2"
+              onClick={() => signIn("github")}
+            >
+              <img
+                className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
+                src="/github.png"
+                alt="Github"
+              />
             </button>
           </div>
           <div>
-          <p className="text-center mt-20">{t("authen.p1")}
-            <u><b>{t("authen.p2")}</b></u>
-            {t("authen.p3")}
-            <u><b>{t("authen.p4")}</b></u>
-            {t("authen.p5")}
-            <u><b>{t("authen.p6")}</b></u></p>
+            <p className="text-center mt-20">
+              {t("authen.p1")}
+              <u>
+                <b>
+                  {" "}
+                  <Link href="/policy" className="hover:text-gray-500">{t("authen.p2")}</Link>
+                </b>
+              </u>
+              {t("authen.p3")}
+              <u>
+                <b><Link href="/policy" className="hover:text-gray-500">{t("authen.p4")}</Link></b>
+              </u>
+              {t("authen.p5")}
+              <u>
+                <b><Link href="/policy" className="hover:text-gray-500">{t("authen.p6")}</Link></b>
+              </u>
+            </p>
           </div>
         </div>
       </div>
       <Footer />
-      </div>
-    );
+    </div>
+  );
 }
