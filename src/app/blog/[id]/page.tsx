@@ -778,7 +778,7 @@ function Blog({ params, initialComments }: BlogProps) {
             <textarea
               value={commentInput}
               onChange={(e) => setCommentInput(e.target.value)}
-              placeholder="Comment"
+              placeholder={t("nav.blog.comment")}
               className="w-full p-2 border-2 rounded-md resize-none mt-4 h-32"
               style={{ paddingRight: '100px' }}  // Add space for the button
             />
@@ -787,7 +787,7 @@ function Blog({ params, initialComments }: BlogProps) {
                 onClick={() => handleAddCommentOrReply(false)}
                 className="่justify-end bottom-2 right-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm h-12"
               >
-                Send
+                <p className="font-bold">{t("nav.home.service.send")}</p>
               </button>
             </div>
             {isPopupOpen && (

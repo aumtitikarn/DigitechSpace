@@ -168,7 +168,7 @@ const Review: React.FC = () => {
                 ))}
             </div>
           ) : (
-            <p>{t("noReviewFound")}</p> // Display message if no projects are found
+            <p>{t("nav.sell.noreview")}</p> // Display message if no projects are found
           )}
         </div>
       </main>
