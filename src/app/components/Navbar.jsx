@@ -33,7 +33,29 @@ function CustomNavbar() {
   // const accountBoxMarginTop =
   //   session?.user?.role === "StudentUser" ? "mt-[451px]" : "mt-[390px]";
 
-  
+  useEffect(() => {
+    const fetchData = async () => {
+      if (session?.user?.id) {
+        try {
+          const res = await fetch(`/api/editprofile/${session.user.id}`, {
+            method: "GET",
+            cache: "no-store",
+          });
+
+          if (!res.ok) throw new Error("Failed to fetch data");
+
+          const data = await res.json();
+          setPostData(data.post);
+          setPostDataS(data.posts);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [session]);
+
   useEffect(() => {
     if (session?.user?.imageUrl) {
       setProfileImage(session.user.imageUrl); // Set the initial image from session data
@@ -223,7 +245,7 @@ function CustomNavbar() {
 
                         <span>
                           <p className="text-[20px] mt-3 text-semibold">
-                            {session?.user?.name || "Unknown"}
+                            {postData?.name || postDataS?.name || "Unknown"}
                           </p>
                           <b>
                             <u className="text-[#0E6FFF]">
@@ -468,7 +490,7 @@ function CustomNavbar() {
                           )}
                           <span>
                             <p className="text-[20px] mt-3 text-semibold">
-                              {session?.user?.name || "Unknown"}
+                              {postData?.name || postDataS?.name || "Unknown"}
                             </p>
                             <b>
                               <u className="text-[#0E6FFF]">
