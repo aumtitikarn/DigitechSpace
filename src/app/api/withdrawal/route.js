@@ -49,6 +49,7 @@ export async function POST(request) {
     // Create withdrawal record with original values
     const withdrawal = new Withdrawal({
       userId,
+      date,
       withdrawn: amount,
       net: originalNet,
       status: 'pending',

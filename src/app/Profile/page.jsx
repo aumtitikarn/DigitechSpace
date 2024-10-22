@@ -382,7 +382,7 @@ function page() {
                     </Link>
                   ))
                 ) : (
-                  <p>{t("nav.profile.noproject")}</p>
+                  <p className="text-gray-500">{t("nav.profile.noproject")}</p>
                 )}
               </div>
             )}
