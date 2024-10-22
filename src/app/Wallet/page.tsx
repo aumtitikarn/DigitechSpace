@@ -202,7 +202,7 @@ const Wallet = () => {
   ];
 
   const currentYear = new Date().getFullYear();
-  const years = ['All', ...Array.from({ length: 5 }, (_, i) => (currentYear - i).toString())];
+  const years = [t('months.all'), ...Array.from({ length: 5 }, (_, i) => (currentYear - i).toString())];
 
   const filteredPurchaseHistory = purchaseHistory.filter((purchase) => {
     const purchaseDate = new Date(purchase.date);
