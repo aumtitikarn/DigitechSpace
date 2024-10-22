@@ -23,7 +23,7 @@ import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 import { OrbitProgress } from "react-loading-indicators";
 import { text } from "stream/consumers";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { profile } from "console";
 import { FaLink } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa";
@@ -39,7 +39,7 @@ function Blog({ params, initialComments }: BlogProps) {
   const [review, setReview] = useState("");
   const [report, setreport] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
-  const [blogname, setBlogname] = useState("")
+  const [blogname, setBlogname] = useState("");
   const maxLength = 200;
 
   const { id } = params;
@@ -70,15 +70,14 @@ function Blog({ params, initialComments }: BlogProps) {
     likedByUsers: any[]; // Or a more specific type
     selectedCategory: string;
     onClosets?: () => void;
+    timestamp: string | Date;
   }
 
   interface Reply {
-
     userName: string;
     profileImageSource: string;
+    timestamp: string | Date;
   }
-
-
 
   const [topic, setTopic] = useState("");
   const [course, setCourse] = useState("");
@@ -123,12 +122,12 @@ function Blog({ params, initialComments }: BlogProps) {
     comments: any[]; // You might want to define a more specific type for comments
     likedByUsers: any[]; // You might want to define a more specific type for likedByUsers
     selectedCategory: string;
+    timestamp: string | Date;
   }
 
   const handleShareClick = () => {
     setIsSharePopupOpen(!isSharePopupOpen); // Toggle popup open/close
   };
-
 
   const getPostByIdprofile = async () => {
     if (!session?.user?.id) {
@@ -165,61 +164,171 @@ function Blog({ params, initialComments }: BlogProps) {
     }
   }, [session?.user?.id]);
 
-
-
-  const handleAddCommentOrReply = async (isReply: boolean, commentId = null) => {
-    console.log("idcoment", postData.comments)
-    console.log("Reply : ", { isReply, commentId });
-    if (session) {
-      const imageUrl = profileUserN?.imageUrl?.[0] || "/path/to/default-image.jpg"; // ใช้รูปภาพเริ่มต้นหากไม่มี
-      setProfileUser([imageUrl]);
-
-      const requestBody = {
-        text: isReply ? replyInput : commentInput,
-        action: isReply ? "reply" : "comment",
-        // author: session?.user?.name || "Anonymous",
-        profile: isReply ? imageUrl : imageUrl,
-        emailcomment: session?.user?.email || "Anonymous",
-        timestamp: new Date(),
-        commentId: isReply ? commentId : null,
-        ...(isReply && { commentId }), // ส่ง commentId ถ้าเป็นการตอบกลับ
-      };
-
-      try {
-        const res = await fetch(`/api/posts/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody),
-        });
-
-        if (res.ok) {
-          const updatedData = await res.json();
-          setComments(updatedData.post.comments); // อัปเดตคอมเมนต์ใหม่
-          setCommentInput("");
-          setReplyInput("");
-          setReplyingTo(null);
-          router.refresh();
-          router.push(`/blog/${id}`);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      // alert("Please log in to save favorites");
-      Swal.fire('Error', 'Please log in to comment.', 'error');
+// แก้ไขฟังก์ชัน formatDate
+const formatDate = (timestamp: any): string => {
+  try {
+    if (!timestamp) {
+      return 'ไม่ระบุเวลา';
     }
+
+    let date: Date;
+
+    // แปลง timestamp เป็น Date object
+    if (typeof timestamp === 'string') {
+      date = new Date(timestamp);
+    } else if (typeof timestamp === 'number') {
+      date = new Date(timestamp);
+    } else if (timestamp instanceof Date) {
+      date = timestamp;
+    } else {
+      date = new Date();
+    }
+
+    // ตรวจสอบความถูกต้องของวันที่
+    if (isNaN(date.getTime())) {
+      console.error('Invalid timestamp value:', timestamp);
+      return 'ไม่ระบุเวลา';
+    }
+
+    // แปลงวันที่เป็นรูปแบบ dd/mm/yy HH:mm
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString().slice(-2);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+
+  } catch (error) {
+    console.error('Error in formatDate:', error);
+    return 'ไม่ระบุเวลา';
+  }
+};
+  
+  // 3. แก้ไขฟังก์ชัน handleAddCommentOrReply
+  const handleAddCommentOrReply = async (isReply: boolean, commentId: string | null = null) => {
+    if (!session || !postData) {
+      Swal.fire('Error', 'Please log in to comment.', 'error');
+      return;
+    }
+  
+    try {
+      const imageUrl = profileUserN?.imageUrl?.[0];
+      // สร้าง timestamp ในรูปแบบ ISO string
+      const now = new Date();
+      const currentTime = now.toISOString();
+  
+      const newComment = {
+        _id: `temp-${Date.now()}`,
+        text: isReply ? replyInput : commentInput,
+        userName: session.user?.name || "Anonymous",
+        profileImageSource: imageUrl ? `/api/posts/images/${imageUrl}` : undefined,
+        timestamp: now, // เก็บเป็น Date object สำหรับการแสดงผลใน UI
+        replies: []
+      };
+  
+      // อัพเดท UI
+      setPostData(prevData => {
+        if (!prevData) return prevData;
+  
+        if (isReply && commentId) {
+          return {
+            ...prevData,
+            comments: prevData.comments.map(comment => {
+              if (comment._id === commentId) {
+                return {
+                  ...comment,
+                  replies: [...(comment.replies || []), newComment]
+                };
+              }
+              return comment;
+            })
+          };
+        } else {
+          return {
+            ...prevData,
+            comments: [...prevData.comments, newComment]
+          };
+        }
+      });
+  
+      // ส่งข้อมูลไปยัง API
+      const res = await fetch(`/api/posts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: isReply ? replyInput : commentInput,
+          action: isReply ? "reply" : "comment",
+          profile: imageUrl,
+          emailcomment: session?.user?.email || "Anonymous",
+          timestamp: currentTime, // ส่ง ISO string ไปยัง API
+          commentId: isReply ? commentId : null,
+        }),
+      });
+  
+      if (!res.ok) {
+        throw new Error('Failed to save comment');
+      }
+  
+      // เคลียร์ input
+      if (isReply) {
+        setReplyInput("");
+        setReplyingTo(null);
+      } else {
+        setCommentInput("");
+      }
+  
+      // โหลดข้อมูลใหม่
+      const newData = await getPostById(id);
+      
+      // แปลง timestamp ในข้อมูลที่ได้รับกลับมา
+      if (newData) {
+        const formattedData = {
+          ...newData,
+          comments: newData.comments.map(comment => ({
+            ...comment,
+            timestamp: new Date(comment.timestamp),
+            replies: comment.replies?.map(reply => ({
+              ...reply,
+              timestamp: new Date(reply.timestamp)
+            }))
+          }))
+        };
+        setPostData(formattedData);
+      }
+  
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      Swal.fire('Error', 'Failed to save comment. Please try again.', 'error');
+    }
+  };
+ 
+  
+  const getProfileImagePath = (imageUrl: string | null | undefined): string => {
+    if (!imageUrl) return "/default-profile-icon.png";
+
+    // ตรวจสอบว่าเป็น URL เต็มหรือไม่
+    const isFullUrl =
+      imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
+    if (isFullUrl) {
+      return `/api/proxy?url=${encodeURIComponent(imageUrl)}`;
+    }
+
+    // ตรวจสอบว่ามี / นำหน้าหรือไม่
+    if (!imageUrl.startsWith("/")) {
+      return `/api/posts/images/${imageUrl}`;
+    }
+
+    return imageUrl;
   };
 
   useEffect(() => {
     console.log("Updated Profile URL:", profileUser);
   }, [profileUser]);
 
-
-
   ////////////////////////////////
 
   ////////////////////////////////
-
 
   const [input1, setInput1] = useState("");
   const handleReviewChange = (
@@ -230,7 +339,8 @@ function Blog({ params, initialComments }: BlogProps) {
 
   const handlePrevClick = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + postData.imageUrl.length) % postData.imageUrl.length
+      (prevIndex) =>
+        (prevIndex - 1 + postData.imageUrl.length) % postData.imageUrl.length
     );
   };
 
@@ -241,31 +351,72 @@ function Blog({ params, initialComments }: BlogProps) {
   const handleReasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedReason(event.target.value);
   };
-
-  const getPostById = async (id: string) => {
+  const getPostById = async (postId: string) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
+      const res = await fetch(`/api/posts/${postId}`, {
         method: "GET",
         cache: "no-store",
       });
-
+  
       if (!res.ok) {
-        throw new Error("Failed to fetch a post");
+        throw new Error("Failed to fetch post");
       }
-
+  
       const data = await res.json();
-      console.log("Edit post: ", data);
-
-      setPostData(data.post);
+      
+      // แปลงข้อมูล timestamp ในความคิดเห็นและการตอบกลับ
+      const formattedPost = {
+        ...data.post,
+        comments: data.post.comments.map(comment => ({
+          ...comment,
+          // แปลง timestamp เป็น milliseconds ถ้ายังไม่ใช่
+          timestamp: typeof comment.timestamp === 'number' 
+            ? comment.timestamp 
+            : Date.now(),
+          replies: comment.replies?.map(reply => ({
+            ...reply,
+            // แปลง timestamp เป็น milliseconds ถ้ายังไม่ใช่
+            timestamp: typeof reply.timestamp === 'number'
+              ? reply.timestamp
+              : Date.now()
+          })) || []
+        }))
+      };
+  
+      setPostData(formattedPost);
+      return formattedPost;
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching post:", error);
+      return null;
     }
   };
 
   useEffect(() => {
     getPostById(id);
   }, []);
-
+  if (status === "loading") {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
+  }
+  
   const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent button's default behavior
 
@@ -330,7 +481,7 @@ function Blog({ params, initialComments }: BlogProps) {
       setIsPopupOpen(!isPopupOpen);
     } else {
       // alert("Please log in to save favorites");
-      Swal.fire('Error', 'Please log in to report.', 'error');
+      Swal.fire("Error", "Please log in to report.", "error");
     }
   };
 
@@ -355,13 +506,14 @@ function Blog({ params, initialComments }: BlogProps) {
   };
 
   const handleTwitterShare = () => {
-    const text = encodeURIComponent(`Digitech Space project: ${postData.topic} by: ${postData.author}`);
+    const text = encodeURIComponent(
+      `Digitech Space project: ${postData.topic} by: ${postData.author}`
+    );
     window.open(
       `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`,
       "_blank"
     );
   };
-
 
   // const handlePopupSubmit = () => {
   //   alert(`Popup Input: ${popupInput}`);
@@ -378,28 +530,34 @@ function Blog({ params, initialComments }: BlogProps) {
 
   const UserId = session?.user?.id ?? "";
 
-
-
   console.log("UserId :", UserId);
 
   const handleSubmitCiHeart = async (e: React.MouseEvent<SVGElement>) => {
     if (session) {
-
       // ตรวจสอบว่าใน likedByUsers มี userId อยู่หรือไม่
-      const isLiked = Array.isArray(postData?.likedByUsers) && postData.likedByUsers.includes(UserId);
+      const isLiked =
+        Array.isArray(postData?.likedByUsers) &&
+        postData.likedByUsers.includes(UserId);
 
       try {
-        const actionheart = isLiked ? 'unlike' : 'like'; // กำหนด actionheart ว่าจะเป็นการ like หรือ unlike
+        const actionheart = isLiked ? "unlike" : "like"; // กำหนด actionheart ว่าจะเป็นการ like หรือ unlike
         const heart = isLiked ? postData.heart - 1 : postData.heart + 1; // ถ้าเคยกดแล้วจะลบ 1 ถ้ายังไม่เคยจะเพิ่ม 1
 
         // ส่งข้อมูลไปยัง backend
-        const blogRes = await fetch(`http://localhost:3000/api/posts/${postData._id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId: UserId, actionheart, setheart: heart }),
-        });
+        const blogRes = await fetch(
+          `http://localhost:3000/api/posts/${postData._id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: UserId,
+              actionheart,
+              setheart: heart,
+            }),
+          }
+        );
 
         if (!blogRes.ok) {
           throw new Error("Failed to update blog post");
@@ -414,32 +572,19 @@ function Blog({ params, initialComments }: BlogProps) {
       } catch (error) {
         console.error("Error updating:", error);
         Swal.fire({
-          position: 'center',
-          icon: 'error',
-          title: 'An error occurred',
-          text: 'error.message',
+          position: "center",
+          icon: "error",
+          title: "An error occurred",
+          text: "error.message",
           showConfirmButton: true,
         });
       }
     } else {
       // alert("Please log in to save favorites");
-      Swal.fire('Error', 'Please log in to save favorites.', 'error');
+      Swal.fire("Error", "Please log in to save favorites.", "error");
     }
   };
 
-
-
-  if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-      <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-    </div>;
-  }
 
   // const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -459,11 +604,12 @@ function Blog({ params, initialComments }: BlogProps) {
     profile?: string[];
     author: string;
     text: string;
+    timestamp: string | Date;
   }
 
-
   const getImageSource = (post: PostData): string => {
-    const useProxy = (url: string): string => `/api/proxy?url=${encodeURIComponent(url)}`;
+    const useProxy = (url: string): string =>
+      `/api/proxy?url=${encodeURIComponent(url)}`;
 
     const isValidHttpUrl = (string: string): boolean => {
       let url;
@@ -487,8 +633,7 @@ function Blog({ params, initialComments }: BlogProps) {
     // Fallback to default image if no userprofile is available
     return "/default-profile-icon.png";
   };
-
-
+  
   return (
     <Container>
       <Navbar />
@@ -521,7 +666,7 @@ function Blog({ params, initialComments }: BlogProps) {
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 <button
                   className={`w-3 h-3 rounded-full`}
-                // onClick={() => handleIndicatorClick()}
+                  // onClick={() => handleIndicatorClick()}
                 ></button>
               </div>
               <button
@@ -537,7 +682,13 @@ function Blog({ params, initialComments }: BlogProps) {
                 <FaChevronRight />
               </button>
             </div>
-            <Link href={postData?.userprofileid ? `/Profile/ViewProfile/${postData.userprofileid}` : '#'}>
+            <Link
+              href={
+                postData?.userprofileid
+                  ? `/Profile/ViewProfile/${postData.userprofileid}`
+                  : "#"
+              }
+            >
               <div className="flex flex-row mt-5 mb-5 items-center">
                 {postData?.profileImage && postData.profileImage[0] ? (
                   <Image
@@ -546,10 +697,7 @@ function Blog({ params, initialComments }: BlogProps) {
                     src={postData.profileImage}
                     alt="Profile"
                     onError={(
-                      e: React.SyntheticEvent<
-                        HTMLImageElement,
-                        Event
-                      >
+                      e: React.SyntheticEvent<HTMLImageElement, Event>
                     ) => {
                       const target = e.target as HTMLImageElement;
                       target.onerror = null;
@@ -574,7 +722,6 @@ function Blog({ params, initialComments }: BlogProps) {
                 href=""
                 className="text-white rounded-md p-2 m-1"
                 style={{ backgroundColor: "#33529B" }}
-
               >
                 {postData && postData.course ? (
                   <h1 className="font-bold">{postData.course}</h1>
@@ -616,8 +763,12 @@ function Blog({ params, initialComments }: BlogProps) {
               <div className="flex space-x-4">
                 <div className="flex items-center">
                   <CiHeart
-                    className={`text-3xl cursor-pointer ${Array.isArray(postData?.likedByUsers) && postData.likedByUsers.includes(UserId) ? 'text-red-500' : 'text-gray-500'
-                      }`} // ถ้าผู้ใช้คนนี้เคยกด ให้แสดงเป็นสีแดง ถ้าไม่เคยกด ให้เป็นสีเทา
+                    className={`text-3xl cursor-pointer ${
+                      Array.isArray(postData?.likedByUsers) &&
+                      postData.likedByUsers.includes(UserId)
+                        ? "text-red-500"
+                        : "text-gray-500"
+                    }`} // ถ้าผู้ใช้คนนี้เคยกด ให้แสดงเป็นสีแดง ถ้าไม่เคยกด ให้เป็นสีเทา
                     onClick={handleSubmitCiHeart}
                   />
                   {postData && postData.heart !== undefined ? (
@@ -633,7 +784,10 @@ function Blog({ params, initialComments }: BlogProps) {
               </div>
               <div className="flex space-x-4">
                 <div className="relative flex justify-center">
-                  <IoShareOutline className="text-2xl cursor-pointer" onClick={handleShareClick} />
+                  <IoShareOutline
+                    className="text-2xl cursor-pointer"
+                    onClick={handleShareClick}
+                  />
 
                   {isSharePopupOpen && (
                     <div className="absolute bottom-full mb-[10px] w-[121px] h-[46px] flex-shrink-0 rounded-[30px] border border-gray-300 bg-white flex items-center justify-center space-x-4 shadow-lg">
@@ -664,109 +818,100 @@ function Blog({ params, initialComments }: BlogProps) {
               <h1 className="font-bold text-2xl">{t("nav.blog.comment")}</h1>
             </div>
 
-            {/* แสดงฟอร์มแสดงความคิดเห็น */}
-
+            {/* // ส่วนแสดงผล Comments และ Replies */}
             <div>
               {Array.isArray(postData?.comments) &&
                 postData.comments.map((comment) => (
                   <div key={comment._id} className="flex flex-col mt-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
-
                         {comment.profileImageSource ? (
                           <Image
-                            width={200}
-                            height={200}
-                            src={comment.profileImageSource} // ใช้ commentProfileImageSource ที่ดึงมาจาก API
-                            alt={`${comment.userName}'s profile picture`} // ใช้ userName แทน author
+                            width={36}
+                            height={36}
+                            src={getProfileImagePath(
+                              comment.profileImageSource
+                            )}
+                            alt={`${comment.userName}'s profile picture`}
                             className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
                           />
                         ) : (
                           <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
                         )}
-                        {/* <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" /> */}
-
-                        <strong className="flex flex-col justify-center text-lg">{comment.userName}</strong>
+                        <strong className="flex flex-col justify-center text-lg">
+                          {comment.userName}
+                        </strong>
                       </p>
                       <div className="flex flex-row">
                         <div className="flex flex-col">
-                        <div className="flex flex-row">
-                        <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
-                        <button
-                          onClick={() => setReplyingTo(comment._id)}
-                          className="font-bold text-[#0E6FFF] ml-4"
-                        >
-                          {t("nav.blog.reply")}
-                        </button>
-                        </div>
-                        <p className="text-lg ml-10">{comment.text}</p>
-                        {replyingTo === comment._id && (
-                          <div className="flex flex-col ml-10 mt-2"> {/* จัดให้ช่องตอบกลับอยู่ใต้ข้อความคอมเมนต์ */}
-                            <textarea
-                              className="border-2 rounded p-2"
-                              value={replyInput}
-                              onChange={(e) => setReplyInput(e.target.value)}
-                              placeholder={t("nav.blog.comment")}
-                            />
-
-                            <div className="flex flex-row w-80 justify-end mt-2">
-                              <button
-                                className="m-2 border-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm"
-                                onClick={() => {
-                                  console.log('Comment ID:', comment.idcomment);
-                                  handleAddCommentOrReply(true, comment._id);
-                                }}
-                              >
-                                {t("nav.blog.reply")}
-                              </button>
-                              <button
-                                className="m-2 border-2 rounded-md p-1 w-32 bg-[#9B3933] text-white text-sm"
-                                onClick={() => setReplyingTo(null)}
-                              >
-                                {t("nav.blog.cancel")}
-                              </button>
-                            </div>
+                          <div className="flex flex-row">
+                            <p className="text-sm text-gray-500 ml-10">
+                            {formatDate(comment.timestamp)}
+                            </p>
+                            <button
+                              onClick={() => setReplyingTo(comment._id)}
+                              className="font-bold text-[#0E6FFF] ml-4"
+                            >
+                              {t("nav.blog.reply")}
+                            </button>
                           </div>
-                        )}
+                          <p className="text-lg ml-10">{comment.text}</p>
+                          {replyingTo === comment._id && (
+                            <div className="flex flex-col ml-10 mt-2">
+                              <textarea
+                                className="border-2 rounded p-2"
+                                value={replyInput}
+                                onChange={(e) => setReplyInput(e.target.value)}
+                                placeholder={t("nav.blog.comment")}
+                              />
+                              <div className="flex flex-row w-80 justify-end mt-2">
+                                <button
+                                  className="m-2 border-2 rounded-md p-1 w-32 bg-[#33539B] text-white text-sm"
+                                  onClick={() => {
+                                    handleAddCommentOrReply(true, comment._id);
+                                  }}
+                                >
+                                  {t("nav.blog.reply")}
+                                </button>
+                                <button
+                                  className="m-2 border-2 rounded-md p-1 w-32 bg-[#9B3933] text-white text-sm"
+                                  onClick={() => setReplyingTo(null)}
+                                >
+                                  {t("nav.blog.cancel")}
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                      <div className="flex flex-col ml-10">
                       </div>
                     </div>
-                    {/* Handle replies if they exist */}
-                    {comment.replies && comment.replies.length > 0 && (
-                      <div style={{ marginLeft: '40px', marginTop: '10px' }}>
-                        {comment.replies.map((reply: Reply) => (
-                          <div>
-                            <p key={reply._id}></p>
-                            <p className="flex flex-row">
 
+                    {/* Replies section */}
+                    {comment.replies && comment.replies.length > 0 && (
+                      <div className="ml-10 mt-2">
+                        {comment.replies.map((reply: any) => (
+                          <div key={reply._id} className="mt-2">
+                            <p className="flex flex-row">
                               {reply.profileImageSource ? (
                                 <Image
-                                  width={200}
-                                  height={200}
-                                  src={reply.profileImageSource} // ใช้ commentProfileImageSource ที่ดึงมาจาก API
-                                  alt={`${reply.userName}'s profile picture`} // ใช้ userName แทน author
+                                  width={36}
+                                  height={36}
+                                  src={getProfileImagePath(
+                                    reply.profileImageSource
+                                  )}
+                                  alt={`${reply.userName}'s profile picture`}
                                   className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
                                 />
                               ) : (
                                 <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
                               )}
-
-                              {/* {reply.profile && reply.profile[0] ? (
-                                <Image
-                                  width={200}
-                                  height={200}
-                                  src={`/api/posts/images/${reply.profile}`}
-                                  alt={`${reply.author}'s profile picture`}
-                                  className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
-                                />
-                              ) : (
-                                <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
-                              )} */}
-                              <strong className="flex flex-col justify-center text-lg">{reply.userName}</strong>
+                              <strong className="flex flex-col justify-center text-lg">
+                                {reply.userName}
+                              </strong>
                             </p>
-                            <p className="text-sm text-gray-500 ml-10">{new Date(comment.timestamp).toLocaleString()}</p>
+                            <p className="text-sm text-gray-500 ml-10">
+                            {formatDate(reply.timestamp)}
+                            </p>
                             <p className="text-lg ml-10">{reply.text}</p>
                           </div>
                         ))}
@@ -780,7 +925,7 @@ function Blog({ params, initialComments }: BlogProps) {
               onChange={(e) => setCommentInput(e.target.value)}
               placeholder={t("nav.blog.comment")}
               className="w-full p-2 border-2 rounded-md resize-none mt-4 h-32"
-              style={{ paddingRight: '100px' }}  // Add space for the button
+              style={{ paddingRight: "100px" }} // Add space for the button
             />
             <div className="flex flex-row justify-end m-4">
               <button
@@ -811,7 +956,9 @@ function Blog({ params, initialComments }: BlogProps) {
                     className="w-full p-3 border-2 border-gray-300 rounded-md resize-none mb-3"
                     maxLength={maxLength}
                   /> */}
-                  <p className="text-lg font-medium mb-2">{t("report.blog.reason")}</p>
+                  <p className="text-lg font-medium mb-2">
+                    {t("report.blog.reason")}
+                  </p>
                   <select
                     value={selectedReason}
                     onChange={(e) => setSelectedReason(e.target.value)}
@@ -829,9 +976,7 @@ function Blog({ params, initialComments }: BlogProps) {
                     <option value="บทความไม่เกี่ยวข้องกับวิชาเรียน หรือมหาวิทยลัย">
                       {t("report.blog.r4")}
                     </option>
-                    <option value="อื่นๆ">
-                      {t("report.blog.r5")}
-                    </option>
+                    <option value="อื่นๆ">{t("report.blog.r5")}</option>
                   </select>
                   <p className="text-lg font-medium mb-2">
                     {t("report.blog.add")}

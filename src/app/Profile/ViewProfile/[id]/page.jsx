@@ -125,9 +125,11 @@ function page({ params, initialComments }) {
   const imageSource = getImageSource();
 
   return (
-    <Container>
+    <div className="flex flex-col min-h-screen">
       <Navbar session={session} />
-      <main className="flex flex-col md:flex-row w-full justify-center p-4 mt-20">
+      <main className="flex-grow">
+        <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row w-full justify-center p-4 mt-20">
         <div className="flex flex-col w-full max-w-auto mb-20">
           {session?.user?.role === "NormalUser" ? (
             <div className="flex flex-row justify-center">
@@ -234,10 +236,10 @@ function page({ params, initialComments }) {
           </div>
 
           {activeButton === "button1" && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center mt-10 w-full">
-                {publishedProjects && publishedProjects.length > 0 ? (
-                  publishedProjects.map((project, index) => (
-                    <Link
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-x-[10px] gap-y-[20px] lg:gap-x-[30px] md:gap-x-[40px] md:gap-y-[40px] mt-5">
+              {publishedProjects.length > 0 ? (
+                publishedProjects.map((project, index) => (
+                  <Link
                       key={index}
                       href={`/project/projectdetail/${project._id}`}
                     >
@@ -309,48 +311,119 @@ function page({ params, initialComments }) {
                           alt={blog.topic}
                           className="w-full object-cover rounded-lg h-full"
                         />
-                      </div>
-                      <div className="ml-2 mt-2">
-                        <div className="flex flex-col mt-1 justify-center">
-                          <div className="flex flex-row">
-                            <p className="truncate mt-1 text-sm font-bold w-full">
-                              {blog.topic || "Untitled Blog"}
+                        <div className="flex flex-col justify-between h-full">
+                          <p className="text-lg font-semibold mb-2 truncate">
+                            {project.projectname}
+                          </p>
+                          <div className="flex items-center mb-2">
+                            {project.profileImage ? (
+                              <Image
+                                src={project.profileImage}
+                                alt="Author Profile"
+                                width={20}
+                                height={20}
+                                className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                              />
+                            ) : (
+                              <span className="text-gray-500 mr-2 text-2xl">
+                                <MdAccountCircle />
+                              </span>
+                            )}
+                            <p className="text-sm text-gray-600 truncate">
+                              {project.authorName}
                             </p>
-                            <div className="flex items-center">
-                              <CiHeart style={{ fontSize: "20px" }} />
-                              <p className="text-gray-500 text-sm">
-                                {blog.heart || 0}
-                              </p>
-                            </div>
                           </div>
-                        </div>
-                        <div className="flex flex-row mb-3">
-                          {/* <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" /> */}
-                          <Image
-                            width={200}
-                            height={200}
-                            src={imageSource}
-                            alt={blog.topic}
-                            className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500"
-                          />
-                          <p className="mt-2 truncate text-gray-500 text-xs">
-                            {postData.name}
-                            {/* ใช้ชื่อผู้ใช้ที่โพสต์ */}
+                          <div className="flex items-center mb-2">
+                            <span className="text-yellow-500 mr-2">
+                              <IoIosStar />
+                            </span>
+                            <span className="lg:text-sm text-gray-600 text-[12px] truncate">
+                              {project.rathing || "N/A"} ({project.review}) |{" "}
+                              {t("nav.project.projectdetail.sold")}{" "}
+                              {project.sold}
+                            </span>
+                          </div>
+                          <p className="text-lg font-bold text-[#33529B]">
+                            {project.price} THB
                           </p>
                         </div>
                       </div>
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <p>{t("nav.profile.noproject")}</p>
+                )}
+              </div>
+            )}
+
+          {activeButton === "button2" && (
+             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center mt-10 w-full">
+              {postDataBlog.length > 0 ? (
+                postDataBlog.map((blog, index) => (
+                  <Link key={index} href={`/blog/${blog._id}`}>
+                  <div className="w-[150px] sm:w-[180px] md:w-[200px] h-auto flex flex-col">
+                    <div
+                      className="rounded w-full relative"
+                      style={{ height: "200px" }}
+                    >
+                      <Image
+                        width={100}
+                        height={400}
+                        src={
+                          blog.imageUrl
+                            ? `/api/posts/images/${blog.imageUrl}`
+                            : "/path/to/default/image.jpg"
+                        }
+                        alt={blog.topic || "Blog Image"}
+                        className="w-full object-cover rounded-lg h-full"
+                      />
                     </div>
-                  </Link>
-                ))
-              ) : (
-                <p>No blog posts found.</p>
-              )}
-            </div>
-          )}
+                    <div className="ml-2 mt-2">
+                      <div className="flex flex-col mt-1 justify-center">
+                        <div className="flex flex-row">
+                          <p className="truncate mt-1 text-sm font-bold w-full">
+                            {blog.topic || "Untitled Blog"}
+                          </p>
+                          <div className="flex items-center">
+                            <CiHeart style={{ fontSize: "20px" }} />
+                            <p className="text-gray-500 text-sm">
+                              {blog.heart || 0}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-row mb-3">
+                        {imageSource ? (
+                          <Image
+                            width={24}
+                            height={24}
+                            src={imageSource}
+                            alt="Profile"
+                            className="w-6 h-6 rounded-full mr-2 mt-1"
+                          />
+                        ) : (
+                          <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
+                        )}
+                        <p className="mt-2 truncate text-gray-500 text-xs">
+                          {blog.authorName || "Unknown Author"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <p className="text-gray-500">{t("nav.profile.noblog")}</p>
+            )}
+          </div>
+        )}
+          </div>
+        </div>
         </div>
       </main>
       <Footer />
-    </Container>
+    </div>
   );
 }
 
