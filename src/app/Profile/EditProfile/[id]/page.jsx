@@ -139,7 +139,7 @@ function page() {
 
   useEffect(() => {
     if (session?.user?.name) {
-      setNewName(session.user.name); // Set the initial name from session data
+      setNewName(postDataS?.name || postData?.name); // Set the initial name from session data
     }
     if (session?.user?.email) {
       setNewEmail(session.user.email); // Set the initial name from session data
@@ -234,6 +234,57 @@ function page() {
       });
     }
   };
+
+
+  const handleSaveT = async () => {
+    const formData = new FormData();
+    formData.append("name", newName);
+    formData.append("email", newEmail);
+    formData.append("line", newLine);
+    formData.append("facebook", newFacebook);
+    formData.append("phonenumber", newPhonenumber);
+
+    if (imageFile) {
+      formData.append("imageUrl", imageFile);
+    }
+
+    try {
+      const response = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "PUT",
+        body: formData, // Use FormData to handle file uploads
+      });
+
+      if (response.ok) {
+
+        // ใช้ SweetAlert2 เพื่อแสดงการแจ้งเตือน
+        await Swal.fire({
+          title: t("nav.profile.success"),
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+        // นำทางไปยังหน้า Profile
+        router.push("/");
+      } else {
+        // แสดงข้อความแจ้งเตือนเมื่อเกิดข้อผิดพลาด
+        Swal.fire({
+          title: t("nav.profile.error"),
+          text: t("nav.profile.errordes"),
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.error("Error during save:", error);
+      // แสดงข้อความแจ้งเตือนเมื่อเกิดข้อผิดพลาด
+      Swal.fire({
+        title: "เกิดข้อผิดพลาด!",
+        text: "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
   const getImageSource = () => {
     const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
@@ -339,7 +390,7 @@ function page() {
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)} // Update state when input changes
-                  placeholder={postDataS?.name || postData?.name}
+                  placeholder={postData?.name || 'กำลังโหลด...'}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <div className="flex flex-row items-center w-full mt-4">
@@ -386,7 +437,7 @@ function page() {
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <button
-                  onClick={handleSave}
+                  onClick={handleSaveT}
                   className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
                   style={{ backgroundColor: "#33539B" }}
                 >
@@ -460,7 +511,7 @@ function page() {
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)} // Update state when input changes
-                  placeholder={postDataS?.name || postData?.name}
+                  placeholder={postDataS?.name || 'กำลังโหลด...'}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <div className="flex flex-row items-center w-full mt-4">

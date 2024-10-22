@@ -468,7 +468,7 @@ function CustomNavbar() {
                           )}
                           <span>
                             <p className="text-[20px] mt-3 text-semibold">
-                              {session?.user?.name || "Unknown"}
+                            {postDataS?.name || postData?.name}
                             </p>
                             <b>
                               <u className="text-[#0E6FFF]">

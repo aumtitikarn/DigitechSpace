@@ -36,7 +36,7 @@ function page({ params, initialComments }) {
       if (status === "authenticated" && session) {
         try {
           // Fetch published projects
-          const publishedResponse = await fetch("/api/project/getProjects/user");
+          const publishedResponse = await fetch(`/api/project/getProjects/${id}`);
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
             setPublishedProjects(publishedData);
@@ -160,22 +160,22 @@ function page({ params, initialComments }) {
               <div className="relative">
                 {imageSource ? (
                   <Image
-                  width={95}
-                  height={95}
-                  src={imageSource}
-                  alt="Profile Image"
-                  unoptimized={true}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                  }}
-                  style={{
-                    objectFit: "cover",
-                    borderRadius: "50%",
-                    width: "95px",
-                    height: "95px",
-                    margin: "15px",
-                  }}
-                />
+                    width={95}
+                    height={95}
+                    src={imageSource}
+                    alt="Profile Image"
+                    unoptimized={true}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                    }}
+                    style={{
+                      objectFit: "cover",
+                      borderRadius: "50%",
+                      width: "95px",
+                      height: "95px",
+                      margin: "15px",
+                    }}
+                  />
                 ) : (
                   <MdAccountCircle className="rounded-full text-gray-500" style={{ width: "95px", height: "95px" }} />
                 )}
@@ -190,7 +190,24 @@ function page({ params, initialComments }) {
           </div>
 
           <div className="flex flex-row justify-center mt-10 mb-10">
-
+            {session?.user?.email === postDataS?.email && (
+              <>
+                <Link
+                  href={`/Profile/EditProfile/${session?.user?.id}`}
+                  className="bg-blue-500 text-white px-4 py-2 rounded mx-2 hover:bg-blue-600 w-64 flex items-center justify-center"
+                  style={{ backgroundColor: "#33539B" }}
+                >
+                  <p>{t("nav.profile.edit")}</p>
+                </Link>
+                <Link
+                  href={`/Profile/QRshare/${session?.user?.id}`}
+                  className="bg-green-500 text-white px-4 py-2 rounded mx-2 hover:bg-green-600 w-64 flex items-center justify-center"
+                  style={{ backgroundColor: "#33539B" }}
+                >
+                  {t("nav.profile.share")}
+                </Link>
+              </>
+            )}
           </div>
 
           <div className="flex flex-row justify-center space-x-4 mt-4 w-full">
@@ -218,26 +235,60 @@ function page({ params, initialComments }) {
 
           {activeButton === "button1" && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center mt-10 w-full">
-              {publishedProjects.length > 0 ? (
-                publishedProjects.map((project, index) => (
-                  <Link key={index} href={`/project/projectdetail/${project._id}`}>
-                    <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white p-4 m-2">
-                      <Image
-                        width={100}
-                        height={150}
-                        src={`/api/project/images/${project.imageUrl[0]}`}
-                        alt="Project Image"
-                        className="w-full h-[150px] rounded-md object-cover mb-4"
-                      />
-                      <p className="text-base font-semibold mb-2 truncate">{project.name}</p>
-                      <p className="text-sm text-gray-600 truncate">{project.author || session?.user?.name}</p>
-                      <p className="text-lg font-bold text-[#33529B]">{project.price || "N/A"} THB</p>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <p>No projects found.</p>
-              )}
+                {publishedProjects && publishedProjects.length > 0 ? (
+                  publishedProjects.map((project, index) => (
+                    <Link
+                      key={index}
+                      href={`/project/projectdetail/${project._id}`}
+                    >
+                      <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
+                        <img
+                          src={`/api/project/images/${project.imageUrl[0]}`}
+                          alt="Project Image"
+                          className="w-full h-[150px] rounded-md object-cover mb-4"
+                        />
+                        <div className="flex flex-col justify-between h-full">
+                          <p className="text-lg font-semibold mb-2 truncate">
+                            {project.projectname}
+                          </p>
+                          <div className="flex items-center mb-2">
+                            {project.profileImage ? (
+                              <Image
+                                src={project.profileImage}
+                                alt="Author Profile"
+                                width={20}
+                                height={20}
+                                className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                              />
+                            ) : (
+                              <span className="text-gray-500 mr-2 text-2xl">
+                                <MdAccountCircle />
+                              </span>
+                            )}
+                            <p className="text-sm text-gray-600 truncate">
+                              {project.authorName}
+                            </p>
+                          </div>
+                          <div className="flex items-center mb-2">
+                            <span className="text-yellow-500 mr-2">
+                              <IoIosStar />
+                            </span>
+                            <span className="lg:text-sm text-gray-600 text-[12px] truncate">
+                              {project.rathing || "N/A"} ({project.review}) |{" "}
+                              {t("nav.project.projectdetail.sold")}{" "}
+                              {project.sold}
+                            </span>
+                          </div>
+                          <p className="text-lg font-bold text-[#33529B]">
+                            {project.price} THB
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <p>{t("nav.profile.noproject")}</p>
+                )}
             </div>
           )}
 
