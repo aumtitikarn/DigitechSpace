@@ -121,7 +121,11 @@ export async function GET(req,{ params }) {
     // ดึง Blog ที่โพสต์โดยผู้ใช้ที่มี username ตรงกับผู้ใช้ใน session
     const allUserProject = await Project.find({ email: username });
 
-    return NextResponse.json(allUserProject, { status: 200 });
+    const publishedProjects = allUserProject.filter(project => project.permission === true);
+    console.log(`Published projects for ${publishedProjects.length}`);
+
+
+    return NextResponse.json(publishedProjects, { status: 200 });
   } catch (error) {
     console.error('Error in getPosts/user:', error);
     return NextResponse.json({ message: 'Internal server error', error: error.toString() }, { status: 500 });

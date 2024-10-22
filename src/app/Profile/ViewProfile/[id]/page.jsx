@@ -294,7 +294,7 @@ function page({ params, initialComments }) {
             </div>
           )}
 
-          {activeButton === "button2" && (
+          {/* {activeButton === "button2" && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center mt-10 w-full">
               {postDataBlog.length > 0 ? (
                 postDataBlog.map((blog, index) => (
@@ -355,7 +355,7 @@ function page({ params, initialComments }) {
                   <p>{t("nav.profile.noproject")}</p>
                 )}
               </div>
-            )}
+            )} */}
 
           {activeButton === "button2" && (
              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center mt-10 w-full">
