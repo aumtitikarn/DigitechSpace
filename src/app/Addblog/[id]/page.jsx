@@ -66,43 +66,6 @@ export default function Page() {
     getPostByIdprofile();
   }, []);
 
-
-   
-  // const getPostByIdprofile = async (id) => {
-  //   try {
-  //     const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
-  //       method: 'GET',
-  //       cache: 'no-store',
-  //     });
-
-  //     if (!res.ok) {
-  //       throw new Error('Failed to fetch a post');
-  //     }
-
-  //     const data = await res.json();
-  //     console.log('Show Blog image: ', data);
-
-  //     const post = data.combinedData;
-  //     setPostData(post);
-  //     setProfileUserT(post.imageUrl);
-  //     setProfileUsername(post.name);
-  //     setProfileUserId(post._id);
-  //     setEmail(post.email);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // // Single useEffect for fetching post by id once router is ready
-  // useEffect(() => {
-  //   if (!router.isReady) return; // Ensure router is ready
-
-  //   const { id } = router.query; // Safely destructure id from query once ready
-  //   if (id) {
-  //     getPostByIdprofile(id); // Fetch the post only when id is available
-  //   }
-  // }, [router.isReady, router.query]); // Depend on router.isReady and qu
-
   if (status === "loading") {
     return <p>Loading...</p>;
   }
@@ -110,8 +73,7 @@ export default function Page() {
   const handleDelete = (index) => {
     setImg((prevImg) => prevImg.filter((_, i) => i !== index));
     setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
-  
-    // Reset the file input to allow re-selection of the same file
+
     const fileInput = document.getElementById("file-upload");
     if (fileInput) {
       fileInput.value = '';
@@ -192,7 +154,7 @@ export default function Page() {
     try {
       const res = await fetch("/api/posts", {
         method: "POST",
-        body: formData, // Don't manually set the Content-Type header
+        body: formData,
       });
   
       if (res.ok) {
@@ -237,16 +199,6 @@ export default function Page() {
             </button>
             </div>
             ))}
-
-            {/* {previewImage && (
-              <Image
-                width={200}
-                height={200}
-                src={previewImage}
-                alt="Preview"
-                className="mt-2 w-full h-32 object-cover"
-              />
-            )} */}
 
             <button
               onClick={() => document.getElementById("file-upload").click()}

@@ -16,27 +16,24 @@ import QRCode from 'react-qr-code';
 
 function page() {
     const { t, i18n } = useTranslation("translation");
-    const [copySuccess, setCopySuccess] = useState(""); // state to manage copy status
+    const [copySuccess, setCopySuccess] = useState(""); 
   
     const { data: session, status } = useSession();
   
     const handleCopyLink = () => {
-      // Get current URL
-      const currentURL = window.location.href;
-  
-      // Extract the ID from the current URL (after the last "/")
+      
+      const currentURL = window.location.href; 
+      
       const userId = currentURL.substring(currentURL.lastIndexOf("/") + 1);
-  
-      // Create new link in /Profile/ViewProfile/[id] format
+       
       const newLink = `http://localhost:3000/Profile/ViewProfile/${userId}`;
   
-      // Copy the new link to clipboard
       navigator.clipboard.writeText(newLink)
         .then(() => {
-          setCopySuccess(t("nav.profile.copied")); // Show success message
+          setCopySuccess(t("nav.profile.copied")); 
         })
         .catch(err => {
-          setCopySuccess(t("nav.profile.copy_fail")); // Show fail message
+          setCopySuccess(t("nav.profile.copy_fail")); 
         });
     };
   

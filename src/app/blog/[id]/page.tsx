@@ -31,8 +31,8 @@ import { RiTwitterXLine } from "react-icons/ri";
 import e from "express";
 
 interface BlogProps {
-  params: { id: string }; // ตัวอย่างการกำหนด type สำหรับ params
-  initialComments: string[]; // ตัวอย่างการกำหนด type สำหรับ initialComments
+  params: { id: string };
+  initialComments: string[];
 }
 
 function Blog({ params, initialComments }: BlogProps) {
@@ -54,7 +54,7 @@ function Blog({ params, initialComments }: BlogProps) {
   const [postData, setPostData] = useState<PostData>([]);
 
   interface PostData {
-    _id: string; // Assuming _id is a string
+    _id: string;
     topic: string;
     course: string;
     description: string;
@@ -66,8 +66,8 @@ function Blog({ params, initialComments }: BlogProps) {
     profileImage: string;
     authorName: string;
     email: string;
-    comments: any[]; // Or a more specific type
-    likedByUsers: any[]; // Or a more specific type
+    comments: any[];
+    likedByUsers: any[];
     selectedCategory: string;
     onClosets?: () => void;
     timestamp: string | Date;
@@ -119,14 +119,14 @@ function Blog({ params, initialComments }: BlogProps) {
     userprofile: string[];
     author: string;
     email: string;
-    comments: any[]; // You might want to define a more specific type for comments
-    likedByUsers: any[]; // You might want to define a more specific type for likedByUsers
+    comments: any[]; 
+    likedByUsers: any[]; 
     selectedCategory: string;
     timestamp: string | Date;
   }
 
   const handleShareClick = () => {
-    setIsSharePopupOpen(!isSharePopupOpen); // Toggle popup open/close
+    setIsSharePopupOpen(!isSharePopupOpen); 
   };
 
   const getPostByIdprofile = async () => {
@@ -164,7 +164,7 @@ function Blog({ params, initialComments }: BlogProps) {
     }
   }, [session?.user?.id]);
 
-// แก้ไขฟังก์ชัน formatDate
+
 const formatDate = (timestamp: any): string => {
   try {
     if (!timestamp) {
@@ -184,13 +184,13 @@ const formatDate = (timestamp: any): string => {
       date = new Date();
     }
 
-    // ตรวจสอบความถูกต้องของวันที่
+
     if (isNaN(date.getTime())) {
       console.error('Invalid timestamp value:', timestamp);
       return 'ไม่ระบุเวลา';
     }
 
-    // แปลงวันที่เป็นรูปแบบ dd/mm/yy HH:mm
+
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear().toString().slice(-2);
@@ -205,7 +205,6 @@ const formatDate = (timestamp: any): string => {
   }
 };
   
-  // 3. แก้ไขฟังก์ชัน handleAddCommentOrReply
   const handleAddCommentOrReply = async (isReply: boolean, commentId: string | null = null) => {
     if (!session || !postData) {
       Swal.fire('Error', 'Please log in to comment.', 'error');
@@ -214,7 +213,6 @@ const formatDate = (timestamp: any): string => {
   
     try {
       const imageUrl = profileUserN?.imageUrl?.[0];
-      // สร้าง timestamp ในรูปแบบ ISO string
       const now = new Date();
       const currentTime = now.toISOString();
   
@@ -223,11 +221,10 @@ const formatDate = (timestamp: any): string => {
         text: isReply ? replyInput : commentInput,
         userName: session.user?.name || "Anonymous",
         profileImageSource: imageUrl ? `/api/posts/images/${imageUrl}` : undefined,
-        timestamp: now, // เก็บเป็น Date object สำหรับการแสดงผลใน UI
+        timestamp: now,
         replies: []
       };
   
-      // อัพเดท UI
       setPostData(prevData => {
         if (!prevData) return prevData;
   
@@ -252,7 +249,6 @@ const formatDate = (timestamp: any): string => {
         }
       });
   
-      // ส่งข้อมูลไปยัง API
       const res = await fetch(`/api/posts/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -261,7 +257,7 @@ const formatDate = (timestamp: any): string => {
           action: isReply ? "reply" : "comment",
           profile: imageUrl,
           emailcomment: session?.user?.email || "Anonymous",
-          timestamp: currentTime, // ส่ง ISO string ไปยัง API
+          timestamp: currentTime,
           commentId: isReply ? commentId : null,
         }),
       });
@@ -277,8 +273,7 @@ const formatDate = (timestamp: any): string => {
       } else {
         setCommentInput("");
       }
-  
-      // โหลดข้อมูลใหม่
+
       const newData = await getPostById(id);
       
       // แปลง timestamp ในข้อมูลที่ได้รับกลับมา
@@ -307,14 +302,12 @@ const formatDate = (timestamp: any): string => {
   const getProfileImagePath = (imageUrl: string | null | undefined): string => {
     if (!imageUrl) return "/default-profile-icon.png";
 
-    // ตรวจสอบว่าเป็น URL เต็มหรือไม่
     const isFullUrl =
       imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
     if (isFullUrl) {
       return `/api/proxy?url=${encodeURIComponent(imageUrl)}`;
     }
 
-    // ตรวจสอบว่ามี / นำหน้าหรือไม่
     if (!imageUrl.startsWith("/")) {
       return `/api/posts/images/${imageUrl}`;
     }
@@ -418,14 +411,13 @@ const formatDate = (timestamp: any): string => {
   }
   
   const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); // Prevent button's default behavior
+    e.preventDefault(); 
 
-    // Set blogid and blogEmail from postData
     setBlogname(postData.topic);
     setBlogEmail(postData.email);
     setBlogid(postData._id);
 
-    // Debugging: check the values
+
     console.log("Blog name:", postData.topic);
     console.log("Blog Email:", postData.email);
     console.log("Blog ID:", postData._id);
@@ -433,7 +425,6 @@ const formatDate = (timestamp: any): string => {
 
     const formData = new FormData();
 
-    // Check if the user is authenticated
     if (!session || !session.user || !session.user.name) {
       Swal.fire({
         position: "center",
@@ -445,13 +436,12 @@ const formatDate = (timestamp: any): string => {
       return;
     }
 
-    // Check if all required fields are filled
+
     if (!report || !selectedReason) {
       alert("Please complete all inputs");
       return;
     }
 
-    // Append form data
     formData.append("blogname", postData.topic);
     formData.append("selectedReason", selectedReason);
     formData.append("report", report);
@@ -515,12 +505,6 @@ const formatDate = (timestamp: any): string => {
     );
   };
 
-  // const handlePopupSubmit = () => {
-  //   alert(`Popup Input: ${popupInput}`);
-  //   setPopupInput("");
-  //   setIsPopupOpen(false);
-  // };
-
   const charactersRemaining = maxLength - review.length;
   const handleSubmit = () => {
     setInput1("");
@@ -534,16 +518,15 @@ const formatDate = (timestamp: any): string => {
 
   const handleSubmitCiHeart = async (e: React.MouseEvent<SVGElement>) => {
     if (session) {
-      // ตรวจสอบว่าใน likedByUsers มี userId อยู่หรือไม่
+
       const isLiked =
         Array.isArray(postData?.likedByUsers) &&
         postData.likedByUsers.includes(UserId);
 
       try {
-        const actionheart = isLiked ? "unlike" : "like"; // กำหนด actionheart ว่าจะเป็นการ like หรือ unlike
-        const heart = isLiked ? postData.heart - 1 : postData.heart + 1; // ถ้าเคยกดแล้วจะลบ 1 ถ้ายังไม่เคยจะเพิ่ม 1
+        const actionheart = isLiked ? "unlike" : "like";
+        const heart = isLiked ? postData.heart - 1 : postData.heart + 1;
 
-        // ส่งข้อมูลไปยัง backend
         const blogRes = await fetch(
           `http://localhost:3000/api/posts/${postData._id}`,
           {
@@ -596,7 +579,6 @@ const formatDate = (timestamp: any): string => {
     topic: string;
     course: string;
     onClose: () => void;
-    // Add any other properties that are in your post data
   }
 
   interface Reply {
@@ -630,7 +612,6 @@ const formatDate = (timestamp: any): string => {
       }
     }
 
-    // Fallback to default image if no userprofile is available
     return "/default-profile-icon.png";
   };
   
@@ -641,11 +622,6 @@ const formatDate = (timestamp: any): string => {
         <div className="w-full max-w-screen-lg p-4">
           <div className="flex flex-col">
             <div className="relative w-auto h-96 md:h-[860px] lg:h-[860px] rounded-xl">
-              {/* <img
-                src="https://64.media.tumblr.com/52eaf78ffa891980b680c5e12b15437e/tumblr_pmhq6nlBzJ1tk9psf_1280.jpg"
-                className="object-cover w-full h-full md:aspect-w-3 md:aspect-h-4 rounded-xl"
-                alt="Blog Image"
-              /> */}
               {postData && postData.imageUrl ? (
                 <Image
                   width={200}
@@ -768,7 +744,7 @@ const formatDate = (timestamp: any): string => {
                       postData.likedByUsers.includes(UserId)
                         ? "text-red-500"
                         : "text-gray-500"
-                    }`} // ถ้าผู้ใช้คนนี้เคยกด ให้แสดงเป็นสีแดง ถ้าไม่เคยกด ให้เป็นสีเทา
+                    }`}
                     onClick={handleSubmitCiHeart}
                   />
                   {postData && postData.heart !== undefined ? (
@@ -925,7 +901,7 @@ const formatDate = (timestamp: any): string => {
               onChange={(e) => setCommentInput(e.target.value)}
               placeholder={t("nav.blog.comment")}
               className="w-full p-2 border-2 rounded-md resize-none mt-4 h-32"
-              style={{ paddingRight: "100px" }} // Add space for the button
+              style={{ paddingRight: "100px" }}
             />
             <div className="flex flex-row justify-end m-4">
               <button
@@ -939,7 +915,7 @@ const formatDate = (timestamp: any): string => {
               <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
                 <div className="relative max-w-lg w-full p-8 bg-white shadow-md rounded-lg">
                   <GoX
-                    onClick={() => setIsPopupOpen(false)} // Use the onClose prop to close the modal
+                    onClick={() => setIsPopupOpen(false)}
                     className="absolute top-4 right-4 text-red-600 text-3xl cursor-pointer"
                   />
                   <h2 className="text-2xl font-bold mb-4 text-center">
@@ -949,13 +925,6 @@ const formatDate = (timestamp: any): string => {
                     {t("report.blog.topic")} : {postData.topic}
                   </p>
                   <div className="border-b border-gray-300 my-3"></div>
-                  {/* <p className="text-lg font-medium mb-3">หัวข้อที่รายงาน</p> */}
-                  {/* <input
-                    placeholder="หัวข้อที่ต้องการรายงาน"
-                    onChange={(e) => setBlogname(e.target.value)}
-                    className="w-full p-3 border-2 border-gray-300 rounded-md resize-none mb-3"
-                    maxLength={maxLength}
-                  /> */}
                   <p className="text-lg font-medium mb-2">
                     {t("report.blog.reason")}
                   </p>

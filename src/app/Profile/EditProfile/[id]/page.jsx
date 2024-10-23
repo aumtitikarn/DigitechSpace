@@ -14,7 +14,7 @@ import Image from "next/image";
 import Swal from "sweetalert2";
 
 function page() {
-  const { data: session, status, update } = useSession(); // Initialize session
+  const { data: session, status, update } = useSession();
   const { t } = useTranslation("translation");
 
   const [postData, setPostData] = useState([]);
@@ -36,7 +36,6 @@ function page() {
     if (status === "authenticated" && session) {
       const fetchData = async () => {
         try {
-          // Fetch published projects
           const publishedResponse = await fetch(
             "/api/project/getProjects/user",
             {
@@ -51,7 +50,6 @@ function page() {
             console.error("Failed to fetch published projects");
           }
 
-          // Fetch blog posts
           const blogResponse = await fetch("/api/posts/getposts/user", {
             cache: "no-store",
           });
@@ -62,7 +60,6 @@ function page() {
             console.error("Failed to fetch blog posts");
           }
 
-          // Fetch user profile
           const profileResponse = await fetch(
             `/api/editprofile/${session.user.id}`,
             {
@@ -139,19 +136,19 @@ function page() {
 
   useEffect(() => {
     if (session?.user?.name) {
-      setNewName(postDataS?.name || postData?.name); // Set the initial name from session data
+      setNewName(postDataS?.name || postData?.name);
     }
     if (session?.user?.email) {
-      setNewEmail(session.user.email); // Set the initial name from session data
+      setNewEmail(session.user.email);
     }
     if (session?.user?.facebook) {
-      setNewEmail(session.user.facebook); // Set the initial name from session data
+      setNewEmail(session.user.facebook);
     }
     if (session?.user?.line) {
-      setNewEmail(session.user.line); // Set the initial name from session data
+      setNewEmail(session.user.line);
     }
     if (session?.user?.imageUrl) {
-      setProfileImage(session.user.imageUrl); // Set the initial image from session data
+      setProfileImage(session.user.imageUrl); 
     }
   }, [session]);
 
@@ -177,7 +174,7 @@ function page() {
     );
   }
 
-  // Handle image
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -185,7 +182,7 @@ function page() {
       setProfileImage(URL.createObjectURL(file));
     }
   };
-  // Handle save profile updates
+
   const handleSave = async () => {
     const formData = new FormData();
     formData.append("name", newName);
@@ -201,18 +198,18 @@ function page() {
     try {
       const response = await fetch(`/api/editprofile/${session?.user?.id}`, {
         method: "PUT",
-        body: formData, // Use FormData to handle file uploads
+        body: formData, 
       });
 
       if (response.ok) {
 
-        // ใช้ SweetAlert2 เพื่อแสดงการแจ้งเตือน
+
         await Swal.fire({
           title: t("nav.profile.success"),
           icon: "success",
           confirmButtonText: "OK",
         });
-        // นำทางไปยังหน้า Profile
+
         router.push("/Profile");
       } else {
         // แสดงข้อความแจ้งเตือนเมื่อเกิดข้อผิดพลาด
@@ -251,21 +248,18 @@ function page() {
     try {
       const response = await fetch(`/api/editprofile/${session?.user?.id}`, {
         method: "PUT",
-        body: formData, // Use FormData to handle file uploads
+        body: formData, 
       });
 
       if (response.ok) {
-
-        // ใช้ SweetAlert2 เพื่อแสดงการแจ้งเตือน
         await Swal.fire({
           title: t("nav.profile.success"),
           icon: "success",
           confirmButtonText: "OK",
         });
-        // นำทางไปยังหน้า Profile
         router.push("/");
       } else {
-        // แสดงข้อความแจ้งเตือนเมื่อเกิดข้อผิดพลาด
+
         Swal.fire({
           title: t("nav.profile.error"),
           text: t("nav.profile.errordes"),
@@ -275,7 +269,7 @@ function page() {
       }
     } catch (error) {
       console.error("Error during save:", error);
-      // แสดงข้อความแจ้งเตือนเมื่อเกิดข้อผิดพลาด
+
       Swal.fire({
         title: "เกิดข้อผิดพลาด!",
         text: "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง",
@@ -342,7 +336,7 @@ function page() {
                     unoptimized={true}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = "/path/to/fallback/image.jpg"; // ถ้าต้องการใช้รูปภาพ fallback
+                      e.target.src = "/path/to/fallback/image.jpg";
                     }}
                     style={{
                       objectFit: "cover",
@@ -389,20 +383,13 @@ function page() {
                 <input
                   type="text"
                   value={newName}
-                  onChange={(e) => setNewName(e.target.value)} // Update state when input changes
+                  onChange={(e) => setNewName(e.target.value)}
                   placeholder={postData?.name || 'กำลังโหลด...'}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>{t("nav.profile.editprofile.email")}</p>
                 </div>
-                {/* <input
-                  type="email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  placeholder={session?.user?.email}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                /> */}
                 <div className="w-full p-2 mb-4 text-zinc-400">
                   {session?.user?.email}
                 </div>
@@ -468,7 +455,7 @@ function page() {
                     unoptimized={true}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = "/path/to/fallback/image.jpg"; // ถ้าต้องการใช้รูปภาพ fallback
+                      e.target.src = "/path/to/fallback/image.jpg";
                     }}
                     className="rounded-full w-[95px] h-[95px] object-cover"
                   />
@@ -510,7 +497,7 @@ function page() {
                 <input
                   type="text"
                   value={newName}
-                  onChange={(e) => setNewName(e.target.value)} // Update state when input changes
+                  onChange={(e) => setNewName(e.target.value)}
                   placeholder={postDataS?.name || 'กำลังโหลด...'}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />

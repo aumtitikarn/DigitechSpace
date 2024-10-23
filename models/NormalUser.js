@@ -18,7 +18,7 @@ const normalUserSchema = new mongoose.Schema({
     favorite:{ type: [String] },
     resetPasswordToken: { type: String, select: false },
     resetPasswordExpires: { type: Date, select: false },
-    // blogId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }], // Array of blog ObjectId references
+    // blogId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }],
 }, { timestamps: true });
 
 const NormalUser = mongoose.models.NormalUser || mongoose.model('NormalUser', normalUserSchema);

@@ -4,7 +4,7 @@ import { type } from "os";
 const replySchema = new mongoose.Schema({
   text: String,
   emailcomment: String,
-  // author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
+  // author: String,
   // profile: { type: [String], required: true },
   timestamp: String, // เพิ่ม timestamp
 });
@@ -13,7 +13,7 @@ const replySchema = new mongoose.Schema({
 const commentSchema = new mongoose.Schema({
   text: String,
   emailcomment: String,
-  // author: String, // เพิ่มฟิลด์นี้เพื่อเก็บชื่อผู้แสดงความคิดเห็น
+  // author: String,
   timestamp: String, // เพิ่ม timestamp
   // profile: { type: [String], required: true },
   replies: [replySchema],
@@ -26,14 +26,14 @@ const postSchema = new mongoose.Schema(
     course: { type: String, required: true },
     description: { type: String, required: true },
     heart: { type: Number, default: 0 },
-    imageUrl: { type: [String], required: true }, // Array of strings
+    imageUrl: { type: [String], required: true }, // Arraystrings
     userprofileid: { type: [String], required: true },
     // userprofile: { type: [String], required: true },
     // author: { type: String, required: true },
     email: { type: String, required: true },
     comments: { type: [commentSchema], default: [] },
     likedByUsers: {
-      type: [String], // เก็บ array ของ user IDs ที่กดไลค์โพสต์นี้
+      type: [String],
       required: true,
     },
     selectedCategory: {

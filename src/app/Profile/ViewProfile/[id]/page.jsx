@@ -35,7 +35,6 @@ function page({ params, initialComments }) {
     const fetchData = async () => {
       if (status === "authenticated" && session) {
         try {
-          // Fetch published projects
           const publishedResponse = await fetch(`/api/project/getProjects/${id}`);
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
@@ -44,7 +43,6 @@ function page({ params, initialComments }) {
             console.error("Failed to fetch published projects");
           }
 
-          // Fetch profile data for the authenticated user
           const profileResponse = await fetch(`/api/editprofile/${id}`);
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
@@ -58,7 +56,6 @@ function page({ params, initialComments }) {
         }
       }
 
-      // Fetch blog posts (not dependent on authentication status)
       try {
         const blogResponse = await fetch(`/api/posts/getposts/${id}`, { cache: "no-store" });
         if (blogResponse.ok) {

@@ -18,7 +18,7 @@ import { OrbitProgress } from "react-loading-indicators";
 import { useRouter } from "next/navigation";
 
 function page() {
-  const [activeButton, setActiveButton] = useState("button1"); // Set initial state to "button1"
+  const [activeButton, setActiveButton] = useState("button1");
   const { t, i18n } = useTranslation("translation");
   const [activeButton1] = useState("button1");
   const router = useRouter();
@@ -45,7 +45,7 @@ function page() {
     if (status === "authenticated" && session) {
       const fetchData = async () => {
         try {
-          // Fetch published projects
+          
           const publishedResponse = await fetch(
             "/api/project/getProjects/user",
             {
@@ -60,7 +60,7 @@ function page() {
             console.error("Failed to fetch published projects");
           }
 
-          // Fetch blog posts
+          
           const blogResponse = await fetch("/api/posts/getposts/user", {
             cache: "no-store",
           });
@@ -72,7 +72,7 @@ function page() {
             console.error("Failed to fetch blog posts");
           }
 
-          // Fetch user profile
+          
           const profileResponse = await fetch(
             `/api/editprofile/${session.user.id}`,
             {

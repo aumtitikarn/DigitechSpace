@@ -7,10 +7,10 @@ import { NextResponse } from "next/server";
 
 export async function PUT(req, { params }) {
   try {
-    const { id } = params; // Get the user ID from params
-    const { imgbucket } = await connectMongoDB(); // Connect MongoDB and get GridFS bucket
+    const { id } = params; 
+    const { imgbucket } = await connectMongoDB(); 
 
-    const formData = await req.formData(); // Retrieve form data
+    const formData = await req.formData();
 
     let name = "";
     let email = "";
@@ -47,20 +47,19 @@ export async function PUT(req, { params }) {
             await new Promise((resolve, reject) => {
               stream.pipe(uploadStream).on("finish", resolve).on("error", reject);
             });
-            imageUrl.push(imageName); // Add image name to imageUrl array
+            imageUrl.push(imageName);
           }
           break;
         case "favblog":
-          // Parse the favblog data if it's provided
+
           const favBlogEntry = JSON.parse(value);
 
-          // Convert imageUrl to array if necessary
           const favBlogImageUrl = Array.isArray(favBlogEntry.imageUrl)
             ? favBlogEntry.imageUrl
             : [favBlogEntry.imageUrl];
 
           favblog.push({
-            blogId: new mongoose.Types.ObjectId(favBlogEntry.blogId), // Ensure ObjectId type
+            blogId: new mongoose.Types.ObjectId(favBlogEntry.blogId),
             imageUrl: favBlogImageUrl,
             topic: favBlogEntry.topic,
           });
@@ -68,59 +67,42 @@ export async function PUT(req, { params }) {
       }
     }
 
-    // Prepare update data object
     const updateData = {
       ...(name && { name }),
       ...(email && { email }),
       ...(line && { line }),
       ...(facebook && { facebook }),
       ...(phonenumber && { phonenumber }),
-      // ...(imageUrl.length > 0 && { imageUrl }),
     };
 
     if (imageUrl.length > 0) {
       updateData.imageUrl = imageUrl;
     }
 
-    // Add line and facebook if they exist in the request
     if (line) {
-      updateData.line = line; // Add line to updateData
+      updateData.line = line;
     }
     if (facebook) {
-      updateData.facebook = facebook; // Add facebook to updateData
+      updateData.facebook = facebook; 
     }
 
     if (favblog.length > 0) {
       updateData.$push = { favblog: { $each: favblog } };
     }
 
-    // Correctly use $push to add entries to favblog
     if (favblog.length > 0) {
       updateData.$push = { favblog: { $each: favblog } };
     }
-
-    // Update the user profile
-    // const updatedUser = await NormalUser.findByIdAndUpdate(
-    //   id,
-    //   updateData,
-    //   { new: true, runValidators: true } // Use runValidators to ensure data adheres to schema
-    // );
-
-
-    // if (!updatedUser) {
-    //   return NextResponse.json({ message: 'User not found' }, { status: 404 });
-    // }
 
     let updatedUser = await NormalUser.findByIdAndUpdate(id,
-      { $set: updateData }, // Use $set to ensure new fields are added
+      { $set: updateData },
       { new: true, runValidators: true, strict: false }
     );
 
-    // If not found in NormalUser, attempt to update StudentUser
     if (!updatedUser) {
       updatedUser = await StudentUser.findByIdAndUpdate(
         id,
-        { $set: updateData }, // Use $set to ensure new fields are added
+        { $set: updateData },
         { new: true, runValidators: true, strict: false }
       );
     }
@@ -158,7 +140,6 @@ export async function GET(req, { params }) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    // Ensure combinedData is defined only after users are found
     const combinedData = {
       ...(normalUser ? normalUser._doc : {}),
       ...(studentUser ? studentUser._doc : {}),

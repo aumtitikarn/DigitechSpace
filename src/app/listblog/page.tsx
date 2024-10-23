@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { OrbitProgress } from "react-loading-indicators";
 
-// Update the PostData interface to include userprofile
 interface PostData {
   _id: string;
   topic: string;
@@ -25,7 +24,7 @@ interface PostData {
   authorName: string;
   profileImage: string;
   description: string;
-  userprofile?: string[]; // ทำให้ userprofile เป็น optional
+  userprofile?: string[]; 
 }
 export default function Page() {
   const [postData, setPostData] = useState<PostData[]>([]);
@@ -128,7 +127,6 @@ export default function Page() {
       }
     }
   
-    // Fallback to default image if no userprofile is available
     return "/default-profile-icon.png";
   };
 

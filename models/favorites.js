@@ -12,5 +12,4 @@ const FavoritesSchema = new mongoose.Schema({
   addedAt: { type: Date, default: Date.now }, // เวลาที่ทำการ favorite โปรเจกต์
 });
 
-// ตรวจสอบว่ามีการสร้างโมเดล Favorites หรือยัง ถ้ายังไม่มีก็สร้าง
 export default mongoose.models.Favorites || mongoose.model('Favorites', FavoritesSchema);
