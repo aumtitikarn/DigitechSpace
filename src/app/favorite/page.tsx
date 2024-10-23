@@ -30,7 +30,7 @@ const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
   const { t } = useTranslation("translation");
 
   return (
-    <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
+    <div className="rounded-[10px] border border-[#BEBEBE] bg-white p-4" style={{ width: "100%", height: "auto" }}>
       <div className="w-full h-full flex flex-col">
         <img
           src={`/api/project/images/${project.imageUrl[0]}`}
@@ -74,6 +74,28 @@ const Favorite: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  if (status === "loading") {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
+  } 
   const fetchFavorites = async () => {
     if (!session?.user?.email) {
       setError("User is not logged in");
