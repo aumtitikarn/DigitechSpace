@@ -30,8 +30,8 @@ const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
   const { t } = useTranslation("translation");
 
   return (
-    <div className="rounded-[10px] border border-[#BEBEBE] bg-white p-4" style={{ width: "100%", height: "auto" }}>
-      <div className="w-full h-full flex flex-col mb-4">
+    <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
+      <div className="w-full h-full flex flex-col">
         <img
           src={`/api/project/images/${project.imageUrl[0]}`}
           alt="Project Image"
