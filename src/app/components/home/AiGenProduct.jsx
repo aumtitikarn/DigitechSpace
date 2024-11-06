@@ -119,6 +119,40 @@ const Aigenproject = () => {
       categories: ["model", "photo", "document"],
     },
   ];
+  const normalizeCategory = (category) => {
+    const thaiToEnglishMap = {
+      "โมเดล/3มิติ": "model",
+      เว็บไซต์: "website",
+      แอพพลิเคชัน: "mobileapp",
+      เอกสาร: "document",
+      เอไอ: "ai",
+      ชุดข้อมูล: "datasets",
+      ไอโอที: "iot",
+      โปรแกรม: "program",
+      รูปภาพ: "photo",
+    };
+    return thaiToEnglishMap[category.toLowerCase()] || category.toLowerCase();
+  };
+  
+  // Helper function to find related categories based on a title
+  const findRelatedCategories = (title) => {
+    const relatedCategories = new Set();
+    productCategories.forEach((group) => {
+      if (
+        group.categories.some(
+          (cat) => normalizeCategory(cat) === normalizeCategory(title)
+        )
+      ) {
+        group.categories.forEach((category) => {
+          if (normalizeCategory(category) !== normalizeCategory(title)) {
+            relatedCategories.add(category);
+          }
+        });
+      }
+    });
+    return Array.from(relatedCategories);
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -128,23 +162,21 @@ const Aigenproject = () => {
             "Content-Type": "application/json",
           },
         });
-
+  
         if (!projectsResponse.ok) {
           throw new Error("Failed to fetch projects");
         }
-
+  
         const projectsData = await projectsResponse.json();
         setProducts(projectsData);
-        console.log("Fetched projects:", projectsData);
-
+  
         // Count projects per category (case-insensitive)
         const categoryCounts = projectsData.reduce((acc, project) => {
           const category = project.category.toLowerCase();
           acc[category] = (acc[category] || 0) + 1;
           return acc;
         }, {});
-        console.log("Category counts:", categoryCounts);
-
+  
         let userTitles = [];
         if (status === "authenticated" && session.user) {
           const interestsResponse = await fetch("/api/ai/interest/get", {
@@ -153,7 +185,7 @@ const Aigenproject = () => {
               "Content-Type": "application/json",
             },
           });
-
+  
           if (interestsResponse.ok) {
             const userData = await interestsResponse.json();
             if (userData.interests && userData.interests.length > 0) {
@@ -165,71 +197,45 @@ const Aigenproject = () => {
             }
           }
         }
-        console.log("User titles:", userTitles);
-        console.log("Final user titles:", userTitles);
-
-        // Process titles, replace with related categories if needed, and filter out those without products
+  
+        // Set default categories if user is not logged in or has no interests
+        if (!session || userTitles.length === 0) {
+          userTitles = ["website", "mobileapp", "document"];
+        }
+  
+        // Process titles and add related categories only if they have products
         const titleSet = new Set();
         userTitles.forEach((title) => {
           const normalizedTitle = normalizeCategory(title);
+          
+          // Add title only if the category has at least one product
           if (categoryCounts[normalizedTitle] > 0) {
             titleSet.add(normalizedTitle);
+  
+            const relatedCategories = findRelatedCategories(normalizedTitle);
+            relatedCategories.forEach((category) => {
+              const normalizedCategory = normalizeCategory(category);
+              
+              // Add related categories only if they have at least one product
+              if (categoryCounts[normalizedCategory] > 0) {
+                titleSet.add(normalizedCategory);
+              }
+            });
           }
-
-          const relatedCategories = findRelatedCategories(normalizedTitle);
-          relatedCategories.forEach((category) => {
-            const normalizedCategory = normalizeCategory(category);
-            if (categoryCounts[normalizedCategory] > 0) {
-              titleSet.add(normalizedCategory);
-            }
-          });
         });
-
+  
         const finalTitles = Array.from(titleSet);
-        console.log("Processed titles:", finalTitles);
         setTitles(finalTitles);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("An error occurred while fetching data");
       }
     };
-
-    const normalizeCategory = (category) => {
-      // แปลงหมวดหมู่ภาษาไทยเป็นภาษาอังกฤษ
-      const thaiToEnglishMap = {
-        "โมเดล/3มิติ": "model",
-        เว็บไซต์: "website",
-        แอพพลิเคชัน: "mobileapp",
-        เอกสาร: "document",
-        เอไอ: "ai",
-        ชุดข้อมูล: "datasets",
-        ไอโอที: "iot",
-        โปรแกรม: "program",
-        รูปภาพ: "photo",
-      };
-      return thaiToEnglishMap[category.toLowerCase()] || category.toLowerCase();
-    };
-
-    const findRelatedCategories = (title) => {
-      const relatedCategories = new Set();
-      productCategories.forEach((group) => {
-        if (
-          group.categories.some(
-            (cat) => normalizeCategory(cat) === normalizeCategory(title)
-          )
-        ) {
-          group.categories.forEach((category) => {
-            if (normalizeCategory(category) !== normalizeCategory(title)) {
-              relatedCategories.add(category);
-            }
-          });
-        }
-      });
-      return Array.from(relatedCategories);
-    };
-
+  
     fetchData();
   }, [status, session, t]);
+  
+  
 
   if (error) {
     return (
