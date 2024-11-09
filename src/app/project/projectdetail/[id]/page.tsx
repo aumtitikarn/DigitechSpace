@@ -374,6 +374,17 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     net: number
   ) => {
     try {
+      // Show loading alert
+      Swal.fire({
+        icon: "info",
+        title: "Processing...",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+  
       const response = await axios.post("/api/payment", {
         token: token,
         amount: amount,
@@ -384,17 +395,29 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         email: session?.user.email,
         name: session?.user.name,
       });
-
-      await Swal.fire({
+  
+      // Success message while still showing loading
+      Swal.fire({
         icon: "success",
         title: "Success",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
       });
+  
+      // Close the alert before navigating
+      Swal.close();
+  
+      // Navigate based on payment type
       if (type === "credit_card") {
         router.push("/myproject");
       } else {
         window.location.href = response.data.authorizeUri;
       }
     } catch (error) {
+      // Show error alert
       Swal.fire({
         icon: "error",
         title: "Error",
