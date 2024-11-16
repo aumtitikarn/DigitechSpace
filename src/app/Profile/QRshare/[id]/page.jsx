@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 import QRCode from 'react-qr-code';
 
-function page() {
+function Page() {
     const { t, i18n } = useTranslation("translation");
     const [copySuccess, setCopySuccess] = useState(""); 
   
@@ -84,4 +84,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

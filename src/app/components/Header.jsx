@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
 // ImageSlider Component
 const ImageSlider = ({ images }) => {
@@ -23,21 +24,28 @@ const ImageSlider = ({ images }) => {
 
   return (
     <div className="relative w-auto h-[300px] lg:h-[500px] overflow-hidden rounded-[15px] bg-gray-300">
-      <img
-        src={images[currentIndex]}
-        alt={`Slide ${currentIndex}`}
-        className="absolute inset-0 w-full h-full object-cover transition-all duration-500"
-      />
+      <div className="relative w-full h-full">
+        <Image
+          src={images[currentIndex]}
+          alt={`Slide ${currentIndex + 1}`}
+          fill
+          priority={currentIndex === 0}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+          className="object-cover transition-all duration-500"
+          quality={75}
+        />
+      </div>
 
       {/* Indicators */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
         {images.map((_, index) => (
           <button
             key={index}
-            className={`w-3 h-3 rounded-full ${
+            className={`w-3 h-3 rounded-full transition-colors duration-300 ${
               currentIndex === index ? "bg-[#0B1E48]" : "bg-gray-500"
             }`}
             onClick={() => handleIndicatorClick(index)}
+            aria-label={`Go to slide ${index + 1}`}
           ></button>
         ))}
       </div>

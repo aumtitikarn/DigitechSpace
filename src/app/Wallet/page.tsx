@@ -131,7 +131,7 @@ const Wallet = () => {
     }
   }, [status, router]);
 
-  const formatDate = (input: string | Date): string => {
+  const formatDate = React.useCallback((input: string | Date): string => {
     try {
       const date = input instanceof Date ? input : new Date(input);
 
@@ -156,9 +156,9 @@ const Wallet = () => {
       console.error("Error formatting date:", error);
       return "Invalid Date";
     }
-  };
+  }, []);
 
-  const createDateTimeForAPI = (): string => {
+  const createDateTimeForAPI = React.useCallback((): string => {
     const now = new Date();
     const options: Intl.DateTimeFormatOptions = {
       timeZone: "Asia/Bangkok",
@@ -183,7 +183,7 @@ const Wallet = () => {
     const formattedTime = `${partValues.hour}:${partValues.minute}:${partValues.second}`;
 
     return `${formattedDate} ${formattedTime}`;
-  };
+  }, []);
 
   const months = [
     { value: 'All', label: t('months.all') },
@@ -215,16 +215,9 @@ const Wallet = () => {
     return matchMonth && matchYear;
   });
 
-  useEffect(() => {
-    console.log('Filtered history:', filteredPurchaseHistory);
-  }, [selectedMonth, selectedYear, purchaseHistory]);
 
-  useEffect(() => {
-    fetchAmount();
-    fetchPurchaseHistory(); // New function to fetch purchase history
-  }, [status, session]);
 
-  const fetchPurchaseHistory = async () => {
+  const fetchPurchaseHistory = React.useCallback(async () => {
     if (status === "authenticated") {
       try {
         const response = await fetch("/api/withdrawal/getHistory");
@@ -238,18 +231,15 @@ const Wallet = () => {
         console.error("Error fetching purchase history:", error);
       }
     }
-  };
+  }, [status]);
 
-  const fetchAmount = async () => {
+  const fetchAmount = React.useCallback(async () => {
     if (status === "authenticated") {
       try {
         const response = await fetch("/api/getAmount");
         if (response.ok) {
           const data = await response.json();
-          if (
-            typeof data.amount === "number" &&
-            typeof data.withdrawable === "number"
-          ) {
+          if (typeof data.amount === "number" && typeof data.withdrawable === "number") {
             setGrossIncome(data.amount);
             setServiceFee(data.servicefee);
             setWithdrawableAmount(data.withdrawable);
@@ -267,17 +257,27 @@ const Wallet = () => {
         }
       } catch (error) {
         console.error("Error fetching amount:", error);
-        setError(
-          error instanceof Error ? error.message : "An unknown error occurred"
-        );
+        setError(error instanceof Error ? error.message : "An unknown error occurred");
       } finally {
         setIsLoading(false);
       }
     } else if (status === "unauthenticated") {
       setIsLoading(false);
     }
-  };
+  }, [status, session?.user?.email, formatDate]);
 
+  
+  useEffect(() => {
+    if (selectedMonth !== 'All' || selectedYear !== 'All') {
+      console.log('Filtered history:', filteredPurchaseHistory);
+    }
+  }, [selectedMonth, selectedYear, filteredPurchaseHistory]);
+
+  useEffect(() => {
+    fetchAmount();
+    fetchPurchaseHistory();
+  }, [fetchAmount, fetchPurchaseHistory]);
+  
   const handleWithdraw = async () => {
     if (withdrawableAmount <= 0) {
       Swal.fire({
@@ -355,15 +355,16 @@ const Wallet = () => {
   };
   useEffect(() => {
     if (showBill) {
-      setBillData({
-        fullname: billData?.fullname || "",
+      setBillData(prevData => ({
+        fullname: prevData?.fullname || "",
         date: createDateTimeForAPI(),
         amount: withdrawalAmount,
         balance: "0.00",
         email: session?.user?.email || "",
-      });
+      }));
     }
-  }, [showBill, withdrawalAmount]);
+  }, [showBill, withdrawalAmount, session?.user?.email, createDateTimeForAPI, billData?.fullname]);
+
 
   if (status === "loading" || isLoading) {
     return (

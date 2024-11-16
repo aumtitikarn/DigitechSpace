@@ -84,7 +84,7 @@ const isValidHttpUrl = (string) => {
   return url.protocol === "http:" || url.protocol === "https:";
 };
 
-const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+const getProxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
 export async function GET(req) {
   try {
@@ -101,7 +101,7 @@ export async function GET(req) {
         authorName = studentUser.name;
         if (studentUser.imageUrl) {
           profileImage = isValidHttpUrl(studentUser.imageUrl)
-            ? useProxy(studentUser.imageUrl)
+            ? getProxyUrl(studentUser.imageUrl)
             : `/api/project/images/${studentUser.imageUrl}`;
         }
       } else {
@@ -111,7 +111,7 @@ export async function GET(req) {
           authorName = normalUser.name;
           if (normalUser.imageUrl) {
             profileImage = isValidHttpUrl(normalUser.imageUrl)
-              ? useProxy(normalUser.imageUrl)
+              ? getProxyUrl(normalUser.imageUrl)
               : `/api/project/images/${normalUser.imageUrl}`;
           }
         }

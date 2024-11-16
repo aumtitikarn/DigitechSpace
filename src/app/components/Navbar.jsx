@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { MdGTranslate, MdAccountCircle } from "react-icons/md";
@@ -67,7 +67,7 @@ function CustomNavbar() {
     i18n.changeLanguage(newLanguage);
   };
 
-  const getPostById = async () => {
+  const getPostById = useCallback(async () => {
     try {
       const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
         method: "GET",
@@ -86,13 +86,9 @@ function CustomNavbar() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [session?.user?.id]); // Add dependency
 
-  useEffect(() => {
-    getPostById();
-  }, []);
-
-  const getPostByIdS = async () => {
+  const getPostByIdS = useCallback(async () => {
     try {
       const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
         method: "GET",
@@ -111,15 +107,20 @@ function CustomNavbar() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [session?.user?.id]); // Add dependency
+
+  useEffect(() => {
+    getPostById();
+  }, [getPostById]); // Add dependency
 
   useEffect(() => {
     getPostByIdS();
-  }, []);
+  }, [getPostByIdS]);
+
   const getImageSource = () => {
-    const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
-  
-    
+    // Changed from useProxy to createProxyUrl to avoid Hook naming convention
+    const createProxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+
     const isValidHttpUrl = (string) => {
       let url;
       try {
@@ -129,20 +130,24 @@ function CustomNavbar() {
       }
       return url.protocol === "http:" || url.protocol === "https:";
     };
+
     if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
       const imageUrl = postData.imageUrl[0];
       if (isValidHttpUrl(imageUrl)) {
-        return useProxy(imageUrl);
+        return createProxyUrl(imageUrl);
       } else {
         return `/api/editprofile/images/${imageUrl}`;
       }
     }
+
     if (postDataS && postDataS.imageUrl) {
       return `/api/editprofile/images/${postDataS.imageUrl}`;
     }
+
     if (session?.user?.image) {
-      return useProxy(session.user.image);
+      return createProxyUrl(session.user.image);
     }
+
     return null;
   };
 
@@ -176,12 +181,14 @@ function CustomNavbar() {
         {/* โลโก้สำหรับมือถือ */}
         <div className="flex-1 flex justify-center lg:hidden">
           <Link href="/">
-            <img
+            <Image
               src="https://m1r.ai/W8p5i.png"
               alt="Digitech Space logo"
               width={100}
               height={100}
               className="ml-[19px]"
+              priority
+              unoptimized 
             />
           </Link>
         </div>
@@ -249,19 +256,21 @@ function CustomNavbar() {
                           </p>
                           <b>
                             <u className="text-[#0E6FFF]">
-                            {session?.user?.role !== "NormalUser" && (
-                              <Link href="/Profile">
-                                <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300 ">
-                                  {t("nav.viewprofile")}
-                                </p>
-                              </Link>
+                              {session?.user?.role !== "NormalUser" && (
+                                <Link href="/Profile">
+                                  <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300 ">
+                                    {t("nav.viewprofile")}
+                                  </p>
+                                </Link>
                               )}
                               {session?.user?.role == "NormalUser" && (
-                              <Link href={`/Profile/EditProfile/${session?.user?.id}`}>
-                                <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
-                                  {t("nav.viewprofile")}
-                                </p>
-                              </Link>
+                                <Link
+                                  href={`/Profile/EditProfile/${session?.user?.id}`}
+                                >
+                                  <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
+                                    {t("nav.viewprofile")}
+                                  </p>
+                                </Link>
                               )}
                             </u>
                           </b>
@@ -348,12 +357,14 @@ function CustomNavbar() {
             {/* โลโก้สำหรับเดสทอป */}
             <div className="flex-none">
               <Link href="/">
-                <img
-                  src="https://m1r.ai/W8p5i.png"
-                  alt="Digitech Space logo"
-                  width={120}
-                  height={120}
-                />
+              <Image
+              src="https://m1r.ai/W8p5i.png"
+              alt="Digitech Space logo"
+              width={120}
+              height={120}
+              priority
+              unoptimized 
+            />
               </Link>
             </div>
 
@@ -494,20 +505,22 @@ function CustomNavbar() {
                             </p>
                             <b>
                               <u className="text-[#0E6FFF]">
-                              {session?.user?.role !== "NormalUser" && (
-                              <Link href="/Profile">
-                                <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
-                                  {t("nav.viewprofile")}
-                                </p>
-                              </Link>
-                              )}
-                              {session?.user?.role == "NormalUser" && (
-                              <Link href={`/Profile/EditProfile/${session?.user?.id}`}>
-                                <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
-                                  {t("nav.viewprofile")}
-                                </p>
-                              </Link>
-                              )}
+                                {session?.user?.role !== "NormalUser" && (
+                                  <Link href="/Profile">
+                                    <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
+                                      {t("nav.viewprofile")}
+                                    </p>
+                                  </Link>
+                                )}
+                                {session?.user?.role == "NormalUser" && (
+                                  <Link
+                                    href={`/Profile/EditProfile/${session?.user?.id}`}
+                                  >
+                                    <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
+                                      {t("nav.viewprofile")}
+                                    </p>
+                                  </Link>
+                                )}
                               </u>
                             </b>
                           </span>
@@ -612,12 +625,14 @@ function CustomNavbar() {
               {/* โลโก้สำหรับเดสทอป */}
               <div className="flex-none">
                 <Link href="/">
-                  <img
-                    src="https://m1r.ai/W8p5i.png"
-                    alt="Digitech Space logo"
-                    width={120}
-                    height={120}
-                  />
+                <Image
+              src="https://m1r.ai/W8p5i.png"
+              alt="Digitech Space logo"
+              width={120}
+              height={120}
+              priority
+              unoptimized 
+            />
                 </Link>
               </div>
 
@@ -725,7 +740,7 @@ function CustomNavbar() {
                             )}
                             <span>
                               <p className="text-[20px] mt-3 text-semibold">
-                              {session?.user?.name || "Unknown"}
+                                {session?.user?.name || "Unknown"}
                               </p>
                               <b>
                                 <u className="text-[#0E6FFF]">
@@ -839,12 +854,14 @@ function CustomNavbar() {
           <div className="lg:hidden bg-[#0B1E48] w-full h-screen z-50 fixed top-0 left-0 flex flex-col">
             <div className="flex justify-between items-center px-5 py-5">
               <Link href="/">
-                <img
-                  src="https://m1r.ai/W8p5i.png"
-                  alt="Digitech Space logo"
-                  width={100}
-                  height={100}
-                />
+              <Image
+              src="https://m1r.ai/W8p5i.png"
+              alt="Digitech Space logo"
+              width={100}
+              height={100}
+              priority
+              unoptimized 
+            />
               </Link>
               <button
                 onClick={toggleMobileMenu}

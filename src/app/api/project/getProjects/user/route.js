@@ -15,7 +15,8 @@ const isValidHttpUrl = (string) => {
   return url.protocol === "http:" || url.protocol === "https:";
 };
 
-const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+const getProxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+
 
 export async function GET(req) {
   try {
@@ -48,7 +49,7 @@ export async function GET(req) {
       authorName = user.name;
       if (user.imageUrl) {
         profileImage = isValidHttpUrl(user.imageUrl)
-          ? useProxy(user.imageUrl)
+          ? getProxyUrl(user.imageUrl)
           : `/api/project/images/${user.imageUrl}`;
       }
     }

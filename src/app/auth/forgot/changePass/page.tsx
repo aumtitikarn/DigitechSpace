@@ -11,7 +11,7 @@ import Footer from "./../../../components/Footer";
 import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
 
-export default function changePass() {
+export default function ChangePassword() {
   const { data: session, status } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -30,15 +30,7 @@ export default function changePass() {
 
   if (status === "loading") {
     return (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-        }}
-      >
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
         <OrbitProgress
           variant="track-disc"
           dense
@@ -51,9 +43,10 @@ export default function changePass() {
     );
   }
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    
     if (!passwordRegex.test(password)) {
       Swal.fire({
         icon: "error",
@@ -61,6 +54,7 @@ export default function changePass() {
       });
       return;
     }
+    
     if (password !== confirmPassword) {
       Swal.fire({
         icon: "error",
@@ -69,64 +63,64 @@ export default function changePass() {
       return;
     }
 
-   
-  console.log('Sending reset request with token:', token);
+    console.log('Sending reset request with token:', token);
 
-  try {
-    const response = await fetch('/api/forgot/resetpassword', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ token, password }),
-    });
-
-    const data = await response.json();
-    console.log('Reset password response:', data);
-
-    if (response.ok) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'Password changed successfully',
-      }).then(() => {
-        router.push('/auth/signin');
+    try {
+      const response = await fetch('/api/forgot/resetpassword', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, password }),
       });
-    } else {
+
+      const data = await response.json();
+      console.log('Reset password response:', data);
+
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Password changed successfully',
+        }).then(() => {
+          router.push('/auth/signin');
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: data.message || 'An error occurred',
+        });
+      }
+    } catch (error) {
+      console.error('Error in reset password request:', error);
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: data.message || 'An error occurred',
+        text: 'An error occurred',
       });
     }
-  } catch (error) {
-    console.error('Error in reset password request:', error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'An error occurred',
-    });
-  }
-};
+  };
+
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const toggleConfirmPasswordVisibility = () =>
-    setShowConfirmPassword(!showConfirmPassword);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
 
   return (
     <div className="flex flex-col h-screen">
       <Navbar />
-      <main className="flex-grow flex items-center justify-center bg-[#FBFBFB] px-6 ">
+      <main className="flex-grow flex items-center justify-center bg-[#FBFBFB] px-6">
         <div className="w-full max-w-sm my-20">
           <div className="text-center">
-            <img
+            <Image
               className="mx-auto h-24 w-auto"
               src="https://m1r.ai/7ttM.png"
               alt="Digitech Space"
+              width={96}
+              height={96}
+              priority
+              unoptimized 
             />
-            <h2
-              style={{ color: "#33539B", fontSize: "29px" }}
-              className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight"
-            >
+            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-[#33539B]">
               {t("authen.forgot.titlech")}
             </h2>
           </div>

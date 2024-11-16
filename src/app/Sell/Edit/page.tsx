@@ -95,14 +95,23 @@ const ProjectEdit: React.FC = () => {
 
   if (status === "loading") {
     return (
-      <div style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        textAlign: "center",
-      }}>
-        <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
       </div>
     );
   }
@@ -111,7 +120,6 @@ const ProjectEdit: React.FC = () => {
     setExistingImages((prevImages) => prevImages.filter((_, i) => i !== index));
     setImagesToDelete((prev) => [...prev, imageToDelete]);
   };
-
 
   const handleAdd = () => {
     setInputs([...inputs, { id: Date.now(), value: "" }]);
@@ -124,10 +132,12 @@ const ProjectEdit: React.FC = () => {
   const handleDelete = (index: number) => {
     setImg((prevImg) => prevImg.filter((_, i) => i !== index));
     setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
-  
-    const fileInput = document.getElementById("file-upload") as HTMLInputElement;
+
+    const fileInput = document.getElementById(
+      "file-upload"
+    ) as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = '';
+      fileInput.value = "";
     }
   };
 
@@ -143,11 +153,16 @@ const ProjectEdit: React.FC = () => {
     const newImages = files.map((file) => URL.createObjectURL(file));
     setUploadedImages((prevImages) => [...prevImages, ...newImages]);
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    if (!session || !session.user || !session.user.name || !session.user.email) {
+
+    if (
+      !session ||
+      !session.user ||
+      !session.user.name ||
+      !session.user.email
+    ) {
       Swal.fire({
         position: "center",
         icon: "error",
@@ -157,7 +172,7 @@ const ProjectEdit: React.FC = () => {
       });
       return;
     }
-  
+
     if (!projectId) {
       Swal.fire({
         position: "center",
@@ -168,47 +183,50 @@ const ProjectEdit: React.FC = () => {
       });
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("projectname", projectname);
     formData.append("description", description);
-    formData.append("receive", JSON.stringify(inputs.map((input) => input.value)));
+    formData.append(
+      "receive",
+      JSON.stringify(inputs.map((input) => input.value))
+    );
     formData.append("category", category);
     formData.append("price", price);
-  
+
     // Append existing images that were not deleted
     existingImages.forEach((img) => formData.append("existingImageUrl", img));
-    
+
     // Append new images
     img.forEach((imgFile) => formData.append("newImageUrl", imgFile));
-    
+
     // Append images to delete
     imagesToDelete.forEach((image) => formData.append("imagesToDelete", image));
-  
+
     // Append new files
     files.forEach((file) => formData.append("newFilesUrl", file));
-  
-    filesToDelete.forEach(file => formData.append("filesToDelete", file));
+
+    filesToDelete.forEach((file) => formData.append("filesToDelete", file));
 
     try {
       const res = await fetch(`/api/project/update/${projectId}`, {
         method: "PUT",
         body: formData,
       });
-  
+
       if (res.ok) {
         const data = await res.json();
         setShowSuccessAlert(true);
         setTimeout(() => setShowSuccessAlert(false), 3000);
-  
+
         Swal.fire({
           position: "center",
           icon: "success",
-          title: "Project updated successfully", 
+          title: "Project updated successfully",
           showConfirmButton: false,
           timer: 3000,
         });
-  
+
         setTimeout(() => {
           router.push(`/project/projectdetail/${projectId}`);
         }, 3000);
@@ -228,7 +246,8 @@ const ProjectEdit: React.FC = () => {
         position: "center",
         icon: "error",
         title: "Error updating project",
-        text: error instanceof Error ? error.message : "An unknown error occurred",
+        text:
+          error instanceof Error ? error.message : "An unknown error occurred",
         showConfirmButton: false,
         timer: 3000,
       });
@@ -236,14 +255,16 @@ const ProjectEdit: React.FC = () => {
   };
 
   const handleFilesChange = (newFiles: File[]) => {
-    console.log('Files received in main component:', newFiles);
+    console.log("Files received in main component:", newFiles);
     setFiles(newFiles);
   };
   const handleDeleteExistingFile = (fileName: string) => {
-    setExistingFiles(prevFiles => prevFiles.filter(file => file !== fileName));
-    setFilesToDelete(prev => [...prev, fileName]);
+    setExistingFiles((prevFiles) =>
+      prevFiles.filter((file) => file !== fileName)
+    );
+    setFilesToDelete((prev) => [...prev, fileName]);
   };
- 
+
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
       <main className="flex-grow">
@@ -252,12 +273,15 @@ const ProjectEdit: React.FC = () => {
           <h1 className="text-[24px] font-bold">{t("nav.sell.edit")}</h1>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-wrap gap-4 mt-3">
-            {existingImages.map((image, index) => (
+              {existingImages.map((image, index) => (
                 <div key={`existing-${index}`} className="relative w-40 h-40">
-                  <img
+                  <Image
                     src={`/api/project/images/${image}`}
                     alt={`Existing ${index}`}
-                    className="w-full h-full object-cover rounded-md"
+                    width={160}
+                    height={160}
+                    className="object-cover rounded-md"
+                    unoptimized // ใช้ถ้าเป็นรูปภาพจาก local API
                   />
                   <button
                     type="button"
@@ -270,10 +294,13 @@ const ProjectEdit: React.FC = () => {
               ))}
               {uploadedImages.map((image, index) => (
                 <div key={`new-${index}`} className="relative w-40 h-40">
-                  <img
+                  <Image
                     src={image}
-                    alt={`New Upload ${index}`}
-                    className="w-full h-full object-cover rounded-md"
+                    alt={`Uploaded ${index}`}
+                    fill
+                    className="object-cover rounded-md"
+                    sizes="(max-width: 160px) 100vw, 160px"
+                    priority={index === 0} // ให้ความสำคัญกับรูปแรก
                   />
                   <button
                     type="button"
@@ -300,7 +327,7 @@ const ProjectEdit: React.FC = () => {
               multiple
               className="hidden"
               onChange={handleFileUpload}
-              accept="image/*" 
+              accept="image/*"
             />
             <div>
               <input
@@ -314,11 +341,11 @@ const ProjectEdit: React.FC = () => {
             </div>
             <div className="mt-5">
               <p className="text-gray-500">* {t("nav.sell.addP.updes")}</p>
-               <Upload 
-        onFilesChange={handleFilesChange}
-        existingFiles={existingFiles}
-        onExistingFileRemove={handleDeleteExistingFile}
-      />
+              <Upload
+                onFilesChange={handleFilesChange}
+                existingFiles={existingFiles}
+                onExistingFileRemove={handleDeleteExistingFile}
+              />
             </div>
             <div>
               <textarea

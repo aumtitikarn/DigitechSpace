@@ -106,11 +106,17 @@ export default function SignIn() {
         className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
       >
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            className="mx-auto h-24 w-auto"
-            src="https://m1r.ai/7ttM.png"
-            alt="Digitech Space"
-          />
+          <div className="relative mx-auto h-24 w-auto">
+            <Image
+              src="https://m1r.ai/7ttM.png"
+              alt="Digitech Space"
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority
+              unoptimized 
+            />
+          </div>
           <h2
             style={{ color: "#33539B", fontSize: "29px" }}
             className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight"
@@ -179,33 +185,45 @@ export default function SignIn() {
               className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2"
               onClick={() => signIn("google")}
             >
-              <Image
-                width={20}
-                height={20}
-                src="/google.png"
-                alt="Google"
-                className="flex-shrink-0 mr-4 ml-5"
-              />
+              <div className="relative w-5 h-5 mr-4 ml-5">
+                <Image
+                  src="/google.png"
+                  alt="Google"
+                  fill
+                  className="object-contain"
+                  sizes="20px"
+                />
+              </div>
             </button>
             <button
               className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2"
               onClick={() => signIn("facebook")}
             >
-              <img
-                className="w-6 h-6 flex-shrink-0 mr-4 ml-5 "
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
-                alt="Facebook"
-              />
+              <div className="relative w-6 h-6 mr-4 ml-5">
+                <Image
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
+                  alt="Facebook"
+                  fill
+                  className="object-contain"
+                  sizes="24px"
+                  priority
+                  unoptimized 
+                />
+              </div>
             </button>
             <button
               className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2"
               onClick={() => signIn("github")}
             >
-              <img
-                className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
-                src="/github.png"
-                alt="Github"
-              />
+              <div className="relative w-6 h-6 mr-4 ml-5">
+                <Image
+                  src="/github.png"
+                  alt="Github"
+                  fill
+                  className="object-contain"
+                  sizes="24px"
+                />
+              </div>
             </button>
           </div>
           <div>
@@ -214,16 +232,26 @@ export default function SignIn() {
               <u>
                 <b>
                   {" "}
-                  <Link href="/policy" className="hover:text-gray-500">{t("authen.p2")}</Link>
+                  <Link href="/policy" className="hover:text-gray-500">
+                    {t("authen.p2")}
+                  </Link>
                 </b>
               </u>
               {t("authen.p3")}
               <u>
-                <b><Link href="/policy" className="hover:text-gray-500">{t("authen.p4")}</Link></b>
+                <b>
+                  <Link href="/policy" className="hover:text-gray-500">
+                    {t("authen.p4")}
+                  </Link>
+                </b>
               </u>
               {t("authen.p5")}
               <u>
-                <b><Link href="/policy" className="hover:text-gray-500">{t("authen.p6")}</Link></b>
+                <b>
+                  <Link href="/policy" className="hover:text-gray-500">
+                    {t("authen.p6")}
+                  </Link>
+                </b>
               </u>
             </p>
           </div>

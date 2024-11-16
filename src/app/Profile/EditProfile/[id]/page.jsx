@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Swal from "sweetalert2";
 
-function page() {
+function Page() {
   const { data: session, status, update } = useSession();
   const { t } = useTranslation("translation");
 
@@ -31,23 +31,18 @@ function page() {
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
+      return;
     }
 
     if (status === "authenticated" && session) {
-      const fetchData = async () => {
+      const fetchAllData = async () => {
         try {
-          const publishedResponse = await fetch(
-            "/api/project/getProjects/user",
-            {
-              method: "GET",
-            }
-          );
+          const publishedResponse = await fetch("/api/project/getProjects/user", {
+            method: "GET",
+          });
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
-            console.log("Published Data:", publishedData);
             setPublishedProjects(publishedData);
-          } else {
-            console.error("Failed to fetch published projects");
           }
 
           const blogResponse = await fetch("/api/posts/getposts/user", {
@@ -56,124 +51,52 @@ function page() {
           if (blogResponse.ok) {
             const blogData = await blogResponse.json();
             setPostDataBlog(blogData);
-          } else {
-            console.error("Failed to fetch blog posts");
           }
 
-          const profileResponse = await fetch(
-            `/api/editprofile/${session.user.id}`,
-            {
-              method: "GET",
-              cache: "no-store",
-            }
-          );
+          const profileResponse = await fetch(`/api/editprofile/${session.user.id}`, {
+            method: "GET",
+            cache: "no-store",
+          });
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
-            console.log("Edit post: ", profileData);
             setPostData(profileData.post);
             setPostDataS(profileData.posts);
-          } else {
-            console.error("Failed to fetch user profile");
           }
         } catch (error) {
           console.error("Error fetching data:", error);
         }
       };
 
-      fetchData();
+      fetchAllData();
     }
   }, [status, session, router]);
 
-  const getPostById = async () => {
-    try {
-      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch a post");
+  // Update form data when session or post data changes
+  useEffect(() => {
+    if (session?.user && (postData || postDataS)) {
+      setNewName(postDataS?.name || postData?.name || session.user.name || "");
+      setNewEmail(session.user.email || "");
+      setNewFacebook(session.user.facebook || "");
+      setNewLine(session.user.line || "");
+      if (session.user.imageUrl) {
+        setProfileImage(session.user.imageUrl);
       }
-
-      const data = await res.json();
-      console.log("Edit post: ", data);
-
-      const post = data.post;
-      setPostData(post);
-    } catch (error) {
-      console.log(error);
     }
+  }, [session, postData, postDataS]);
+
+  const getImageSource = () => {
+    if (postData?.imageUrl?.[0]) {
+      const imageUrl = postData.imageUrl[0];
+      return isValidHttpUrl(imageUrl) ? proxyUrl(imageUrl) : `/api/editprofile/images/${imageUrl}`;
+    }
+    if (postDataS?.imageUrl) {
+      return `/api/editprofile/images/${postDataS.imageUrl}`;
+    }
+    if (session?.user?.image) {
+      return proxyUrl(session.user.image);
+    }
+    return null;
   };
-
-  useEffect(() => {
-    getPostById();
-  }, []);
-
-  const getPostByIdS = async () => {
-    try {
-      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch a post");
-      }
-
-      const data = await res.json();
-      console.log("Edit post: ", data);
-
-      const posts = data.posts;
-      setPostDataS(posts);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getPostByIdS();
-  }, []);
-
-  useEffect(() => {
-    if (session?.user?.name) {
-      setNewName(postDataS?.name || postData?.name);
-    }
-    if (session?.user?.email) {
-      setNewEmail(session.user.email);
-    }
-    if (session?.user?.facebook) {
-      setNewEmail(session.user.facebook);
-    }
-    if (session?.user?.line) {
-      setNewEmail(session.user.line);
-    }
-    if (session?.user?.imageUrl) {
-      setProfileImage(session.user.imageUrl); 
-    }
-  }, [session]);
-
-  if (status === "loading") {
-    return (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-        }}
-      >
-        <OrbitProgress
-          variant="track-disc"
-          dense
-          color="#33539B"
-          size="medium"
-          text=""
-        />
-      </div>
-    );
-  }
-
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -183,7 +106,7 @@ function page() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (redirectPath) => {
     const formData = new FormData();
     formData.append("name", newName);
     formData.append("email", newEmail);
@@ -198,21 +121,17 @@ function page() {
     try {
       const response = await fetch(`/api/editprofile/${session?.user?.id}`, {
         method: "PUT",
-        body: formData, 
+        body: formData,
       });
 
       if (response.ok) {
-
-
         await Swal.fire({
           title: t("nav.profile.success"),
           icon: "success",
           confirmButtonText: "OK",
         });
-
-        router.push("/Profile");
+        router.push(redirectPath);
       } else {
-        // แสดงข้อความแจ้งเตือนเมื่อเกิดข้อผิดพลาด
         Swal.fire({
           title: t("nav.profile.error"),
           text: t("nav.profile.errordes"),
@@ -222,7 +141,6 @@ function page() {
       }
     } catch (error) {
       console.error("Error during save:", error);
-      // แสดงข้อความแจ้งเตือนเมื่อเกิดข้อผิดพลาด
       Swal.fire({
         title: "เกิดข้อผิดพลาด!",
         text: "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง",
@@ -232,82 +150,13 @@ function page() {
     }
   };
 
-
-  const handleSaveT = async () => {
-    const formData = new FormData();
-    formData.append("name", newName);
-    formData.append("email", newEmail);
-    formData.append("line", newLine);
-    formData.append("facebook", newFacebook);
-    formData.append("phonenumber", newPhonenumber);
-
-    if (imageFile) {
-      formData.append("imageUrl", imageFile);
-    }
-
-    try {
-      const response = await fetch(`/api/editprofile/${session?.user?.id}`, {
-        method: "PUT",
-        body: formData, 
-      });
-
-      if (response.ok) {
-        await Swal.fire({
-          title: t("nav.profile.success"),
-          icon: "success",
-          confirmButtonText: "OK",
-        });
-        router.push("/");
-      } else {
-
-        Swal.fire({
-          title: t("nav.profile.error"),
-          text: t("nav.profile.errordes"),
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      }
-    } catch (error) {
-      console.error("Error during save:", error);
-
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
-    }
-  };
-
-  const getImageSource = () => {
-    const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
-
-    const isValidHttpUrl = (string) => {
-      let url;
-      try {
-        url = new URL(string);
-      } catch (_) {
-        return false;
-      }
-      return url.protocol === "http:" || url.protocol === "https:";
-    };
-    if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
-      const imageUrl = postData.imageUrl[0];
-      if (isValidHttpUrl(imageUrl)) {
-        return useProxy(imageUrl);
-      } else {
-        return `/api/editprofile/images/${imageUrl}`;
-      }
-    }
-    if (postDataS && postDataS.imageUrl) {
-      return `/api/editprofile/images/${postDataS.imageUrl}`;
-    }
-    if (session?.user?.image) {
-      return useProxy(session.user.image);
-    }
-    return null;
-  };
-
+  if (status === "loading") {
+    return (
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+        <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" />
+      </div>
+    );
+  }
   const imageSource = getImageSource();
 
   return (
@@ -554,4 +403,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

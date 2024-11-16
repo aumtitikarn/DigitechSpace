@@ -201,11 +201,15 @@ function SignUp() {
       className="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 overflow-y-auto"
     >
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img
-          className="mx-auto h-24 w-auto"
-          src="https://m1r.ai/7ttM.png"
-          alt="Digitech Space"
-        />
+      <Image
+              className="mx-auto h-24 w-auto"
+              src="https://m1r.ai/7ttM.png"
+              alt="Digitech Space"
+              width={96}
+              height={96}
+              priority
+              unoptimized 
+            />
         <h2
           style={{ color: "#33539B", fontSize: "29px" }}
           className="mt-7 text-center text-2xl font-bold leading-9 tracking-tight"
@@ -337,18 +341,28 @@ function SignUp() {
             />
           </button>
           <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => handleSocialSignIn('facebook')}>
-            <img
-              className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
-              alt="Facebook"
-            />
+          <div className="relative w-6 h-6 mr-4 ml-5">
+                <Image
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png"
+                  alt="Facebook"
+                  fill
+                  className="object-contain"
+                  sizes="24px"
+                  priority
+                  unoptimized 
+                />
+              </div>
           </button>
           <button className="flex-1 flex items-center justify-center rounded-lg border-2 border-sky-600 px-4 py-2" onClick={() => handleSocialSignIn('github')}>
-            <img
-              className="w-6 h-6 flex-shrink-0 mr-4 ml-5"
-              src="/github.png"
-              alt="Github"
-            />
+          <div className="relative w-6 h-6 mr-4 ml-5">
+                <Image
+                  src="/github.png"
+                  alt="Github"
+                  fill
+                  className="object-contain"
+                  sizes="24px"
+                />
+              </div>
           </button>
         </div>
         <div>

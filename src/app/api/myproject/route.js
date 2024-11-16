@@ -14,7 +14,7 @@ const isValidHttpUrl = (string) => {
   return url.protocol === "http:" || url.protocol === "https:";
 };
 
-const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+const getProxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
 export async function GET(req) {
   try {
@@ -122,7 +122,7 @@ export async function GET(req) {
       ...order,
       profileImage: order.authorImageUrl 
         ? (isValidHttpUrl(order.authorImageUrl) 
-            ? useProxy(order.authorImageUrl) 
+            ? getProxyUrl(order.authorImageUrl) 
             : `/api/project/images/${order.authorImageUrl}`)
         : null
     }));

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import Navbar from "../../components/Navbar";
@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { OrbitProgress } from "react-loading-indicators";
 
 export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -19,7 +20,7 @@ export default function Page() {
   const [topic, setTopic] = useState("");
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
-  const [postData,setPostData] = useState("");
+  const [postData, setPostData] = useState("");
   const [heart, setHeart] = useState(0);
   const [file, setFile] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
@@ -27,48 +28,50 @@ export default function Page() {
 
   const [img, setImg] = useState([]);
 
-  const [email,setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [profileUserT, setProfileUserT] = useState("");
   const [profileUserId, setProfileUserId] = useState("");
-  const [profileUsername,setProfileUsername] = useState("");
+  const [profileUsername, setProfileUsername] = useState("");
 
   const { data: session, status } = useSession();
   const router = useRouter();
 
   const { register, handleSubmit } = useForm();
-
-  const getPostByIdprofile = async () => {
-    try {
-      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch a post");
-      }
-
-      const data = await res.json();
-      console.log("Show Blog image: ", data);
-
-      const post = data.combinedData;
-      setPostData(post);
-      setProfileUserT(post.imageUrl);
-      setProfileUsername(post.name);
-      setProfileUserId(post._id);
-      setEmail(post.email);
-    } catch (error) {
-      console.log(error);
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
     }
-  };
+  }, [status, router]);
 
   useEffect(() => {
+    const getPostByIdprofile = async () => {
+      try {
+        const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+          method: "GET",
+          cache: "no-store",
+        });
+  
+        if (!res.ok) {
+          throw new Error("Failed to fetch a post");
+        }
+  
+        const data = await res.json();
+        console.log("Show Blog image: ", data);
+  
+        const post = data.combinedData;
+        setPostData(post);
+        setProfileUserT(post.imageUrl);
+        setProfileUsername(post.name);
+        setProfileUserId(post._id);
+        setEmail(post.email);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
     getPostByIdprofile();
-  }, []);
-
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
+  }, [session?.user?.id]);
+  
 
   const handleDelete = (index) => {
     setImg((prevImg) => prevImg.filter((_, i) => i !== index));
@@ -76,9 +79,9 @@ export default function Page() {
 
     const fileInput = document.getElementById("file-upload");
     if (fileInput) {
-      fileInput.value = '';
+      fileInput.value = "";
     }
-};
+  };
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files || []);
@@ -110,18 +113,18 @@ export default function Page() {
     }
   };
 
-      console.log("อันนี้set"+setProfileUserT)
-      console.log("อันนี้p"+profileUserT)
+  console.log("อันนี้set" + setProfileUserT);
+  console.log("อันนี้p" + profileUserT);
 
-      console.log("อันนี้setid"+setProfileUserId)
-      console.log("อันนี้userid"+profileUserId)
+  console.log("อันนี้setid" + setProfileUserId);
+  console.log("อันนี้userid" + profileUserId);
 
-      console.log("อันนี้setname"+setProfileUsername)
-      console.log("อันนี้username"+profileUsername)
+  console.log("อันนี้setname" + setProfileUsername);
+  console.log("อันนี้username" + profileUsername);
 
   const handleSudmit = async (e) => {
     console.log(file);
-  
+
     const formData = new FormData();
 
     if (!session || !session.user || !session.user.name) {
@@ -134,7 +137,7 @@ export default function Page() {
       });
       return;
     }
-  
+
     if (!topic || !course || !description || !selectedCategory) {
       alert("Please complete all inputs");
       return;
@@ -146,17 +149,17 @@ export default function Page() {
     formData.append("heart", heart);
     formData.append("selectedCategory", selectedCategory);
     formData.append("author", profileUsername);
-    formData.append("userprofileid", profileUserId)
+    formData.append("userprofileid", profileUserId);
     formData.append("userprofile", profileUserT);
     formData.append("email", email);
     img.forEach((img) => formData.append("imageUrl", img));
-  
+
     try {
       const res = await fetch("/api/posts", {
         method: "POST",
         body: formData,
       });
-  
+
       if (res.ok) {
         router.push("/listblog");
       }
@@ -165,8 +168,20 @@ export default function Page() {
     }
   };
 
-  console.log(topic)
+  console.log(topic);
 
+  
+  if (status === "loading") {
+    return <div style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      textAlign: "center",
+    }}>
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
+  </div>;
+  }
   return (
     <Container>
       <Navbar session={session} />
@@ -184,26 +199,30 @@ export default function Page() {
           <div className="flex flex-wrap gap-4">
             {uploadedImages.map((image, index) => (
               <div key={index} className="relative w-40 h-40">
-              <img
-                key={index}
-                src={image}
-                alt={`Uploaded ${index}`}
-                className="w-40 h-40 object-cover rounded-md"
-              />
-              <button
-              type="button"
-              onClick={() => handleDelete(index)}
-              className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-200"
-            >
-              <IoCloseCircleOutline className="text-red-500" size={24} />
-            </button>
-            </div>
+                <Image
+                  key={index}
+                  src={image}
+                  alt={`Uploaded ${index}`}
+                  width={160} // กำหนดขนาดภาพแทนที่ตัวอย่างนี้
+                  height={160}
+                  className="object-cover rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleDelete(index)}
+                  className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-200"
+                >
+                  <IoCloseCircleOutline className="text-red-500" size={24} />
+                </button>
+              </div>
             ))}
 
             <button
               onClick={() => document.getElementById("file-upload").click()}
               className={`flex items-center justify-center w-40 h-40 rounded-md p-2 bg-white border-2 ${
-                activeButton === "button1" ? "border-b-indigo-700 border-b-4" : ""
+                activeButton === "button1"
+                  ? "border-b-indigo-700 border-b-4"
+                  : ""
               }`}
             >
               <div className="flex items-center justify-center w-10 h-10">

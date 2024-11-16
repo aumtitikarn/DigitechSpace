@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use } from "react";
+import React, { useCallback } from "react";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { AiOutlineNotification } from "react-icons/ai";
@@ -129,14 +129,14 @@ function Blog({ params, initialComments }: BlogProps) {
     setIsSharePopupOpen(!isSharePopupOpen); 
   };
 
-  const getPostByIdprofile = async () => {
+  const getPostByIdprofile = useCallback(async () => {
     if (!session?.user?.id) {
       console.error("User ID not available.");
       return;
     }
 
     try {
-      const res = await fetch(`/api/editprofile/${session?.user?.id}`, {
+      const res = await fetch(`/api/editprofile/${session.user.id}`, {
         method: "GET",
         cache: "no-store",
       });
@@ -149,12 +149,11 @@ function Blog({ params, initialComments }: BlogProps) {
       console.log("Fetched profile data: ", data);
 
       const postP = data.combinedData;
-
       setProfileUserN(postP);
     } catch (error) {
       console.log("Error fetching profile:", error);
     }
-  };
+  }, [session?.user?.id]); // Add dependency
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -162,7 +161,8 @@ function Blog({ params, initialComments }: BlogProps) {
     } else {
       console.error("User ID not found in session.");
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, getPostByIdprofile]);
+
 
 
 const formatDate = (timestamp: any): string => {
@@ -344,7 +344,7 @@ const formatDate = (timestamp: any): string => {
   const handleReasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedReason(event.target.value);
   };
-  const getPostById = async (postId: string) => {
+  const getPostById = useCallback(async (postId: string) => {
     try {
       const res = await fetch(`/api/posts/${postId}`, {
         method: "GET",
@@ -357,18 +357,15 @@ const formatDate = (timestamp: any): string => {
   
       const data = await res.json();
       
-      // แปลงข้อมูล timestamp ในความคิดเห็นและการตอบกลับ
       const formattedPost = {
         ...data.post,
         comments: data.post.comments.map(comment => ({
           ...comment,
-          // แปลง timestamp เป็น milliseconds ถ้ายังไม่ใช่
           timestamp: typeof comment.timestamp === 'number' 
             ? comment.timestamp 
             : Date.now(),
           replies: comment.replies?.map(reply => ({
             ...reply,
-            // แปลง timestamp เป็น milliseconds ถ้ายังไม่ใช่
             timestamp: typeof reply.timestamp === 'number'
               ? reply.timestamp
               : Date.now()
@@ -382,11 +379,15 @@ const formatDate = (timestamp: any): string => {
       console.error("Error fetching post:", error);
       return null;
     }
-  };
-
+  }, []);
+  useEffect(() => {
+    if (id) {
+      getPostById(id);
+    }
+  }, [id, getPostById]);
   useEffect(() => {
     getPostById(id);
-  }, []);
+  }, [id, getPostById]);
   if (status === "loading") {
     return (
       <div
@@ -590,23 +591,24 @@ const formatDate = (timestamp: any): string => {
   }
 
   const getImageSource = (post: PostData): string => {
-    const useProxy = (url: string): string =>
+    // Helper function for proxy URL
+    const getProxyUrl = (url: string): string => 
       `/api/proxy?url=${encodeURIComponent(url)}`;
 
+    // Helper function to check if URL is valid
     const isValidHttpUrl = (string: string): boolean => {
-      let url;
       try {
-        url = new URL(string);
+        const url = new URL(string);
+        return url.protocol === "http:" || url.protocol === "https:";
       } catch (_) {
         return false;
       }
-      return url.protocol === "http:" || url.protocol === "https:";
     };
 
     if (post.profileImage && post.profileImage.length > 0) {
       const profileImage = post.profileImage[0];
       if (isValidHttpUrl(profileImage)) {
-        return useProxy(profileImage);
+        return getProxyUrl(profileImage);
       } else {
         return `/api/posts/images/${profileImage}`;
       }

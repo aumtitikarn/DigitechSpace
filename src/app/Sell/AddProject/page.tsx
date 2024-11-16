@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { OrbitProgress } from "react-loading-indicators";
+import Image from "next/image";
 
 const Project: React.FC = () => {
   const { data: session, status } = useSession();
@@ -34,18 +35,29 @@ const Project: React.FC = () => {
   }, [status, router]);
 
   if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
   }
- 
-  console.log("idUser",session.user.id)
+
+  console.log("idUser", session.user.id);
 
   const handleAdd = () => {
     setInputs([...inputs, { id: Date.now(), value: "" }]);
@@ -57,14 +69,15 @@ const Project: React.FC = () => {
   const handleDelete = (index: number) => {
     setImg((prevImg) => prevImg.filter((_, i) => i !== index));
     setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
-  
+
     // Reset the file input to allow re-selection of the same file
-    const fileInput = document.getElementById("file-upload") as HTMLInputElement;
+    const fileInput = document.getElementById(
+      "file-upload"
+    ) as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = '';
+      fileInput.value = "";
     }
   };
-  
 
   const handleInputChange = (id: number, value: string) => {
     setInputs(
@@ -78,11 +91,16 @@ const Project: React.FC = () => {
     const newImages = files.map((file) => URL.createObjectURL(file));
     setUploadedImages((prevImages) => [...prevImages, ...newImages]);
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!session || !session.user || !session.user.name || !session.user.email) {
+    if (
+      !session ||
+      !session.user ||
+      !session.user.name ||
+      !session.user.email
+    ) {
       Swal.fire({
         position: "center",
         icon: "error",
@@ -98,7 +116,10 @@ const Project: React.FC = () => {
     const formData = new FormData();
     formData.append("projectname", projectname);
     formData.append("description", description);
-    formData.append("receive", JSON.stringify(inputs.map((input) => input.value)));
+    formData.append(
+      "receive",
+      JSON.stringify(inputs.map((input) => input.value))
+    );
     formData.append("category", category);
     formData.append("price", price);
     formData.append("email", session.user.email);
@@ -110,22 +131,22 @@ const Project: React.FC = () => {
     formData.append("status", "pending");
     img.forEach((img) => formData.append("imageUrl", img));
     files.forEach((file) => formData.append("filesUrl", file));
-  
+
     try {
       const res = await fetch("/api/project", {
         method: "POST",
         body: formData,
       });
-  
+
       if (res.ok) {
         const data = await res.json();
         setShowSuccessAlert(true);
         setTimeout(() => setShowSuccessAlert(false), 3000);
-  
+
         Swal.fire({
           position: "center",
           icon: "success",
-          title: t("authen.signup.status.success"), 
+          title: t("authen.signup.status.success"),
           showConfirmButton: false,
           timer: 3000,
         });
@@ -159,7 +180,8 @@ const Project: React.FC = () => {
         position: "center",
         icon: "error",
         title: "Error submitting project",
-        text: error instanceof Error ? error.message : "An unknown error occurred",
+        text:
+          error instanceof Error ? error.message : "An unknown error occurred",
         showConfirmButton: false,
         timer: 3000,
       });
@@ -167,10 +189,10 @@ const Project: React.FC = () => {
   };
 
   const handleFilesChange = (newFiles: File[]) => {
-    console.log('Files received in main component:', newFiles);
+    console.log("Files received in main component:", newFiles);
     setFiles(newFiles);
   };
- 
+
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
       <main className="flex-grow">
@@ -179,17 +201,22 @@ const Project: React.FC = () => {
           <h1 className="text-[24px] font-bold">{t("nav.sell.buttAdd")}</h1>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-wrap gap-4 mt-3">
-            {uploadedImages.map((image, index) => (
+              {uploadedImages.map((image, index) => (
                 <div key={index} className="relative w-40 h-40">
-                  <img
-                    src={image}
-                    alt={`Uploaded ${index}`}
-                    className="w-full h-full object-cover rounded-md"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={image}
+                      alt={`Uploaded ${index}`}
+                      fill
+                      className="object-cover rounded-md"
+                      sizes="(max-width: 160px) 100vw, 160px"
+                      priority={index === 0} // ให้ความสำคัญกับรูปแรก
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={() => handleDelete(index)}
-                    className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-200"
+                    className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-200 z-10"
                   >
                     <IoCloseCircleOutline className="text-red-500" size={24} />
                   </button>
@@ -211,7 +238,7 @@ const Project: React.FC = () => {
               multiple
               className="hidden"
               onChange={handleFileUpload}
-              accept="image/*" 
+              accept="image/*"
             />
             <div>
               <input
@@ -224,8 +251,8 @@ const Project: React.FC = () => {
               />
             </div>
             <div className="mt-5">
-            <p className="text-gray-500">* {t("nav.sell.addP.updes")}</p>
-              <Upload onFilesChange={handleFilesChange}/>
+              <p className="text-gray-500">* {t("nav.sell.addP.updes")}</p>
+              <Upload onFilesChange={handleFilesChange} />
             </div>
             <div>
               <textarea

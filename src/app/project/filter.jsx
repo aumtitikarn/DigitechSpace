@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash/debounce";
 import Image from "next/image";
+import { OrbitProgress } from "react-loading-indicators";
 
 const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const { t, i18n } = useTranslation("translation");
@@ -20,6 +21,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const [filteredProjects, setFilteredProjects] = useState([]);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(true);
 
   const categories = [
     { id: 1, category: t("nav.project.all"), categoryEN: "All" },
@@ -118,6 +120,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   };
 
   const fetchProjects = async (categoryEN) => {
+    setIsLoading(true);
     try {
       const normalizedCategory = categoryEN.toLowerCase();
       const response = await fetch(
@@ -132,17 +135,22 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     } catch (error) {
       console.error("Error fetching projects:", error);
       return [];
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       const fetchedProjects = await fetchProjects(selectedCategory);
       setProjects(fetchedProjects);
       filterProjects(fetchedProjects, searchTerm, selectedRating);
+      setIsLoading(false);
     };
     fetchData();
   }, [selectedCategory, selectedRating]);
+
 
   const handleCategoryChange = (e) => {
     const selectedTranslatedCategory = e.target.value;
@@ -300,10 +308,21 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
         </div>
       </div>
 
-      {/* Projects Display Section */}
-      <div className="flex-grow">
+     {/* Projects Display Section with Loading State */}
+     <div className="flex-grow">
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-x-[10px] gap-y-[20px] lg:gap-x-[30px] md:gap-x-[40px] md:gap-y-[40px]">
-          {filteredProjects.length > 0 ? (
+          {isLoading ? (
+            <div className="col-span-full flex justify-center items-center min-h-[200px]">
+              <OrbitProgress
+                variant="track-disc"
+                dense
+                color="#33539B"
+                size="medium"
+                text=""
+                textColor=""
+              />
+            </div>
+          ) : filteredProjects.length > 0 ? (
             filteredProjects.map((project, index) => (
               <Link key={index} href={`/project/projectdetail/${project._id}`}>
                 <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">

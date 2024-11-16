@@ -38,8 +38,9 @@ const ConfirmDeleteModal: React.FC<{
   onClose: () => void;
   onConfirm: () => void;
 }> = ({ isOpen, onClose, onConfirm }) => {
+  const { t } = useTranslation("translation");
+
   if (!isOpen) return null;
-  const { t, i18n } = useTranslation("translation");
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-[300px]">
@@ -261,11 +262,15 @@ const ProductList: React.FC = () => {
                           passHref
                         >
                           <div className="w-auto h-auto flex flex-col">
-                            <img
-                              src={`/api/project/images/${project.imageUrl[0]}`}
-                              alt="Product Image"
-                              className="w-full h-[150px] rounded-md object-cover mb-4"
-                            />
+                            <div className="relative w-full h-[150px]">
+                              <Image
+                                src={`/api/project/images/${project.imageUrl[0]}`}
+                                alt="Product Image"
+                                fill
+                                className="rounded-md object-cover"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              />
+                            </div>
                             <div className="flex flex-col h-full">
                               <p className="text-lg font-semibold mb-2 truncate">
                                 {project.projectname}
@@ -352,11 +357,15 @@ const ProductList: React.FC = () => {
                       passHref
                     >
                       <div className="w-auto h-auto flex flex-col cursor-pointer">
-                        <img
-                          src={`/api/project/images/${project.imageUrl[0]}`}
-                          alt="Project Image"
-                          className="w-full h-[150px] rounded-md object-cover mb-4"
-                        />
+                        <div className="relative w-full h-[150px] mb-4">
+                          <Image
+                            src={`/api/project/images/${project.imageUrl[0]}`}
+                            alt="Product Image"
+                            fill
+                            className="rounded-md object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                        </div>
                         <div className="flex flex-col h-full">
                           <p className="text-lg font-semibold mb-2 truncate">
                             {project.projectname}

@@ -33,30 +33,35 @@ const Upload: React.FC<UploadProps> = ({
       console.error("onExistingFileRemove is not a function");
     }
   };
+
   useEffect(() => {
+    // Clear any existing intervals
+    intervalsRef.current.forEach(clearInterval);
+    intervalsRef.current = [];
+
     if (newFiles.length > 0) {
-      const intervals = newFiles.map((_, index) => {
+      // Initialize progress array for new files
+      setProgress(new Array(newFiles.length).fill(0));
+
+      // Create new intervals for each file
+      const newIntervals = newFiles.map((_, index) => {
         return setInterval(() => {
-          setProgress((prevProgress) => {
+          setProgress(prevProgress => {
             const newProgress = [...prevProgress];
             if (newProgress[index] < 100) {
-              newProgress[index] = newProgress[index] + 1; // Increase progress
+              newProgress[index] = Math.min(newProgress[index] + 1, 100);
             }
             return newProgress;
           });
-        }, 100); // Update progress every 100ms
+        }, 100);
       });
-  
-      const progressCheckInterval = setInterval(() => {
-        if (progress.every((p) => p >= 100)) {
-          clearInterval(progressCheckInterval);
-          intervals.forEach(clearInterval); // Clear all intervals
-        }
-      }, 100);
-  
+
+      // Store new intervals in ref
+      intervalsRef.current = newIntervals;
+
+      // Cleanup function
       return () => {
-        clearInterval(progressCheckInterval);
-        intervals.forEach(clearInterval);
+        newIntervals.forEach(clearInterval);
       };
     }
   }, [newFiles]);

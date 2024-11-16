@@ -12,7 +12,7 @@ module.exports = {
   useSuspense: false,
   reactStrictMode: true,
   images: {
-    domains: ['lh3.googleusercontent.com'], // เพิ่มโดเมนที่ต้องการให้รองรับ
+    domains: ['lh3.googleusercontent.com', 'm1r.ai', 'upload.wikimedia.org'], // เพิ่มโดเมนที่ต้องการให้รองรับ
   },
   eslint :{
     ignoreDuringBuilds: true
