@@ -614,7 +614,12 @@ const formatDate = (timestamp: any): string => {
 
     return "/default-profile-icon.png";
   };
-  
+  const handleRedirect = (e) => {
+    if (!session) {
+      e.preventDefault(); // Prevent the link from navigating
+      router.push("/auth/signin"); // Redirect to signin if no session
+    }
+  };
   return (
     <Container>
       <Navbar />
@@ -658,13 +663,10 @@ const formatDate = (timestamp: any): string => {
                 <FaChevronRight />
               </button>
             </div>
-            <Link
-              href={
-                postData?.userprofileid
-                  ? `/Profile/ViewProfile/${postData.userprofileid}`
-                  : "#"
-              }
-            >
+              <Link
+                    href={`/Profile/ViewProfile/${postData.userprofileid || "#"}`}
+                    onClick={handleRedirect}
+                  >
               <div className="flex flex-row mt-5 mb-5 items-center">
                 {postData?.profileImage && postData.profileImage[0] ? (
                   <Image

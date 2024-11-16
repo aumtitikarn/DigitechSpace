@@ -423,7 +423,12 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
       "_blank"
     );
   };
-
+  const handleRedirect = (e) => {
+    if (!session) {
+      e.preventDefault(); // Prevent the link from navigating
+      router.push("/auth/signin"); // Redirect to signin if no session
+    }
+  };
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar />
@@ -458,7 +463,10 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                   <p className="text-xl font-bold text-[28px] mt-3">
                     {project.projectname}
                   </p>
-                  <Link href={project?.iduser ? `/Profile/ViewProfile/${project.iduser}` : '#'}>
+                  <Link
+                    href={`/Profile/ViewProfile/${project?.iduser || "#"}`}
+                    onClick={handleRedirect}
+                  >
                   <div className="flex items-center mt-2">
                     <p className="text-sm text-gray-600 mr-2">
                       {t("nav.project.projectdetail.by")}

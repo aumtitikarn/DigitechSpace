@@ -384,7 +384,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           Swal.showLoading();
         },
       });
-  
+
       const response = await axios.post("/api/payment", {
         token: token,
         amount: amount,
@@ -395,7 +395,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
         email: session?.user.email,
         name: session?.user.name,
       });
-  
+
       // Success message while still showing loading
       Swal.fire({
         icon: "success",
@@ -406,10 +406,10 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           Swal.showLoading();
         },
       });
-  
+
       // Close the alert before navigating
       Swal.close();
-  
+
       // Navigate based on payment type
       if (type === "credit_card") {
         router.push("/myproject");
@@ -456,7 +456,12 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
       "_blank"
     );
   };
-
+  const handleRedirect = (e) => {
+    if (!session) {
+      e.preventDefault(); // Prevent the link from navigating
+      router.push("/auth/signin"); // Redirect to signin if no session
+    }
+  };
   return (
     <main className="bg-[#FBFBFB]">
       <Navbar />
@@ -492,11 +497,8 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                     {project.projectname}
                   </p>
                   <Link
-                    href={
-                      project?.iduser
-                        ? `/Profile/ViewProfile/${project.iduser}`
-                        : "#"
-                    }
+                    href={`/Profile/ViewProfile/${project?.iduser || "#"}`}
+                    onClick={handleRedirect}
                   >
                     <div className="flex items-center mt-2">
                       <p className="text-sm text-gray-600 mr-2">
@@ -621,7 +623,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul>
-                {reviews.length > 0 ? (
+                  {reviews.length > 0 ? (
                     reviews.map((review, index) => (
                       <li key={index} className="mb-4">
                         <div className="flex items-center">
