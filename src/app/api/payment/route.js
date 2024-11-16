@@ -37,7 +37,7 @@ export async function POST(request) {
         amount: Math.round(amount * 100), 
         currency: 'thb',
         customer: customer.id,
-        return_uri: `https://digitechspace.loca.lt/myproject`,
+        return_uri: `https://digiproj.sut.ac.th/project67_B6501761/myproject`,
       });
       if (charge.status === 'successful') {
         await connectMongoDB();
@@ -94,7 +94,7 @@ export async function POST(request) {
         currency: 'thb',
         source: token, 
         description: description,
-        return_uri: `https://digitechspace.loca.lt/myproject`,
+        return_uri: `https://digiproj.sut.ac.th/project67_B6501761/myproject`,
         metadata: {
           typec,
           name,
@@ -109,7 +109,7 @@ export async function POST(request) {
 
 
     return NextResponse.json({
-      authorizeUri: typec === 'credit_card' ? `return_uri: https://digitechspace.loca.lt/myproject` : charge.authorize_uri,
+      authorizeUri: typec === 'credit_card' ? `return_uri: https://digiproj.sut.ac.th/project67_B6501761/myproject` : charge.authorize_uri,
       status: 'success',
       token: charge.id,
       charge: {
