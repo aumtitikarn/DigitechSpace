@@ -1,5 +1,5 @@
 import { connectMongoDB } from '../../../../lib/mongodb';
-import Review from '../../../../models/Review';
+import Review from '../../../../models/review';
 import Project from '../../../../models/project';
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth";
