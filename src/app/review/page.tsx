@@ -102,8 +102,10 @@ const Review: React.FC = () => {
       <Navbar />
       <main className="flex-grow">
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <h1 className="font-bold mb-4 text-[24px]">{t("nav.review.title")}</h1>
-          
+          <h1 className="font-bold mb-4 text-[24px]">
+            {t("nav.review.title")}
+          </h1>
+
           {projects.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {projects
@@ -122,11 +124,15 @@ const Review: React.FC = () => {
                   >
                     <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4">
                       <div className="w-auto h-auto flex flex-col">
-                        <img
-                          src={`/api/project/images/${project.projectDetails?.imageUrl[0]}`}
-                          alt="Product Image"
-                          className="w-full h-[150px] rounded-md object-cover mb-4"
-                        />
+                        <div className="relative w-full h-[150px] mb-4">
+                          <Image
+                            src={`/api/project/images/${project.projectDetails?.imageUrl[0]}`}
+                            alt="Product Image"
+                            fill
+                            className="rounded-md object-cover"
+                            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          />
+                        </div>
                         <div className="flex flex-col h-full">
                           <p className="text-lg font-semibold mb-2 truncate">
                             {project.projectDetails?.projectname}
@@ -154,8 +160,10 @@ const Review: React.FC = () => {
                               <IoIosStar />
                             </span>
                             <span className="text-gray-600 text-xs lg:text-sm truncate">
-                              {project.projectDetails?.rathing || "N/A"} ({project.projectDetails?.review}) |{" "}
-                              {t("nav.project.projectdetail.sold")} {project.projectDetails?.sold}
+                              {project.projectDetails?.rathing || "N/A"} (
+                              {project.projectDetails?.review}) |{" "}
+                              {t("nav.project.projectdetail.sold")}{" "}
+                              {project.projectDetails?.sold}
                             </span>
                           </div>
                           <p className="text-lg font-bold text-[#33529B]">

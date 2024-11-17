@@ -94,6 +94,7 @@
       "code" : "Course code",
       "reply" : "Reply",
       "cancel" : "Cancel",
+      "noblog" : "There are no blogs at this time.",
       "addblog" : {
         "title" : "Add Blog",
         "topic" : "Topic",

@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { connectMongoDB } from '../../../../lib/mongodb';
 import { getServerSession } from "next-auth";
 import Studentuser from '../../../../models/StudentUser';
-import { authOption } from '../../../app/api/auth/[...nextauth]/route';
+import { authOptions } from '../../../app/api/auth/[...nextauth]/route';
 
 export async function GET(req) {
   try {
-    const session = await getServerSession(authOption);
+    const session = await getServerSession(authOptions);
     if (!session || !session.user || !session.user.email) {
       console.log('Session or user email is missing:', session);
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });

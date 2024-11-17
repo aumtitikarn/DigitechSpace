@@ -8,7 +8,7 @@ import StudentUser from "../../../../../models/StudentUser";
 import NormalUser from "../../../../../models/NormalUser";
 import bcrypt from "bcryptjs";
 
-const authOption = {
+const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -75,9 +75,6 @@ const authOption = {
       clientSecret: process.env.GITHUB_SECRET,
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
   callbacks: {
     async jwt({ token, user, account, profile }) {
       console.log("JWT callback:", { token, account, profile });
@@ -92,14 +89,12 @@ const authOption = {
         await connectMongoDB();
         let dbUser;
   
-        // ตรวจสอบว่ามีผู้ใช้ที่มีอีเมลนี้อยู่แล้วหรือไม่
         if (email.endsWith("@g.sut.ac.th")) {
           dbUser = await StudentUser.findOne({ email });
         } else {
           dbUser = await NormalUser.findOne({ email });
         }
   
-        // ถ้าไม่มีผู้ใช้ที่มีอีเมลนี้ ให้สร้างใหม่
         if (!dbUser) {
           let imageUrl;
           if (account.provider === "facebook") {
@@ -125,7 +120,6 @@ const authOption = {
           }
         }
   
-        // ใช้ข้อมูลจาก dbUser แทนที่จะใช้ข้อมูลจาก profile
         token.id = dbUser._id.toString();
         token.name = dbUser.name || "Unknown";
         token.email = dbUser.email;
@@ -157,7 +151,6 @@ const authOption = {
         try {
           await connectMongoDB();
   
-          // ตรวจสอบว่ามีผู้ใช้ที่มีอีเมลนี้อยู่แล้วหรือไม่
           let existingUser;
           if (email.endsWith("@g.sut.ac.th")) {
             existingUser = await StudentUser.findOne({ email });
@@ -165,7 +158,6 @@ const authOption = {
             existingUser = await NormalUser.findOne({ email });
           }
   
-          // ถ้าไม่มีผู้ใช้ที่มีอีเมลนี้ ให้สร้างใหม่
           if (!existingUser) {
             let imageUrl;
             if (account.provider === "facebook") {
@@ -190,7 +182,6 @@ const authOption = {
               });
             }
           }
-          // ถ้ามีผู้ใช้อยู่แล้ว ไม่ต้องทำอะไร
           
           return true;
         } catch (error) {
@@ -198,10 +189,9 @@ const authOption = {
           return false;
         }
       }
-      return true; // For other providers
+      return true;
     },
   },
-  
 
   session: {
     strategy: "jwt",
@@ -214,5 +204,10 @@ const authOption = {
   },
 };
 
-const handler = NextAuth(authOption);
-export { handler as GET, handler as POST,  authOption};
+const handler = NextAuth(authOptions);
+
+// Export the handler as GET and POST
+export { handler as GET, handler as POST };
+
+// If you need to use authOptions elsewhere, create a separate config file
+// and export it from there instead of from the route file

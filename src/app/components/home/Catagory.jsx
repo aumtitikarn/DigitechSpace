@@ -32,8 +32,6 @@ function Catagory() {
     { type: t("nav.project.other"), server: "other", icon: <RiMenuSearchLine size={24} /> },
   ];
 
-
-
   return (
     <main className="flex flex-col items-center justify-center px-4 w-full">
       <div className="flex flex-col justify-center w-full">
@@ -46,15 +44,15 @@ function Catagory() {
           <div className="grid gap-4 grid-cols-3 lg:grid-cols-4 xl:grid-cols-10">
             {buttonsData.map((button, index) => (
               <Link
-              href={`/project?category=${button.server}`}
-            >
-              <button
                 key={index}
-                className="w-full h-[80px] flex flex-col items-center justify-center rounded-lg text-black p-2"
+                href={`/project?category=${button.server}`}
               >
-                {button.icon}
-                <span className="mt-2">{button.type}</span>
-              </button>
+                <button
+                  className="w-full h-[80px] flex flex-col items-center justify-center rounded-lg text-black p-2"
+                >
+                  {button.icon}
+                  <span className="mt-2">{button.type}</span>
+                </button>
               </Link>
             ))}
           </div>

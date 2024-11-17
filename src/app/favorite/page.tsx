@@ -1,14 +1,15 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { OrbitProgress } from "react-loading-indicators";
 
-// Define the Project interface
 interface Project {
   _id: string;
   projectname: string;
@@ -18,34 +19,41 @@ interface Project {
   price: number;
   review: number;
   sold: number;
-  rathing: number; // เปลี่ยนชื่อฟิลด์จาก 'rathing' เป็น 'rating'
+  rathing: number;
   imageUrl: string[];
   author: string;
-  profileImage?: string; // เพิ่มฟิลด์ profileImage ที่อาจไม่มีค่า
-  authorName?: string; // เพิ่มฟิลด์ authorName ที่อาจไม่มีค่า
+  profileImage?: string;
+  authorName?: string;
 }
 
-// ReviewCard Component
 const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
   const { t } = useTranslation("translation");
 
   return (
     <div className="rounded-[10px] border border-[#BEBEBE] bg-white p-4" style={{ width: "100%", height: "auto" }}>
       <div className="w-full h-full flex flex-col">
-        <img
-          src={`/api/project/images/${project.imageUrl[0]}`}
-          alt="Project Image"
-          className="w-full h-[150px] rounded-md object-cover mb-4"
-        />
+        <div className="relative w-full h-[150px] mb-4">
+          <Image
+            src={`/api/project/images/${project.imageUrl[0]}`}
+            alt="Project Image"
+            fill
+            className="rounded-md object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
         <div className="flex flex-col h-full">
           <p className="text-lg font-semibold mb-2 truncate">{project.projectname}</p>
           <div className="flex items-center mb-2">
             {project.profileImage ? (
-              <img
-                src={project.profileImage}
-                alt="Author Profile"
-                className="rounded-full mr-2  w-[30px] h-[30px] object-cover" 
-              />
+              <div className="relative w-[30px] h-[30px] mr-2">
+                <Image
+                  src={project.profileImage}
+                  alt="Author Profile"
+                  fill
+                  className="rounded-full object-cover"
+                  sizes="30px"
+                />
+              </div>
             ) : (
               <span className="text-gray-500 mr-2 text-2xl">
                 <MdAccountCircle />
@@ -66,37 +74,14 @@ const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
   );
 };
 
-// Favorite Component
 const Favorite: React.FC = () => {
   const { t } = useTranslation("translation");
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [favoriteProjects, setFavoriteProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  if (status === "loading") {
-    return (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-        }}
-      >
-        <OrbitProgress
-          variant="track-disc"
-          dense
-          color="#33539B"
-          size="medium"
-          text=""
-          textColor=""
-        />
-      </div>
-    );
-  } 
-  const fetchFavorites = async () => {
+  const fetchFavorites = useCallback(async () => {
     if (!session?.user?.email) {
       setError("User is not logged in");
       setLoading(false);
@@ -138,11 +123,34 @@ const Favorite: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [session?.user?.email]);
 
   useEffect(() => {
     fetchFavorites();
-  }, [session?.user?.email]); // Re-fetch favorites when the email changes
+  }, [fetchFavorites]);
+
+  if (status === "loading") {
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">

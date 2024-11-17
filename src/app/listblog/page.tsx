@@ -105,28 +105,27 @@ export default function Page() {
     );
   }
 
+  const getProxyUrl = (url: string): string => `/api/proxy?url=${encodeURIComponent(url)}`;
+
+  const isValidHttpUrl = (string: string): boolean => {
+    let url;
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:";
+  };
+  
   const getImageSource = (post: PostData): string => {
-    const useProxy = (url: string): string => `/api/proxy?url=${encodeURIComponent(url)}`;
-  
-    const isValidHttpUrl = (string: string): boolean => {
-      let url;
-      try {
-        url = new URL(string);
-      } catch (_) {
-        return false;
-      }
-      return url.protocol === "http:" || url.protocol === "https:";
-    };
-  
     if (post.profileImage && post.profileImage.length > 0) {
       const profileImage = post.profileImage[0];
       if (isValidHttpUrl(profileImage)) {
-        return useProxy(profileImage);
+        return getProxyUrl(profileImage);
       } else {
         return `/api/posts/images/${profileImage}`;
       }
     }
-  
     return "/default-profile-icon.png";
   };
 

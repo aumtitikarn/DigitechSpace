@@ -1,11 +1,11 @@
 import { getServerSession } from 'next-auth/next';
 import { connectMongoDB } from '../../../../../lib/mongodb';
 import StudentUser from '../../../../../models/StudentUser';
-import { authOption } from '../../auth/[...nextauth]/route';
+import { authOptions } from '../../auth/[...nextauth]/route';
 
 export async function GET(req, res) {
   try {
-    const session = await getServerSession({ req, ...authOption });
+    const session = await getServerSession({ req, ...authOptions });
     
     if (!session || !session.user || !session.user.email) {
       return new Response('Unauthorized', { status: 401 });

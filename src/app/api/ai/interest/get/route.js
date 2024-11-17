@@ -3,13 +3,13 @@ import StudentUser from '../../../../../../models/StudentUser';
 import NormalUser from '../../../../../../models/NormalUser';
 import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
-import { authOption } from '../../../auth/[...nextauth]/route'; // Adjust this import path as necessary
+import { authOptions } from '../../../auth/[...nextauth]/route'; // Adjust this import path as necessary
 
 export async function GET(req) {
   try {
     await connectMongoDB();
     
-    const session = await getServerSession(authOption);
+    const session = await getServerSession(authOptions);
     
     if (!session || !session.user) {
       console.error('No session or user found');

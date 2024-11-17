@@ -4,87 +4,42 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { CiHeart } from "react-icons/ci";
 import { MdAccountCircle } from "react-icons/md";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import Link from "next/link";
 
-// function BlogPost() {
-
-//   return (
-//     <div className="mb-7 w-[280px] flex-shrink-0 ">
-//       {/* Blog post image */}
-//       <img
-//         src={image}
-//         alt={title}
-//         className="w-full h-[390px] rounded-md object-cover border-2 border-gray-200"
-//       />
-//       <div className="pt-4">
-//         {/* Title and like button */}
-//         <div className="flex items-center justify-between">
-//           <h3 className="font-bold text-lg">{truncatedTitle}</h3>
-//           <button className="flex items-center text-gray-500 ml-2">
-//             <CiHeart className="mr-1" size={20} />
-//             <span>500</span>
-//           </button>
-//         </div>
-
-//         {/* Author information */}
-//         <div className="flex items-center">
-//           <span className="text-gray-500 mr-2 text-2xl">
-//             <MdAccountCircle />
-//           </span>
-//           <p className="text-sm text-gray-600">{author}</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 function Blog() {
-  const { t, i18n } = useTranslation('translation');
+  const { t, i18n } = useTranslation("translation");
 
   const [postData, setPostData] = useState([]);
 
   const getPosts = async () => {
-
     try {
       const res = await fetch("http://localhost:3000/api/posts", {
-        cache: "no-store"
-      })
+        cache: "no-store",
+      });
 
       if (!res.ok) {
-        throw new Error("Failed of fetch posts")
+        throw new Error("Failed of fetch posts");
       }
 
       const data = await res.json();
-      console.log("Fetched Data: ", data); // Log the data to inspect its structure
+      console.log("Fetched Data: ", data);
       setPostData(data.posts);
-      console.log(data); // Check the structure here
-      setPostData(data.posts); // Make sure data.posts exists
-
+      console.log(data);
+      setPostData(data.posts);
     } catch (error) {
       console.log("Error loading posts: ", error);
     }
-  }
+  };
 
   useEffect(() => {
     getPosts();
   }, []);
 
-  // interface PostData {
-  //   _id: string;
-  //   topic: string;
-  //   course: string;
-  //   heart: string;
-  //   imageUrl: string[];
-  //   author: string;
-  //   userprofile: string[];
-  //   // Add any other properties that are in your post data
-  // }
-
-
   const getImageSource = (post) => {
-    const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+    // Changed from useProxy to regular function
+    const proxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
     const isValidHttpUrl = (string) => {
       let url;
@@ -99,16 +54,14 @@ function Blog() {
     if (post.profileImage && post.profileImage.length > 0) {
       const profileImage = post.profileImage[0];
       if (isValidHttpUrl(profileImage)) {
-        return useProxy(profileImage);
+        return proxyUrl(profileImage);
       } else {
         return `/api/posts/images/${profileImage}`;
       }
     }
 
-    // Fallback to default image if no profile image is available
     return "/default-profile-icon.png";
   };
-
 
   return (
     <main className="flex flex-col items-center justify-center px-4 w-full">
@@ -120,10 +73,19 @@ function Blog() {
         </div>
         <div className="mt-5 flex overflow-x-auto space-x-5 h-96">
           {postData && postData.length > 0 ? (
-            postData.map(val => (
-              <Link href={`/blog/${val._id}`}>
-                <div key={val._id} className="flex flex-col" style={{ height: "300px", width: "180px" }}>
-                  <div className="rounded w-full relative" style={{ height: "250px" }}>
+            postData.map((val) => (
+              <Link href={`/blog/${val._id}`} key={val._id}>
+                {" "}
+                {/* Added key prop here */}
+                <div
+                  key={val._id}
+                  className="flex flex-col"
+                  style={{ height: "300px", width: "180px" }}
+                >
+                  <div
+                    className="rounded w-full relative"
+                    style={{ height: "250px" }}
+                  >
                     <Image
                       width={300}
                       height={300}
@@ -156,13 +118,22 @@ function Blog() {
                       </div>
                     </div>
                     <div className="flex flex-row mb-3">
-                      {postData.length && postData.length > 0 && val.profileImage && val.profileImage[0] ? (
+                      {postData.length &&
+                      postData.length > 0 &&
+                      val.profileImage &&
+                      val.profileImage[0] ? (
                         <Image
                           width={30}
                           height={30}
                           src={val.profileImage}
                           alt="Profile"
-                          style={{ objectFit: "cover", borderRadius: "50%", width: "30px", height: "30px", marginRight: "10px" }}
+                          style={{
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                            width: "30px",
+                            height: "30px",
+                            marginRight: "10px",
+                          }}
                           onError={(e) => {
                             const target = e.target;
                             target.onerror = null;
@@ -173,14 +144,23 @@ function Blog() {
                       ) : (
                         <MdAccountCircle className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500" />
                       )}
-                      <p className="mt-2 truncate text-gray-500" style={{ fontSize: "12px" }}>
+                      <p
+                        className="mt-2 truncate text-gray-500"
+                        style={{ fontSize: "12px" }}
+                      >
                         {val.authorName}
                       </p>
                     </div>
                   </div>
                 </div>
               </Link>
-            ))) : (<p>you don't have</p>)}
+            ))
+          ) : (
+            <div className="text-gray-500 text-center">
+            <p>{t("nav.blog.noblog")}</p>
+            </div>
+          )}{" "}
+          {/* Fixed apostrophe here */}
         </div>
         <div className="flex-grow text-center mt-3">
           <Link href={`/listblog`}>

@@ -87,15 +87,19 @@ const MyProject: React.FC = () => {
       {project.projectDetails ? (
         <Link href={`/project/projectreceive/${project.projectDetails._id}`}>
           <div className="w-auto h-auto flex flex-col">
-            <img
-              src={
-                project.projectDetails.imageUrl?.length > 0
-                  ? `/api/project/images/${project.projectDetails.imageUrl[0]}`
-                  : '/path/to/default/image.jpg' // เปลี่ยนให้เป็นเส้นทางของภาพเริ่มต้น
-              }
-              alt="Product Image"
-              className="w-full h-[150px] rounded-md object-cover mb-4"
-            />
+          <div className="relative w-full h-[150px] mb-4">
+              <Image
+                src={
+                  project.projectDetails.imageUrl?.length > 0
+                    ? `/api/project/images/${project.projectDetails.imageUrl[0]}`
+                    : '/path/to/default/image.jpg'
+                }
+                alt={project.projectDetails.projectname}
+                fill
+                className="rounded-md object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
             <div className="flex flex-col h-full">
               <p className="text-lg font-semibold mb-2 truncate">
                 {project.projectDetails.projectname}

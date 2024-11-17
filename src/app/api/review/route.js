@@ -3,12 +3,12 @@ import Review from '../../../../models/review';
 import Project from '../../../../models/project';
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth";
-import { authOption } from '../../../app/api/auth/[...nextauth]/route';
+import { authOptions } from '../../../app/api/auth/[...nextauth]/route';
 import StudentUser from '../../../../models/StudentUser';
 import NormalUser from '../../../../models/NormalUser';
 
 export async function POST(req) {
-  const session = await getServerSession(authOption);
+  const session = await getServerSession(authOptions);
 
   // Handle unauthorized access
   if (!session) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import { useSession } from "next-auth/react";
@@ -56,6 +56,18 @@ interface Review {
   authorName?: string;
   projectId: string; // Ensure this matches your database structure
 }
+
+const PROJECT_GROUPS = [
+  {
+    group: "Software Development",
+    categories: ["website", "mobileapp", "program", "document"],
+  },
+  { group: "Data and AI", categories: ["ai", "datasets", "document"] },
+  { group: "Hardware and IoT", categories: ["iot", "program", "document"] },
+  { group: "Content and Design", categories: ["document", "photo"] },
+  { group: "3D and Modeling", categories: ["photo", "document", "model"] },
+];
+
 const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -71,27 +83,11 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [confirmAction, setConfirmAction] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false); // กำหนดสถานะเริ่มต้น
   const [reviews, setReviews] = useState<Review[]>([]);
+  const projectGroups = useMemo(() => PROJECT_GROUPS, []);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-
-  const projectGroups = [
-    {
-      group: "Software Development",
-      categories: ["website", "mobileapp", "program", "document"],
-    },
-    { group: "Data and AI", categories: ["ai", "datasets", "document"] },
-    { group: "Hardware and IoT", categories: ["iot", "program", "document"] },
-    {
-      group: "Content and Design",
-      categories: ["document", "photo"],
-    },
-    {
-      group: "3D and Modeling",
-      categories: ["photo", "document", "model"],
-    },
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -178,7 +174,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
     };
 
     fetchSimilarProjects();
-  }, [project]);
+  }, [project, projectGroups]);
 
   useEffect(() => {
     const checkFavoriteStatus = async () => {
@@ -470,10 +466,12 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
           {/* Slider Section */}
           <div className="flex flex-col items-center p-4 ">
             <div className="relative w-full h-[500px] overflow-hidden rounded-lg">
-              <img
+              <Image
                 src={`/api/project/images/${project.imageUrl[currentIndex]}`}
                 alt="Project Image"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1200px) 100vw, 1200px"
               />
               {/* Slider Controls */}
               <button
@@ -607,7 +605,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 {project.receive.map((item, index) => (
-                  <ul className="list-none  text-gray-600 mt-2">
+                  <ul key={`receive-${index}`} className="list-none text-gray-600 mt-2">
                     <li className="flex items-center" key={index}>
                       <GoCheck className="w-5 h-5 text-green-500 mr-2" />
                       {item}
@@ -616,7 +614,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 ))}
               </div>
               <div></div>
-              {/* Reviews Section */}
               <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
                 <h2 className="text-lg font-bold text-[#33529B]">
                   {t("nav.project.projectdetail.review")}
@@ -625,7 +622,11 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 <ul>
                   {reviews.length > 0 ? (
                     reviews.map((review, index) => (
-                      <li key={index} className="mb-4">
+                      // เพิ่ม key ให้กับ <li> element
+                      <li
+                        key={`review-${review.userEmail}-${index}`}
+                        className="mb-4"
+                      >
                         <div className="flex items-center">
                           {review.profileImage ? (
                             <Image
@@ -660,7 +661,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       </li>
                     ))
                   ) : (
-                    <p className=" text-gray-500 mt-5 text-center">
+                    <p className="text-gray-500 mt-5 text-center">
                       {t("nav.sell.noreview")}
                     </p>
                   )}
@@ -710,11 +711,15 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       >
                         <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
                           <div className="w-full h-auto flex flex-col">
-                            <img
-                              src={`/api/project/images/${product.imageUrl[0]}`}
-                              alt="Product Image"
-                              className="w-full h-[150px] rounded-md object-cover mb-4"
-                            />
+                            <div className="relative w-full h-[150px] mb-4">
+                              <Image
+                                src={`/api/project/images/${product.imageUrl[0]}`}
+                                alt="Product Image"
+                                fill
+                                className="rounded-md object-cover"
+                                sizes="210px"
+                              />
+                            </div>
                             <div className="flex flex-col justify-between h-full">
                               <p className="text-lg font-semibold mb-2 truncate w-[150px]">
                                 {product.projectname}
@@ -775,11 +780,15 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                       >
                         <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
                           <div className="w-full h-auto flex flex-col">
-                            <img
-                              src={`/api/project/images/${product.imageUrl[0]}`}
-                              alt="Product Image"
-                              className="w-full h-[150px] rounded-md object-cover mb-4"
-                            />
+                            <div className="relative w-full h-[150px] mb-4">
+                              <Image
+                                src={`/api/project/images/${product.imageUrl[0]}`}
+                                alt="Product Image"
+                                fill
+                                className="rounded-md object-cover"
+                                sizes="210px"
+                              />
+                            </div>
                             <div className="flex flex-col justify-between h-full">
                               <p className="text-lg font-semibold mb-2 truncate w-[150px]">
                                 {product.projectname}

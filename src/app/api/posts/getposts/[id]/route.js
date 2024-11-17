@@ -4,14 +4,14 @@ import { connectMongoDB } from '../../../../../../lib/mongodb';
 import Post from '../../../../../../models/post'; // Model ของ Blog Post
 import NormalUser from "../../../../../../models/NormalUser";
 import StudentUser from "../../../../../../models/StudentUser";
-import { authOption } from '../../../auth/[...nextauth]/route';
+import { authOptions } from '../../../auth/[...nextauth]/route';
 
 export async function GET(req,{ params }) {
   const { id } = params;
 
   try {
     
-    const session = await getServerSession(authOption);
+    const session = await getServerSession(authOptions);
 
     // ตรวจสอบว่ามี session ของผู้ใช้หรือไม่
     if (!session || !session.user || !session.user.name) {

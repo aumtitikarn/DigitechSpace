@@ -4,7 +4,7 @@ import { connectMongoDB } from '../../../../../../lib/mongodb';
 import Post from '../../../../../../models/post';
 import StudentUser from '../../../../../../models/StudentUser';
 import NormalUser from '../../../../../../models/NormalUser';
-import { authOption } from '../../../auth/[...nextauth]/route';
+import { authOptions } from '../../../auth/[...nextauth]/route';
 
 const isValidHttpUrl = (string) => {
   let url;
@@ -20,7 +20,7 @@ const getProxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
 export async function GET(req) {
   try {
-    const session = await getServerSession(authOption);
+    const session = await getServerSession(authOptions);
 
     if (!session || !session.user || !session.user.email) {
       return NextResponse.json({ message: 'Unauthorized or missing user email' }, { status: 401 });

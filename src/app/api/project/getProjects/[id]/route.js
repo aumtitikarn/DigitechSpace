@@ -4,7 +4,7 @@ import { connectMongoDB } from '../../../../../../lib/mongodb';
 import Project from '../../../../../../models/project';
 import StudentUser from '../../../../../../models/StudentUser';
 import NormalUser from "../../../../../../models/NormalUser";
-import { authOption } from '../../../../../app/api/auth/[...nextauth]/route';
+import { authOptions } from '../../../../../app/api/auth/[...nextauth]/route';
 
 const isValidHttpUrl = (string) => {
   let url;
@@ -23,7 +23,7 @@ export async function GET(req,{ params }) {
 
   try {
     
-    const session = await getServerSession(authOption);
+    const session = await getServerSession(authOptions);
 
     // ตรวจสอบว่ามี session ของผู้ใช้หรือไม่
     if (!session || !session.user || !session.user.name) {

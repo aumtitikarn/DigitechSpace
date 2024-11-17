@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+"use client";
+
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FaSearch } from "react-icons/fa";
 import { star } from "react-icons-kit/fa";
 import Icon from "react-icons-kit";
@@ -23,7 +25,8 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
 
-  const categories = [
+  // Move categories to useMemo to maintain reference
+  const categories = useMemo(() => [
     { id: 1, category: t("nav.project.all"), categoryEN: "All" },
     { id: 2, category: t("nav.project.document"), categoryEN: "Document" },
     { id: 3, category: t("nav.project.model"), categoryEN: "Model" },
@@ -35,7 +38,45 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     { id: 9, category: t("nav.project.program"), categoryEN: "Program" },
     { id: 10, category: t("nav.project.photo"), categoryEN: "Photo" },
     { id: 11, category: t("nav.project.other"), categoryEN: "Other" },
-  ];
+  ], [t]);
+
+  const calculateRatingCounts = useCallback((projects) => {
+    const counts = {
+      total: projects.length,
+      5: 0,
+      4: 0,
+      3: 0,
+      2: 0,
+      1: 0,
+      0: 0,
+    };
+  
+    projects.forEach((project) => {
+      const rating = Math.floor(parseFloat(project.rathing) || 0);
+      if (rating >= 0 && rating <= 5) {
+        counts[rating]++;
+      }
+    });
+  
+    return counts;
+  }, []);
+  
+  // Then add calculateRatingCounts to filterProjects dependencies
+  const filterProjects = useCallback((projectsToFilter, term, rating) => {
+    let filtered = projectsToFilter.filter((project) =>
+      project.projectname.toLowerCase().includes(term.toLowerCase())
+    );
+  
+    if (rating !== null) {
+      filtered = filtered.filter((project) => {
+        const projectRating = parseFloat(project.rathing) || 0;
+        return projectRating >= rating && projectRating < rating + 1;
+      });
+    }
+  
+    setFilteredProjects(filtered);
+    return calculateRatingCounts(filtered);
+  }, [calculateRatingCounts]);
 
   useEffect(() => {
     const search = searchParams.get("search");
@@ -57,69 +98,25 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     } else {
       setSelectedCategory(undefined);
     }
-  }, [initialCategory, isProjectPage, searchParams]);
-
-  // Updated filterProjects function to include rating filter
-  const filterProjects = (projectsToFilter, term, rating) => {
-    let filtered = projectsToFilter.filter((project) =>
-      project.projectname.toLowerCase().includes(term.toLowerCase())
-    );
-
-    if (rating !== null) {
-      filtered = filtered.filter((project) => {
-        const projectRating = parseFloat(project.rathing) || 0;
-        // Filter projects with rating greater than or equal to selected rating
-        // and less than the next rating point
-        return projectRating >= rating && projectRating < rating + 1;
-      });
-    }
-
-    setFilteredProjects(filtered);
-
-    // Calculate rating counts for the current filtered projects
-    const ratingCounts = calculateRatingCounts(filtered);
-    return ratingCounts;
-  };
-
-  // Calculate counts for each rating level
-  const calculateRatingCounts = (projects) => {
-    const counts = {
-      total: projects.length,
-      5: 0,
-      4: 0,
-      3: 0,
-      2: 0,
-      1: 0,
-      0: 0,
-    };
-
-    projects.forEach((project) => {
-      const rating = Math.floor(parseFloat(project.rathing) || 0);
-      if (rating >= 0 && rating <= 5) {
-        counts[rating]++;
-      }
-    });
-
-    return counts;
-  };
+  }, [initialCategory, isProjectPage, searchParams, categories]);
 
   const debouncedSearch = useCallback(
-    debounce((term) => {
+    (term) => {
       filterProjects(projects, term, selectedRating);
       router.push(`/project?search=${encodeURIComponent(term)}`, {
         scroll: false,
       });
-    }, 300),
-    [projects, selectedRating, router]
+    },
+    [projects, selectedRating, router, filterProjects]
   );
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = useCallback((e) => {
     const newSearchTerm = e.target.value;
     setSearchTerm(newSearchTerm);
     debouncedSearch(newSearchTerm);
-  };
+  }, [debouncedSearch]);
 
-  const fetchProjects = async (categoryEN) => {
+  const fetchProjects = useCallback(async (categoryEN) => {
     setIsLoading(true);
     try {
       const normalizedCategory = categoryEN.toLowerCase();
@@ -138,7 +135,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,7 +146,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
       setIsLoading(false);
     };
     fetchData();
-  }, [selectedCategory, selectedRating]);
+  }, [selectedCategory, selectedRating, fetchProjects, filterProjects, searchTerm]);
 
 
   const handleCategoryChange = (e) => {
@@ -326,11 +323,15 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
             filteredProjects.map((project, index) => (
               <Link key={index} href={`/project/projectdetail/${project._id}`}>
                 <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
-                  <img
-                    src={`/api/project/images/${project.imageUrl[0]}`}
-                    alt="Project Image"
-                    className="w-full h-[150px] rounded-md object-cover mb-4"
-                  />
+                <div className="relative w-full h-[150px] mb-4">
+                    <Image
+                      src={`/api/project/images/${project.imageUrl[0]}`}
+                      alt="Project Image"
+                      fill
+                      className="rounded-md object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                   <div className="flex flex-col justify-between h-full">
                     <p className="text-lg font-semibold mb-2 truncate">
                       {project.projectname}

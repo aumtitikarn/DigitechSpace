@@ -1,14 +1,14 @@
 import { connectMongoDB } from '../../../../../../lib/mongodb'; 
 import StudentUser from '../../../../../../models/StudentUser'; 
 import { getServerSession } from 'next-auth/next'; // Import getServerSession
-import { authOption } from '../../../auth/[...nextauth]/route';
+import { authOptions } from '../../../auth/[...nextauth]/route';
 
 export async function PUT(request, { params }) {
   try {
     await connectMongoDB();
 
     // Use getServerSession to get the session
-    const session = await getServerSession({ req: request, ...authOption });
+    const session = await getServerSession({ req: request, ...authOptions });
 
     // Check if the user is authenticated
     if (!session) {

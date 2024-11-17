@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import { useSession } from "next-auth/react";
@@ -53,6 +53,20 @@ interface Review {
   projectId: string; // Ensure this matches your database structure
 }
 
+const PROJECT_GROUPS = [
+  {
+    group: "Software Development",
+    categories: ["website", "mobileapp", "program", "document"],
+  },
+  { group: "Data and AI", categories: ["ai", "datasets", "document"] },
+  { group: "Hardware and IoT", categories: ["iot", "program", "document"] },
+  {
+    group: "Content and Design",
+    categories: ["document", "photo", "document"],
+  },
+  { group: "3D and Modeling", categories: ["model", "photo", "document"] },
+];
+
 const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const { data: session, status } = useSession();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -69,23 +83,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const router = useRouter();
-
-  const projectGroups = [
-    {
-      group: "Software Development",
-      categories: ["website", "mobileapp", "program", "document"],
-    },
-    { group: "Data and AI", categories: ["ai", "datasets", "document"] },
-    { group: "Hardware and IoT", categories: ["iot", "program", "document"] },
-    {
-      group: "Content and Design",
-      categories: ["document", "photo", "document"],
-    },
-    {
-      group: "3D and Modeling",
-      categories: ["model", "photo", "document"],
-    },
-  ];
+  const projectGroups = useMemo(() => PROJECT_GROUPS, []);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -125,46 +123,47 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
     };
     console.log("project :", project);
     fetchSimilarProjects();
-  }, [status, router, project]);
+  }, [status, router, project, projectGroups]); // Dependencies properly listed
 
-  // const response = await fetch(`/api/project/getSimilarProject?categories=${encodeURIComponent(categories)}&exclude=${project._id}`);
-  useEffect(() => {
-    const fetchData = async () => {
-      if (params.id) {
-        try {
-          setLoading(true);
-          // ดึงข้อมูลโปรเจกต์ตาม ID
-          const projectResponse = await fetch(`/api/project/${params.id}`);
-          if (projectResponse.ok) {
-            const projectData = await projectResponse.json();
-            setProject(projectData); // ไม่ต้องใช้ .post แล้ว
-            console.log("Project data:", projectData);
-
-            // ดึงโปรเจกต์อื่นๆ ของผู้ใช้คนเดียวกัน
-            if (projectData && projectData.email) {
-              const publishedResponse = await fetch(
-                `/api/project/getProjects/by?email=${encodeURIComponent(projectData.email)}`
-              );
-              if (publishedResponse.ok) {
-                const publishedData = await publishedResponse.json();
-                setPublishedProjects(publishedData);
-              } else {
-                console.error("Failed to fetch published projects");
-              }
-            }
+  const fetchData = useCallback(async () => {
+    if (!params.id) return;
+  
+    try {
+      setLoading(true);
+      // Fetch project data by ID
+      const projectResponse = await fetch(`/api/project/${params.id}`);
+      if (projectResponse.ok) {
+        const projectData = await projectResponse.json();
+        setProject(projectData);
+        console.log("Project data:", projectData);
+  
+        // Fetch other projects by the same user
+        if (projectData && projectData.email) {
+          const publishedResponse = await fetch(
+            `/api/project/getProjects/by?email=${encodeURIComponent(projectData.email)}`
+          );
+          if (publishedResponse.ok) {
+            const publishedData = await publishedResponse.json();
+            setPublishedProjects(publishedData);
           } else {
-            console.error("Failed to fetch project data");
+            console.error("Failed to fetch published projects");
           }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        } finally {
-          setLoading(false);
         }
+      } else {
+        console.error("Failed to fetch project data");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [params.id]); // Include params.id in the dependency array
 
-    fetchData();
-  }, [params.id]);
+  useEffect(() => {
+    if (params.id) {
+      fetchData();
+    }
+  }, [fetchData, params.id]); // Include both fetchData and params.id
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -173,12 +172,12 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
           const response = await fetch("/api/review");
           const result = await response.json();
 
-          // กรองเฉพาะ reviews ที่มี projectId ตรงกับ _id ของ project
+          // Filter reviews that match the project ID
           const filteredReviews = result.data.filter(
             (review: Review) => review.projectId === params.id
           );
 
-          console.log("Fetched reviews:", filteredReviews); // Log filtered reviews
+          console.log("Fetched reviews:", filteredReviews);
 
           setReviews(filteredReviews);
           setLoading(false);
@@ -192,22 +191,25 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
     if (project) {
       fetchReviews();
     }
-  }, [project]);
+  }, [project, params.id]);
+  
   useEffect(() => {
     const checkFavoriteStatus = async () => {
       if (session) {
         try {
-          const response = await fetch(`/api/favorites?email=${session.user.email}`);
+          const response = await fetch(
+            `/api/favorites?email=${session.user.email}`
+          );
           const favoriteProjects = await response.json();
-  
+
           const isProjectFavorited = favoriteProjects.includes(params.id);
           setIsFavorited(isProjectFavorited);
         } catch (error) {
-          console.error('Error checking favorite status:', error);
+          console.error("Error checking favorite status:", error);
         }
       }
     };
-  
+
     checkFavoriteStatus();
   }, [session, params.id]);
   const updateProjectRating = async (projectId: string) => {
@@ -275,7 +277,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
           email: session.user.email,
           projectId: project._id,
         };
-  
+
         const favoriteResponse = await fetch("/api/favorites", {
           method: "POST",
           headers: {
@@ -283,16 +285,16 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
           },
           body: JSON.stringify(data),
         });
-  
+
         if (favoriteResponse.ok) {
           const result = await favoriteResponse.json();
-  
+
           // ตั้งค่าสถานะตามที่ได้รับจาก API
           setIsFavorited(result.isFavorited);
-  
+
           // ตั้งค่า status เป็น favorites ถ้าถูกเพิ่ม หรือ 'pending' ถ้าถูกลบ
-          const status = result.isFavorited ? 'favorites' : 'pending';
-          
+          const status = result.isFavorited ? "favorites" : "pending";
+
           // แสดงข้อความแจ้งเตือนด้วย SweetAlert2
           Swal.fire({
             icon: "success",
@@ -437,10 +439,12 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
           {/* Slider Section */}
           <div className="flex flex-col items-center p-4 ">
             <div className="relative w-full h-[500px] overflow-hidden rounded-lg">
-              <img
+              <Image
                 src={`/api/project/images/${project.imageUrl[currentIndex]}`}
                 alt="Project Image"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1200px) 100vw, 1200px"
               />
               {/* Slider Controls */}
               <button
@@ -467,29 +471,29 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                     href={`/Profile/ViewProfile/${project?.iduser || "#"}`}
                     onClick={handleRedirect}
                   >
-                  <div className="flex items-center mt-2">
-                    <p className="text-sm text-gray-600 mr-2">
-                      {t("nav.project.projectdetail.by")}
-                    </p>
-                    <span className="text-gray-500  text-3xl mr-2">
-                      {project.profileImage ? (
-                        <Image
-                          src={project.profileImage}
-                          alt="Author Profile"
-                          width={30}
-                          height={30}
-                          className="rounded-full w-[30px] h-[30px] object-cover"
-                        />
-                      ) : (
-                        <span className="text-gray-500 text-3xl mr-2">
-                          <MdAccountCircle />
-                        </span>
-                      )}
-                    </span>
-                    <p className="text-sm text-gray-600 truncate w-[150px]">
-                      {project.authorName}
-                    </p>
-                  </div>
+                    <div className="flex items-center mt-2">
+                      <p className="text-sm text-gray-600 mr-2">
+                        {t("nav.project.projectdetail.by")}
+                      </p>
+                      <span className="text-gray-500  text-3xl mr-2">
+                        {project.profileImage ? (
+                          <Image
+                            src={project.profileImage}
+                            alt="Author Profile"
+                            width={30}
+                            height={30}
+                            className="rounded-full w-[30px] h-[30px] object-cover"
+                          />
+                        ) : (
+                          <span className="text-gray-500 text-3xl mr-2">
+                            <MdAccountCircle />
+                          </span>
+                        )}
+                      </span>
+                      <p className="text-sm text-gray-600 truncate w-[150px]">
+                        {project.authorName}
+                      </p>
+                    </div>
                   </Link>
                   <div>
                     <p className="text-lg font-bold mt-3 text-[#33529B] text-[26px]">
@@ -504,8 +508,8 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       {project.rathing ? project.rathing.toFixed(1) : "N/A"}{" "}
                       {/* แสดงค่า rating หรือ N/A */}(
                       {project.review ? project.review : 0}){" "}
-                      {/* แสดงจำนวนรีวิว */} |
-                      {" "} {t("nav.project.projectdetail.sold")} {project.sold}
+                      {/* แสดงจำนวนรีวิว */} |{" "}
+                      {t("nav.project.projectdetail.sold")} {project.sold}
                     </span>
                   </div>
                 </div>
@@ -534,18 +538,18 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                         </div>
                       )}
                     </div>
-                      <>
+                    <>
                       <button
-                      onClick={handleFavoriteClick}
-                      className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`}
-                    >
-                      {isFavorited ? <GoHeartFill /> : <GoHeart />}
-                    </button>
-                        <AiOutlineNotification
-                          onClick={handleNotificationClick}
-                          className="text-gray-600 cursor-pointer text-2xl"
-                        />
-                      </>
+                        onClick={handleFavoriteClick}
+                        className={`cursor-pointer text-2xl ${isFavorited ? "text-red-500" : "text-gray-600"}`}
+                      >
+                        {isFavorited ? <GoHeartFill /> : <GoHeart />}
+                      </button>
+                      <AiOutlineNotification
+                        onClick={handleNotificationClick}
+                        className="text-gray-600 cursor-pointer text-2xl"
+                      />
+                    </>
                   </div>
                 </div>
               </div>
@@ -568,7 +572,10 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                 </h2>
                 <div className="border-t border-gray-300 my-4"></div>
                 {project.receive.map((item, index) => (
-                  <ul className="list-none  text-gray-600 mt-2">
+                  <ul
+                    key={`receive-${index}`}
+                    className="list-none text-gray-600 mt-2"
+                  >
                     <li className="flex items-center" key={index}>
                       <GoCheck className="w-5 h-5 text-green-500 mr-2" />
                       {item}
@@ -610,21 +617,21 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                     reviews
                       .slice(0, visibleReviewsCount)
                       .map((review, index) => (
-                        <li key={index} className="mb-4">
+                        <li key={`review-${review.userEmail}-${index}`} className="mb-4">
                           <div className="flex items-center">
-                          {review.profileImage ? (
-                            <Image
-                              src={review.profileImage}
-                              alt="Author Profile"
-                              width={50}
-                              height={50}
-                              className="rounded-full w-[50px] h-[50px] object-cover mr-2"
-                            />
-                          ) : (
-                            <span className="text-gray-500 text-5xl mr-2">
-                              <MdAccountCircle />
-                            </span>
-                          )}
+                            {review.profileImage ? (
+                              <Image
+                                src={review.profileImage}
+                                alt="Author Profile"
+                                width={50}
+                                height={50}
+                                className="rounded-full w-[50px] h-[50px] object-cover mr-2"
+                              />
+                            ) : (
+                              <span className="text-gray-500 text-5xl mr-2">
+                                <MdAccountCircle />
+                              </span>
+                            )}
                             <div className="flex flex-col">
                               <div className="flex items-center">
                                 <p className="text-sm font-bold mr-2">
@@ -694,11 +701,15 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       >
                         <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
                           <div className="w-full h-auto flex flex-col">
-                            <img
-                              src={`/api/project/images/${product.imageUrl[0]}`}
-                              alt="Product Image"
-                              className="w-full h-[150px] rounded-md object-cover mb-4"
-                            />
+                            <div className="relative w-full h-[150px] mb-4">
+                              <Image
+                                src={`/api/project/images/${product.imageUrl[0]}`}
+                                alt="Product Image"
+                                fill
+                                className="rounded-md object-cover"
+                                sizes="210px"
+                              />
+                            </div>
                             <div className="flex flex-col justify-between h-full">
                               <p className="text-lg font-semibold mb-2 truncate w-[150px]">
                                 {product.projectname}
@@ -759,11 +770,15 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                       >
                         <div className="flex-shrink-0 rounded-[10px] border border-[#BEBEBE] bg-white w-[210px] h-auto p-4">
                           <div className="w-full h-auto flex flex-col">
-                            <img
-                              src={`/api/project/images/${product.imageUrl[0]}`}
-                              alt="Product Image"
-                              className="w-full h-[150px] rounded-md object-cover mb-4"
-                            />
+                            <div className="relative w-full h-[150px] mb-4">
+                              <Image
+                                src={`/api/project/images/${product.imageUrl[0]}`}
+                                alt="Product Image"
+                                fill
+                                className="rounded-md object-cover"
+                                sizes="210px"
+                              />
+                            </div>
                             <div className="flex flex-col justify-between h-full">
                               <p className="text-lg font-semibold mb-2 truncate w-[150px]">
                                 {product.projectname}

@@ -1,18 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { IoIosStar } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
-import { OrbitProgress } from "react-loading-indicators";
 import Image from "next/image";
 
 const ProductList = ({ products, titles }) => {
   const { t } = useTranslation("translation");
-
-  
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
@@ -37,26 +34,33 @@ const ProductList = ({ products, titles }) => {
                   key={index}
                   href={`/project/projectdetail/${product._id}`}
                 >
-                  <div className="w-[190px] h-auto lg:w-[230px] md:w-[210px] rounded-[10px] border border-[#BEBEBE] bg-white p-4  mb-5 mt-5">
-                    <div className=" flex flex-col">
-                      <img
-                        src={`/api/project/images/${product.imageUrl[0]}`}
-                        alt="Project Image"
-                        className="w-full h-[150px] rounded-md object-cover mb-4"
-                      />
+                  <div className="w-[190px] h-auto lg:w-[230px] md:w-[210px] rounded-[10px] border border-[#BEBEBE] bg-white p-4 mb-5 mt-5">
+                    <div className="flex flex-col">
+                      <div className="relative w-full h-[150px] mb-4">
+                        <Image
+                          src={`/api/project/images/${product.imageUrl[0]}`}
+                          alt={product.projectname}
+                          fill
+                          className="rounded-md object-cover"
+                          sizes="(max-width: 768px) 190px, (max-width: 1024px) 210px, 230px"
+                          priority={index < 2} // Prioritize loading first two images
+                        />
+                      </div>
                       <div className="flex flex-col justify-between h-full">
                         <p className="text-lg font-semibold mb-2 truncate">
                           {product.projectname}
                         </p>
                         <div className="flex items-center mb-2">
                           {product.profileImage ? (
-                            <Image
-                              src={product.profileImage}
-                              alt="Author Profile"
-                              width={20}
-                              height={20}
-                              className="rounded-full mr-2"
-                            />
+                            <div className="relative w-5 h-5 mr-2">
+                              <Image
+                                src={product.profileImage}
+                                alt="Author Profile"
+                                fill
+                                className="rounded-full"
+                                sizes="20px"
+                              />
+                            </div>
                           ) : (
                             <span className="text-gray-500 mr-2 text-2xl">
                               <MdAccountCircle />
@@ -100,44 +104,46 @@ const ProductList = ({ products, titles }) => {
   );
 };
 
+const PRODUCT_CATEGORIES = [
+  {
+    group: "Software Development",
+    categories: ["website", "mobileapp", "program"],
+  },
+  { group: "Data and AI", categories: ["ai", "datasets"] },
+  { group: "Hardware and IoT", categories: ["iot", "program"] },
+  { group: "Content and Design", categories: ["document", "photo"] },
+  {
+    group: "3D and Modeling",
+    categories: ["model", "photo", "document"],
+  },
+];
+
+const THAI_TO_ENGLISH_MAP = {
+  "โมเดล/3มิติ": "model",
+  เว็บไซต์: "website",
+  แอพพลิเคชัน: "mobileapp",
+  เอกสาร: "document",
+  เอไอ: "ai",
+  ชุดข้อมูล: "datasets",
+  ไอโอที: "iot",
+  โปรแกรม: "program",
+  รูปภาพ: "photo",
+};
+
 const Aigenproject = () => {
   const [titles, setTitles] = useState([]);
   const [products, setProducts] = useState([]);
-  const { data: session, status } = useSession();
   const [error, setError] = useState(null);
+  const { data: session, status } = useSession();
   const { t } = useTranslation("translation");
-  const productCategories = [
-    {
-      group: "Software Development",
-      categories: ["website", "mobileapp", "program"],
-    },
-    { group: "Data and AI", categories: ["ai", "datasets"] },
-    { group: "Hardware and IoT", categories: ["iot", "program"] },
-    { group: "Content and Design", categories: ["document", "photo"] },
-    {
-      group: "3D and Modeling",
-      categories: ["model", "photo", "document"],
-    },
-  ];
-  const normalizeCategory = (category) => {
-    const thaiToEnglishMap = {
-      "โมเดล/3มิติ": "model",
-      เว็บไซต์: "website",
-      แอพพลิเคชัน: "mobileapp",
-      เอกสาร: "document",
-      เอไอ: "ai",
-      ชุดข้อมูล: "datasets",
-      ไอโอที: "iot",
-      โปรแกรม: "program",
-      รูปภาพ: "photo",
-    };
-    return thaiToEnglishMap[category.toLowerCase()] || category.toLowerCase();
-  };
-  
-  // Helper function to find related categories based on a title
-  const findRelatedCategories = (title) => {
+
+  const normalizeCategory = useCallback((category) => {
+    return THAI_TO_ENGLISH_MAP[category.toLowerCase()] || category.toLowerCase();
+  }, []);
+
+  const findRelatedCategories = useCallback((title) => {
     const relatedCategories = new Set();
-    productCategories.forEach((group) => {
+    PRODUCT_CATEGORIES.forEach((group) => {
       if (
         group.categories.some(
           (cat) => normalizeCategory(cat) === normalizeCategory(title)
@@ -151,8 +157,8 @@ const Aigenproject = () => {
       }
     });
     return Array.from(relatedCategories);
-  };
-  
+  }, [normalizeCategory]); // Now we only depend on normalizeCategory
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -162,80 +168,69 @@ const Aigenproject = () => {
             "Content-Type": "application/json",
           },
         });
-  
+
         if (!projectsResponse.ok) {
           throw new Error("Failed to fetch projects");
         }
-  
+
         const projectsData = await projectsResponse.json();
         setProducts(projectsData);
-  
-        // Count projects per category (case-insensitive)
+
         const categoryCounts = projectsData.reduce((acc, project) => {
           const category = project.category.toLowerCase();
           acc[category] = (acc[category] || 0) + 1;
           return acc;
         }, {});
-  
+
         let userTitles = [];
-        if (status === "authenticated" && session.user) {
+        if (status === "authenticated" && session?.user) {
           const interestsResponse = await fetch("/api/ai/interest/get", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
           });
-  
+
           if (interestsResponse.ok) {
             const userData = await interestsResponse.json();
             if (userData.interests && userData.interests.length > 0) {
               userTitles = Array.isArray(userData.interests)
                 ? userData.interests
-                : userData.interests
-                    .split(",")
-                    .map((interest) => interest.trim());
+                : userData.interests.split(",").map((interest) => interest.trim());
             }
           }
         }
-  
-        // Set default categories if user is not logged in or has no interests
+
         if (!session || userTitles.length === 0) {
           userTitles = ["website", "mobileapp", "document"];
         }
-  
-        // Process titles and add related categories only if they have products
+
         const titleSet = new Set();
         userTitles.forEach((title) => {
           const normalizedTitle = normalizeCategory(title);
           
-          // Add title only if the category has at least one product
           if (categoryCounts[normalizedTitle] > 0) {
             titleSet.add(normalizedTitle);
-  
+            
             const relatedCategories = findRelatedCategories(normalizedTitle);
             relatedCategories.forEach((category) => {
               const normalizedCategory = normalizeCategory(category);
-              
-              // Add related categories only if they have at least one product
               if (categoryCounts[normalizedCategory] > 0) {
                 titleSet.add(normalizedCategory);
               }
             });
           }
         });
-  
-        const finalTitles = Array.from(titleSet);
-        setTitles(finalTitles);
+
+        setTitles(Array.from(titleSet));
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("An error occurred while fetching data");
       }
     };
-  
+
     fetchData();
-  }, [status, session, t]);
-  
-  
+  }, [status, session, findRelatedCategories, normalizeCategory]);
 
   if (error) {
     return (
