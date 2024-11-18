@@ -36,98 +36,83 @@ interface BlogProps {
   params: { id: string };
   initialComments: string[];
 }
+interface Reply {
+  _id: string;
+  text: string;
+  userName: string;
+  profileImageSource?: string;
+  timestamp: string | Date;
+}
+
+interface Comment {
+  _id: string;
+  text: string;
+  userName: string;
+  profileImageSource?: string;
+  timestamp: string | Date;
+  replies?: Reply[];
+}
+
+interface PostData {
+  _id: string;
+  topic: string;
+  course: string;
+  description: string;
+  heart: number;
+  imageUrl: string[];
+  userprofileid: string[];
+  userprofile: string[];
+  author: string;
+  profileImage: string;
+  authorName: string;
+  email: string;
+  comments: Comment[];
+  likedByUsers: string[];
+  selectedCategory: string;
+  timestamp: string | Date;
+  onClose: () => void;
+}
+interface ProfileUser {
+  imageUrl: string[];
+}
 
 function Blog({ params, initialComments }: BlogProps) {
   const [review, setReview] = useState("");
   const [report, setreport] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
-  const [blogname, setBlogname] = useState("");
   const maxLength = 200;
-
   const { id } = params;
-
   const { data: session, status } = useSession();
   const router = useRouter();
-
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isPopupOpenMore, setIsPopupOpenMore] = useState(false);
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
   const [popupInput, setPopupInput] = useState("");
-
-  const [postData, setPostData] = useState<PostData>([]);
-
-  interface PostData {
-    _id: string;
-    topic: string;
-    course: string;
-    description: string;
-    heart: number;
-    imageUrl: string[];
-    userprofileid: string[];
-    userprofile: string[];
-    author: string;
-    profileImage: string;
-    authorName: string;
-    email: string;
-    comments: any[];
-    likedByUsers: any[];
-    selectedCategory: string;
-    onClosets?: () => void;
-    timestamp: string | Date;
-  }
-
-  interface Reply {
-    userName: string;
-    profileImageSource: string;
-    timestamp: string | Date;
-  }
-
+  const [postData, setPostData] = useState<PostData | null>(null);
   const [topic, setTopic] = useState("");
   const [course, setCourse] = useState("");
   const [description, setDescription] = useState("");
   const { t, i18n } = useTranslation("translation");
-
   const [setheart, setHeart] = useState(0);
   const [isHeartClicked, setIsHeartClicked] = useState(false);
-
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const [comments, setComments] = useState([]);
   const [commentInput, setCommentInput] = useState("");
   const [replyInput, setReplyInput] = useState("");
-  const [replyingTo, setReplyingTo] = useState(null); // เก็บ ID ของ comment ที่กำลังตอบกลับ
-
-  const [blogid, setBlogid] = useState("");
-  const [blogEmail, setBlogEmail] = useState("");
-
+  const [replyingTo, setReplyingTo] = useState<string | null>(null); // เก็บ ID ของ comment ที่กำลังตอบกลับ
+  const [blogname, setBlogname] = useState<string | null>(null);
+  const [blogEmail, setBlogEmail] = useState<string | null>(null);
+  const [blogid, setBlogid] = useState<string | null>(null);
   const [profileUser, setProfileUser] = useState<string[]>([]);
-
-  // interface Profile {
-  //   imageUrl: string;
-  // }
-
   const [profileUserN, setProfileUserN] = useState<ProfileUser | null>(null);
 
-  interface ProfileUser {
-    imageUrl: string[];
+  if (!postData) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
-  interface PostData {
-    _id: string;
-    topic: string;
-    course: string;
-    description: string;
-    heart: number;
-    imageUrl: string[];
-    userprofileid: string[];
-    userprofile: string[];
-    author: string;
-    email: string;
-    comments: any[];
-    likedByUsers: any[];
-    selectedCategory: string;
-    timestamp: string | Date;
-  }
-
   const handleShareClick = () => {
     setIsSharePopupOpen(!isSharePopupOpen);
   };
@@ -172,18 +157,18 @@ function Blog({ params, initialComments }: BlogProps) {
 
   const handleDelete = async () => {
     const result = await Swal.fire({
-      title: 'คุณต้องการลบบล็อกนี้ใช่หรือไม่?',
-      icon: 'warning',
+      title: "คุณต้องการลบบล็อกนี้ใช่หรือไม่?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'ใช่, ลบเลย!',
-      cancelButtonText: 'ยกเลิก'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก",
     });
 
     if (result.isConfirmed) {
       try {
-        const res = await fetch(`/api/posts/${postData._id}`, {
+        const res = await fetch(`/api/posts/${postData?._id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -191,32 +176,31 @@ function Blog({ params, initialComments }: BlogProps) {
           body: JSON.stringify({ id }),
         });
         if (res.ok) {
-          Swal.fire('Deleted!', 'โครงงานและบล็อกถูกลบเรียบร้อยแล้ว', 'success');
+          Swal.fire("Deleted!", "โครงงานและบล็อกถูกลบเรียบร้อยแล้ว", "success");
           router.push("/listblog");
         } else {
           const data = await res.json();
-          Swal.fire('Error', `${data.message || "ลบไม่สำเร็จ"}`, 'error');
+          Swal.fire("Error", `${data.message || "ลบไม่สำเร็จ"}`, "error");
         }
       } catch (error) {
         console.error("Error deleting post:", error);
-        Swal.fire('Error', 'มีข้อผิดพลาดในการลบโครงงาน/บล็อก', 'error');
+        Swal.fire("Error", "มีข้อผิดพลาดในการลบโครงงาน/บล็อก", "error");
       }
     }
   };
 
-
   const formatDate = (timestamp: any): string => {
     try {
       if (!timestamp) {
-        return 'ไม่ระบุเวลา';
+        return "ไม่ระบุเวลา";
       }
 
       let date: Date;
 
       // แปลง timestamp เป็น Date object
-      if (typeof timestamp === 'string') {
+      if (typeof timestamp === "string") {
         date = new Date(timestamp);
-      } else if (typeof timestamp === 'number') {
+      } else if (typeof timestamp === "number") {
         date = new Date(timestamp);
       } else if (timestamp instanceof Date) {
         date = timestamp;
@@ -224,30 +208,30 @@ function Blog({ params, initialComments }: BlogProps) {
         date = new Date();
       }
 
-
       if (isNaN(date.getTime())) {
-        console.error('Invalid timestamp value:', timestamp);
-        return 'ไม่ระบุเวลา';
+        console.error("Invalid timestamp value:", timestamp);
+        return "ไม่ระบุเวลา";
       }
 
-
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const year = date.getFullYear().toString().slice(-2);
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
 
       return `${day}/${month}/${year} ${hours}:${minutes}`;
-
     } catch (error) {
-      console.error('Error in formatDate:', error);
-      return 'ไม่ระบุเวลา';
+      console.error("Error in formatDate:", error);
+      return "ไม่ระบุเวลา";
     }
   };
 
-  const handleAddCommentOrReply = async (isReply: boolean, commentId: string | null = null) => {
+  const handleAddCommentOrReply = async (
+    isReply: boolean,
+    commentId: string | null = null
+  ) => {
     if (!session || !postData) {
-      Swal.fire('Error', 'Please log in to comment.', 'error');
+      Swal.fire("Error", "Please log in to comment.", "error");
       return;
     }
 
@@ -259,32 +243,34 @@ function Blog({ params, initialComments }: BlogProps) {
         _id: `temp-${Date.now()}`,
         text: isReply ? replyInput : commentInput,
         userName: session.user?.name || "Anonymous",
-        profileImageSource: imageUrl ? `/api/posts/images/${imageUrl}` : undefined,
+        profileImageSource: imageUrl
+          ? `/api/posts/images/${imageUrl}`
+          : undefined,
         timestamp: currentTime, // ใช้ timestamp ที่เพิ่งสร้าง
-        replies: []
+        replies: [],
       };
 
       // อัพเดท UI ก่อน
-      setPostData(prevData => {
+      setPostData((prevData) => {
         if (!prevData) return prevData;
 
         if (isReply && commentId) {
           return {
             ...prevData,
-            comments: prevData.comments.map(comment => {
+            comments: prevData.comments.map((comment) => {
               if (comment._id === commentId) {
                 return {
                   ...comment,
-                  replies: [...(comment.replies || []), newComment]
+                  replies: [...(comment.replies || []), newComment],
                 };
               }
               return comment;
-            })
+            }),
           };
         } else {
           return {
             ...prevData,
-            comments: [...prevData.comments, newComment]
+            comments: [...prevData.comments, newComment],
           };
         }
       });
@@ -304,7 +290,7 @@ function Blog({ params, initialComments }: BlogProps) {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to save comment');
+        throw new Error("Failed to save comment");
       }
 
       // เคลียร์ input
@@ -317,10 +303,9 @@ function Blog({ params, initialComments }: BlogProps) {
 
       // ดึงข้อมูลใหม่จาก API
       await getPostById(id);
-
     } catch (error) {
-      console.error('Error adding comment:', error);
-      Swal.fire('Error', 'Failed to save comment. Please try again.', 'error');
+      console.error("Error adding comment:", error);
+      Swal.fire("Error", "Failed to save comment. Please try again.", "error");
     }
   };
 
@@ -375,28 +360,29 @@ function Blog({ params, initialComments }: BlogProps) {
         method: "GET",
         cache: "no-store",
       });
-
+  
       if (!res.ok) {
         throw new Error("Failed to fetch post");
       }
-
+  
       const data = await res.json();
-
+  
       // แก้ไขการจัดการ timestamp โดยใช้ค่าจากฐานข้อมูลโดยตรง
       const formattedPost = {
         ...data.post,
-        comments: data.post.comments.map(comment => ({
+        comments: data.post.comments.map((comment: Comment) => ({
           ...comment,
           // ใช้ timestamp จากฐานข้อมูล
           timestamp: comment.timestamp,
-          replies: comment.replies?.map(reply => ({
-            ...reply,
-            // ใช้ timestamp จากฐานข้อมูลสำหรับ reply
-            timestamp: reply.timestamp
-          })) || []
-        }))
+          replies:
+            comment.replies?.map((reply: Reply) => ({
+              ...reply,
+              // ใช้ timestamp จากฐานข้อมูลสำหรับ reply
+              timestamp: reply.timestamp,
+            })) || [],
+        })),
       };
-
+  
       setPostData(formattedPost);
       return formattedPost;
     } catch (error) {
@@ -438,10 +424,11 @@ function Blog({ params, initialComments }: BlogProps) {
   const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
+    if (!postData) return; // Add a guard clause
+
     setBlogname(postData.topic);
     setBlogEmail(postData.email);
     setBlogid(postData._id);
-
 
     console.log("Blog name:", postData.topic);
     console.log("Blog Email:", postData.email);
@@ -461,19 +448,17 @@ function Blog({ params, initialComments }: BlogProps) {
       return;
     }
 
-
     if (!report || !selectedReason) {
       alert("Please complete all inputs");
       return;
     }
 
-    formData.append("blogname", postData.topic);
     formData.append("selectedReason", selectedReason);
     formData.append("report", report);
     formData.append("author", session.user.name);
-    formData.append("blogid", postData._id);
-    formData.append("blogEmail", postData.email);
-
+    formData.append("blogname", blogname || "");
+    formData.append("blogEmail", blogEmail || "");
+    formData.append("blogid", blogid || "");
     try {
       const res = await fetch("http://localhost:3000/api/reportblog", {
         method: "POST",
@@ -535,15 +520,12 @@ function Blog({ params, initialComments }: BlogProps) {
     setInput1("");
   };
 
-  // const UserId = session?.user?.id;
-
   const UserId = session?.user?.id ?? "";
 
   console.log("UserId :", UserId);
 
   const handleSubmitCiHeart = async (e: React.MouseEvent<SVGElement>) => {
     if (session) {
-
       const isLiked =
         Array.isArray(postData?.likedByUsers) &&
         postData.likedByUsers.includes(UserId);
@@ -593,27 +575,6 @@ function Blog({ params, initialComments }: BlogProps) {
     }
   };
 
-
-  // const [currentIndex, setCurrentIndex] = useState(0);
-
-  // const handleIndicatorClick = () => {
-  //   setCurrentIndex();
-  // };
-  interface PostData {
-    _id: string;
-    topic: string;
-    course: string;
-    onClose: () => void;
-  }
-
-  interface Reply {
-    _id: string;
-    profile?: string[];
-    author: string;
-    text: string;
-    timestamp: string | Date;
-  }
-
   const getImageSource = (post: PostData): string => {
     // Helper function for proxy URL
     const getProxyUrl = (url: string): string =>
@@ -640,10 +601,10 @@ function Blog({ params, initialComments }: BlogProps) {
 
     return "/default-profile-icon.png";
   };
-  const handleRedirect = (e) => {
+  const handleRedirect = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!session) {
-      e.preventDefault(); // Prevent the link from navigating
-      router.push("/auth/signin"); // Redirect to signin if no session
+      e.preventDefault();
+      router.push("/auth/signin");
     }
   };
   return (
@@ -673,7 +634,7 @@ function Blog({ params, initialComments }: BlogProps) {
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 <button
                   className={`w-3 h-3 rounded-full`}
-                // onClick={() => handleIndicatorClick()}
+                  // onClick={() => handleIndicatorClick()}
                 ></button>
               </div>
               <button
@@ -722,7 +683,7 @@ function Blog({ params, initialComments }: BlogProps) {
                   </div>
                 </div>
               </Link>
-              
+
               <div className="ml-[500px] relative flex justify-end">
                 {/* Dropdown Toggle */}
                 <button
@@ -752,8 +713,6 @@ function Blog({ params, initialComments }: BlogProps) {
                   </div>
                 )}
               </div>
-              
-
             </div>
             <div className="flex flex-wrap my-2">
               <Link
@@ -783,7 +742,9 @@ function Blog({ params, initialComments }: BlogProps) {
 
             <div className="mt-5 mb-3">
               {postData && postData.topic ? (
-                <h1 className="text-2xl"><strong>{postData.topic}</strong></h1>
+                <h1 className="text-2xl">
+                  <strong>{postData.topic}</strong>
+                </h1>
               ) : (
                 <h1>No Topic Available</h1>
               )}
@@ -801,11 +762,12 @@ function Blog({ params, initialComments }: BlogProps) {
               <div className="flex space-x-4">
                 <div className="flex items-center">
                   <CiHeart
-                    className={`text-3xl cursor-pointer ${Array.isArray(postData?.likedByUsers) &&
-                        postData.likedByUsers.includes(UserId)
+                    className={`text-3xl cursor-pointer ${
+                      Array.isArray(postData?.likedByUsers) &&
+                      postData.likedByUsers.includes(UserId)
                         ? "text-red-500"
                         : "text-gray-500"
-                      }`}
+                    }`}
                     onClick={handleSubmitCiHeart}
                   />
                   {postData && postData.heart !== undefined ? (
@@ -858,7 +820,7 @@ function Blog({ params, initialComments }: BlogProps) {
             {/* // ส่วนแสดงผล Comments และ Replies */}
             <div>
               {Array.isArray(postData?.comments) &&
-                postData.comments.map((comment) => (
+                postData.comments.map((comment: Comment) => (
                   <div key={comment._id} className="flex flex-col mt-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
@@ -883,7 +845,7 @@ function Blog({ params, initialComments }: BlogProps) {
                         <div className="flex flex-col">
                           <div className="flex flex-row">
                             <p className="text-sm text-gray-500 ml-10">
-                              {comment.timestamp}
+                              {comment.timestamp.toString()}
                             </p>
                             <button
                               onClick={() => setReplyingTo(comment._id)}
@@ -947,7 +909,7 @@ function Blog({ params, initialComments }: BlogProps) {
                               </strong>
                             </p>
                             <p className="text-sm text-gray-500 ml-10">
-                              {reply.timestamp}
+                              {reply.timestamp.toString()}
                             </p>
                             <p className="text-lg ml-10">{reply.text}</p>
                           </div>
