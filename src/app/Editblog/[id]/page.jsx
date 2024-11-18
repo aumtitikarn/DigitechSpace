@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { OrbitProgress } from "react-loading-indicators";
+import { image } from "@nextui-org/theme";
 
 export default function Page({params}) {
   const { id } = params
@@ -27,6 +28,7 @@ export default function Page({params}) {
   const [newDescription, setNewDescription] = useState("");
   const [postData, setPostData] = useState("");
   const [blogData, setBlogData] = useState("");
+  const [blogImage,setBlogImage] = useState([]);
   const [heart, setHeart] = useState(0);
   const [file, setFile] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
@@ -56,11 +58,13 @@ export default function Page({params}) {
         const data = await res.json();
         console.log("Edit post2: ", data);
         setBlogData(data.post);
+        setBlogImage(blogData.imageUrl || []);
 
     } catch(error) {
         console.log(error);
     }
 }
+
 
 useEffect(() => {
   getPostById(id);
@@ -210,6 +214,9 @@ console.log("TestPostblog: ",blogData);
     <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
   </div>;
   }
+
+  console.log("รูปจร้า; ",blogImage)
+
   return (
     <Container>
       <Navbar session={session} />
@@ -225,6 +232,25 @@ console.log("TestPostblog: ",blogData);
           </div>
 
           <div className="flex flex-wrap gap-4">
+          {blogImage?.map((image, index) => (
+              <div key={index} className="relative w-40 h-40">
+              <Image
+                key={index}
+                src={`/api/posts/images/${image}`}
+                alt={`Uploaded ${index}`}
+                width={160} // กำหนดขนาดภาพแทนที่ตัวอย่างนี้
+                height={160}
+                className="object-cover rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => handleDelete(index)}
+                className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md hover:bg-gray-200"
+              >
+                <IoCloseCircleOutline className="text-red-500" size={24} />
+              </button>
+            </div>
+            ))}
             {uploadedImages.map((image, index) => (
               <div key={index} className="relative w-40 h-40">
                 <Image
