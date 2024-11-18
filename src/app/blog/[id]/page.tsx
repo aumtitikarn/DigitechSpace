@@ -244,99 +244,84 @@ const formatDate = (timestamp: any): string => {
   }
 };
   
-  const handleAddCommentOrReply = async (isReply: boolean, commentId: string | null = null) => {
-    if (!session || !postData) {
-      Swal.fire('Error', 'Please log in to comment.', 'error');
-      return;
-    }
-  
-    try {
-      const imageUrl = profileUserN?.imageUrl?.[0];
-      const now = new Date();
-      const currentTime = now.toISOString();
-  
-      const newComment = {
-        _id: `temp-${Date.now()}`,
-        text: isReply ? replyInput : commentInput,
-        userName: session.user?.name || "Anonymous",
-        profileImageSource: imageUrl ? `/api/posts/images/${imageUrl}` : undefined,
-        timestamp: now,
-        replies: []
-      };
-  
-      setPostData(prevData => {
-        if (!prevData) return prevData;
-  
-        if (isReply && commentId) {
-          return {
-            ...prevData,
-            comments: prevData.comments.map(comment => {
-              if (comment._id === commentId) {
-                return {
-                  ...comment,
-                  replies: [...(comment.replies || []), newComment]
-                };
-              }
-              return comment;
-            })
-          };
-        } else {
-          return {
-            ...prevData,
-            comments: [...prevData.comments, newComment]
-          };
-        }
-      });
-  
-      const res = await fetch(`/api/posts/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: isReply ? replyInput : commentInput,
-          action: isReply ? "reply" : "comment",
-          profile: imageUrl,
-          emailcomment: session?.user?.email || "Anonymous",
-          timestamp: currentTime,
-          commentId: isReply ? commentId : null,
-        }),
-      });
-  
-      if (!res.ok) {
-        throw new Error('Failed to save comment');
-      }
-  
-      // เคลียร์ input
-      if (isReply) {
-        setReplyInput("");
-        setReplyingTo(null);
-      } else {
-        setCommentInput("");
-      }
+const handleAddCommentOrReply = async (isReply: boolean, commentId: string | null = null) => {
+  if (!session || !postData) {
+    Swal.fire('Error', 'Please log in to comment.', 'error');
+    return;
+  }
 
-      const newData = await getPostById(id);
-      
-      // แปลง timestamp ในข้อมูลที่ได้รับกลับมา
-      if (newData) {
-        const formattedData = {
-          ...newData,
-          comments: newData.comments.map(comment => ({
-            ...comment,
-            timestamp: new Date(comment.timestamp),
-            replies: comment.replies?.map(reply => ({
-              ...reply,
-              timestamp: new Date(reply.timestamp)
-            }))
-          }))
+  try {
+    const imageUrl = profileUserN?.imageUrl?.[0];
+    const currentTime = new Date().toISOString(); // สร้าง timestamp ในรูปแบบ ISO string
+
+    const newComment = {
+      _id: `temp-${Date.now()}`,
+      text: isReply ? replyInput : commentInput,
+      userName: session.user?.name || "Anonymous",
+      profileImageSource: imageUrl ? `/api/posts/images/${imageUrl}` : undefined,
+      timestamp: currentTime, // ใช้ timestamp ที่เพิ่งสร้าง
+      replies: []
+    };
+
+    // อัพเดท UI ก่อน
+    setPostData(prevData => {
+      if (!prevData) return prevData;
+
+      if (isReply && commentId) {
+        return {
+          ...prevData,
+          comments: prevData.comments.map(comment => {
+            if (comment._id === commentId) {
+              return {
+                ...comment,
+                replies: [...(comment.replies || []), newComment]
+              };
+            }
+            return comment;
+          })
         };
-        setPostData(formattedData);
+      } else {
+        return {
+          ...prevData,
+          comments: [...prevData.comments, newComment]
+        };
       }
-  
-    } catch (error) {
-      console.error('Error adding comment:', error);
-      Swal.fire('Error', 'Failed to save comment. Please try again.', 'error');
+    });
+
+    // ส่งข้อมูลไปยัง API
+    const res = await fetch(`/api/posts/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: isReply ? replyInput : commentInput,
+        action: isReply ? "reply" : "comment",
+        profile: imageUrl,
+        emailcomment: session?.user?.email || "Anonymous",
+        timestamp: currentTime,
+        commentId: isReply ? commentId : null,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to save comment');
     }
-  };
- 
+
+    // เคลียร์ input
+    if (isReply) {
+      setReplyInput("");
+      setReplyingTo(null);
+    } else {
+      setCommentInput("");
+    }
+
+    // ดึงข้อมูลใหม่จาก API
+    await getPostById(id);
+
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    Swal.fire('Error', 'Failed to save comment. Please try again.', 'error');
+  }
+};
   
   const getProfileImagePath = (imageUrl: string | null | undefined): string => {
     if (!imageUrl) return "/default-profile-icon.png";
@@ -396,18 +381,17 @@ const formatDate = (timestamp: any): string => {
   
       const data = await res.json();
       
+      // แก้ไขการจัดการ timestamp โดยใช้ค่าจากฐานข้อมูลโดยตรง
       const formattedPost = {
         ...data.post,
         comments: data.post.comments.map(comment => ({
           ...comment,
-          timestamp: typeof comment.timestamp === 'number' 
-            ? comment.timestamp 
-            : Date.now(),
+          // ใช้ timestamp จากฐานข้อมูล
+          timestamp: comment.timestamp,
           replies: comment.replies?.map(reply => ({
             ...reply,
-            timestamp: typeof reply.timestamp === 'number'
-              ? reply.timestamp
-              : Date.now()
+            // ใช้ timestamp จากฐานข้อมูลสำหรับ reply
+            timestamp: reply.timestamp
           })) || []
         }))
       };
@@ -886,7 +870,7 @@ const formatDate = (timestamp: any): string => {
                         <div className="flex flex-col">
                           <div className="flex flex-row">
                             <p className="text-sm text-gray-500 ml-10">
-                            {formatDate(comment.timestamp)}
+                            {comment.timestamp}
                             </p>
                             <button
                               onClick={() => setReplyingTo(comment._id)}
@@ -950,7 +934,7 @@ const formatDate = (timestamp: any): string => {
                               </strong>
                             </p>
                             <p className="text-sm text-gray-500 ml-10">
-                            {formatDate(reply.timestamp)}
+                            {reply.timestamp}
                             </p>
                             <p className="text-lg ml-10">{reply.text}</p>
                           </div>
