@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
-import { useEffect, useState } from "react";
+import React, { useCallback,useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { AiOutlineNotification } from "react-icons/ai";
 import { IoShareOutline } from "react-icons/io5";
@@ -32,10 +31,13 @@ import { RiTwitterXLine } from "react-icons/ri";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import e from "express";
 
-interface BlogProps {
-  params: { id: string };
-  initialComments: string[];
+interface BlogProps {  
+  params: { 
+    id: string;
+  };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
+
 interface Reply {
   _id: string;
   text: string;
@@ -76,10 +78,11 @@ interface ProfileUser {
   imageUrl: string[];
 }
 
-function Blog({ params, initialComments }: BlogProps) {
+function Blog({ params }: BlogProps) {
   const [review, setReview] = useState("");
   const [report, setreport] = useState("");
   const [selectedReason, setSelectedReason] = useState<string>("");
+  const [input1, setInput1] = useState("");
   const maxLength = 200;
   const { id } = params;
   const { data: session, status } = useSession();
@@ -105,22 +108,42 @@ function Blog({ params, initialComments }: BlogProps) {
   const [blogid, setBlogid] = useState<string | null>(null);
   const [profileUser, setProfileUser] = useState<string[]>([]);
   const [profileUserN, setProfileUserN] = useState<ProfileUser | null>(null);
-
-  if (!postData) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-  const handleShareClick = () => {
-    setIsSharePopupOpen(!isSharePopupOpen);
-  };
-
-  const handleMoreClick = () => {
-    setIsPopupOpenMore(!isPopupOpenMore);
-  };
-
+  const getPostById = useCallback(async (postId: string) => {
+    try {
+      const res = await fetch(`/api/posts/${postId}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+  
+      if (!res.ok) {
+        throw new Error("Failed to fetch post");
+      }
+  
+      const data = await res.json();
+  
+      // แก้ไขการจัดการ timestamp โดยใช้ค่าจากฐานข้อมูลโดยตรง
+      const formattedPost = {
+        ...data.post,
+        comments: data.post.comments.map((comment: Comment) => ({
+          ...comment,
+          // ใช้ timestamp จากฐานข้อมูล
+          timestamp: comment.timestamp,
+          replies:
+            comment.replies?.map((reply: Reply) => ({
+              ...reply,
+              // ใช้ timestamp จากฐานข้อมูลสำหรับ reply
+              timestamp: reply.timestamp,
+            })) || [],
+        })),
+      };
+  
+      setPostData(formattedPost);
+      return formattedPost;
+    } catch (error) {
+      console.error("Error fetching post:", error);
+      return null;
+    }
+  }, []);
   const getPostByIdprofile = useCallback(async () => {
     if (!session?.user?.id) {
       console.error("User ID not available.");
@@ -150,10 +173,48 @@ function Blog({ params, initialComments }: BlogProps) {
   useEffect(() => {
     if (session?.user?.id) {
       getPostByIdprofile();
-    } else {
-      console.error("User ID not found in session.");
     }
   }, [session?.user?.id, getPostByIdprofile]);
+
+  useEffect(() => {
+    if (id) {
+      getPostById(id);
+    }
+  }, [id, getPostById]);
+
+  useEffect(() => {
+    getPostById(id);
+  }, [id, getPostById]);
+
+  if (status === "loading") {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
+  }
+
+  if (!postData) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+  const handleShareClick = () => {
+    setIsSharePopupOpen(!isSharePopupOpen);
+  };
+
+  const handleMoreClick = () => {
+    setIsPopupOpenMore(!isPopupOpenMore);
+  };
 
   const handleDelete = async () => {
     const result = await Swal.fire({
@@ -324,16 +385,8 @@ function Blog({ params, initialComments }: BlogProps) {
 
     return imageUrl;
   };
+  
 
-  useEffect(() => {
-    console.log("Updated Profile URL:", profileUser);
-  }, [profileUser]);
-
-  ////////////////////////////////
-
-  ////////////////////////////////
-
-  const [input1, setInput1] = useState("");
   const handleReviewChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
@@ -354,72 +407,7 @@ function Blog({ params, initialComments }: BlogProps) {
   const handleReasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedReason(event.target.value);
   };
-  const getPostById = useCallback(async (postId: string) => {
-    try {
-      const res = await fetch(`/api/posts/${postId}`, {
-        method: "GET",
-        cache: "no-store",
-      });
-  
-      if (!res.ok) {
-        throw new Error("Failed to fetch post");
-      }
-  
-      const data = await res.json();
-  
-      // แก้ไขการจัดการ timestamp โดยใช้ค่าจากฐานข้อมูลโดยตรง
-      const formattedPost = {
-        ...data.post,
-        comments: data.post.comments.map((comment: Comment) => ({
-          ...comment,
-          // ใช้ timestamp จากฐานข้อมูล
-          timestamp: comment.timestamp,
-          replies:
-            comment.replies?.map((reply: Reply) => ({
-              ...reply,
-              // ใช้ timestamp จากฐานข้อมูลสำหรับ reply
-              timestamp: reply.timestamp,
-            })) || [],
-        })),
-      };
-  
-      setPostData(formattedPost);
-      return formattedPost;
-    } catch (error) {
-      console.error("Error fetching post:", error);
-      return null;
-    }
-  }, []);
-  useEffect(() => {
-    if (id) {
-      getPostById(id);
-    }
-  }, [id, getPostById]);
-  useEffect(() => {
-    getPostById(id);
-  }, [id, getPostById]);
-  if (status === "loading") {
-    return (
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-        }}
-      >
-        <OrbitProgress
-          variant="track-disc"
-          dense
-          color="#33539B"
-          size="medium"
-          text=""
-          textColor=""
-        />
-      </div>
-    );
-  }
+ 
 
   const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
