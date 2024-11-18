@@ -128,6 +128,12 @@ export default function Page() {
     }
     return "/default-profile-icon.png";
   };
+  const getImageUrl = (imageUrl: string[] | string) => {
+    if (Array.isArray(imageUrl)) {
+      return imageUrl.length > 0 ? `/api/posts/images/${imageUrl[0]}` : '/default-image.png';
+    }
+    return `/api/posts/images/${imageUrl}`;
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -176,7 +182,7 @@ export default function Page() {
                             <Image
                               width={300}
                               height={300}
-                              src={`/api/posts/images/${val.imageUrl}`}
+                              src={getImageUrl(val.imageUrl)}
                               alt={val.topic}
                               className="w-full object-cover rounded-lg h-full"
                               style={{ height: "220px" }}
