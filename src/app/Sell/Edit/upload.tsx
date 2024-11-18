@@ -19,6 +19,8 @@ const Upload: React.FC<UploadProps> = ({
   const [progress, setProgress] = useState<number[]>([]);
   const maxFilesize = 50; // Maximum total file size in MB
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Add the missing intervals ref
+  const intervalsRef = useRef<number[]>([]);
   const { t } = useTranslation("translation");
 
   const handleRemoveNewFile = (index: number) => {
@@ -26,6 +28,7 @@ const Upload: React.FC<UploadProps> = ({
     setNewFiles(updatedNewFiles);
     onFilesChange(updatedNewFiles);
   };
+
   const handleExistingFileRemove = (fileName: string) => {
     if (typeof onExistingFileRemove === "function") {
       onExistingFileRemove(fileName);
@@ -45,7 +48,7 @@ const Upload: React.FC<UploadProps> = ({
 
       // Create new intervals for each file
       const newIntervals = newFiles.map((_, index) => {
-        return setInterval(() => {
+        return window.setInterval(() => {
           setProgress(prevProgress => {
             const newProgress = [...prevProgress];
             if (newProgress[index] < 100) {
