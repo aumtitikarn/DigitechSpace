@@ -14,13 +14,15 @@ import Image from "next/image";
 import Swal from "sweetalert2";
 
 function Page() {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const { t } = useTranslation("translation");
+  const router = useRouter();
 
   const [postData, setPostData] = useState([]);
   const [postDataS, setPostDataS] = useState([]);
+  const [publishedProjects, setPublishedProjects] = useState([]);
+  const [postDataBlog, setPostDataBlog] = useState([]);
 
-  const router = useRouter();
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newLine, setNewLine] = useState("");
@@ -28,6 +30,7 @@ function Page() {
   const [newPhonenumber, setNewPhonenumber] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
@@ -71,13 +74,15 @@ function Page() {
     }
   }, [status, session, router]);
 
-  // Update form data when session or post data changes
   useEffect(() => {
     if (session?.user && (postData || postDataS)) {
       setNewName(postDataS?.name || postData?.name || session.user.name || "");
       setNewEmail(session.user.email || "");
-      setNewFacebook(session.user.facebook || "");
-      setNewLine(session.user.line || "");
+      // Update these fields with existing data
+      setNewPhonenumber(postDataS?.phonenumber || postData?.phonenumber || "");
+      setNewFacebook(postDataS?.facebook || postData?.facebook || "");
+      setNewLine(postDataS?.line || postData?.line || "");
+      
       if (session.user.imageUrl) {
         setProfileImage(session.user.imageUrl);
       }
@@ -93,7 +98,7 @@ function Page() {
       return `/api/editprofile/images/${postDataS.imageUrl}`;
     }
     if (session?.user?.image) {
-      return proxyUrl(session.user.image);
+      return session.user.image;
     }
     return null;
   };
@@ -106,7 +111,17 @@ function Page() {
     }
   };
 
-  const handleSave = async (redirectPath) => {
+  const handleSave = async () => {
+    if (!session?.user?.id) {
+      await Swal.fire({
+        title: t("nav.profile.error"),
+        text: t("nav.profile.errordes"),
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     const formData = new FormData();
     formData.append("name", newName);
     formData.append("email", newEmail);
@@ -119,7 +134,7 @@ function Page() {
     }
 
     try {
-      const response = await fetch(`/api/editprofile/${session?.user?.id}`, {
+      const response = await fetch(`/api/editprofile/${session.user.id}`, {
         method: "PUT",
         body: formData,
       });
@@ -130,20 +145,16 @@ function Page() {
           icon: "success",
           confirmButtonText: "OK",
         });
-        router.push(redirectPath);
+        // Always redirect to the profile page after successful save
+        router.push("/Profile");
       } else {
-        Swal.fire({
-          title: t("nav.profile.error"),
-          text: t("nav.profile.errordes"),
-          icon: "error",
-          confirmButtonText: "OK",
-        });
+        throw new Error('Failed to update profile');
       }
     } catch (error) {
       console.error("Error during save:", error);
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง",
+      await Swal.fire({
+        title: t("nav.profile.error"),
+        text: t("nav.profile.errordes"),
         icon: "error",
         confirmButtonText: "OK",
       });
@@ -157,53 +168,8 @@ function Page() {
       </div>
     );
   }
+
   const imageSource = getImageSource();
-
-  const handleSaveT = async () => {
-    const formData = new FormData();
-    formData.append("name", newName);
-    formData.append("email", newEmail);
-    formData.append("line", newLine);
-    formData.append("facebook", newFacebook);
-    formData.append("phonenumber", newPhonenumber);
-
-    if (imageFile) {
-      formData.append("imageUrl", imageFile);
-    }
-
-    try {
-      const response = await fetch(`/api/editprofile/${session?.user?.id}`, {
-        method: "PUT",
-        body: formData, 
-      });
-
-      if (response.ok) {
-        await Swal.fire({
-          title: t("nav.profile.success"),
-          icon: "success",
-          confirmButtonText: "OK",
-        });
-        router.push("/");
-      } else {
-
-        Swal.fire({
-          title: t("nav.profile.error"),
-          text: t("nav.profile.errordes"),
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      }
-    } catch (error) {
-      console.error("Error during save:", error);
-
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
-    }
-  };
 
 
   return (
