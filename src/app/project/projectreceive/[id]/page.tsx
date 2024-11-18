@@ -425,7 +425,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
       "_blank"
     );
   };
-  const handleRedirect = (e) => {
+  const handleRedirect = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!session) {
       e.preventDefault(); // Prevent the link from navigating
       router.push("/auth/signin"); // Redirect to signin if no session

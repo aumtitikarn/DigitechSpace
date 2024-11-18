@@ -57,7 +57,7 @@ const Project: React.FC = () => {
     );
   }
 
-  console.log("idUser", session.user.id);
+  // console.log("idUser", session.user.id);
 
   const handleAdd = () => {
     setInputs([...inputs, { id: Date.now(), value: "" }]);
@@ -94,13 +94,9 @@ const Project: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (
-      !session ||
-      !session.user ||
-      !session.user.name ||
-      !session.user.email
-    ) {
+  
+    // ตรวจสอบการ authenticate และข้อมูลที่จำเป็น
+    if (!session?.user?.email || !session?.user?.id) {
       Swal.fire({
         position: "center",
         icon: "error",
@@ -110,39 +106,43 @@ const Project: React.FC = () => {
       });
       return;
     }
+  
+    // กำหนดค่าเริ่มต้น
     const rathingValue: number = parseFloat("0.0");
     const soldValue: number = 0;
     const reviewValue: number = 0;
+  
     const formData = new FormData();
-    formData.append("projectname", projectname);
-    formData.append("description", description);
-    formData.append(
-      "receive",
-      JSON.stringify(inputs.map((input) => input.value))
-    );
-    formData.append("category", category);
-    formData.append("price", price);
-    formData.append("email", session.user.email);
-    formData.append("iduser", session.user.id);
+  
+    // เพิ่มข้อมูลลงใน FormData พร้อมกับแปลงค่าให้เป็น string ทั้งหมด
+    formData.append("projectname", projectname || '');
+    formData.append("description", description || '');
+    formData.append("receive", JSON.stringify(inputs.map((input) => input.value)));
+    formData.append("category", category || '');
+    formData.append("price", price || '');
+    formData.append("email", session.user.email); // ตอนนี้เรารู้แน่นอนว่ามีค่า
+    formData.append("iduser", session.user.id);   // ตอนนี้เรารู้แน่นอนว่ามีค่า
     formData.append("rathing", rathingValue.toFixed(1));
     formData.append("sold", soldValue.toString());
     formData.append("review", reviewValue.toString());
     formData.append("permission", "false");
     formData.append("status", "pending");
+  
+    // เพิ่มไฟล์รูปภาพ
     img.forEach((img) => formData.append("imageUrl", img));
     files.forEach((file) => formData.append("filesUrl", file));
-
+  
     try {
       const res = await fetch("/api/project", {
         method: "POST",
         body: formData,
       });
-
+  
       if (res.ok) {
         const data = await res.json();
         setShowSuccessAlert(true);
         setTimeout(() => setShowSuccessAlert(false), 3000);
-
+  
         Swal.fire({
           position: "center",
           icon: "success",
@@ -150,6 +150,8 @@ const Project: React.FC = () => {
           showConfirmButton: false,
           timer: 3000,
         });
+  
+        // ส่งการแจ้งเตือน
         await fetch("/api/notification", {
           method: "POST",
           headers: {
@@ -160,7 +162,8 @@ const Project: React.FC = () => {
             email: session.user.email,
           }),
         });
-        // Redirect to the project detail page using the ID from the response
+  
+        // Redirect หลังจากส่งข้อมูลสำเร็จ
         setTimeout(() => {
           router.push(`/project/projectdetail/${data._id}`);
         }, 3000);
@@ -180,8 +183,7 @@ const Project: React.FC = () => {
         position: "center",
         icon: "error",
         title: "Error submitting project",
-        text:
-          error instanceof Error ? error.message : "An unknown error occurred",
+        text: error instanceof Error ? error.message : "An unknown error occurred",
         showConfirmButton: false,
         timer: 3000,
       });
