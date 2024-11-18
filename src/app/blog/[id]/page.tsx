@@ -29,6 +29,7 @@ import { profile } from "console";
 import { FaLink } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa";
 import { RiTwitterXLine } from "react-icons/ri";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import e from "express";
 
 interface BlogProps {
@@ -121,18 +122,18 @@ function Blog({ params, initialComments }: BlogProps) {
     userprofile: string[];
     author: string;
     email: string;
-    comments: any[]; 
-    likedByUsers: any[]; 
+    comments: any[];
+    likedByUsers: any[];
     selectedCategory: string;
     timestamp: string | Date;
   }
 
   const handleShareClick = () => {
-    setIsSharePopupOpen(!isSharePopupOpen); 
+    setIsSharePopupOpen(!isSharePopupOpen);
   };
 
   const handleMoreClick = () => {
-    setIsPopupOpenMore(!isPopupOpenMore); 
+    setIsPopupOpenMore(!isPopupOpenMore);
   };
 
   const getPostByIdprofile = useCallback(async () => {
@@ -179,7 +180,7 @@ function Blog({ params, initialComments }: BlogProps) {
       confirmButtonText: 'ใช่, ลบเลย!',
       cancelButtonText: 'ยกเลิก'
     });
-  
+
     if (result.isConfirmed) {
       try {
         const res = await fetch(`/api/posts/${postData._id}`, {
@@ -204,125 +205,125 @@ function Blog({ params, initialComments }: BlogProps) {
   };
 
 
-const formatDate = (timestamp: any): string => {
-  try {
-    if (!timestamp) {
-      return 'ไม่ระบุเวลา';
-    }
-
-    let date: Date;
-
-    // แปลง timestamp เป็น Date object
-    if (typeof timestamp === 'string') {
-      date = new Date(timestamp);
-    } else if (typeof timestamp === 'number') {
-      date = new Date(timestamp);
-    } else if (timestamp instanceof Date) {
-      date = timestamp;
-    } else {
-      date = new Date();
-    }
-
-
-    if (isNaN(date.getTime())) {
-      console.error('Invalid timestamp value:', timestamp);
-      return 'ไม่ระบุเวลา';
-    }
-
-
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString().slice(-2);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
-
-  } catch (error) {
-    console.error('Error in formatDate:', error);
-    return 'ไม่ระบุเวลา';
-  }
-};
-  
-const handleAddCommentOrReply = async (isReply: boolean, commentId: string | null = null) => {
-  if (!session || !postData) {
-    Swal.fire('Error', 'Please log in to comment.', 'error');
-    return;
-  }
-
-  try {
-    const imageUrl = profileUserN?.imageUrl?.[0];
-    const currentTime = new Date().toISOString(); // สร้าง timestamp ในรูปแบบ ISO string
-
-    const newComment = {
-      _id: `temp-${Date.now()}`,
-      text: isReply ? replyInput : commentInput,
-      userName: session.user?.name || "Anonymous",
-      profileImageSource: imageUrl ? `/api/posts/images/${imageUrl}` : undefined,
-      timestamp: currentTime, // ใช้ timestamp ที่เพิ่งสร้าง
-      replies: []
-    };
-
-    // อัพเดท UI ก่อน
-    setPostData(prevData => {
-      if (!prevData) return prevData;
-
-      if (isReply && commentId) {
-        return {
-          ...prevData,
-          comments: prevData.comments.map(comment => {
-            if (comment._id === commentId) {
-              return {
-                ...comment,
-                replies: [...(comment.replies || []), newComment]
-              };
-            }
-            return comment;
-          })
-        };
-      } else {
-        return {
-          ...prevData,
-          comments: [...prevData.comments, newComment]
-        };
+  const formatDate = (timestamp: any): string => {
+    try {
+      if (!timestamp) {
+        return 'ไม่ระบุเวลา';
       }
-    });
 
-    // ส่งข้อมูลไปยัง API
-    const res = await fetch(`/api/posts/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      let date: Date;
+
+      // แปลง timestamp เป็น Date object
+      if (typeof timestamp === 'string') {
+        date = new Date(timestamp);
+      } else if (typeof timestamp === 'number') {
+        date = new Date(timestamp);
+      } else if (timestamp instanceof Date) {
+        date = timestamp;
+      } else {
+        date = new Date();
+      }
+
+
+      if (isNaN(date.getTime())) {
+        console.error('Invalid timestamp value:', timestamp);
+        return 'ไม่ระบุเวลา';
+      }
+
+
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear().toString().slice(-2);
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+
+    } catch (error) {
+      console.error('Error in formatDate:', error);
+      return 'ไม่ระบุเวลา';
+    }
+  };
+
+  const handleAddCommentOrReply = async (isReply: boolean, commentId: string | null = null) => {
+    if (!session || !postData) {
+      Swal.fire('Error', 'Please log in to comment.', 'error');
+      return;
+    }
+
+    try {
+      const imageUrl = profileUserN?.imageUrl?.[0];
+      const currentTime = new Date().toISOString(); // สร้าง timestamp ในรูปแบบ ISO string
+
+      const newComment = {
+        _id: `temp-${Date.now()}`,
         text: isReply ? replyInput : commentInput,
-        action: isReply ? "reply" : "comment",
-        profile: imageUrl,
-        emailcomment: session?.user?.email || "Anonymous",
-        timestamp: currentTime,
-        commentId: isReply ? commentId : null,
-      }),
-    });
+        userName: session.user?.name || "Anonymous",
+        profileImageSource: imageUrl ? `/api/posts/images/${imageUrl}` : undefined,
+        timestamp: currentTime, // ใช้ timestamp ที่เพิ่งสร้าง
+        replies: []
+      };
 
-    if (!res.ok) {
-      throw new Error('Failed to save comment');
+      // อัพเดท UI ก่อน
+      setPostData(prevData => {
+        if (!prevData) return prevData;
+
+        if (isReply && commentId) {
+          return {
+            ...prevData,
+            comments: prevData.comments.map(comment => {
+              if (comment._id === commentId) {
+                return {
+                  ...comment,
+                  replies: [...(comment.replies || []), newComment]
+                };
+              }
+              return comment;
+            })
+          };
+        } else {
+          return {
+            ...prevData,
+            comments: [...prevData.comments, newComment]
+          };
+        }
+      });
+
+      // ส่งข้อมูลไปยัง API
+      const res = await fetch(`/api/posts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: isReply ? replyInput : commentInput,
+          action: isReply ? "reply" : "comment",
+          profile: imageUrl,
+          emailcomment: session?.user?.email || "Anonymous",
+          timestamp: currentTime,
+          commentId: isReply ? commentId : null,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to save comment');
+      }
+
+      // เคลียร์ input
+      if (isReply) {
+        setReplyInput("");
+        setReplyingTo(null);
+      } else {
+        setCommentInput("");
+      }
+
+      // ดึงข้อมูลใหม่จาก API
+      await getPostById(id);
+
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      Swal.fire('Error', 'Failed to save comment. Please try again.', 'error');
     }
+  };
 
-    // เคลียร์ input
-    if (isReply) {
-      setReplyInput("");
-      setReplyingTo(null);
-    } else {
-      setCommentInput("");
-    }
-
-    // ดึงข้อมูลใหม่จาก API
-    await getPostById(id);
-
-  } catch (error) {
-    console.error('Error adding comment:', error);
-    Swal.fire('Error', 'Failed to save comment. Please try again.', 'error');
-  }
-};
-  
   const getProfileImagePath = (imageUrl: string | null | undefined): string => {
     if (!imageUrl) return "/default-profile-icon.png";
 
@@ -374,13 +375,13 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
         method: "GET",
         cache: "no-store",
       });
-  
+
       if (!res.ok) {
         throw new Error("Failed to fetch post");
       }
-  
+
       const data = await res.json();
-      
+
       // แก้ไขการจัดการ timestamp โดยใช้ค่าจากฐานข้อมูลโดยตรง
       const formattedPost = {
         ...data.post,
@@ -395,7 +396,7 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
           })) || []
         }))
       };
-  
+
       setPostData(formattedPost);
       return formattedPost;
     } catch (error) {
@@ -433,9 +434,9 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
       </div>
     );
   }
-  
+
   const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     setBlogname(postData.topic);
     setBlogEmail(postData.email);
@@ -615,7 +616,7 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
 
   const getImageSource = (post: PostData): string => {
     // Helper function for proxy URL
-    const getProxyUrl = (url: string): string => 
+    const getProxyUrl = (url: string): string =>
       `/api/proxy?url=${encodeURIComponent(url)}`;
 
     // Helper function to check if URL is valid
@@ -672,7 +673,7 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 <button
                   className={`w-3 h-3 rounded-full`}
-                  // onClick={() => handleIndicatorClick()}
+                // onClick={() => handleIndicatorClick()}
                 ></button>
               </div>
               <button
@@ -688,59 +689,72 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
                 <FaChevronRight />
               </button>
             </div>
+            <div className="flex flex-row items-center">
               <Link
-                    href={`/Profile/ViewProfile/${postData.userprofileid || "#"}`}
-                    onClick={handleRedirect}
-                  >
-              <div className="flex flex-row mt-5 mb-5 items-center">
-                {postData?.profileImage && postData.profileImage[0] ? (
-                  <Image
-                    width={30}
-                    height={30}
-                    src={postData.profileImage}
-                    alt="Profile"
-                    onError={(
-                      e: React.SyntheticEvent<HTMLImageElement, Event>
-                    ) => {
-                      const target = e.target as HTMLImageElement;
-                      target.onerror = null;
-                      target.src = "/default-profile-icon.png";
-                    }}
-                    className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500"
-                  />
-                ) : (
-                  <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
-                )}
-                <div className="flex flex-col justify-center">
-                  {postData && postData.authorName ? (
-                    <h1 className="font-bold">{postData.authorName}</h1>
+                href={`/Profile/ViewProfile/${postData.userprofileid || "#"}`}
+                onClick={handleRedirect}
+              >
+                <div className="flex flex-row mt-5 mb-5 items-center text-lg">
+                  {postData?.profileImage && postData.profileImage[0] ? (
+                    <Image
+                      width={46}
+                      height={46}
+                      src={postData.profileImage}
+                      alt="Profile"
+                      onError={(
+                        e: React.SyntheticEvent<HTMLImageElement, Event>
+                      ) => {
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null;
+                        target.src = "/default-profile-icon.png";
+                      }}
+                      className="w-10 h-10 rounded-full mr-2 mt-1 text-gray-500"
+                    />
                   ) : (
-                    <h1 className="font-bold">Anonymous</h1> // กรณีที่ไม่มีข้อมูลผู้เขียน
+                    <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
                   )}
-                </div>
-              </div>
-            </Link>
-            <div className="relative flex justify-end ml-10">
-                <BsThreeDots 
-                  onClick={handleMoreClick}
-                />
-                {isPopupOpenMore && (
-                  <div>
-                    <Link
-                        href={`/Editblog/${postData._id}`}
-                        className="w-[172px] h-[66px] flex-shrink-0 rounded-[10px] bg-[#5D76AD] text-white font-semibold flex items-center justify-center hover:bg-[#4A5F8C] transition-colors duration-300"
-                      >
-                        แก้ไขบล็อก
-                      </Link>
-                        <button
-                        onClick={handleDelete}
-                        className="w-[172px] h-[66px] flex-shrink-0 rounded-[10px] bg-[#5D76AD] text-white font-semibold flex items-center justify-center hover:bg-[#4A5F8C] transition-colors duration-300"
-                      >
-                        ลบบล็อก
-                      </button>
+                  <div className="flex flex-col justify-center w-[400px]">
+                    {postData && postData.authorName ? (
+                      <h1 className="font-bold">{postData.authorName}</h1>
+                    ) : (
+                      <h1 className="font-bold">Anonymous</h1> // กรณีที่ไม่มีข้อมูลผู้เขียน
+                    )}
                   </div>
-                  )}
                 </div>
+              </Link>
+              
+              <div className="ml-[500px] relative flex justify-end">
+                {/* Dropdown Toggle */}
+                <button
+                  className="p-2 rounded-full hover:bg-gray-200 transition"
+                  onClick={handleMoreClick}
+                >
+                  <BsThreeDots size={20} />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isPopupOpenMore && (
+                  <div className="absolute top-10 right-0 bg-white shadow-lg rounded-md z-10">
+                    <Link
+                      href={`/Editblog/${postData._id}`}
+                      className="w-36 flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                    >
+                      <FaEdit className="mr-2 text-blue-600" />
+                      แก้ไขบล็อก
+                    </Link>
+                    <button
+                      onClick={handleDelete}
+                      className="w-36 flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100 transition"
+                    >
+                      <FaTrash className="mr-2" />
+                      ลบบล็อก
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+
+            </div>
             <div className="flex flex-wrap my-2">
               <Link
                 href=""
@@ -767,15 +781,15 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
               </Link>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-5 mb-3">
               {postData && postData.topic ? (
-                <h1>{postData.topic}</h1>
+                <h1 className="text-2xl"><strong>{postData.topic}</strong></h1>
               ) : (
                 <h1>No Topic Available</h1>
               )}
             </div>
 
-            <div className="mt-2 mb-3">
+            <div className="mb-5">
               {postData && postData.description ? (
                 <p>{postData.description}</p>
               ) : (
@@ -783,16 +797,15 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
               )}
             </div>
 
-            <div className="flex justify-between items-center border-b-2 border-t-2 border-gray-200 py-3">
+            <div className="flex justify-between items-center border-b-2 border-t-2 border-gray-200 py-3 mt-4 mb-3">
               <div className="flex space-x-4">
                 <div className="flex items-center">
                   <CiHeart
-                    className={`text-3xl cursor-pointer ${
-                      Array.isArray(postData?.likedByUsers) &&
-                      postData.likedByUsers.includes(UserId)
+                    className={`text-3xl cursor-pointer ${Array.isArray(postData?.likedByUsers) &&
+                        postData.likedByUsers.includes(UserId)
                         ? "text-red-500"
                         : "text-gray-500"
-                    }`}
+                      }`}
                     onClick={handleSubmitCiHeart}
                   />
                   {postData && postData.heart !== undefined ? (
@@ -870,7 +883,7 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
                         <div className="flex flex-col">
                           <div className="flex flex-row">
                             <p className="text-sm text-gray-500 ml-10">
-                            {comment.timestamp}
+                              {comment.timestamp}
                             </p>
                             <button
                               onClick={() => setReplyingTo(comment._id)}
@@ -934,7 +947,7 @@ const handleAddCommentOrReply = async (isReply: boolean, commentId: string | nul
                               </strong>
                             </p>
                             <p className="text-sm text-gray-500 ml-10">
-                            {reply.timestamp}
+                              {reply.timestamp}
                             </p>
                             <p className="text-lg ml-10">{reply.text}</p>
                           </div>
