@@ -127,74 +127,242 @@ export async function GET(req, { params }) {
   return NextResponse.json({ post }, { status: 200 });
 }
 
+// export async function PUT(req, { params }) {
+//   try {
+//     const { id } = params;
+//     const body = await req.json();
+//     const { text, action, commentId, setheart: heart, userId, actionheart, emailcomment, profile, newTopic:topic, newCourse:course, newDescription:description, newSelectedCategory:selectedCategory} = body;
+//     // const { newTopic:topic, newCourse:course, newDescription:description, newSelectedCategory:selectedCategory} = await req.json();
+
+//     await connectMongoDB();
+//     const post = await Post.findById({ _id: id });
+
+//     if (!post) {
+//       return NextResponse.json({ message: 'Post not found' }, { status: 404 });
+//     }
+
+//     const updated = await Post.findByIdAndUpdate(id,{topic, course, description, selectedCategory});
+
+//     const timestamp = new Date().toLocaleString();
+
+//     console.log('Request body:', body);
+//     console.log('Heart value:', heart);
+//     console.log('userId body:', userId);
+//     console.log('actionheart body:', actionheart);
+
+//     if (heart !== undefined) {
+//       post.heart = heart;
+//     }
+
+//     if (actionheart === 'like') {
+//       if (!post.likedByUsers) {
+//         post.likedByUsers = [];
+//       }
+//       if (!post.likedByUsers.includes(userId)) {
+//         post.likedByUsers.push(userId);
+//       }
+//     } else if (actionheart === 'unlike') {
+//       if (post.likedByUsers) {
+//         post.likedByUsers = post.likedByUsers.filter((user) => user !== userId);
+//       }
+//     }
+
+//     try {
+//       await post.save();
+//       console.log('Post updated:', post);
+//     } catch (error) {
+//       console.error('Error saving post:', error);
+//     }
+
+//     if (action === 'comment') {
+//       post.comments.push({
+//         text,
+//         emailcomment,
+//         profile: typeof profile === 'string' ? profile : '',
+//         timestamp,
+//         replies: [],
+//       });
+//     } else if (action === 'reply' && commentId) {
+//       const comment = post.comments.id(commentId);
+//       if (comment) {
+//         comment.replies.push({
+//           text,
+//           emailcomment,
+//           profile: typeof profile === 'string' ? profile : '',
+//           timestamp,
+//         });
+//       }
+//     }
+
+//     await post.save();
+//     return NextResponse.json({ post,updated }, { status: 200 });
+//   } catch (error) {
+//     console.error('Error updating post:', error);
+//     return NextResponse.json({ message: 'Error updating post' }, { status: 500 });
+//   }
+// }
+
 export async function PUT(req, { params }) {
   try {
     const { id } = params;
-    const body = await req.json();
-    const { text, action, commentId, setheart: heart, userId, actionheart, emailcomment, profile } = body;
 
-    await connectMongoDB();
-    const post = await Post.findById({ _id: id });
-
-    if (!post) {
-      return NextResponse.json({ message: 'Post not found' }, { status: 404 });
+    // Parse and validate request body
+    let body;
+    try {
+      body = await req.json();
+    } catch (err) {
+      console.error("Error parsing JSON:", err.message);
+      return NextResponse.json({ message: "Invalid JSON body" }, { status: 400 });
     }
 
-    const timestamp = new Date().toLocaleString();
+    // Destructure and initialize variables
+    let {
+      text,
+      action,
+      commentId,
+      setheart: heart,
+      userId,
+      actionheart,
+      emailcomment,
+      profile,
+      newTopic: topic,
+      newCourse: course,
+      newDescription: description,
+      newSelectedCategory: selectedCategory,
+      img: imageUrl = [], // Ensure this is an array
+    } = body;
 
-    console.log('Request body:', body);
-    console.log('Heart value:', heart);
-    console.log('userId body:', userId);
-    console.log('actionheart body:', actionheart);
+    // Connect to MongoDB
+    await connectMongoDB();
+    const post = await Post.findById(id);
+    if (!post) {
+      return NextResponse.json({ message: "Post not found" }, { status: 404 });
+    }
 
+    // Handle form data if multipart/form-data is received
+    const contentType = req.headers.get("content-type");
+    if (contentType && contentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+
+      // Use a temporary object to handle updates
+      const updates = { topic, course, description, selectedCategory };
+
+      for (const [key, value] of formData.entries()) {
+        switch (key) {
+          case "topic":
+            updates.topic = value.toString();
+            break;
+          case "course":
+            updates.course = value.toString();
+            break;
+          case "description":
+            updates.description = value.toString();
+            break;
+          case "selectedCategory":
+            updates.selectedCategory = value.toString();
+            break;
+          case "imageUrl":
+            if (value instanceof Blob && value.type.startsWith("image/")) {
+              const imageName = `${Date.now()}_${value.name}`;
+              const buffer = Buffer.from(await value.arrayBuffer());
+              const stream = Readable.from(buffer);
+              const uploadStream = imgbucket.openUploadStream(imageName);
+              await new Promise((resolve, reject) => {
+                stream.pipe(uploadStream).on("finish", resolve).on("error", reject);
+              });
+              imageUrl.push(imageName); // Add only the image name as a string
+            }
+            break;
+        }
+      }
+
+      // Update variables with the processed values
+      ({ topic, course, description, selectedCategory } = updates);
+    }
+
+    // Validate imageUrl to ensure it's an array of strings
+    imageUrl = imageUrl.filter((img) => typeof img === "string");
+
+    // Build update data
+    const updateData = {
+      ...(topic && { topic }),
+      ...(course && { course }),
+      ...(description && { description }),
+      ...(selectedCategory && { selectedCategory }),
+      ...(imageUrl.length > 0 && { imageUrl }), // Only add imageUrl if it's valid
+    };
+
+    // Update the main post fields
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true, strict: false }
+    );
+
+    // Update likes and comments
     if (heart !== undefined) {
       post.heart = heart;
     }
 
-    if (actionheart === 'like') {
-      if (!post.likedByUsers) {
-        post.likedByUsers = [];
-      }
+    if (actionheart === "like") {
       if (!post.likedByUsers.includes(userId)) {
         post.likedByUsers.push(userId);
       }
-    } else if (actionheart === 'unlike') {
-      if (post.likedByUsers) {
-        post.likedByUsers = post.likedByUsers.filter((user) => user !== userId);
-      }
+    } else if (actionheart === "unlike") {
+      post.likedByUsers = post.likedByUsers.filter((user) => user !== userId);
     }
 
-    try {
-      await post.save();
-      console.log('Post updated:', post);
-    } catch (error) {
-      console.error('Error saving post:', error);
-    }
-
-    if (action === 'comment') {
+    if (action === "comment") {
       post.comments.push({
         text,
         emailcomment,
-        profile: typeof profile === 'string' ? profile : '',
-        timestamp,
+        profile,
+        timestamp: new Date().toLocaleString(),
         replies: [],
       });
-    } else if (action === 'reply' && commentId) {
+    } else if (action === "reply" && commentId) {
       const comment = post.comments.id(commentId);
       if (comment) {
         comment.replies.push({
           text,
           emailcomment,
-          profile: typeof profile === 'string' ? profile : '',
-          timestamp,
+          profile,
+          timestamp: new Date().toLocaleString(),
         });
       }
     }
 
     await post.save();
-    return NextResponse.json({ post }, { status: 200 });
+
+    return NextResponse.json({ post: updatedPost }, { status: 200 });
   } catch (error) {
-    console.error('Error updating post:', error);
-    return NextResponse.json({ message: 'Error updating post' }, { status: 500 });
+    console.error("Error updating post:", error);
+    return NextResponse.json({ message: "Error updating post" }, { status: 500 });
+  }
+}
+
+
+export async function DELETE(req) {
+  try {
+    await connectMongoDB();
+    const { id } = await req.json(); // Assume the id of the report is sent in the request body
+
+    if (!id) {
+      return NextResponse.json({ msg: "ID is required" }, { status: 400 });
+    }
+
+    const deletedpost = await Post.findByIdAndDelete(id);
+
+    if (!deletedpost) {
+      return NextResponse.json({ msg: "Report not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Report deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error in DELETE handler:", error);
+    return NextResponse.json(
+      { msg: "Error deleting report" },
+      { status: 500 }
+    );
   }
 }

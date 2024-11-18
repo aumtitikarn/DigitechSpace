@@ -12,6 +12,7 @@ import Footer from "../../components/Footer";
 import Container from "../../components/Container";
 import Link from "next/link";
 import { MdAccountCircle } from "react-icons/md";
+import { BsThreeDots } from "react-icons/bs";
 import { FaRegCommentDots } from "react-icons/fa6";
 import { MdOutlineCancel } from "react-icons/md";
 import { set } from "mongoose";
@@ -48,6 +49,7 @@ function Blog({ params, initialComments }: BlogProps) {
   const router = useRouter();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isPopupOpenMore, setIsPopupOpenMore] = useState(false);
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
   const [popupInput, setPopupInput] = useState("");
 
@@ -129,6 +131,10 @@ function Blog({ params, initialComments }: BlogProps) {
     setIsSharePopupOpen(!isSharePopupOpen); 
   };
 
+  const handleMoreClick = () => {
+    setIsPopupOpenMore(!isPopupOpenMore); 
+  };
+
   const getPostByIdprofile = useCallback(async () => {
     if (!session?.user?.id) {
       console.error("User ID not available.");
@@ -163,6 +169,39 @@ function Blog({ params, initialComments }: BlogProps) {
     }
   }, [session?.user?.id, getPostByIdprofile]);
 
+  const handleDelete = async () => {
+    const result = await Swal.fire({
+      title: 'คุณต้องการลบบล็อกนี้ใช่หรือไม่?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ใช่, ลบเลย!',
+      cancelButtonText: 'ยกเลิก'
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`/api/posts/${postData._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        });
+        if (res.ok) {
+          Swal.fire('Deleted!', 'โครงงานและบล็อกถูกลบเรียบร้อยแล้ว', 'success');
+          router.push("/listblog");
+        } else {
+          const data = await res.json();
+          Swal.fire('Error', `${data.message || "ลบไม่สำเร็จ"}`, 'error');
+        }
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        Swal.fire('Error', 'มีข้อผิดพลาดในการลบโครงงาน/บล็อก', 'error');
+      }
+    }
+  };
 
 
 const formatDate = (timestamp: any): string => {
@@ -697,6 +736,27 @@ const formatDate = (timestamp: any): string => {
                 </div>
               </div>
             </Link>
+            <div className="relative flex justify-end ml-10">
+                <BsThreeDots 
+                  onClick={handleMoreClick}
+                />
+                {isPopupOpenMore && (
+                  <div>
+                    <Link
+                        href={`/Editblog/${postData._id}`}
+                        className="w-[172px] h-[66px] flex-shrink-0 rounded-[10px] bg-[#5D76AD] text-white font-semibold flex items-center justify-center hover:bg-[#4A5F8C] transition-colors duration-300"
+                      >
+                        แก้ไขบล็อก
+                      </Link>
+                        <button
+                        onClick={handleDelete}
+                        className="w-[172px] h-[66px] flex-shrink-0 rounded-[10px] bg-[#5D76AD] text-white font-semibold flex items-center justify-center hover:bg-[#4A5F8C] transition-colors duration-300"
+                      >
+                        ลบบล็อก
+                      </button>
+                  </div>
+                  )}
+                </div>
             <div className="flex flex-wrap my-2">
               <Link
                 href=""
