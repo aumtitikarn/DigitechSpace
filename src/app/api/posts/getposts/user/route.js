@@ -4,7 +4,7 @@ import { connectMongoDB } from '../../../../../../lib/mongodb';
 import Post from '../../../../../../models/post';
 import StudentUser from '../../../../../../models/StudentUser';
 import NormalUser from '../../../../../../models/NormalUser';
-import { authOptions } from '../../../auth/[...nextauth]/route';
+import { authOptions } from '../../../auth/auth.config';
 
 const isValidHttpUrl = (string) => {
   let url;

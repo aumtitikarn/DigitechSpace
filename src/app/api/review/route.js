@@ -3,7 +3,7 @@ import Review from '../../../../models/review';
 import Project from '../../../../models/project';
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth";
-import { authOptions } from '../../../app/api/auth/[...nextauth]/route';
+import { authOptions } from '../../../app/api/auth/auth.config';
 import StudentUser from '../../../../models/StudentUser';
 import NormalUser from '../../../../models/NormalUser';
 

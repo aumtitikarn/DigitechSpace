@@ -3,7 +3,7 @@ import { connectMongoDB } from '../../../../../lib/mongodb';
 import Project from '../../../../../models/project';
 import Order from '../../../../../models/order';
 import { getServerSession } from 'next-auth/next';
-import { authOption } from '../../auth/[...nextauth]/route';
+import { authOptions } from '../../auth/auth.config';
 
 export async function GET(req) {
   try {
@@ -11,7 +11,7 @@ export async function GET(req) {
     await connectMongoDB();
 
     // Get the user's session
-    const session = await getServerSession(authOption);
+    const session = await getServerSession(authOptions);
     
 
     if (!session) {

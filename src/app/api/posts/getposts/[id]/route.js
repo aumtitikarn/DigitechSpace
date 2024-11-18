@@ -4,7 +4,7 @@ import { connectMongoDB } from '../../../../../../lib/mongodb';
 import Post from '../../../../../../models/post'; // Model ของ Blog Post
 import NormalUser from "../../../../../../models/NormalUser";
 import StudentUser from "../../../../../../models/StudentUser";
-import { authOptions } from '../../../auth/[...nextauth]/route';
+import { authOptions } from '../../../auth/auth.config';
 
 export async function GET(req,{ params }) {
   const { id } = params;

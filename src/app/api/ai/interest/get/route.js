@@ -3,7 +3,7 @@ import StudentUser from '../../../../../../models/StudentUser';
 import NormalUser from '../../../../../../models/NormalUser';
 import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
-import { authOptions } from '../../../auth/[...nextauth]/route'; // Adjust this import path as necessary
+import { authOptions } from '../../../../api/auth/auth.config'; // Adjust this import path as necessary
 
 export async function GET(req) {
   try {
