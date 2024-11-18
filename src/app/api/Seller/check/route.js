@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { connectMongoDB } from '../../../../../lib/mongodb';
 import StudentUser from '../../../../../models/StudentUser';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from "../../../api/auth/auth.config";
 
 export async function GET(req, res) {
   try {

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectMongoDB } from '../../../../lib/mongodb';
 import Order from '../../../../models/order';
 import { getServerSession } from "next-auth";
-import { authOptions } from '../../../app/api/auth/[...nextauth]/route';
+import { authOptions } from '../../../app/api/auth/auth.config';
 
 const isValidHttpUrl = (string) => {
   let url;

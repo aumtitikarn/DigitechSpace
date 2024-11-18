@@ -159,6 +159,53 @@ function Page() {
   }
   const imageSource = getImageSource();
 
+  const handleSaveT = async () => {
+    const formData = new FormData();
+    formData.append("name", newName);
+    formData.append("email", newEmail);
+    formData.append("line", newLine);
+    formData.append("facebook", newFacebook);
+    formData.append("phonenumber", newPhonenumber);
+
+    if (imageFile) {
+      formData.append("imageUrl", imageFile);
+    }
+
+    try {
+      const response = await fetch(`/api/editprofile/${session?.user?.id}`, {
+        method: "PUT",
+        body: formData, 
+      });
+
+      if (response.ok) {
+        await Swal.fire({
+          title: t("nav.profile.success"),
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+        router.push("/");
+      } else {
+
+        Swal.fire({
+          title: t("nav.profile.error"),
+          text: t("nav.profile.errordes"),
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.error("Error during save:", error);
+
+      Swal.fire({
+        title: "เกิดข้อผิดพลาด!",
+        text: "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
+
   return (
     <Container>
       <Navbar />

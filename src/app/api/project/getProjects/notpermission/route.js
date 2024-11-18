@@ -3,7 +3,7 @@ import Project from '../../../../../../models/project';
 import StudentUser from '../../../../../../models/StudentUser';
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth";
-import { authOptions } from '../../../../../app/api/auth/[...nextauth]/route';
+import { authOptions } from '../../../../../app/api/auth/auth.config';
 
 const isValidHttpUrl = (string) => {
   let url;

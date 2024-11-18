@@ -15,7 +15,19 @@ import { FaPlus } from "react-icons/fa6";
 import { OrbitProgress } from "react-loading-indicators";
 import { useRouter } from "next/navigation";
 
-function page() {
+const getProxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+
+const isValidHttpUrl = (string) => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+};
+
+function Profile() {
   const [activeButton, setActiveButton] = useState("button1");
   const { t, i18n } = useTranslation("translation");
   const [activeButton1] = useState("button1");
@@ -27,13 +39,28 @@ function page() {
   const [publishedProject, setPublishedProjects] = useState([]);
   const { data: session, status } = useSession();
 
-  console.log("Current session:", session?.user?.name);
-
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
   };
 
-  console.log("User ID:", session?.user?.id);
+  // Move getImageSource logic into the component
+  const getImageSource = () => {
+    if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
+      const imageUrl = postData.imageUrl[0];
+      if (isValidHttpUrl(imageUrl)) {
+        return getProxyUrl(imageUrl);
+      } else {
+        return `/api/editprofile/images/${imageUrl}`;
+      }
+    }
+    if (postDataS && postDataS.imageUrl) {
+      return `/api/editprofile/images/${postDataS.imageUrl}`;
+    }
+    if (session?.user?.image) {
+      return getProxyUrl(session.user.image);
+    }
+    return null;
+  };
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -43,34 +70,26 @@ function page() {
     if (status === "authenticated" && session) {
       const fetchData = async () => {
         try {
-          
-          const publishedResponse = await fetch(
-            "/api/project/getProjects/user",
-            {
-              method: "GET",
-            }
-          );
+          const publishedResponse = await fetch("/api/project/getProjects/user", {
+            method: "GET",
+          });
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
-            console.log("Published Data:", publishedData);
             setPublishedProjects(publishedData);
           } else {
             console.error("Failed to fetch published projects");
           }
 
-          
           const blogResponse = await fetch("/api/posts/getposts/user", {
             cache: "no-store",
           });
           if (blogResponse.ok) {
             const blogData = await blogResponse.json();
             setPostDataBlog(blogData);
-            console.log("blogdata : ", blogData);
           } else {
             console.error("Failed to fetch blog posts");
           }
 
-          
           const profileResponse = await fetch(
             `/api/editprofile/${session.user.id}`,
             {
@@ -80,7 +99,6 @@ function page() {
           );
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
-            console.log("Edit post: ", profileData);
             setPostData(profileData.post);
             setPostDataS(profileData.posts);
           } else {
@@ -180,35 +198,6 @@ function page() {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const getImageSource = () => {
-    const useProxy = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
-
-    const isValidHttpUrl = (string) => {
-      let url;
-      try {
-        url = new URL(string);
-      } catch (_) {
-        return false;
-      }
-      return url.protocol === "http:" || url.protocol === "https:";
-    };
-    if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
-      const imageUrl = postData.imageUrl[0];
-      if (isValidHttpUrl(imageUrl)) {
-        return useProxy(imageUrl);
-      } else {
-        return `/api/editprofile/images/${imageUrl}`;
-      }
-    }
-    if (postDataS && postDataS.imageUrl) {
-      return `/api/editprofile/images/${postDataS.imageUrl}`;
-    }
-    if (session?.user?.image) {
-      return useProxy(session.user.image);
-    }
-    return null;
   };
 
   const imageSource = getImageSource();
@@ -335,11 +324,15 @@ function page() {
                       href={`/project/projectdetail/${project._id}`}
                     >
                       <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
-                        <img
-                          src={`/api/project/images/${project.imageUrl[0]}`}
-                          alt="Project Image"
-                          className="w-full h-[150px] rounded-md object-cover mb-4"
-                        />
+                      <div className="relative w-full h-[150px] mb-4">
+                      <Image
+                        src={`/api/project/images/${project.imageUrl[0]}`}
+                        alt="Project Image"
+                        fill
+                        className="rounded-md object-cover"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      />
+                    </div>
                         <div className="flex flex-col justify-between h-full">
                           <p className="text-lg font-semibold mb-2 truncate">
                             {project.projectname}
@@ -454,4 +447,4 @@ function page() {
   );
 }
 
-export default page;
+export default Profile;
