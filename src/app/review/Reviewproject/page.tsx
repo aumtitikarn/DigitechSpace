@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from "react-i18next";
@@ -8,14 +8,18 @@ import { OrbitProgress } from "react-loading-indicators";
 import Swal from "sweetalert2";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center h-screen">
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" />
+  </div>
+);
 // Define proper page props interface
 interface PageProps {
   params?: { id?: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-const ProjectReview: React.FC<PageProps> = () => {
+const ProjectReview = () => {
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>("");
   const { t } = useTranslation("translation");
@@ -160,4 +164,12 @@ const ProjectReview: React.FC<PageProps> = () => {
   );
 };
 
-export default ProjectReview;
+const ProjectReviewPage: React.FC = () => {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <ProjectReview />
+    </Suspense>
+  );
+};
+
+export default ProjectReviewPage;

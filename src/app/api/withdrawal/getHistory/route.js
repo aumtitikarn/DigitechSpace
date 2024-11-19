@@ -4,7 +4,7 @@ import Project from '../../../../../models/project';
 import Order from '../../../../../models/order';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../auth/auth.config';
-
+export const dynamic = 'force-dynamic';
 export async function GET(req) {
   try {
     // Connect to the database

@@ -10,6 +10,7 @@ import Service from '../components/home/Service';
 import Catagory from '../components/home/Catagory';
 import Trend from '../components/home/Trend';
 import Blog from '../components/home/Blog';
+import Skill from '../components/home/Skill';
 import AiGenProduct from '../components/home/AiGenProduct';
 import { redirect } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -70,6 +71,9 @@ export default function Home() {
           </div>
           <div className="mb-10">
             <Trend session={session} />
+          </div>
+          <div className="mb-10">
+            <Skill />
           </div>
           <div className="mb-10">
             <Catagory />

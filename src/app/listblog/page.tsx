@@ -228,7 +228,7 @@ export default function Page() {
                               ) : (
                                 <MdAccountCircle className="w-9 h-9 rounded-full mr-2 mt-1 text-gray-500" />
                               )}
-                              <p className="mt-2 truncate text-gray-500 text-xs font-semibold">
+                              <p className="mt-3 truncate text-gray-500 text-xs font-semibold">
                                 {val.authorName}
                               </p>
                             </div>

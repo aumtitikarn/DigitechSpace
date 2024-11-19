@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { IoIosStar } from "react-icons/io";
@@ -11,7 +11,11 @@ import { useRouter } from "next/navigation";
 import { OrbitProgress } from "react-loading-indicators";
 import Image from "next/image";
 
-// Define types for project data
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center h-screen">
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" />
+  </div>
+);
 interface Project {
   _id: string;
   product: string;
@@ -38,8 +42,7 @@ interface Project {
   };
 }
 
-// Main Review Component
-const Review: React.FC = () => {
+const Review = () => {
   const { data: session, status } = useSession();
   const { t } = useTranslation("translation");
   const [projects, setProjects] = useState<Project[]>([]);
@@ -185,4 +188,12 @@ const Review: React.FC = () => {
   );
 };
 
-export default Review;
+const ReviewPage: React.FC = () => {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <Review />
+    </Suspense>
+  );
+};
+
+export default ReviewPage;

@@ -4,7 +4,7 @@ import { connectMongoDB } from '../../../../../../lib/mongodb';
 import Project from '../../../../../../models/project';
 import StudentUser from '../../../../../../models/StudentUser';
 import { authOptions } from '../../../../../app/api/auth/auth.config';
-
+export const dynamic = 'force-dynamic';
 const isValidHttpUrl = (string) => {
   let url;
   try {

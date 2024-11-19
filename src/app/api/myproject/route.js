@@ -3,7 +3,7 @@ import { connectMongoDB } from '../../../../lib/mongodb';
 import Order from '../../../../models/order';
 import { getServerSession } from "next-auth";
 import { authOptions } from '../../../app/api/auth/auth.config';
-
+export const dynamic = 'force-dynamic';
 const isValidHttpUrl = (string) => {
   let url;
   try {

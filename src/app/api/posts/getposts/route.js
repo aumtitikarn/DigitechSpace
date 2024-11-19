@@ -1,6 +1,6 @@
 import { connectMongoDB } from '../../../../../lib/mongodb';
 import Post from "../../../../../models/post";
-
+export const dynamic = 'force-dynamic';
 export async function GET(req) {
     await connectMongoDB();
 

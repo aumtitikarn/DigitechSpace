@@ -3,7 +3,7 @@ import { connectMongoDB } from '../../../../lib/mongodb';
 import { getServerSession } from "next-auth";
 import Studentuser from '../../../../models/StudentUser';
 import { authOptions } from '../../../app/api/auth/auth.config';
-
+export const dynamic = 'force-dynamic';
 export async function GET(req) {
   try {
     const session = await getServerSession(authOptions);

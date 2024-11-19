@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
@@ -11,7 +11,13 @@ import Footer from "./../../../components/Footer";
 import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
 
-export default function ChangePassword() {
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center h-screen">
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" />
+  </div>
+);
+
+const ChangePassword = () => {
   const { data: session, status } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -194,3 +200,13 @@ export default function ChangePassword() {
     </div>
   );
 }
+
+const ChangePasswordPage: React.FC = () => {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <ChangePassword />
+    </Suspense>
+  );
+};
+
+export default ChangePasswordPage;

@@ -1,6 +1,6 @@
 //Sell/Edit
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Upload from "./upload";
@@ -13,8 +13,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { OrbitProgress } from "react-loading-indicators";
 import Image from "next/image";
-
-const ProjectEdit: React.FC = () => {
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center h-screen">
+    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" />
+  </div>
+);
+const ProjectEdit = () => {
   const { data: session, status } = useSession();
   const [inputs, setInputs] = useState([{ id: Date.now(), value: "" }]);
   const [projectname, setProjectname] = useState("");
@@ -156,8 +160,13 @@ const ProjectEdit: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    if (!session || !session.user || !session.user.name || !session.user.email) {
+
+    if (
+      !session ||
+      !session.user ||
+      !session.user.name ||
+      !session.user.email
+    ) {
       Swal.fire({
         position: "center",
         icon: "error",
@@ -167,7 +176,7 @@ const ProjectEdit: React.FC = () => {
       });
       return;
     }
-  
+
     if (!projectId) {
       Swal.fire({
         position: "center",
@@ -178,47 +187,50 @@ const ProjectEdit: React.FC = () => {
       });
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("projectname", projectname);
     formData.append("description", description);
-    formData.append("receive", JSON.stringify(inputs.map((input) => input.value)));
+    formData.append(
+      "receive",
+      JSON.stringify(inputs.map((input) => input.value))
+    );
     formData.append("category", category);
     formData.append("price", price);
-  
+
     // Append existing images that were not deleted
     existingImages.forEach((img) => formData.append("existingImageUrl", img));
-    
+
     // Append new images
     img.forEach((imgFile) => formData.append("newImageUrl", imgFile));
-    
+
     // Append images to delete
     imagesToDelete.forEach((image) => formData.append("imagesToDelete", image));
-  
+
     // Append new files
     files.forEach((file) => formData.append("newFilesUrl", file));
-  
-    filesToDelete.forEach(file => formData.append("filesToDelete", file));
+
+    filesToDelete.forEach((file) => formData.append("filesToDelete", file));
 
     try {
       const res = await fetch(`/api/project/update/${projectId}`, {
         method: "PUT",
         body: formData,
       });
-  
+
       if (res.ok) {
         const data = await res.json();
         setShowSuccessAlert(true);
         setTimeout(() => setShowSuccessAlert(false), 3000);
-  
+
         Swal.fire({
           position: "center",
           icon: "success",
-          title: "Project updated successfully", 
+          title: "Project updated successfully",
           showConfirmButton: false,
           timer: 3000,
         });
-  
+
         setTimeout(() => {
           router.push(`/project/projectdetail/${projectId}`);
         }, 3000);
@@ -238,7 +250,8 @@ const ProjectEdit: React.FC = () => {
         position: "center",
         icon: "error",
         title: "Error updating project",
-        text: error instanceof Error ? error.message : "An unknown error occurred",
+        text:
+          error instanceof Error ? error.message : "An unknown error occurred",
         showConfirmButton: false,
         timer: 3000,
       });
@@ -428,4 +441,12 @@ const ProjectEdit: React.FC = () => {
   );
 };
 
-export default ProjectEdit;
+const ProjectEditPage: React.FC = () => {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <ProjectEdit />
+    </Suspense>
+  );
+};
+
+export default ProjectEditPage;

@@ -1,16 +1,21 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import { useSession } from "next-auth/react";
 import { MdClose } from "react-icons/md";
-import Bill from "./bill";
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
 import Swal from "sweetalert2";
 import { IoAlertCircleOutline } from "react-icons/io5";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from 'next/dynamic';
+import { format as dateFnsFormat } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+
+const Navbar = dynamic(() => import("../components/Navbar"), { ssr: false });
+const Footer = dynamic(() => import("../components/Footer"), { ssr: false });
+const Bill = dynamic(() => import("./bill"), { ssr: false });
+
 
 interface BillData {
   fullname: string;
@@ -107,6 +112,26 @@ interface Purchase {
   balance: number;
 }
 
+const formatDate = (input: string | Date): string => {
+  try {
+    const date = input instanceof Date ? input : new Date(input);
+    return formatInTimeZone(date, 'Asia/Bangkok', 'dd/MM/yyyy');
+  } catch {
+    return "Invalid Date";
+  }
+};
+
+const createDateTimeForAPI = (): string => {
+  try {
+    const date = new Date();
+    return formatInTimeZone(date, 'Asia/Bangkok', 'dd/MM/yyyy HH:mm:ss');
+  } catch {
+    return formatInTimeZone(new Date(), 'Asia/Bangkok', 'dd/MM/yyyy HH:mm:ss');
+  }
+};
+
+
+
 const Wallet = () => {
   const { data: session, status } = useSession();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -123,67 +148,43 @@ const Wallet = () => {
   const [showBill, setShowBill] = useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = useState<string>('All');
   const [selectedYear, setSelectedYear] = useState<string>('All');
+  const [isBrowser, setIsBrowser] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/signin");
-    }
-  }, [status, router]);
+    setIsBrowser(true);
+  }, []);
 
-  const formatDate = React.useCallback((input: string | Date): string => {
-    try {
-      const date = input instanceof Date ? input : new Date(input);
+  const fetchAmount = React.useCallback(async () => {
+    if (status === "authenticated") {
+      try {
+        const response = await fetch("/api/getAmount");
+        if (response.ok) {
+          const data = await response.json();
+          if (typeof data.amount === "number" && typeof data.withdrawable === "number") {
+            setGrossIncome(data.amount);
+            setServiceFee(data.servicefee);
+            setWithdrawableAmount(data.withdrawable);
 
-      if (isNaN(date.getTime())) {
-        throw new Error("Invalid date");
+            setBillData({
+              fullname: data.fullname,
+              date: formatDate(new Date()),
+              amount: data.amount.toString(),
+              balance: data.withdrawable.toString(),
+              email: session?.user?.email || "",
+            });
+          }
+        }
+      } catch (error) {
+        setError(error instanceof Error ? error.message : "An unknown error occurred");
+      } finally {
+        setIsLoading(false);
       }
-
-      const options: Intl.DateTimeFormatOptions = {
-        timeZone: "Asia/Bangkok",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      };
-
-      const [day, month, year] = new Intl.DateTimeFormat("th-TH", options)
-        .format(date)
-        .split("/");
-
-      const buddhistYear = parseInt(year) - 543;
-      return `${day}/${month}/${buddhistYear}`;
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Invalid Date";
+    } else if (status === "unauthenticated") {
+      setIsLoading(false);
     }
-  }, []);
+  }, [status, session?.user?.email]);
 
-  const createDateTimeForAPI = React.useCallback((): string => {
-    const now = new Date();
-    const options: Intl.DateTimeFormatOptions = {
-      timeZone: "Asia/Bangkok",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    };
-
-    const formatter = new Intl.DateTimeFormat("th-TH", options);
-    const parts = formatter.formatToParts(now);
-
-    const partValues: { [key: string]: string } = {};
-    parts.forEach((part) => {
-      partValues[part.type] = part.value;
-    });
-
-    const formattedDate = `${partValues.day}/${partValues.month}/${parseInt(partValues.year) - 543}`;
-    const formattedTime = `${partValues.hour}:${partValues.minute}:${partValues.second}`;
-
-    return `${formattedDate} ${formattedTime}`;
-  }, []);
 
   const months = [
     { value: 'All', label: t('months.all') },
@@ -233,38 +234,7 @@ const Wallet = () => {
     }
   }, [status]);
 
-  const fetchAmount = React.useCallback(async () => {
-    if (status === "authenticated") {
-      try {
-        const response = await fetch("/api/getAmount");
-        if (response.ok) {
-          const data = await response.json();
-          if (typeof data.amount === "number" && typeof data.withdrawable === "number") {
-            setGrossIncome(data.amount);
-            setServiceFee(data.servicefee);
-            setWithdrawableAmount(data.withdrawable);
 
-            setBillData({
-              fullname: data.fullname,
-              date: formatDate(new Date()),
-              amount: data.amount.toString(),
-              balance: data.withdrawable.toString(),
-              email: session?.user?.email || "",
-            });
-          }
-        } else {
-          throw new Error("Failed to fetch amount");
-        }
-      } catch (error) {
-        console.error("Error fetching amount:", error);
-        setError(error instanceof Error ? error.message : "An unknown error occurred");
-      } finally {
-        setIsLoading(false);
-      }
-    } else if (status === "unauthenticated") {
-      setIsLoading(false);
-    }
-  }, [status, session?.user?.email, formatDate]);
 
   
   useEffect(() => {
@@ -274,9 +244,11 @@ const Wallet = () => {
   }, [selectedMonth, selectedYear, filteredPurchaseHistory]);
 
   useEffect(() => {
-    fetchAmount();
-    fetchPurchaseHistory();
-  }, [fetchAmount, fetchPurchaseHistory]);
+    if (status === "authenticated") {
+      fetchAmount();
+      fetchPurchaseHistory();
+    }
+  }, [status, fetchAmount, fetchPurchaseHistory]);
   
   const handleWithdraw = async () => {
     if (withdrawableAmount <= 0) {
@@ -360,10 +332,10 @@ const Wallet = () => {
         date: createDateTimeForAPI(),
         amount: withdrawalAmount,
         balance: "0.00",
-        email: session?.user?.email || "",
+        email: session?.user?.email || ""
       }));
     }
-  }, [showBill, withdrawalAmount, session?.user?.email, createDateTimeForAPI, billData?.fullname]);
+  }, [showBill, withdrawalAmount, session?.user?.email]);
 
 
   if (status === "loading" || isLoading) {
@@ -528,4 +500,4 @@ const Wallet = () => {
   );
 };
 
-export default Wallet;
+export default dynamic(() => Promise.resolve(Wallet), { ssr: false });
