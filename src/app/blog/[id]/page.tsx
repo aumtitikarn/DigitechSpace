@@ -108,7 +108,7 @@ function Blog({ params }: BlogProps) {
   const [blogid, setBlogid] = useState<string | null>(null);
   const [profileUser, setProfileUser] = useState<string[]>([]);
   const [profileUserN, setProfileUserN] = useState<ProfileUser | null>(null);
-  const [failedImages, setFailedImages] = useState(new Set());
+  const [failedImages, setFailedImages] = useState<string[]>([]);
   const getPostById = useCallback(async (postId: string) => {
     try {
       const res = await fetch(`/api/posts/${postId}`, {
@@ -643,7 +643,7 @@ function Blog({ params }: BlogProps) {
                 onClick={handleRedirect}
               >
                 <div className="flex flex-row mt-5 mb-5 items-center text-lg">
-                  {postData.profileImage && !failedImages.has(postData._id) ? (
+                  {postData.profileImage && !failedImages.includes(postData._id) ? (
                     <Image
                       width={30}
                       height={30}
@@ -658,9 +658,7 @@ function Blog({ params }: BlogProps) {
                       }}
                       className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500"
                       onError={() => {
-                        setFailedImages(
-                          (prev) => new Set([...prev, postData._id])
-                        );
+                        setFailedImages((prev) => [...prev, postData._id]);
                       }}
                     />
                   ) : (
@@ -817,7 +815,7 @@ function Blog({ params }: BlogProps) {
                     <div className="flex flex-col">
                       <p className="flex flex-row">
                         {comment.profileImageSource &&
-                        !failedImages.has(comment._id) ? (
+                        !failedImages.includes(comment._id) ? (
                           <Image
                             width={36}
                             height={36}
@@ -832,9 +830,7 @@ function Blog({ params }: BlogProps) {
                             }}
                             className=" rounded-full mr-2 mt-1 text-gray-500"
                             onError={() => {
-                              setFailedImages(
-                                (prev) => new Set([...prev, comment._id])
-                              );
+                              setFailedImages((prev) => [...prev, comment._id]);
                             }}
                           />
                         ) : (
@@ -895,7 +891,7 @@ function Blog({ params }: BlogProps) {
                           <div key={reply._id} className="mt-2">
                             <p className="flex flex-row">
                               {reply.profileImageSource &&
-                              !failedImages.has(comment._id) ? (
+                              !failedImages.includes(comment._id) ? (
                                 <Image
                                   width={36}
                                   height={36}
@@ -910,9 +906,7 @@ function Blog({ params }: BlogProps) {
                                   }}
                                   className=" rounded-full mr-2 mt-1 text-gray-500"
                                   onError={() => {
-                                    setFailedImages(
-                                      (prev) => new Set([...prev, reply._id])
-                                    );
+                                    setFailedImages((prev) => [...prev, reply._id]);
                                   }}
                                 />
                               ) : (

@@ -34,7 +34,7 @@ export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPosts, setFilteredPosts] = useState<PostData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [failedImages, setFailedImages] = useState(new Set());
+  const [failedImages, setFailedImages] = useState<string[]>([]);
 
   const getPosts = async () => {
     try {
@@ -208,7 +208,7 @@ export default function Page() {
                             </div>
                           </div>
                           <div className="flex flex-row mb-3">
-                            {val.profileImage && !failedImages.has(val._id) ? (
+                            {val.profileImage && !failedImages.includes(val._id) ? (
                               <Image
                                 width={30}
                                 height={30}
@@ -223,9 +223,7 @@ export default function Page() {
                                 }}
                                 className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500"
                                 onError={() => {
-                                  setFailedImages(
-                                    (prev) => new Set([...prev, val._id])
-                                  );
+                                  setFailedImages((prev) => [...prev, val._id]);
                                 }}
                               />
                             ) : (
