@@ -41,6 +41,7 @@ const MyProject: React.FC = () => {
   const { t } = useTranslation("translation");
   const [projects, setProjects] = useState<Project[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [failedImages, setFailedImages] = useState<string[]>([]);
 
   useEffect(() => {
     setIsClient(true);
@@ -105,19 +106,22 @@ const MyProject: React.FC = () => {
                 {project.projectDetails.projectname}
               </p>
               <div className="flex items-center mb-2">
-              {project.profileImage ? (
-                        <Image
-                          src={project.profileImage}
-                          alt="Author Profile"
-                          width={30}
-                          height={30}
-                          className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
-                        />
-                      ) : (
-                        <span className="text-gray-500 mr-2 text-2xl">
-                          <MdAccountCircle />
-                        </span>
-                      )}
+              {project.profileImage && !failedImages.includes(project._id) ? (
+              <Image
+                src={project.profileImage}
+                alt="Author Profile"
+                width={30}
+                height={30}
+                className="rounded-full w-[30px] h-[30px] object-cover"
+                onError={() => {
+                  setFailedImages((prev) => [...prev, project._id]);
+                }}
+              />
+            ) : (
+              <span>
+                <MdAccountCircle className="text-gray-500 mr-2 text-2xl" />
+              </span>
+            )}
                       <p className="text-sm text-gray-600 truncate">
                         {project.authorName}
                       </p>

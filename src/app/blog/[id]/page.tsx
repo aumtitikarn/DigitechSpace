@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback,useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { AiOutlineNotification } from "react-icons/ai";
 import { IoShareOutline } from "react-icons/io5";
@@ -31,8 +31,8 @@ import { RiTwitterXLine } from "react-icons/ri";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import e from "express";
 
-interface BlogProps {  
-  params: { 
+interface BlogProps {
+  params: {
     id: string;
   };
   searchParams?: { [key: string]: string | string[] | undefined };
@@ -108,19 +108,20 @@ function Blog({ params }: BlogProps) {
   const [blogid, setBlogid] = useState<string | null>(null);
   const [profileUser, setProfileUser] = useState<string[]>([]);
   const [profileUserN, setProfileUserN] = useState<ProfileUser | null>(null);
+  const [failedImages, setFailedImages] = useState(new Set());
   const getPostById = useCallback(async (postId: string) => {
     try {
       const res = await fetch(`/api/posts/${postId}`, {
         method: "GET",
         cache: "no-store",
       });
-  
+
       if (!res.ok) {
         throw new Error("Failed to fetch post");
       }
-  
+
       const data = await res.json();
-  
+
       // แก้ไขการจัดการ timestamp โดยใช้ค่าจากฐานข้อมูลโดยตรง
       const formattedPost = {
         ...data.post,
@@ -136,7 +137,7 @@ function Blog({ params }: BlogProps) {
             })) || [],
         })),
       };
-  
+
       setPostData(formattedPost);
       return formattedPost;
     } catch (error) {
@@ -385,7 +386,6 @@ function Blog({ params }: BlogProps) {
 
     return imageUrl;
   };
-  
 
   const handleReviewChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -407,7 +407,6 @@ function Blog({ params }: BlogProps) {
   const handleReasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedReason(event.target.value);
   };
- 
 
   const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -644,23 +643,28 @@ function Blog({ params }: BlogProps) {
                 onClick={handleRedirect}
               >
                 <div className="flex flex-row mt-5 mb-5 items-center text-lg">
-                  {postData?.profileImage && postData.profileImage[0] ? (
+                  {postData.profileImage && !failedImages.has(postData._id) ? (
                     <Image
-                      width={46}
-                      height={46}
+                      width={30}
+                      height={30}
                       src={postData.profileImage}
-                      alt="Profile"
-                      onError={(
-                        e: React.SyntheticEvent<HTMLImageElement, Event>
-                      ) => {
-                        const target = e.target as HTMLImageElement;
-                        target.onerror = null;
-                        target.src = "/default-profile-icon.png";
+                      alt={`${postData.authorName}'s profile`}
+                      style={{
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                        width: "30px",
+                        height: "30px",
+                        marginRight: "10px",
                       }}
-                      className="w-10 h-10 rounded-full mr-2 mt-1 text-gray-500"
+                      className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500"
+                      onError={() => {
+                        setFailedImages(
+                          (prev) => new Set([...prev, postData._id])
+                        );
+                      }}
                     />
                   ) : (
-                    <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-4" />
+                    <MdAccountCircle className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500" />
                   )}
                   <div className="flex flex-col justify-center w-[400px]">
                     {postData && postData.authorName ? (
@@ -812,18 +816,29 @@ function Blog({ params }: BlogProps) {
                   <div key={comment._id} className="flex flex-col mt-3 p-2">
                     <div className="flex flex-col">
                       <p className="flex flex-row">
-                        {comment.profileImageSource ? (
+                        {comment.profileImageSource &&
+                        !failedImages.has(comment._id) ? (
                           <Image
                             width={36}
                             height={36}
                             src={getProfileImagePath(
                               comment.profileImageSource
                             )}
-                            alt={`${comment.userName}'s profile picture`}
-                            className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                            alt={`${comment.userName}'s profile`}
+                            style={{
+                              objectFit: "cover",
+                              borderRadius: "50%",
+                              marginRight: "10px",
+                            }}
+                            className=" rounded-full mr-2 mt-1 text-gray-500"
+                            onError={() => {
+                              setFailedImages(
+                                (prev) => new Set([...prev, comment._id])
+                              );
+                            }}
                           />
                         ) : (
-                          <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+                          <MdAccountCircle className="w-[36px] h-[36px] rounded-full mr-2 mt-1 text-gray-500" />
                         )}
                         <strong className="flex flex-col justify-center text-lg">
                           {comment.userName}
@@ -879,18 +894,29 @@ function Blog({ params }: BlogProps) {
                         {comment.replies.map((reply: any) => (
                           <div key={reply._id} className="mt-2">
                             <p className="flex flex-row">
-                              {reply.profileImageSource ? (
+                              {reply.profileImageSource &&
+                              !failedImages.has(comment._id) ? (
                                 <Image
                                   width={36}
                                   height={36}
                                   src={getProfileImagePath(
                                     reply.profileImageSource
                                   )}
-                                  alt={`${reply.userName}'s profile picture`}
-                                  className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2"
+                                  alt={`${reply.userName}'s profile`}
+                                  style={{
+                                    objectFit: "cover",
+                                    borderRadius: "50%",
+                                    marginRight: "10px",
+                                  }}
+                                  className=" rounded-full mr-2 mt-1 text-gray-500"
+                                  onError={() => {
+                                    setFailedImages(
+                                      (prev) => new Set([...prev, reply._id])
+                                    );
+                                  }}
                                 />
                               ) : (
-                                <MdAccountCircle className="text-gray-500 w-9 h-9 flex justify-center items-center rounded-full mr-2" />
+                                <MdAccountCircle className="w-[36px] h-[36px] rounded-full mr-2 mt-1 text-gray-500" />
                               )}
                               <strong className="flex flex-col justify-center text-lg">
                                 {reply.userName}

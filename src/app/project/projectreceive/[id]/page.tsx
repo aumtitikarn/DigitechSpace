@@ -29,6 +29,7 @@ interface ProjectData {
   projectname: string;
   description: string;
   receive: string[];
+  skill: string[];
   category: string;
   price: number;
   review: number;
@@ -44,6 +45,7 @@ interface ProjectData {
 }
 
 interface Review {
+  _id: string;
   username: string;
   userEmail: string;
   rathing: number;
@@ -84,6 +86,9 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const router = useRouter();
   const projectGroups = useMemo(() => PROJECT_GROUPS, []);
+  const [showAllSkills, setShowAllSkills] = useState(false);
+  const SKILLS_TO_SHOW = 4;
+  const [failedImages, setFailedImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -476,17 +481,21 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                         {t("nav.project.projectdetail.by")}
                       </p>
                       <span className="text-gray-500  text-3xl mr-2">
-                        {project.profileImage ? (
+                      {project.profileImage &&
+                        !failedImages.includes(project._id) ? (
                           <Image
                             src={project.profileImage}
                             alt="Author Profile"
                             width={30}
                             height={30}
                             className="rounded-full w-[30px] h-[30px] object-cover"
+                            onError={() => {
+                              setFailedImages((prev) => [...prev, project._id]);
+                            }}
                           />
                         ) : (
-                          <span className="text-gray-500 text-3xl mr-2">
-                            <MdAccountCircle />
+                          <span>
+                            <MdAccountCircle className="text-gray-500 text-2xl" />
                           </span>
                         )}
                       </span>
@@ -583,6 +592,41 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                   </ul>
                 ))}
               </div>
+              {/* skill Section */}
+              <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
+                <h2 className="text-lg font-bold text-[#33529B]">
+                  {t("nav.skill.title")}
+                </h2>
+                <div className="border-t border-gray-300 my-4"></div>
+                {project.skill
+                  .slice(
+                    0,
+                    showAllSkills ? project.skill.length : SKILLS_TO_SHOW
+                  )
+                  .map((item, index) => (
+                    <ul
+                      key={`skill-${index}`}
+                      className="list-none text-gray-600 mt-2"
+                    >
+                      <li className="flex items-center">
+                        <GoCheck className="w-5 h-5 text-green-500 mr-2" />
+                        {item}
+                      </li>
+                    </ul>
+                  ))}
+                {project.skill.length > SKILLS_TO_SHOW && (
+                  <button
+                    onClick={() => setShowAllSkills(!showAllSkills)}
+                    className="text-[#33529B] mt-2 font-bold w-full"
+                  >
+                    <p className="text-center">
+                      {showAllSkills
+                        ? t("nav.project.projectdetail.hidden")
+                        : `${t("nav.home.seemore")} (${project.skill.length - SKILLS_TO_SHOW})`}
+                    </p>
+                  </button>
+                )}
+              </div>
               <div>
                 {/* ไฟล์ */}
                 <div className="bg-white p-6 rounded-lg mt-10 shadow-custom">
@@ -614,24 +658,33 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                 <div className="border-t border-gray-300 my-4"></div>
                 <ul>
                   {reviews.length > 0 ? (
-                    reviews
-                      .slice(0, visibleReviewsCount)
-                      .map((review, index) => (
-                        <li key={`review-${review.userEmail}-${index}`} className="mb-4">
-                          <div className="flex items-center">
-                            {review.profileImage ? (
-                              <Image
-                                src={review.profileImage}
-                                alt="Author Profile"
-                                width={50}
-                                height={50}
-                                className="rounded-full w-[50px] h-[50px] object-cover mr-2"
-                              />
-                            ) : (
-                              <span className="text-gray-500 text-5xl mr-2">
-                                <MdAccountCircle />
-                              </span>
-                            )}
+                    reviews.map((review, index) => (
+                      // เพิ่ม key ให้กับ <li> element
+                      <li
+                        key={`review-${review.userEmail}-${index}`}
+                        className="mb-4"
+                      >
+                        <div className="flex items-center">
+                          {review.profileImage &&
+                          !failedImages.includes(review._id) ? (
+                            <Image
+                              src={review.profileImage || ""} // เพิ่ม fallback เป็น empty string
+                              alt="Author Profile"
+                              width={50}
+                              height={50}
+                              className="rounded-full w-[50px] h-[50px] object-cover mr-2"
+                              onError={() => {
+                                setFailedImages((prev) => [
+                                  ...prev,
+                                  review._id,
+                                ]); // แก้จาก project._id เป็น review._id
+                              }}
+                            />
+                          ) : (
+                            <span className="text-gray-500 text-5xl mr-2">
+                              <MdAccountCircle />
+                            </span>
+                          )}
                             <div className="flex flex-col">
                               <div className="flex items-center">
                                 <p className="text-sm font-bold mr-2">
@@ -715,13 +768,20 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                                 {product.projectname}
                               </p>
                               <div className="flex items-center mb-2">
-                                {product.profileImage ? (
+                              {product.profileImage &&
+                                !failedImages.includes(product._id) ? (
                                   <Image
-                                    src={product.profileImage}
+                                    src={product.profileImage || ""}
                                     alt="Author Profile"
                                     width={20}
                                     height={20}
                                     className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                                    onError={() => {
+                                      setFailedImages((prev) => [
+                                        ...prev,
+                                        product._id,
+                                      ]);
+                                    }}
                                   />
                                 ) : (
                                   <span className="text-gray-500 mr-2 text-2xl">
@@ -784,13 +844,20 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                                 {product.projectname}
                               </p>
                               <div className="flex items-center mb-2">
-                                {product.profileImage ? (
+                              {product.profileImage &&
+                                !failedImages.includes(product._id) ? (
                                   <Image
-                                    src={product.profileImage}
+                                    src={product.profileImage || ""}
                                     alt="Author Profile"
                                     width={30}
                                     height={30}
                                     className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                                    onError={() => {
+                                      setFailedImages((prev) => [
+                                        ...prev,
+                                        product._id,
+                                      ]);
+                                    }}
                                   />
                                 ) : (
                                   <span className="text-gray-500 mr-2 text-2xl">

@@ -48,6 +48,7 @@ const Review = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [failedImages, setFailedImages] = useState<string[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -141,17 +142,24 @@ const Review = () => {
                             {project.projectDetails?.projectname}
                           </p>
                           <div className="flex items-center mb-2">
-                            {project.profileImage ? (
+                            {project.profileImage &&
+                            !failedImages.includes(project._id) ? (
                               <Image
                                 src={project.profileImage}
                                 alt="Author Profile"
-                                width={20}
-                                height={20}
-                                className="rounded-full mr-2"
+                                width={30}
+                                height={30}
+                                className="rounded-full w-[30px] h-[30px] object-cover"
+                                onError={() => {
+                                  setFailedImages((prev) => [
+                                    ...prev,
+                                    project._id,
+                                  ]);
+                                }}
                               />
                             ) : (
-                              <span className="text-gray-500 mr-2 text-2xl">
-                                <MdAccountCircle />
+                              <span>
+                                <MdAccountCircle className="text-gray-500 mr-2 text-2xl" />
                               </span>
                             )}
                             <p className="text-sm text-gray-600 truncate">
@@ -179,7 +187,7 @@ const Review = () => {
                 ))}
             </div>
           ) : (
-            <p>{t("nav.sell.noreview")}</p> // Display message if no projects are found
+            <p className="text-gray-500">{t("nav.sell.noreview")}</p> // Display message if no projects are found
           )}
         </div>
       </main>

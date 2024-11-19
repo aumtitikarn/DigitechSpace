@@ -191,6 +191,14 @@
         "save" : "Save"
       }
     },
+    "skill" : {
+      "title" : "Skill",
+      "popskill" : "Popular skills",
+      "popskilldes" : "Popular skills of SUT students",
+      "search" : "Find accounts with these skills.",
+      "desadd" : "The skills you use to complete projects. (insert at least 1 skill)",
+      "addskill" : "Add Skill"
+    },
     "favorite": "Favorite",
     "signin": "Sign In",
     "signup": "Create Account",

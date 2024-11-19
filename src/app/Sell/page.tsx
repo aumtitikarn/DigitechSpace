@@ -76,6 +76,7 @@ const ProductList: React.FC = () => {
   const [projectToDelete, setProjectToDelete] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [failedImages, setFailedImages] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -262,7 +263,7 @@ const ProductList: React.FC = () => {
                           passHref
                         >
                           <div className="w-auto h-auto flex flex-col">
-                            <div className="relative w-full h-[150px]">
+                            <div className="relative w-full h-[150px] mb-4">
                               <Image
                                 src={`/api/project/images/${project.imageUrl[0]}`}
                                 alt="Product Image"
@@ -276,17 +277,24 @@ const ProductList: React.FC = () => {
                                 {project.projectname}
                               </p>
                               <div className="flex items-center mb-2">
-                                {project.profileImage ? (
+                                {project.profileImage &&
+                                !failedImages.includes(project._id) ? (
                                   <Image
                                     src={project.profileImage}
                                     alt="Author Profile"
                                     width={30}
                                     height={30}
-                                    className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                                    className="rounded-full w-[30px] h-[30px] object-cover"
+                                    onError={() => {
+                                      setFailedImages((prev) => [
+                                        ...prev,
+                                        project._id,
+                                      ]);
+                                    }}
                                   />
                                 ) : (
-                                  <span className="text-gray-500 mr-2 text-2xl">
-                                    <MdAccountCircle />
+                                  <span>
+                                    <MdAccountCircle className="text-gray-500 mr-2 text-2xl" />
                                   </span>
                                 )}
                                 <p className="text-sm text-gray-600 truncate">
@@ -371,13 +379,20 @@ const ProductList: React.FC = () => {
                             {project.projectname}
                           </p>
                           <div className="flex items-center mb-2">
-                            {project.profileImage ? (
+                            {project.profileImage &&
+                            !failedImages.includes(project._id) ? (
                               <Image
-                                src={project.profileImage}
+                                src={project.profileImage || ""}
                                 alt="Author Profile"
                                 width={30}
                                 height={30}
                                 className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                                onError={() => {
+                                  setFailedImages((prev) => [
+                                    ...prev,
+                                    project._id,
+                                  ]);
+                                }}
                               />
                             ) : (
                               <span className="text-gray-500 mr-2 text-2xl">

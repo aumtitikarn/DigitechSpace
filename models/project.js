@@ -25,7 +25,14 @@ const ProjectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  receive: [String],
+  receive: {
+    type: [String],
+    required: true,
+  },
+  skill: {
+    type: [String],
+    required: true,
+  },
   permission: { 
     type: Boolean, 
     default: false 

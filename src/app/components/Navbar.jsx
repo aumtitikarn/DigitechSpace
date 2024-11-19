@@ -21,6 +21,7 @@ function CustomNavbar() {
   const [postData, setPostData] = useState([]);
   const [postDataS, setPostDataS] = useState([]);
   const [profileImage, setProfileImage] = useState(null);
+  const [failedImages, setFailedImages] = useState(new Set());
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -188,7 +189,7 @@ function CustomNavbar() {
               height={100}
               className="ml-[19px]"
               priority
-              unoptimized 
+              unoptimized
             />
           </Link>
         </div>
@@ -200,15 +201,17 @@ function CustomNavbar() {
                 onClick={toggleAccountBox}
                 className="text-white focus:outline-none"
               >
-                {imageSource ? (
+                {imageSource && !failedImages.has(imageSource._id) ? (
                   <Image
                     width={35}
                     height={35}
                     src={imageSource}
                     alt="Profile Image"
                     unoptimized={true}
-                    onError={(e) => {
-                      e.target.onerror = null;
+                    onError={() => {
+                      setFailedImages(
+                        (prev) => new Set([...prev, imageSource._id])
+                      );
                     }}
                     className="rounded-full w-[35px] h-[35px] object-cover "
                   />
@@ -228,21 +231,23 @@ function CustomNavbar() {
                     {/* Account Box Content */}
                     <div className="">
                       <div className="flex items-center ">
-                        {imageSource ? (
+                        {imageSource && !failedImages.has(imageSource._id) ? (
                           <Image
                             width={55}
                             height={55}
                             src={imageSource}
                             alt="Profile Image"
                             unoptimized={true}
-                            onError={(e) => {
-                              e.target.onerror = null;
+                            onError={() => {
+                              setFailedImages(
+                                (prev) => new Set([...prev, imageSource._id])
+                              );
                             }}
-                            className="rounded-full w-[55px] h-[55px] object-cover mr-2"
+                            className="rounded-full w-[55px] h-[55px] object-cover "
                           />
                         ) : (
                           <MdAccountCircle
-                            className="rounded-full text-gray-600"
+                            className="rounded-full text-gray-500"
                             style={{
                               width: "55px",
                               height: "55px",
@@ -357,14 +362,14 @@ function CustomNavbar() {
             {/* โลโก้สำหรับเดสทอป */}
             <div className="flex-none">
               <Link href="/">
-              <Image
-              src="https://m1r.ai/W8p5i.png"
-              alt="Digitech Space logo"
-              width={120}
-              height={120}
-              priority
-              unoptimized 
-            />
+                <Image
+                  src="https://m1r.ai/W8p5i.png"
+                  alt="Digitech Space logo"
+                  width={120}
+                  height={120}
+                  priority
+                  unoptimized
+                />
               </Link>
             </div>
 
@@ -447,17 +452,19 @@ function CustomNavbar() {
                       onClick={toggleAccountBox}
                       className="text-white focus:outline-none"
                     >
-                      {imageSource ? (
+                      {imageSource && !failedImages.has(imageSource._id) ? (
                         <Image
                           width={35}
                           height={35}
                           src={imageSource}
                           alt="Profile Image"
                           unoptimized={true}
-                          onError={(e) => {
-                            e.target.onerror = null;
+                          onError={() => {
+                            setFailedImages(
+                              (prev) => new Set([...prev, imageSource._id])
+                            );
                           }}
-                          className="rounded-full w-[35px] h-[35px] object-cover mr-2"
+                          className="rounded-full w-[35px] h-[35px] object-cover "
                         />
                       ) : (
                         <MdAccountCircle
@@ -478,21 +485,23 @@ function CustomNavbar() {
                     >
                       <div className="">
                         <div className="flex items-center">
-                          {imageSource ? (
+                          {imageSource && !failedImages.has(imageSource._id) ? (
                             <Image
                               width={55}
                               height={55}
                               src={imageSource}
                               alt="Profile Image"
                               unoptimized={true}
-                              onError={(e) => {
-                                e.target.onerror = null;
+                              onError={() => {
+                                setFailedImages(
+                                  (prev) => new Set([...prev, imageSource._id])
+                                );
                               }}
-                              className="rounded-full w-[55px] h-[55px] object-cover mr-2"
+                              className="rounded-full w-[55px] h-[55px] object-cover "
                             />
                           ) : (
                             <MdAccountCircle
-                              className="rounded-full text-gray-600"
+                              className="rounded-full text-gray-500"
                               style={{
                                 width: "55px",
                                 height: "55px",
@@ -625,14 +634,14 @@ function CustomNavbar() {
               {/* โลโก้สำหรับเดสทอป */}
               <div className="flex-none">
                 <Link href="/">
-                <Image
-              src="https://m1r.ai/W8p5i.png"
-              alt="Digitech Space logo"
-              width={120}
-              height={120}
-              priority
-              unoptimized 
-            />
+                  <Image
+                    src="https://m1r.ai/W8p5i.png"
+                    alt="Digitech Space logo"
+                    width={120}
+                    height={120}
+                    priority
+                    unoptimized
+                  />
                 </Link>
               </div>
 
@@ -731,7 +740,7 @@ function CustomNavbar() {
                               />
                             ) : (
                               <MdAccountCircle
-                                className="rounded-full "
+                                className="rounded-full text-gray-500"
                                 style={{
                                   width: "60px",
                                   height: "60px",
@@ -854,14 +863,14 @@ function CustomNavbar() {
           <div className="lg:hidden bg-[#0B1E48] w-full h-screen z-50 fixed top-0 left-0 flex flex-col">
             <div className="flex justify-between items-center px-5 py-5">
               <Link href="/">
-              <Image
-              src="https://m1r.ai/W8p5i.png"
-              alt="Digitech Space logo"
-              width={100}
-              height={100}
-              priority
-              unoptimized 
-            />
+                <Image
+                  src="https://m1r.ai/W8p5i.png"
+                  alt="Digitech Space logo"
+                  width={100}
+                  height={100}
+                  priority
+                  unoptimized
+                />
               </Link>
               <button
                 onClick={toggleMobileMenu}

@@ -28,9 +28,13 @@ interface Project {
 
 const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
   const { t } = useTranslation("translation");
+  const [failedImages, setFailedImages] = useState<string[]>([]);
 
   return (
-    <div className="rounded-[10px] border border-[#BEBEBE] bg-white p-4" style={{ width: "100%", height: "auto" }}>
+    <div
+      className="rounded-[10px] border border-[#BEBEBE] bg-white p-4"
+      style={{ width: "100%", height: "auto" }}
+    >
       <div className="w-full h-full flex flex-col">
         <div className="relative w-full h-[150px] mb-4">
           <Image
@@ -42,32 +46,42 @@ const ReviewCard: React.FC<{ project: Project }> = ({ project }) => {
           />
         </div>
         <div className="flex flex-col h-full">
-          <p className="text-lg font-semibold mb-2 truncate">{project.projectname}</p>
+          <p className="text-lg font-semibold mb-2 truncate">
+            {project.projectname}
+          </p>
           <div className="flex items-center mb-2">
-            {project.profileImage ? (
-              <div className="relative w-[30px] h-[30px] mr-2">
-                <Image
-                  src={project.profileImage}
-                  alt="Author Profile"
-                  fill
-                  className="rounded-full object-cover"
-                  sizes="30px"
-                />
-              </div>
+            {project.profileImage && !failedImages.includes(project._id) ? (
+              <Image
+                src={project.profileImage}
+                alt="Author Profile"
+                width={30}
+                height={30}
+                className="rounded-full w-[30px] h-[30px] object-cover"
+                onError={() => {
+                  setFailedImages((prev) => [...prev, project._id]);
+                }}
+              />
             ) : (
-              <span className="text-gray-500 mr-2 text-2xl">
-                <MdAccountCircle />
+              <span>
+                <MdAccountCircle className="text-gray-500 mr-2 text-2xl" />
               </span>
             )}
-            <p className="text-sm text-gray-600 truncate">{project.authorName || t("unknownAuthor")}</p>
+            <p className="text-sm text-gray-600 truncate">
+              {project.authorName || t("unknownAuthor")}
+            </p>
           </div>
           <div className="flex mb-2">
-            <span className="text-yellow-500 mr-2"><IoIosStar /></span>
+            <span className="text-yellow-500 mr-2">
+              <IoIosStar />
+            </span>
             <span className="lg:text-sm text-gray-600 text-[12px] truncate">
-              {project.rathing || "N/A"} ({project.review}) | {t("nav.project.projectdetail.sold")} {project.sold}
+              {project.rathing || "N/A"} ({project.review}) |{" "}
+              {t("nav.project.projectdetail.sold")} {project.sold}
             </span>
           </div>
-          <p className="text-lg font-bold text-[#33529B] mb-2">{project.price} THB</p>
+          <p className="text-lg font-bold text-[#33529B] mb-2">
+            {project.price} THB
+          </p>
         </div>
       </div>
     </div>
@@ -92,10 +106,13 @@ const Favorite: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/favorites?email=${encodeURIComponent(session.user.email)}`, {
-        method: "GET",
-        cache: "no-store",
-      });
+      const response = await fetch(
+        `/api/favorites?email=${encodeURIComponent(session.user.email)}`,
+        {
+          method: "GET",
+          cache: "no-store",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch favorites.");
@@ -104,10 +121,10 @@ const Favorite: React.FC = () => {
       const favoriteProjectIds: string[] = await response.json();
 
       if (favoriteProjectIds.length > 0) {
-        const projectPromises = favoriteProjectIds.map(id =>
-          fetch(`/api/project/${id}`).then(res => {
+        const projectPromises = favoriteProjectIds.map((id) =>
+          fetch(`/api/project/${id}`).then((res) => {
             if (!res.ok) {
-              throw new Error(`Failed to fetch project with ID: ${id}`);
+              throw new Error();
             }
             return res.json();
           })
@@ -165,7 +182,11 @@ const Favorite: React.FC = () => {
               <p>{error}</p>
             ) : favoriteProjects.length > 0 ? (
               favoriteProjects.map((project) => (
-                <Link key={project._id} href={`/project/projectdetail/${project._id}`} passHref>
+                <Link
+                  key={project._id}
+                  href={`/project/projectdetail/${project._id}`}
+                  passHref
+                >
                   <ReviewCard project={project} />
                 </Link>
               ))

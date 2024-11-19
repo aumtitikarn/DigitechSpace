@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Readable } from "stream";
 import { connectMongoDB } from "../../../../lib/mongodb";
 import Project from "../../../../models/project";
+import StudentUser from "../../../../models/StudentUser";
 
 export const revalidate = 0;
 
@@ -14,6 +15,7 @@ export async function POST(req, res) {
     let projectname = "";
     let description = "";
     let receive = [];
+    let skill = [];
     let category = "";
     let price = "";
     let imageUrl = [];
@@ -37,6 +39,9 @@ export async function POST(req, res) {
         case "receive":
           receive = JSON.parse(value.toString());
           break;
+        case "skill":
+          skill = JSON.parse(value.toString());
+          break;
         case "category":
           category = value.toString();
           break;
@@ -46,9 +51,9 @@ export async function POST(req, res) {
         case "email":
           email = value.toString();
           break;
-          case "iduser":
-            iduser = value.toString();
-            break;
+        case "iduser":
+          iduser = value.toString();
+          break;
         case "rathing":
           rathing = parseFloat(value);
           break;
@@ -63,7 +68,7 @@ export async function POST(req, res) {
           break;
         case "status":
           status = value.toString();
-        break;
+          break;
         case "imageUrl":
           if (value instanceof Blob) {
             const image = `${Date.now()}_${value.name}`;
@@ -106,6 +111,7 @@ export async function POST(req, res) {
       projectname,
       description,
       receive,
+      skill,
       category,
       price,
       email,
@@ -119,7 +125,26 @@ export async function POST(req, res) {
 
     // Save the project
     const savedProject = await newItem.save(); // Save and get the saved document
-
+    if (iduser && skill.length > 0) {
+      // Get existing user skills
+      const user = await StudentUser.findById(iduser);
+      if (user) {
+        // Filter out duplicate skills
+        const newSkills = skill.filter(newSkill => 
+          !user.skills?.some(existingSkill => 
+            existingSkill.toLowerCase() === newSkill.toLowerCase()
+          )
+        );
+    
+        if (newSkills.length > 0) {
+          await StudentUser.findByIdAndUpdate(
+            iduser,
+            { $addToSet: { skills: { $each: newSkills } } },
+            { new: true }
+          );
+        }
+      }
+    }
     return NextResponse.json(
       {
         _id: savedProject._id,

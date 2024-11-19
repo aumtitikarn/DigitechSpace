@@ -11,6 +11,7 @@ import Link from "next/link";
 function Blog() {
   const { t } = useTranslation("translation");
   const [postData, setPostData] = useState([]);
+  const [failedImages, setFailedImages] = useState(new Set());
 
   const getPosts = async () => {
     try {
@@ -35,7 +36,9 @@ function Blog() {
 
   const getImageUrl = (imageUrl) => {
     if (Array.isArray(imageUrl)) {
-      return imageUrl.length > 0 ? `/api/posts/images/${imageUrl[0]}` : '/default-image.png';
+      return imageUrl.length > 0
+        ? `/api/posts/images/${imageUrl[0]}`
+        : "/default-image.png";
     }
     return `/api/posts/images/${imageUrl}`;
   };
@@ -52,8 +55,14 @@ function Blog() {
           {postData && postData.length > 0 ? (
             postData.map((val) => (
               <Link href={`/blog/${val._id}`} key={val._id}>
-                <div className="flex flex-col" style={{ height: "300px", width: "180px" }}>
-                  <div className="rounded w-full relative" style={{ height: "250px" }}>
+                <div
+                  className="flex flex-col"
+                  style={{ height: "300px", width: "180px" }}
+                >
+                  <div
+                    className="rounded w-full relative"
+                    style={{ height: "250px" }}
+                  >
                     <Image
                       width={300}
                       height={300}
@@ -73,19 +82,17 @@ function Blog() {
                           <div className="w-6 h-6 ml-1 mt-1 text-gray-500">
                             <CiHeart style={{ fontSize: "20px" }} />
                           </div>
-                          <p className="text-gray-500 text-base">
-                            {val.heart}
-                          </p>
+                          <p className="text-gray-500 text-base">{val.heart}</p>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-row mb-3">
-                      {postData.length && postData.length > 0 && val.profileImage && val.profileImage[0] ? (
+                      {val.profileImage && !failedImages.has(val._id) ? (
                         <Image
                           width={30}
                           height={30}
                           src={val.profileImage}
-                          alt="Profile"
+                          alt={`${val.authorName}'s profile`}
                           style={{
                             objectFit: "cover",
                             borderRadius: "50%",
@@ -93,12 +100,12 @@ function Blog() {
                             height: "30px",
                             marginRight: "10px",
                           }}
-                          onError={(e) => {
-                            const target = e.target;
-                            target.onerror = null;
-                            target.src = "/default-profile-icon.png";
-                          }}
                           className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500"
+                          onError={() => {
+                            setFailedImages(
+                              (prev) => new Set([...prev, val._id])
+                            );
+                          }}
                         />
                       ) : (
                         <MdAccountCircle className="w-8 h-8 rounded-full mr-2 mt-1 text-gray-500" />

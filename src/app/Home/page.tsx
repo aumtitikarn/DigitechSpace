@@ -10,7 +10,7 @@ import Service from '../components/home/Service';
 import Catagory from '../components/home/Catagory';
 import Trend from '../components/home/Trend';
 import Blog from '../components/home/Blog';
-import Skill from '../components/home/Skill';
+import Skill from '../components/home/skill';
 import AiGenProduct from '../components/home/AiGenProduct';
 import { redirect } from 'next/navigation';
 import { useTranslation } from 'react-i18next';

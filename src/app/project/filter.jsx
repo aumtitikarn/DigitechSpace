@@ -24,21 +24,25 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [failedImages, setFailedImages] = useState([]);
 
   // Move categories to useMemo to maintain reference
-  const categories = useMemo(() => [
-    { id: 1, category: t("nav.project.all"), categoryEN: "All" },
-    { id: 2, category: t("nav.project.document"), categoryEN: "Document" },
-    { id: 3, category: t("nav.project.model"), categoryEN: "Model" },
-    { id: 4, category: t("nav.project.website"), categoryEN: "Website" },
-    { id: 5, category: t("nav.project.mobileapp"), categoryEN: "MobileApp" },
-    { id: 6, category: t("nav.project.ai"), categoryEN: "Ai" },
-    { id: 7, category: t("nav.project.datasets"), categoryEN: "Datasets" },
-    { id: 8, category: t("nav.project.iot"), categoryEN: "IOT" },
-    { id: 9, category: t("nav.project.program"), categoryEN: "Program" },
-    { id: 10, category: t("nav.project.photo"), categoryEN: "Photo" },
-    { id: 11, category: t("nav.project.other"), categoryEN: "Other" },
-  ], [t]);
+  const categories = useMemo(
+    () => [
+      { id: 1, category: t("nav.project.all"), categoryEN: "All" },
+      { id: 2, category: t("nav.project.document"), categoryEN: "Document" },
+      { id: 3, category: t("nav.project.model"), categoryEN: "Model" },
+      { id: 4, category: t("nav.project.website"), categoryEN: "Website" },
+      { id: 5, category: t("nav.project.mobileapp"), categoryEN: "MobileApp" },
+      { id: 6, category: t("nav.project.ai"), categoryEN: "Ai" },
+      { id: 7, category: t("nav.project.datasets"), categoryEN: "Datasets" },
+      { id: 8, category: t("nav.project.iot"), categoryEN: "IOT" },
+      { id: 9, category: t("nav.project.program"), categoryEN: "Program" },
+      { id: 10, category: t("nav.project.photo"), categoryEN: "Photo" },
+      { id: 11, category: t("nav.project.other"), categoryEN: "Other" },
+    ],
+    [t]
+  );
 
   const calculateRatingCounts = useCallback((projects) => {
     const counts = {
@@ -50,33 +54,36 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
       1: 0,
       0: 0,
     };
-  
+
     projects.forEach((project) => {
       const rating = Math.floor(parseFloat(project.rathing) || 0);
       if (rating >= 0 && rating <= 5) {
         counts[rating]++;
       }
     });
-  
+
     return counts;
   }, []);
-  
+
   // Then add calculateRatingCounts to filterProjects dependencies
-  const filterProjects = useCallback((projectsToFilter, term, rating) => {
-    let filtered = projectsToFilter.filter((project) =>
-      project.projectname.toLowerCase().includes(term.toLowerCase())
-    );
-  
-    if (rating !== null) {
-      filtered = filtered.filter((project) => {
-        const projectRating = parseFloat(project.rathing) || 0;
-        return projectRating >= rating && projectRating < rating + 1;
-      });
-    }
-  
-    setFilteredProjects(filtered);
-    return calculateRatingCounts(filtered);
-  }, [calculateRatingCounts]);
+  const filterProjects = useCallback(
+    (projectsToFilter, term, rating) => {
+      let filtered = projectsToFilter.filter((project) =>
+        project.projectname.toLowerCase().includes(term.toLowerCase())
+      );
+
+      if (rating !== null) {
+        filtered = filtered.filter((project) => {
+          const projectRating = parseFloat(project.rathing) || 0;
+          return projectRating >= rating && projectRating < rating + 1;
+        });
+      }
+
+      setFilteredProjects(filtered);
+      return calculateRatingCounts(filtered);
+    },
+    [calculateRatingCounts]
+  );
 
   useEffect(() => {
     const search = searchParams.get("search");
@@ -110,11 +117,14 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     [projects, selectedRating, router, filterProjects]
   );
 
-  const handleSearchChange = useCallback((e) => {
-    const newSearchTerm = e.target.value;
-    setSearchTerm(newSearchTerm);
-    debouncedSearch(newSearchTerm);
-  }, [debouncedSearch]);
+  const handleSearchChange = useCallback(
+    (e) => {
+      const newSearchTerm = e.target.value;
+      setSearchTerm(newSearchTerm);
+      debouncedSearch(newSearchTerm);
+    },
+    [debouncedSearch]
+  );
 
   const fetchProjects = useCallback(async (categoryEN) => {
     setIsLoading(true);
@@ -146,8 +156,13 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
       setIsLoading(false);
     };
     fetchData();
-  }, [selectedCategory, selectedRating, fetchProjects, filterProjects, searchTerm]);
-
+  }, [
+    selectedCategory,
+    selectedRating,
+    fetchProjects,
+    filterProjects,
+    searchTerm,
+  ]);
 
   const handleCategoryChange = (e) => {
     const selectedTranslatedCategory = e.target.value;
@@ -167,7 +182,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const Rating = () => {
     const ratingCounts = calculateRatingCounts(projects);
     const items = [];
-    
+
     for (let index = 5; index >= 0; index--) {
       items.push(
         <li className="flex items-center mb-2" key={index}>
@@ -305,8 +320,8 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
         </div>
       </div>
 
-     {/* Projects Display Section with Loading State */}
-     <div className="flex-grow">
+      {/* Projects Display Section with Loading State */}
+      <div className="flex-grow">
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-x-[10px] gap-y-[20px] lg:gap-x-[30px] md:gap-x-[40px] md:gap-y-[40px]">
           {isLoading ? (
             <div className="col-span-full flex justify-center items-center min-h-[200px]">
@@ -323,7 +338,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
             filteredProjects.map((project, index) => (
               <Link key={index} href={`/project/projectdetail/${project._id}`}>
                 <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
-                <div className="relative w-full h-[150px] mb-4">
+                  <div className="relative w-full h-[150px] mb-4">
                     <Image
                       src={`/api/project/images/${project.imageUrl[0]}`}
                       alt="Project Image"
@@ -337,13 +352,18 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
                       {project.projectname}
                     </p>
                     <div className="flex items-center mb-2">
-                      {project.profileImage ? (
+                      {project.profileImage &&
+                      Array.isArray(failedImages) &&
+                      !failedImages.includes(project._id) ? (
                         <Image
-                          src={project.profileImage}
+                          src={project.profileImage || ""}
                           alt="Author Profile"
                           width={20}
                           height={20}
                           className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                          onError={() => {
+                            setFailedImages((prev) => [...prev, project._id]);
+                          }}
                         />
                       ) : (
                         <span className="text-gray-500 mr-2 text-2xl">

@@ -10,6 +10,7 @@ import Image from "next/image";
 
 const ProductList = ({ products, titles }) => {
   const { t } = useTranslation("translation");
+  const [failedImages, setFailedImages] = useState([]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
@@ -51,16 +52,21 @@ const ProductList = ({ products, titles }) => {
                           {product.projectname}
                         </p>
                         <div className="flex items-center mb-2">
-                          {product.profileImage ? (
-                            <div className="relative w-5 h-5 mr-2">
-                              <Image
-                                src={product.profileImage}
-                                alt="Author Profile"
-                                fill
-                                className="rounded-full"
-                                sizes="20px"
-                              />
-                            </div>
+                          {product.profileImage &&
+                          !failedImages?.includes?.(product._id) ? (
+                            <Image
+                              src={product.profileImage || ""}
+                              alt="Author Profile"
+                              width={20}
+                              height={20}
+                              className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                              onError={() => {
+                                setFailedImages((prev) => [
+                                  ...prev,
+                                  product._id,
+                                ]);
+                              }}
+                            />
                           ) : (
                             <span className="text-gray-500 mr-2 text-2xl">
                               <MdAccountCircle />
@@ -138,26 +144,31 @@ const Aigenproject = () => {
   const { t } = useTranslation("translation");
 
   const normalizeCategory = useCallback((category) => {
-    return THAI_TO_ENGLISH_MAP[category.toLowerCase()] || category.toLowerCase();
+    return (
+      THAI_TO_ENGLISH_MAP[category.toLowerCase()] || category.toLowerCase()
+    );
   }, []);
 
-  const findRelatedCategories = useCallback((title) => {
-    const relatedCategories = new Set();
-    PRODUCT_CATEGORIES.forEach((group) => {
-      if (
-        group.categories.some(
-          (cat) => normalizeCategory(cat) === normalizeCategory(title)
-        )
-      ) {
-        group.categories.forEach((category) => {
-          if (normalizeCategory(category) !== normalizeCategory(title)) {
-            relatedCategories.add(category);
-          }
-        });
-      }
-    });
-    return Array.from(relatedCategories);
-  }, [normalizeCategory]); // Now we only depend on normalizeCategory
+  const findRelatedCategories = useCallback(
+    (title) => {
+      const relatedCategories = new Set();
+      PRODUCT_CATEGORIES.forEach((group) => {
+        if (
+          group.categories.some(
+            (cat) => normalizeCategory(cat) === normalizeCategory(title)
+          )
+        ) {
+          group.categories.forEach((category) => {
+            if (normalizeCategory(category) !== normalizeCategory(title)) {
+              relatedCategories.add(category);
+            }
+          });
+        }
+      });
+      return Array.from(relatedCategories);
+    },
+    [normalizeCategory]
+  ); // Now we only depend on normalizeCategory
 
   useEffect(() => {
     const fetchData = async () => {
@@ -196,7 +207,9 @@ const Aigenproject = () => {
             if (userData.interests && userData.interests.length > 0) {
               userTitles = Array.isArray(userData.interests)
                 ? userData.interests
-                : userData.interests.split(",").map((interest) => interest.trim());
+                : userData.interests
+                    .split(",")
+                    .map((interest) => interest.trim());
             }
           }
         }
@@ -208,10 +221,10 @@ const Aigenproject = () => {
         const titleSet = new Set();
         userTitles.forEach((title) => {
           const normalizedTitle = normalizeCategory(title);
-          
+
           if (categoryCounts[normalizedTitle] > 0) {
             titleSet.add(normalizedTitle);
-            
+
             const relatedCategories = findRelatedCategories(normalizedTitle);
             relatedCategories.forEach((category) => {
               const normalizedCategory = normalizeCategory(category);

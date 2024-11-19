@@ -17,6 +17,9 @@ import Image from "next/image";
 const Project: React.FC = () => {
   const { data: session, status } = useSession();
   const [inputs, setInputs] = useState([{ id: Date.now(), value: "" }]);
+  const [skillinputs, setSkillinputs] = useState([
+    { id: Date.now(), value: "" },
+  ]);
   const [projectname, setProjectname] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -85,6 +88,22 @@ const Project: React.FC = () => {
     );
   };
 
+  const handleAddSkill = () => {
+    setSkillinputs([...skillinputs, { id: Date.now(), value: "" }]);
+  };
+
+  const handleRemoveSkill = (id: number) => {
+    setSkillinputs(skillinputs.filter((input) => input.id !== id));
+  };
+
+  const handleSkillInputChange = (id: number, value: string) => {
+    setSkillinputs(
+      skillinputs.map((input) =>
+        input.id === id ? { ...input, value } : input
+      )
+    );
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     setImg((prevImg) => [...prevImg, ...files]); // เพิ่มไฟล์ใหม่เข้าไปใน state
@@ -95,7 +114,6 @@ const Project: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    // ตรวจสอบการ authenticate และข้อมูลที่จำเป็น
     if (!session?.user?.email || !session?.user?.id) {
       Swal.fire({
         position: "center",
@@ -106,29 +124,49 @@ const Project: React.FC = () => {
       });
       return;
     }
+     // Validate required fields and skills
+  if (skillinputs.length < 1 || !skillinputs[0].value) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Please add at least one skill",
+      timer: 3000,
+    });
+    return;
+  }
+
+  // Validate other required fields
+  if (!projectname || !description || !category || !price || !inputs[0].value || img.length === 0 || files.length === 0) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Please fill in all required fields",
+      timer: 3000,
+    });
+    return;
+  }
   
-    // กำหนดค่าเริ่มต้น
-    const rathingValue: number = parseFloat("0.0");
-    const soldValue: number = 0;
-    const reviewValue: number = 0;
-  
+    // Initialize form data
+    const rathingValue = parseFloat("0.0");
+    const soldValue = 0;
+    const reviewValue = 0;
     const formData = new FormData();
   
-    // เพิ่มข้อมูลลงใน FormData พร้อมกับแปลงค่าให้เป็น string ทั้งหมด
-    formData.append("projectname", projectname || '');
-    formData.append("description", description || '');
+    // Add data to FormData
+    formData.append("projectname", projectname || "");
+    formData.append("description", description || "");
     formData.append("receive", JSON.stringify(inputs.map((input) => input.value)));
-    formData.append("category", category || '');
-    formData.append("price", price || '');
-    formData.append("email", session.user.email); // ตอนนี้เรารู้แน่นอนว่ามีค่า
-    formData.append("iduser", session.user.id);   // ตอนนี้เรารู้แน่นอนว่ามีค่า
+    formData.append("skill", JSON.stringify(skillinputs.map((input) => input.value)));
+    formData.append("category", category || "");
+    formData.append("price", price || "");
+    formData.append("email", session.user.email);
+    formData.append("iduser", session.user.id);
     formData.append("rathing", rathingValue.toFixed(1));
     formData.append("sold", soldValue.toString());
     formData.append("review", reviewValue.toString());
     formData.append("permission", "false");
     formData.append("status", "pending");
   
-    // เพิ่มไฟล์รูปภาพ
     img.forEach((img) => formData.append("imageUrl", img));
     files.forEach((file) => formData.append("filesUrl", file));
   
@@ -141,17 +179,28 @@ const Project: React.FC = () => {
       if (res.ok) {
         const data = await res.json();
         setShowSuccessAlert(true);
-        setTimeout(() => setShowSuccessAlert(false), 3000);
-  
-        Swal.fire({
+        
+        // Show success alert
+        await Swal.fire({
           position: "center",
           icon: "success",
           title: t("authen.signup.status.success"),
           showConfirmButton: false,
           timer: 3000,
         });
-  
-        // ส่งการแจ้งเตือน
+      
+        // Show processing alert
+        Swal.fire({
+          icon: "info",
+          title: "Processing...",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+      
+        // Send notification
         await fetch("/api/notification", {
           method: "POST",
           headers: {
@@ -162,13 +211,13 @@ const Project: React.FC = () => {
             email: session.user.email,
           }),
         });
-  
-        // Redirect หลังจากส่งข้อมูลสำเร็จ
+      
+        // Redirect first, then close the alert
+        router.push(`/project/projectdetail/${data._id}`);
         setTimeout(() => {
-          router.push(`/project/projectdetail/${data._id}`);
-        }, 3000);
+          Swal.close();
+        }, 1000); // Close alert 1 second after navigation
       } else {
-        console.error("Failed to submit project");
         Swal.fire({
           position: "center",
           icon: "error",
@@ -178,7 +227,6 @@ const Project: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error("Error submitting project:", error);
       Swal.fire({
         position: "center",
         icon: "error",
@@ -270,6 +318,7 @@ const Project: React.FC = () => {
               {t("nav.sell.addP.receive")}
             </h1>
             <p className="text-gray-500">{t("nav.sell.addP.desre")}</p>
+            {/* Receieve Section */}
             <div>
               {inputs.map((input) => (
                 <div key={input.id} className="flex items-center mt-5">
@@ -299,6 +348,41 @@ const Project: React.FC = () => {
                 <p className="text-[18px]">{t("nav.sell.addP.buttre")}</p>
               </button>
             </div>
+            {/* Skill Section */}
+            <h1 className="mt-5 text-[24px] font-bold">
+              {t("nav.skill.title")}
+            </h1>
+            <p className="text-gray-500">{t("nav.skill.desadd")}</p>
+            <div>
+              {skillinputs.map((input) => (
+                <div key={input.id} className="flex items-center mt-5">
+                  <input
+                    id={`skill-${input.id}`}
+                    type="text"
+                    value={input.value}
+                    onChange={(e) =>
+                      handleSkillInputChange(input.id, e.target.value)
+                    }
+                    placeholder={t("nav.skill.title")}
+                    required
+                    className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                  />
+                  <MdDeleteOutline
+                    size={30}
+                    className="ml-3 text-gray-500 hover:text-red-500 cursor-pointer"
+                    onClick={() => handleRemoveSkill(input.id)}
+                  />
+                </div>
+              ))}
+              <button
+                type="button"
+                className="mt-5 flex w-full justify-center rounded-md bg-[#38B6FF] hover:bg-sky-300 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                onClick={handleAddSkill}
+              >
+                <p className="text-[18px]">{t("nav.skill.addskill")}</p>
+              </button>
+            </div>
+
             <div className="mt-5">
               <select
                 id="category"
