@@ -34,6 +34,7 @@ function Page({ params }) {
   const [postDataS, setPostDataS] = useState([]);
   const [postDataBlog, setPostDataBlog] = useState([]);
   const [publishedProjects, setPublishedProjects] = useState([]);
+  const [failedImages, setFailedImages] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,16 +148,15 @@ function Page({ params }) {
               ) : (
                 <div className="flex flex-row justify-center">
                   <div className="relative">
-                    {imageSource ? (
+                    {imageSource &&
+                    Array.isArray(failedImages) &&
+                    !failedImages.includes(imageSource) ? (
                       <Image
                         width={95}
                         height={95}
-                        src={imageSource}
+                        src={imageSource || ""}
                         alt="Profile Image"
                         unoptimized={true}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                        }}
                         style={{
                           objectFit: "cover",
                           borderRadius: "50%",
@@ -164,11 +164,18 @@ function Page({ params }) {
                           height: "95px",
                           margin: "15px",
                         }}
+                        onError={() => {
+                          setFailedImages((prev) => [...prev, imageSource]);
+                        }}
                       />
                     ) : (
                       <MdAccountCircle
                         className="rounded-full text-gray-500"
-                        style={{ width: "95px", height: "95px" }}
+                        style={{
+                          width: "95px",
+                          height: "95px",
+                          margin: "15px",
+                        }}
                       />
                     )}
                   </div>
@@ -259,13 +266,21 @@ function Page({ params }) {
                               {project.projectname}
                             </p>
                             <div className="flex items-center mb-2">
-                              {project.profileImage ? (
+                              {project.profileImage &&
+                              Array.isArray(failedImages) &&
+                              !failedImages.includes(project._id) ? (
                                 <Image
-                                  src={project.profileImage}
+                                  src={project.profileImage || ""}
                                   alt="Author Profile"
                                   width={20}
                                   height={20}
                                   className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                                  onError={() => {
+                                    setFailedImages((prev) => [
+                                      ...prev,
+                                      project._id,
+                                    ]);
+                                  }}
                                 />
                               ) : (
                                 <span className="text-gray-500 mr-2 text-2xl">
@@ -399,13 +414,18 @@ function Page({ params }) {
                               </div>
                             </div>
                             <div className="flex flex-row mb-3">
-                              {imageSource ? (
+                              {imageSource &&
+                              Array.isArray(failedImages) &&
+                              !failedImages.includes(id) ? (
                                 <Image
                                   width={24}
                                   height={24}
-                                  src={imageSource}
+                                  src={imageSource || ""}
                                   alt="Profile"
                                   className="w-6 h-6 rounded-full mr-2 mt-1"
+                                  onError={() => {
+                                    setFailedImages((prev) => [...prev, id]);
+                                  }}
                                 />
                               ) : (
                                 <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />

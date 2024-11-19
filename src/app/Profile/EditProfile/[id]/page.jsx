@@ -30,6 +30,7 @@ function Page() {
   const [newPhonenumber, setNewPhonenumber] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [failedImages, setFailedImages] = useState([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -40,9 +41,12 @@ function Page() {
     if (status === "authenticated" && session) {
       const fetchAllData = async () => {
         try {
-          const publishedResponse = await fetch("/api/project/getProjects/user", {
-            method: "GET",
-          });
+          const publishedResponse = await fetch(
+            "/api/project/getProjects/user",
+            {
+              method: "GET",
+            }
+          );
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
             setPublishedProjects(publishedData);
@@ -56,10 +60,13 @@ function Page() {
             setPostDataBlog(blogData);
           }
 
-          const profileResponse = await fetch(`/api/editprofile/${session.user.id}`, {
-            method: "GET",
-            cache: "no-store",
-          });
+          const profileResponse = await fetch(
+            `/api/editprofile/${session.user.id}`,
+            {
+              method: "GET",
+              cache: "no-store",
+            }
+          );
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
             setPostData(profileData.post);
@@ -82,7 +89,7 @@ function Page() {
       setNewPhonenumber(postDataS?.phonenumber || postData?.phonenumber || "");
       setNewFacebook(postDataS?.facebook || postData?.facebook || "");
       setNewLine(postDataS?.line || postData?.line || "");
-      
+
       if (session.user.imageUrl) {
         setProfileImage(session.user.imageUrl);
       }
@@ -92,7 +99,9 @@ function Page() {
   const getImageSource = () => {
     if (postData?.imageUrl?.[0]) {
       const imageUrl = postData.imageUrl[0];
-      return isValidHttpUrl(imageUrl) ? proxyUrl(imageUrl) : `/api/editprofile/images/${imageUrl}`;
+      return isValidHttpUrl(imageUrl)
+        ? proxyUrl(imageUrl)
+        : `/api/editprofile/images/${imageUrl}`;
     }
     if (postDataS?.imageUrl) {
       return `/api/editprofile/images/${postDataS.imageUrl}`;
@@ -148,7 +157,7 @@ function Page() {
         // Always redirect to the profile page after successful save
         router.push("/Profile");
       } else {
-        throw new Error('Failed to update profile');
+        throw new Error("Failed to update profile");
       }
     } catch (error) {
       console.error("Error during save:", error);
@@ -164,13 +173,18 @@ function Page() {
   if (status === "loading") {
     return (
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-        <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" />
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+        />
       </div>
     );
   }
 
   const imageSource = getImageSource();
-
 
   return (
     <Container>
@@ -189,23 +203,22 @@ function Page() {
                   borderRadius: "50%",
                 }}
               >
-                {profileImage || imageSource ? (
+                {imageSource && Array.isArray(failedImages) && !failedImages.includes(imageSource) ? (
                   <Image
                     width={95}
                     height={95}
-                    src={profileImage || imageSource}
+                    src={profileImage || imageSource || ""}
                     alt="Profile Image"
                     unoptimized={true}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/path/to/fallback/image.jpg";
-                    }}
                     style={{
                       objectFit: "cover",
                       borderRadius: "50%",
                       width: "95px",
                       height: "95px",
                       margin: "15px",
+                    }}
+                    onError={() => {
+                      setFailedImages((prev) => [...prev, imageSource]);
                     }}
                   />
                 ) : (
@@ -233,7 +246,10 @@ function Page() {
               </div>
 
               <div className="flex flex-row justify-center mb-4">
-                <p style={{ fontSize: "24px", fontWeight: "bold" }} className="mt-6">
+                <p
+                  style={{ fontSize: "24px", fontWeight: "bold" }}
+                  className="mt-6"
+                >
                   {postDataS?.name || postData?.name}
                 </p>
               </div>
@@ -246,7 +262,7 @@ function Page() {
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  placeholder={postData?.name || 'กำลังโหลด...'}
+                  placeholder={postData?.name || "กำลังโหลด..."}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <div className="flex flex-row items-center w-full mt-4">
@@ -308,18 +324,23 @@ function Page() {
                   borderRadius: "50%",
                 }}
               >
-                {profileImage || imageSource ? (
+                {imageSource && Array.isArray(failedImages) && !failedImages.includes(imageSource) ? (
                   <Image
                     width={95}
                     height={95}
-                    src={profileImage || imageSource}
+                    src={profileImage || imageSource || ""}
                     alt="Profile Image"
                     unoptimized={true}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/path/to/fallback/image.jpg";
+                    style={{
+                      objectFit: "cover",
+                      borderRadius: "50%",
+                      width: "95px",
+                      height: "95px",
+                      margin: "15px",
                     }}
-                    className="rounded-full w-[95px] h-[95px] object-cover"
+                    onError={() => {
+                      setFailedImages((prev) => [...prev, imageSource]);
+                    }}
                   />
                 ) : (
                   <MdAccountCircle
@@ -346,7 +367,10 @@ function Page() {
               </div>
 
               <div className="flex flex-row justify-center mb-4">
-                <p style={{ fontSize: "24px", fontWeight: "bold" }} className="mt-6">
+                <p
+                  style={{ fontSize: "24px", fontWeight: "bold" }}
+                  className="mt-6"
+                >
                   {postDataS?.name || postData?.name}
                 </p>
               </div>
@@ -360,7 +384,7 @@ function Page() {
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  placeholder={postDataS?.name || 'กำลังโหลด...'}
+                  placeholder={postDataS?.name || "กำลังโหลด..."}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <div className="flex flex-row items-center w-full mt-4">

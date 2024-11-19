@@ -38,6 +38,7 @@ function Profile() {
   const [postDataBlog, setPostDataBlog] = useState([]);
   const [publishedProject, setPublishedProjects] = useState([]);
   const { data: session, status } = useSession();
+  const [failedImages, setFailedImages] = useState([]);
 
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
@@ -70,9 +71,12 @@ function Profile() {
     if (status === "authenticated" && session) {
       const fetchData = async () => {
         try {
-          const publishedResponse = await fetch("/api/project/getProjects/user", {
-            method: "GET",
-          });
+          const publishedResponse = await fetch(
+            "/api/project/getProjects/user",
+            {
+              method: "GET",
+            }
+          );
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
             setPublishedProjects(publishedData);
@@ -212,22 +216,24 @@ function Profile() {
           <div className="flex flex-col w-full max-w-auto mb-20">
             <div className="flex flex-row justify-center">
               <div className="relative">
-                {imageSource ? (
+                {imageSource &&
+                Array.isArray(failedImages) &&
+                !failedImages.includes(imageSource) ? (
                   <Image
                     width={95}
                     height={95}
-                    src={imageSource}
+                    src={imageSource || ""}
                     alt="Profile Image"
                     unoptimized={true}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                    }}
                     style={{
                       objectFit: "cover",
                       borderRadius: "50%",
                       width: "95px",
                       height: "95px",
                       margin: "15px",
+                    }}
+                    onError={() => {
+                      setFailedImages((prev) => [...prev, imageSource]);
                     }}
                   />
                 ) : (
@@ -324,27 +330,35 @@ function Profile() {
                       href={`/project/projectdetail/${project._id}`}
                     >
                       <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
-                      <div className="relative w-full h-[150px] mb-4">
-                      <Image
-                        src={`/api/project/images/${project.imageUrl[0]}`}
-                        alt="Project Image"
-                        fill
-                        className="rounded-md object-cover"
-                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      />
-                    </div>
+                        <div className="relative w-full h-[150px] mb-4">
+                          <Image
+                            src={`/api/project/images/${project.imageUrl[0]}`}
+                            alt="Project Image"
+                            fill
+                            className="rounded-md object-cover"
+                            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          />
+                        </div>
                         <div className="flex flex-col justify-between h-full">
                           <p className="text-lg font-semibold mb-2 truncate">
                             {project.projectname}
                           </p>
                           <div className="flex items-center mb-2">
-                            {project.profileImage ? (
+                            {project.profileImage &&
+                            Array.isArray(failedImages) &&
+                            !failedImages.includes(project._id) ? (
                               <Image
-                                src={project.profileImage}
+                                src={project.profileImage || ""}
                                 alt="Author Profile"
                                 width={20}
                                 height={20}
                                 className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                                onError={() => {
+                                  setFailedImages((prev) => [
+                                    ...prev,
+                                    project._id,
+                                  ]);
+                                }}
                               />
                             ) : (
                               <span className="text-gray-500 mr-2 text-2xl">
@@ -415,13 +429,18 @@ function Profile() {
                             </div>
                           </div>
                           <div className="flex flex-row mb-3">
-                            {imageSource ? (
+                            {imageSource &&
+                            Array.isArray(failedImages) &&
+                            !failedImages.includes(id) ? (
                               <Image
                                 width={24}
                                 height={24}
-                                src={imageSource}
+                                src={imageSource || ""}
                                 alt="Profile"
                                 className="w-6 h-6 rounded-full mr-2 mt-1"
+                                onError={() => {
+                                  setFailedImages((prev) => [...prev, id]);
+                                }}
                               />
                             ) : (
                               <MdAccountCircle className="w-6 h-6 rounded-full mr-2 mt-1 text-gray-500" />
