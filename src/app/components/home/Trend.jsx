@@ -84,7 +84,7 @@ function Trend({ session }) {
                 key={index}
                 href={`/project?search=${search.term}`}
               >
-                <button className="w-[112px] h-[35px] flex-shrink-0 rounded-full bg-[#FFC107] text-black font-semibold">
+                <button className="w-[112px] h-[35px] flex-shrink-0 rounded-full border-solid border-3 border-[#FFC107] hover:bg-[#FFC107] text-black font-semibold">
                   {search.term}
                 </button>
               </Link>

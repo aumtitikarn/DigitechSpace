@@ -64,51 +64,58 @@ function Profile() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (status === "authenticated" && session) {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+
+    if (status === "authenticated" && session) {
+      const fetchData = async () => {
         try {
-          // Fetch profile data first
-          const profileResponse = await fetch(`/api/editprofile/${id}`);
-          if (profileResponse.ok) {
-            const profileData = await profileResponse.json();
-            setPostData(profileData.post || profileData.posts);
-            setPostDataS(profileData.posts);
-            
-            // Store author name from profile data
-            const authorName = profileData.post?.name || profileData.posts?.name;
-
-            // Fetch projects with author data
-            const publishedResponse = await fetch(`/api/project/getProjects/${id}`);
-            if (publishedResponse.ok) {
-              const publishedData = await publishedResponse.json();
-              // Add author name to each project
-              const projectsWithAuthor = publishedData.map(project => ({
-                ...project,
-                authorName: authorName // Add author name from profile
-              }));
-              setPublishedProjects(projectsWithAuthor);
+          const publishedResponse = await fetch(
+            "/api/project/getProjects/user",
+            {
+              method: "GET",
             }
+          );
+          if (publishedResponse.ok) {
+            const publishedData = await publishedResponse.json();
+            setPublishedProjects(publishedData);
+          } else {
+            console.error("Failed to fetch published projects");
+          }
 
-          // Fetch blog posts with author data
-          const blogResponse = await fetch(`/api/posts/getposts/${id}`);
+          const blogResponse = await fetch("/api/posts/getposts/user", {
+            cache: "no-store",
+          });
           if (blogResponse.ok) {
             const blogData = await blogResponse.json();
-            // Add author name to each blog post
-            const blogsWithAuthor = blogData.map(blog => ({
-              ...blog,
-              authorName: authorName // Add author name from profile
-            }));
-            setPostDataBlog(blogsWithAuthor);
+            setPostDataBlog(blogData);
+          } else {
+            console.error("Failed to fetch blog posts");
           }
+
+          const profileResponse = await fetch(
+            `/api/editprofile/${session.user.id}`,
+            {
+              method: "GET",
+              cache: "no-store",
+            }
+          );
+          if (profileResponse.ok) {
+            const profileData = await profileResponse.json();
+            setPostData(profileData.post);
+            setPostDataS(profileData.posts);
+          } else {
+            console.error("Failed to fetch user profile");
           }
         } catch (error) {
           console.error("Error fetching data:", error);
         }
-      }
-    };
+      };
 
-    fetchData();
-  }, [id, status, session]);
+      fetchData();
+    }
+  }, [status, session, router]);
 
   if (status === "loading") {
     return (
