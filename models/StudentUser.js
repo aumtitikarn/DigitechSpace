@@ -19,6 +19,9 @@ const studentUserSchema = new mongoose.Schema({
     email: {
         type: String,
     },
+    briefly: {
+        type: String,
+    },
     password: {
         type: String,
     },

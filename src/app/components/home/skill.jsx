@@ -9,7 +9,16 @@ import debounce from "lodash/debounce";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+const proxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
+const isValidHttpUrl = (string) => {
+  try {
+    const url = new URL(string);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
 const PopularSkills = () => {
   const { t } = useTranslation("translation");
   const { data: session, status } = useSession();
@@ -18,7 +27,7 @@ const PopularSkills = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [failedImages, setFailedImages] = useState(new Set());
+  const [failedImages, setFailedImages] = useState([]);
   const [error, setError] = useState(null);
   const [showAll, setShowAll] = useState(false);
 
@@ -139,7 +148,10 @@ const PopularSkills = () => {
   useEffect(() => {
     fetchUsersBySkillsOrName();
   }, [selectedSkills, searchTerm]);
-
+  useEffect(() => {
+    fetchUsersBySkillsOrName();
+    console.log("Users data:", users);
+  }, [selectedSkills, searchTerm]);
   const getDisplayedUsers = () => {
     if (typeof window !== "undefined" && window.innerWidth <= 768 && !showAll) {
       return users.slice(0, 30);
@@ -202,6 +214,23 @@ const PopularSkills = () => {
       router.push("/auth/signin"); // Redirect to signin if no session
     }
   };
+  // const getImageSource = (user) => {
+  //   if (user?.imageUrl?.[0]) {
+  //     const imageUrl = user.imageUrl[0];
+  //     return isValidHttpUrl(imageUrl)
+  //       ? proxyUrl(imageUrl)
+  //       : `/api/editprofile/images/${imageUrl}`;
+  //   }
+  //   if (user?.imageUrl) {
+  //     return `/api/editprofile/images/${user.imageUrl}`;
+  //   }
+  //   if (user?.image) {
+  //     return proxyUrl(user.image);
+  //   }
+  //   return null;
+  // };
+
+  // const imageSource = getImageSource();
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
@@ -251,55 +280,58 @@ const PopularSkills = () => {
         </div>
       </div>
 
-      <div className="flex flex-col">
-        <div className="relative flex-grow">
-          <div className="md:overflow-x-auto md:whitespace-nowrap scrollbar-none">
-            <div className="flex flex-col md:flex-row gap-4 md:w-max">
-              {isLoading ? (
-                <div className="w-full text-center py-4">Loading...</div>
-              ) : getDisplayedUsers().length > 0 ? (
-                getDisplayedUsers().map((user) => (
-                  <div
-                    key={user._id}
-                    className="bg-[#E6ECFF] rounded-lg p-4 md:min-w-[300px] flex-shrink-0"
-                  >
-                    <Link
-                      href={`/Profile/ViewProfile/${user._id || "#"}`}
-                      onClick={handleRedirect}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <div className="relative w-[64px] h-[64px]">
-                            {/* เพิ่ม Border สีเหลืองด้านนอก */}
-                            <div className="absolute inset-0">
-                              <svg
-                                viewBox="0 0 100 100"
-                                className="w-[64px] h-[64px]"
-                              >
-                                <circle
-                                  cx="50"
-                                  cy="50"
-                                  r="47"
-                                  fill="none"
-                                  stroke="#FFE495"
-                                  strokeWidth="6"
-                                />
-                              </svg>
-                            </div>
+{/* แก้ไขส่วนการแสดงผล Users */}
+<div className="flex flex-col">
+  <div className="relative flex-grow">
+    <div className="md:overflow-x-auto md:whitespace-nowrap scrollbar-none">
+      <div className="flex flex-col md:flex-row gap-4 md:w-max">
+        {isLoading ? (
+          <div className="w-full text-center py-4">Loading...</div>
+        ) : getDisplayedUsers().length > 0 ? (
+          getDisplayedUsers().map((user) => (
+            <div
+              key={user._id}
+              className="bg-[#E6ECFF] rounded-lg p-4 md:min-w-[300px] flex-shrink-0"
+            >
+              <Link
+                href={`/Profile/ViewProfile/${user._id || "#"}`}
+                onClick={handleRedirect}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="relative w-[64px] h-[64px]">
+                      {/* Border สีเหลือง */}
+                      <div className="absolute inset-0">
+                        <svg viewBox="0 0 100 100" className="w-[64px] h-[64px]">
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="47"
+                            fill="none"
+                            stroke="#FFE495"
+                            strokeWidth="6"
+                          />
+                        </svg>
+                      </div>
 
-                            {/* รูปโปรไฟล์ */}
-                            {user.profileImage &&
-                            !failedImages.has(user._id) ? (
-                              <Image
-                                src={user.profileImage}
-                                alt={user.name}
-                                fill
-                                className="rounded-full object-cover"
-                              />
-                            ) : (
-                              <MdAccountCircle className="w-[64px] h-[64px] text-gray-400" />
-                            )}
-                          </div>
+                      {/* รูปโปรไฟล์ */}
+                      {user.imageUrl && !failedImages.includes(user._id) ? (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Image
+                            src={`/api/editprofile/images/${user.imageUrl}`}
+                            alt={user.name || "Profile"}
+                            width={54}
+                            height={54}
+                            className="rounded-full object-cover "
+                            onError={() => {
+                              setFailedImages((prev) => [...prev, user._id]);
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <MdAccountCircle className="w-[64px] h-[64px] text-gray-400" />
+                      )}
+                    </div>
 
                           {/* แถบเปอร์เซ็นต์ */}
                           <div

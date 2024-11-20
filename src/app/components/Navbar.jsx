@@ -213,11 +213,11 @@ function CustomNavbar() {
                         (prev) => new Set([...prev, imageSource._id])
                       );
                     }}
-                    className="rounded-full w-[35px] h-[35px] object-cover "
+                    className="rounded-full w-[35px] h-[35px] object-cover ml-2"
                   />
                 ) : (
                   <MdAccountCircle
-                    className="rounded-full "
+                    className="rounded-full ml-2"
                     style={{
                       width: "35px",
                       height: "35px",
@@ -256,14 +256,14 @@ function CustomNavbar() {
                         )}
 
                         <span>
-                          <p className="text-[20px] mt-3 text-semibold">
+                          <p className="text-[20px] mt-3 text-semibold ml-3">
                             {postData?.name || postDataS?.name || "Unknown"}
                           </p>
                           <b>
                             <u className="text-[#0E6FFF]">
                               {session?.user?.role !== "NormalUser" && (
                                 <Link href="/Profile">
-                                  <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300 ">
+                                  <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300 ml-3">
                                     {t("nav.viewprofile")}
                                   </p>
                                 </Link>
@@ -272,7 +272,7 @@ function CustomNavbar() {
                                 <Link
                                   href={`/Profile/EditProfile/${session?.user?.id}`}
                                 >
-                                  <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
+                                  <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300 ml-3">
                                     {t("nav.viewprofile")}
                                   </p>
                                 </Link>
@@ -509,14 +509,14 @@ function CustomNavbar() {
                             />
                           )}
                           <span>
-                            <p className="text-[20px] mt-3 text-semibold">
+                            <p className="text-[20px] mt-3 text-semibold ml-3">
                               {postData?.name || postDataS?.name || "Unknown"}
                             </p>
                             <b>
                               <u className="text-[#0E6FFF]">
                                 {session?.user?.role !== "NormalUser" && (
                                   <Link href="/Profile">
-                                    <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
+                                    <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300 ml-3">
                                       {t("nav.viewprofile")}
                                     </p>
                                   </Link>
@@ -525,7 +525,7 @@ function CustomNavbar() {
                                   <Link
                                     href={`/Profile/EditProfile/${session?.user?.id}`}
                                   >
-                                    <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
+                                    <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300 ml-3">
                                       {t("nav.viewprofile")}
                                     </p>
                                   </Link>
@@ -736,11 +736,11 @@ function CustomNavbar() {
                                 onError={(e) => {
                                   e.target.onerror = null;
                                 }}
-                                className="rounded-full w-[60px] h-[60px] object-cover"
+                                className="rounded-full w-[60px] h-[60px] object-cover mr-2"
                               />
                             ) : (
                               <MdAccountCircle
-                                className="rounded-full text-gray-500"
+                                className="rounded-full text-gray-500 mr-2"
                                 style={{
                                   width: "60px",
                                   height: "60px",
@@ -748,13 +748,13 @@ function CustomNavbar() {
                               />
                             )}
                             <span>
-                              <p className="text-[20px] mt-3 text-semibold">
+                              <p className="text-[20px] mt-3 text-semibold ml-3">
                                 {session?.user?.name || "Unknown"}
                               </p>
                               <b>
                                 <u className="text-[#0E6FFF]">
                                   <Link href="/Profile">
-                                    <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300">
+                                    <p className="text-[14px] ml-1 text-[#0E6FFF] hover:text-gray-300 ml-3">
                                       {t("nav.viewprofile")}
                                     </p>
                                   </Link>

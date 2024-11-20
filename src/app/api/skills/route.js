@@ -2,91 +2,99 @@ import { connectMongoDB } from "../../../../lib/mongodb";
 import StudentUser from "../../../../models/StudentUser";
 import { NextResponse } from "next/server";
 
-export async function GET(request) {
+export async function GET(req) {
   try {
-    const { searchParams } = new URL(request.url);
-    const mode = searchParams.get('mode') || 'skills';
-    const query = searchParams.get('query') || '';
-    const skills = searchParams.get('skills')?.split(',').filter(Boolean) || [];
-
     await connectMongoDB();
+    
+    const { searchParams } = new URL(req.url);
+    const mode = searchParams.get('mode');
+    const skillsParam = searchParams.get('skills');
+    const name = searchParams.get('name');
 
     if (mode === 'skills') {
-      // Existing skills aggregation code...
-      const skillsData = await StudentUser.aggregate([
-        { $unwind: "$skills" },
-        {
-          $group: {
-            _id: {
-              original: "$skills",
-              lower: { $toLower: "$skills" }
-            },
-            count: { $sum: 1 }
-          }
-        },
-        { $sort: { count: -1 } },
-        {
-          $project: {
-            _id: "$_id.original",
-            count: 1
-          }
-        }
-      ]);
-
+      // Return all unique skills
+      const allUsers = await StudentUser.find({});
+      const allSkills = [...new Set(allUsers.flatMap(user => user.skills || []))];
       return NextResponse.json({ 
         success: true,
-        skills: skillsData.map(item => item._id)
+        skills: allSkills 
       });
+    }
 
-    } else {
-      // Case-insensitive search for users with any of the searched skills
-      const skillRegexes = skills.length > 0 
-        ? skills.map(skill => new RegExp(skill, 'i'))
-        : [new RegExp(query, 'i')];
+    if (mode === 'users') {
+      let query = {};
+      
+      if (name) {
+        query.name = { $regex: name, $options: 'i' };
+      }
 
-      const users = await StudentUser.find({
-        skills: { $in: skillRegexes }  // Changed from $all to $in to find users with any matching skill
-      }).select('name profileImage skills _id');
+      // Fetch users
+      const users = await StudentUser.find(query);
+
+      if (!skillsParam) {
+        // If no skills specified, return all users
+        return NextResponse.json({ 
+          success: true,
+          users: users.map(user => ({
+            _id: user._id,
+            name: user.name,
+            imageUrl: user.imageUrl,
+            skills: user.skills,
+            matchPercentage: 100,
+            matchedSkills: user.skills
+          }))
+        });
+      }
+
+      const searchSkills = skillsParam.split(',');
+      const searchSkillsLower = searchSkills.map(s => s.toLowerCase());
 
       // Calculate match percentage for each user
-      const usersWithMatchPercentage = users.map(user => {
-        const userSkillsLower = user.skills.map(s => s.toLowerCase());
-        const searchSkillsLower = skills.map(s => s.toLowerCase());
+      const usersWithMatch = users.map(user => {
+        const userSkills = user.skills || [];
+        const userSkillsLower = userSkills.map(s => s.toLowerCase());
         
-        // Find matching skills (maintaining original case)
-        const matchedSkills = user.skills.filter(userSkill => 
-          skillRegexes.some(regex => regex.test(userSkill))
+        // Find matching skills
+        const matchedSkills = userSkills.filter(skill => 
+          searchSkillsLower.includes(skill.toLowerCase())
         );
 
         // Calculate percentage
-        const matchPercentage = (matchedSkills.length / searchSkillsLower.length) * 100;
+        const matchPercentage = searchSkills.length > 0
+          ? (matchedSkills.length / searchSkills.length) * 100
+          : 0;
 
         return {
-          ...user.toObject(),
-          matchedSkills,
-          matchPercentage: Math.round(matchPercentage) // Round to nearest integer
+          _id: user._id,
+          name: user.name,
+          imageUrl: user.imageUrl,
+          skills: user.skills,
+          matchedSkills: matchedSkills,
+          matchPercentage: Math.round(matchPercentage)
         };
       });
 
-      // Sort by match percentage (highest first)
-      const sortedUsers = usersWithMatchPercentage.sort((a, b) => 
-        b.matchPercentage - a.matchPercentage
-      );
+      // Filter users with match percentage > 0 and sort by percentage
+      const filteredAndSorted = usersWithMatch
+        .filter(user => user.matchPercentage > 0)
+        .sort((a, b) => b.matchPercentage - a.matchPercentage);
 
       return NextResponse.json({ 
         success: true,
-        users: sortedUsers
+        users: filteredAndSorted
       });
     }
+
+    return NextResponse.json({ 
+      success: false,
+      error: "Invalid mode specified" 
+    });
+
   } catch (error) {
-    console.error("Error in GET /api/skills:", error);
-    return NextResponse.json(
-      { 
-        success: false,
-        error: "Failed to fetch data",
-        details: error.message
-      },
-      { status: 500 }
-    );
+    console.error('API Error:', error);
+    return NextResponse.json({ 
+      success: false,
+      error: error.message 
+    });
   }
 }

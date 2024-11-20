@@ -7,8 +7,8 @@ import { NextResponse } from "next/server";
 
 export async function PUT(req, { params }) {
   try {
-    const { id } = params; 
-    const { imgbucket } = await connectMongoDB(); 
+    const { id } = params;
+    const { imgbucket } = await connectMongoDB();
 
     const formData = await req.formData();
 
@@ -16,6 +16,7 @@ export async function PUT(req, { params }) {
     let email = "";
     let line = "";
     let facebook = "";
+    let briefly = "";
     let phonenumber = "";
     let imageUrl = [];
     let favblog = [];
@@ -32,6 +33,9 @@ export async function PUT(req, { params }) {
         case "line":
           line = value.toString();
           break;
+        case "briefly":
+          briefly = value.toString();
+          break;
         case "facebook":
           facebook = value.toString();
           break;
@@ -39,19 +43,21 @@ export async function PUT(req, { params }) {
           phonenumber = value.toString();
           break;
         case "imageUrl":
-          if (value instanceof Blob && value.type.startsWith('image/')) {
+          if (value instanceof Blob && value.type.startsWith("image/")) {
             const imageName = `${Date.now()}_${value.name}`;
             const buffer = Buffer.from(await value.arrayBuffer());
             const stream = Readable.from(buffer);
             const uploadStream = imgbucket.openUploadStream(imageName);
             await new Promise((resolve, reject) => {
-              stream.pipe(uploadStream).on("finish", resolve).on("error", reject);
+              stream
+                .pipe(uploadStream)
+                .on("finish", resolve)
+                .on("error", reject);
             });
             imageUrl.push(imageName);
           }
           break;
         case "favblog":
-
           const favBlogEntry = JSON.parse(value);
 
           const favBlogImageUrl = Array.isArray(favBlogEntry.imageUrl)
@@ -71,6 +77,7 @@ export async function PUT(req, { params }) {
       ...(name && { name }),
       ...(email && { email }),
       ...(line && { line }),
+      ...(briefly && { briefly }),
       ...(facebook && { facebook }),
       ...(phonenumber && { phonenumber }),
     };
@@ -83,7 +90,11 @@ export async function PUT(req, { params }) {
       updateData.line = line;
     }
     if (facebook) {
-      updateData.facebook = facebook; 
+      updateData.facebook = facebook;
+    }
+
+    if (facebook) {
+      updateData.briefly = briefly;
     }
 
     if (favblog.length > 0) {
@@ -94,7 +105,8 @@ export async function PUT(req, { params }) {
       updateData.$push = { favblog: { $each: favblog } };
     }
 
-    let updatedUser = await NormalUser.findByIdAndUpdate(id,
+    let updatedUser = await NormalUser.findByIdAndUpdate(
+      id,
       { $set: updateData },
       { new: true, runValidators: true, strict: false }
     );
@@ -108,13 +120,16 @@ export async function PUT(req, { params }) {
     }
 
     if (!updatedUser) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json({ user: updatedUser }, { status: 200 });
   } catch (error) {
-    console.error('Error updating user:', error);
-    return NextResponse.json({ message: 'Error updating user' }, { status: 500 });
+    console.error("Error updating user:", error);
+    return NextResponse.json(
+      { message: "Error updating user" },
+      { status: 500 }
+    );
   }
 }
 
@@ -126,7 +141,7 @@ export async function GET(req, { params }) {
   }
 
   await connectMongoDB();
-  
+
   const post = await NormalUser.findOne({ _id: id });
   const posts = await StudentUser.findOne({ _id: id });
 
@@ -148,7 +163,9 @@ export async function GET(req, { params }) {
     return NextResponse.json({ post, posts, combinedData }, { status: 200 });
   } catch (error) {
     console.error("Error fetching user profile:", error);
-    return NextResponse.json({ message: "Error fetching user profile" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error fetching user profile" },
+      { status: 500 }
+    );
   }
 }
-
