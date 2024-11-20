@@ -184,9 +184,7 @@ const PopularSkills = () => {
             <div className="w-full text-center text-gray-500">
               Loading skills...
             </div>
-          ) : error ? (
-            <div className="w-full text-center text-red-500">{error}</div>
-          ) : skills.length > 0 ? (
+          )  : skills.length > 0 ? (
             skills.map((skill, index) => (
               <button
                 key={index}

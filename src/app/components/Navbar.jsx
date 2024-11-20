@@ -302,21 +302,12 @@ function CustomNavbar() {
                           />
                         ) : (
                           <MdAccountCircle
-                          className={`
-                            ml-8 text-xl focus:outline-none transition-colors duration-300
-                            ${isHomePage 
-                              ? (isScrolled 
-                                  ? 'text-white hover:text-[#5f66de]'
-                                  : 'text-gray-800 hover:text-gray-600')
-                              : 'text-white hover:text-[#5f66de]'
-                            }
-                            w-[35px] h-[35px]
-                          `}
-                            style={{
-                              width: "55px",
-                              height: "55px",
-                            }}
-                          />
+                          className="rounded-full text-gray-600"
+                          style={{
+                            width: "55px",
+                            height: "55px",
+                          }}
+                        />
                         )}
 
                         <span>
@@ -650,21 +641,12 @@ function CustomNavbar() {
                             />
                           ) : (
                             <MdAccountCircle
-                            className={`
-                              ml-8 text-xl focus:outline-none transition-colors duration-300
-                              ${isHomePage 
-                                ? (isScrolled 
-                                    ? 'text-white hover:text-[#5f66de]'
-                                    : 'text-gray-800 hover:text-gray-600')
-                                : 'text-white hover:text-[#5f66de]'
-                              }
-                              w-[35px] h-[35px]
-                            `}
-                              style={{
-                                width: "55px",
-                                height: "55px",
-                              }}
-                            />
+                            className="rounded-full text-gray-600"
+                            style={{
+                              width: "55px",
+                              height: "55px",
+                            }}
+                          />
                           )}
                           <span>
                             <p className="text-[20px] mt-3 text-semibold ml-3">
