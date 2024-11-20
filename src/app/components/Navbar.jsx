@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "./../i18n";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { usePathname } from 'next/navigation';
 
 function CustomNavbar() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -22,6 +23,9 @@ function CustomNavbar() {
   const [postDataS, setPostDataS] = useState([]);
   const [profileImage, setProfileImage] = useState(null);
   const [failedImages, setFailedImages] = useState(new Set());
+  const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname(); 
+  const isHomePage = pathname === '/';
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -153,15 +157,55 @@ function CustomNavbar() {
   };
 
   const imageSource = getImageSource();
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        // ปรับตัวเลขตามความเหมาะสม
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const getLogo = () => {
+    if (isHomePage) {
+      return isScrolled ? 'https://m1r.ai/W8p5i.png' : 'https://m1r.ai/7ttM.png';
+    }
+    return 'https://m1r.ai/W8p5i.png';
+  };
 
   return (
-    <nav className="bg-[#0B1E48] shadow-md p-5 relative z-50 sticky top-0">
+    <nav
+  className={`
+    ${isHomePage
+      ? `fixed top-0 w-full z-50 transition-all duration-300 p-5
+         ${isScrolled 
+           ? 'bg-[#0B1E48]' 
+           : 'bg-gradient-to-b from-black/65 to-transparent backdrop-blur-[1px]'
+         }`
+      : 'bg-[#0B1E48] shadow-md p-5 relative z-50 sticky top-0'
+    }
+  `}
+>
       <div className="flex items-center justify-between lg:mx-[50px]">
         {/* ปุ่มเมนูสำหรับหน้าจอมือถือ */}
         <div className="block lg:hidden">
           <button
             onClick={toggleMobileMenu}
-            className="text-white focus:outline-none"
+            className={`
+              ml-2 text-xl focus:outline-none transition-colors duration-300
+              ${isHomePage 
+                ? (isScrolled 
+                    ? 'text-white hover:text-[#FFC92B]'
+                    : 'text-gray-800 hover:text-gray-600')
+                : 'text-white hover:text-[#FFC92B]'
+              }
+              w-[35px] h-[35px]
+            `}
           >
             <svg
               className="w-6 h-6 mt-5"
@@ -182,8 +226,10 @@ function CustomNavbar() {
         {/* โลโก้สำหรับมือถือ */}
         <div className="flex-1 flex justify-center lg:hidden">
           <Link href="/">
-            <Image
-              src="https://m1r.ai/W8p5i.png"
+            <Image 
+              src={
+                getLogo()
+              }
               alt="Digitech Space logo"
               width={100}
               height={100}
@@ -217,7 +263,16 @@ function CustomNavbar() {
                   />
                 ) : (
                   <MdAccountCircle
-                    className="rounded-full ml-2"
+                  className={`
+                    ml-8 text-xl focus:outline-none transition-colors duration-300
+                    ${isHomePage 
+                      ? (isScrolled 
+                          ? 'text-white hover:text-[#5f66de]'
+                          : 'text-gray-800 hover:text-gray-600')
+                      : 'text-white hover:text-[#5f66de]'
+                    }
+                    w-[35px] h-[35px]
+                  `}
                     style={{
                       width: "35px",
                       height: "35px",
@@ -247,7 +302,16 @@ function CustomNavbar() {
                           />
                         ) : (
                           <MdAccountCircle
-                            className="rounded-full text-gray-500"
+                          className={`
+                            ml-8 text-xl focus:outline-none transition-colors duration-300
+                            ${isHomePage 
+                              ? (isScrolled 
+                                  ? 'text-white hover:text-[#5f66de]'
+                                  : 'text-gray-800 hover:text-gray-600')
+                              : 'text-white hover:text-[#5f66de]'
+                            }
+                            w-[35px] h-[35px]
+                          `}
                             style={{
                               width: "55px",
                               height: "55px",
@@ -363,7 +427,7 @@ function CustomNavbar() {
             <div className="flex-none">
               <Link href="/">
                 <Image
-                  src="https://m1r.ai/W8p5i.png"
+                  src={getLogo()}
                   alt="Digitech Space logo"
                   width={120}
                   height={120}
@@ -379,21 +443,54 @@ function CustomNavbar() {
                 <ul className="flex  items-center">
                   <li>
                     <Link href="/">
-                      <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                      <p
+                        className={`
+                          font-semibold text-[20px] px-8
+                          ${isHomePage 
+                            ? (isScrolled 
+                                ? "text-white hover:text-[#5f66de]" 
+                                : "text-gray-800 hover:text-gray-600")
+                            : "text-white hover:text-[#5f66de]"
+                          }
+                          transition-colors duration-300
+                        `}
+                      >
                         {t("nav.home.title")}
                       </p>
                     </Link>
                   </li>
                   <li>
                     <Link href="/project">
-                      <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                      <p
+                        className={`
+                          font-semibold text-[20px] px-8
+                          ${isHomePage 
+                            ? (isScrolled 
+                                ? "text-white hover:text-[#5f66de]" 
+                                : "text-gray-800 hover:text-gray-600")
+                            : "text-white hover:text-[#5f66de]"
+                          }
+                          transition-colors duration-300
+                        `}
+                      >
                         {t("nav.project.title")}
                       </p>
                     </Link>
                   </li>
                   <li>
                     <Link href="/listblog">
-                      <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                      <p
+                        className={`
+                          font-semibold text-[20px] px-8
+                          ${isHomePage 
+                            ? (isScrolled 
+                                ? "text-white hover:text-[#5f66de]" 
+                                : "text-gray-800 hover:text-gray-600")
+                            : "text-white hover:text-[#5f66de]"
+                          }
+                          transition-colors duration-300
+                        `}
+                      >
                         {t("nav.blog.title")}
                       </p>
                     </Link>
@@ -406,21 +503,54 @@ function CustomNavbar() {
                   <ul className="flex  items-center">
                     <li>
                       <Link href="/">
-                        <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                        <p
+                          className={`
+                            font-semibold text-[20px] px-8
+                            ${isHomePage 
+                              ? (isScrolled 
+                                  ? "text-white hover:text-[#5f66de]" 
+                                  : "text-gray-800 hover:text-gray-600")
+                              : "text-white hover:text-[#5f66de]"
+                            }
+                            transition-colors duration-300
+                          `}
+                        >
                           {t("nav.home.title")}
                         </p>
                       </Link>
                     </li>
                     <li>
                       <Link href="/project">
-                        <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                        <p
+                          className={`
+                            font-semibold text-[20px] px-8
+                            ${isHomePage 
+                              ? (isScrolled 
+                                  ? "text-white hover:text-[#5f66de]" 
+                                  : "text-gray-800 hover:text-gray-600")
+                              : "text-white hover:text-[#5f66de]"
+                            }
+                            transition-colors duration-300
+                          `}
+                        >
                           {t("nav.project.title")}
                         </p>
                       </Link>
                     </li>
                     <li>
                       <Link href="/listblog">
-                        <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                        <p
+                          className={`
+                            font-semibold text-[20px] px-8
+                            ${isHomePage 
+                              ? (isScrolled 
+                                  ? "text-white hover:text-[#5f66de]" 
+                                  : "text-gray-800 hover:text-gray-600")
+                              : "text-white hover:text-[#5f66de]"
+                            }
+                            transition-colors duration-300
+                          `}
+                        >
                           {t("nav.blog.title")}
                         </p>
                       </Link>
@@ -436,21 +566,31 @@ function CustomNavbar() {
                 <>
                   {/* ปุ่มเปลี่ยนภาษา */}
                   <div className="space-x-5">
-                    <button
-                      onClick={toggleLanguage}
-                      className=" text-white text-xl hover:text-[#FFC92B] focus:outline-none"
-                    >
-                      <MdGTranslate
-                        style={{
-                          width: "35px",
-                          height: "35px",
-                        }}
-                      />
+                  <button
+            onClick={toggleLanguage}
+            className={`
+               text-xl focus:outline-none transition-colors duration-300
+              ${isHomePage 
+                ? (isScrolled 
+                    ? 'text-white hover:text-[#5f66de]'
+                    : 'text-gray-800 hover:text-gray-600')
+                : 'text-white hover:text-[#5f66de]'
+              }
+              w-[35px] h-[35px]
+            `}
+          >
+            <MdGTranslate className="text-3xl" />
                     </button>
 
                     <button
                       onClick={toggleAccountBox}
-                      className="text-white focus:outline-none"
+                      className={`
+                        ml-8 text-xl focus:outline-none
+                        ${isScrolled 
+                          ? 'text-white hover:text-[#FFC92B]'
+                          : 'text-gray-800 hover:text-gray-600'
+                        }
+                      `}
                     >
                       {imageSource && !failedImages.has(imageSource._id) ? (
                         <Image
@@ -468,7 +608,16 @@ function CustomNavbar() {
                         />
                       ) : (
                         <MdAccountCircle
-                          className="rounded-full "
+                        className={`
+                           text-xl focus:outline-none transition-colors duration-300
+                          ${isHomePage 
+                            ? (isScrolled 
+                                ? 'text-white hover:text-[#5f66de]'
+                                : 'text-gray-800 hover:text-gray-600')
+                            : 'text-white hover:text-[#5f66de]'
+                          }
+                          w-[35px] h-[35px]
+                        `}
                           style={{
                             width: "35px",
                             height: "35px",
@@ -501,7 +650,16 @@ function CustomNavbar() {
                             />
                           ) : (
                             <MdAccountCircle
-                              className="rounded-full text-gray-500"
+                            className={`
+                              ml-8 text-xl focus:outline-none transition-colors duration-300
+                              ${isHomePage 
+                                ? (isScrolled 
+                                    ? 'text-white hover:text-[#5f66de]'
+                                    : 'text-gray-800 hover:text-gray-600')
+                                : 'text-white hover:text-[#5f66de]'
+                              }
+                              w-[35px] h-[35px]
+                            `}
                               style={{
                                 width: "55px",
                                 height: "55px",
@@ -610,7 +768,16 @@ function CustomNavbar() {
                   {/* ปุ่มเปลี่ยนภาษา */}
                   <button
                     onClick={toggleLanguage}
-                    className="ml-8 text-white text-xl hover:text-blue-300 focus:outline-none"
+                    className={`
+                      ml-8 text-xl focus:outline-none transition-colors duration-300
+                      ${isHomePage 
+                        ? (isScrolled 
+                            ? 'text-white hover:text-[#FFC92B]'
+                            : 'text-gray-800 hover:text-gray-600')
+                        : 'text-white hover:text-[#FFC92B]'
+                      }
+                      w-[35px] h-[35px]
+                    `}
                   >
                     <MdGTranslate className="text-3xl" />
                   </button>
@@ -635,7 +802,7 @@ function CustomNavbar() {
               <div className="flex-none">
                 <Link href="/">
                   <Image
-                    src="https://m1r.ai/W8p5i.png"
+                    src={getLogo()}
                     alt="Digitech Space logo"
                     width={120}
                     height={120}
@@ -651,21 +818,54 @@ function CustomNavbar() {
                   <ul className="flex  items-center">
                     <li>
                       <Link href="/">
-                        <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                        <p
+                          className={`
+                            font-semibold text-[20px] px-8
+                            ${isHomePage 
+                              ? (isScrolled 
+                                  ? "text-white hover:text-[#5f66de]" 
+                                  : "text-gray-800 hover:text-gray-600")
+                              : "text-white hover:text-[#5f66de]"
+                            }
+                            transition-colors duration-300
+                          `}
+                        >
                           {t("nav.home.title")}
                         </p>
                       </Link>
                     </li>
                     <li>
                       <Link href="/project">
-                        <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                        <p
+                          className={`
+                            font-semibold text-[20px] px-8
+                            ${isHomePage 
+                              ? (isScrolled 
+                                  ? "text-white hover:text-[#5f66de]" 
+                                  : "text-gray-800 hover:text-gray-600")
+                              : "text-white hover:text-[#5f66de]"
+                            }
+                            transition-colors duration-300
+                          `}
+                        >
                           {t("nav.project.title")}
                         </p>
                       </Link>
                     </li>
                     <li>
                       <Link href="/listblog">
-                        <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                        <p
+                          className={`
+                            font-semibold text-[20px] px-8
+                            ${isHomePage 
+                              ? (isScrolled 
+                                  ? "text-white hover:text-[#5f66de]" 
+                                  : "text-gray-800 hover:text-gray-600")
+                              : "text-white hover:text-[#5f66de]"
+                            }
+                            transition-colors duration-300
+                          `}
+                        >
                           {t("nav.blog.title")}
                         </p>
                       </Link>
@@ -678,21 +878,54 @@ function CustomNavbar() {
                     <ul className="flex  items-center">
                       <li>
                         <Link href="/">
-                          <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                          <p
+                            className={`
+                              font-semibold text-[20px] px-8
+                              ${isHomePage 
+                                ? (isScrolled 
+                                    ? "text-white hover:text-[#5f66de]" 
+                                    : "text-gray-800 hover:text-gray-600")
+                                : "text-white hover:text-[#5f66de]"
+                              }
+                              transition-colors duration-300
+                            `}
+                          >
                             {t("nav.home.title")}
                           </p>
                         </Link>
                       </li>
                       <li>
                         <Link href="/project">
-                          <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                          <p
+                            className={`
+                              font-semibold text-[20px] px-8
+                              ${isHomePage 
+                                ? (isScrolled 
+                                    ? "text-white hover:text-[#5f66de]" 
+                                    : "text-gray-800 hover:text-gray-600")
+                                : "text-white hover:text-[#5f66de]"
+                              }
+                              transition-colors duration-300
+                            `}
+                          >
                             {t("nav.project.title")}
                           </p>
                         </Link>
                       </li>
                       <li>
                         <Link href="/listblog">
-                          <p className="font-semibold text-[20px] text-white px-8 hover:text-[#FFC92B]">
+                          <p
+                            className={`
+                              font-semibold text-[20px] px-8
+                              ${isHomePage 
+                                ? (isScrolled 
+                                    ? "text-white hover:text-[#5f66de]" 
+                                    : "text-gray-800 hover:text-gray-600")
+                                : "text-white hover:text-[#5f66de]"
+                              }
+                              transition-colors duration-300
+                            `}
+                          >
                             {t("nav.blog.title")}
                           </p>
                         </Link>
@@ -710,7 +943,7 @@ function CustomNavbar() {
                     <div className="space-x-5">
                       <button
                         onClick={toggleLanguage}
-                        className="ml-8 text-white text-xl hover:text-[#FFC92B] focus:outline-none"
+                        className="ml-8 text-white text-xl hover:text-[#5f66de] focus:outline-none"
                       >
                         <MdGTranslate className="text-3xl" />
                       </button>
@@ -740,7 +973,16 @@ function CustomNavbar() {
                               />
                             ) : (
                               <MdAccountCircle
-                                className="rounded-full text-gray-500 mr-2"
+                              className={`
+                                ml-8 text-xl focus:outline-none transition-colors duration-300
+                                ${isHomePage 
+                                  ? (isScrolled 
+                                      ? 'text-white hover:text-[#5f66de]'
+                                      : 'text-gray-800 hover:text-gray-600')
+                                  : 'text-white hover:text-[#5f66de]'
+                                }
+                                w-[35px] h-[35px]
+                              `}
                                 style={{
                                   width: "60px",
                                   height: "60px",
@@ -837,7 +1079,7 @@ function CustomNavbar() {
                     {/* ปุ่มเปลี่ยนภาษา */}
                     <button
                       onClick={toggleLanguage}
-                      className="ml-8 text-white text-xl hover:text-[#FFC92B] focus:outline-none"
+                      className="ml-8 text-white text-xl hover:text-[#5f66de] focus:outline-none"
                     >
                       <MdGTranslate className="text-3xl" />
                     </button>
@@ -864,7 +1106,7 @@ function CustomNavbar() {
             <div className="flex justify-between items-center px-5 py-5">
               <Link href="/">
                 <Image
-                  src="https://m1r.ai/W8p5i.png"
+                  src={getLogo()}
                   alt="Digitech Space logo"
                   width={100}
                   height={100}
@@ -874,7 +1116,16 @@ function CustomNavbar() {
               </Link>
               <button
                 onClick={toggleMobileMenu}
-                className="text-white text-2xl focus:outline-none"
+                className={`
+                  ml-8 text-xl focus:outline-none transition-colors duration-300
+                  ${isHomePage 
+                    ? (isScrolled 
+                        ? 'text-white hover:text-[#5f66de]'
+                        : 'text-gray-800 hover:text-gray-600')
+                    : 'text-white hover:text-[#5f66de]'
+                  }
+                  w-[35px] h-[35px]
+                `}
               >
                 <svg
                   className="w-6 h-6"
@@ -897,28 +1148,61 @@ function CustomNavbar() {
                 <ul className="flex-1 px-5 space-y-5 mt-10">
                   <li className="border-t border-gray-300 pt-2">
                     <Link href="/">
-                      <p className="font-semibold text-[20px] text-white hover:text-[#FFC92B]">
+                      <p
+                        className={`
+                          font-semibold text-[20px] px-8
+                          ${isHomePage 
+                            ? (isScrolled 
+                                ? "text-white hover:text-[#5f66de]" 
+                                : "text-white hover:text-gray-600")
+                            : "text-white hover:text-[#5f66de]"
+                          }
+                          transition-colors duration-300
+                        `}
+                      >
                         {t("nav.home.title")}
                       </p>
                     </Link>
                   </li>
                   <li className="border-t border-gray-300 pt-2">
                     <Link href="/project">
-                      <p className="font-semibold text-[20px] text-white hover:text-[#FFC92B]">
+                      <p
+                        className={`
+                          font-semibold text-[20px] px-8
+                          ${isHomePage 
+                            ? (isScrolled 
+                                ? "text-white hover:text-[#5f66de]" 
+                                : "text-white hover:text-gray-600")
+                            : "text-white hover:text-[#5f66de]"
+                          }
+                          transition-colors duration-300
+                        `}
+                      >
                         {t("nav.project.title")}
                       </p>
                     </Link>
                   </li>
                   <li className="border-t border-gray-300 pt-2 flex items-center justify-between">
                     <Link href="/listblog" className="flex-1">
-                      <p className="font-semibold text-[20px] text-white hover:text-[#FFC92B]">
+                      <p
+                        className={`
+                          font-semibold text-[20px] px-8
+                          ${isHomePage 
+                            ? (isScrolled 
+                                ? "text-white hover:text-[#5f66de]" 
+                                : "text-white hover:text-gray-600")
+                            : "text-white hover:text-[#5f66de]"
+                          }
+                          transition-colors duration-300
+                        `}
+                      >
                         {t("nav.blog.title")}
                       </p>
                     </Link>
                   </li>
                   <li className="flex justify-center border-t border-gray-300 pt-5 ">
                     <MdGTranslate
-                      className="text-white text-4xl hover:text-[#FFC92B]"
+                      className="text-white text-4xl hover:text-[#5f66de]"
                       onClick={toggleLanguage}
                     />
                   </li>
@@ -929,28 +1213,61 @@ function CustomNavbar() {
                 <ul className="flex-1 px-5 space-y-5 mt-10">
                   <li className="border-t border-gray-300 pt-2">
                     <Link href="/">
-                      <p className="font-semibold text-[20px] text-white hover:text-[#FFC92B]">
+                      <p
+                        className={`
+                          font-semibold text-[20px] px-8
+                          ${isHomePage 
+                            ? (isScrolled 
+                                ? "text-white hover:text-[#5f66de]" 
+                                : "text-gray-800 hover:text-gray-600")
+                            : "text-white hover:text-[#5f66de]"
+                          }
+                          transition-colors duration-300
+                        `}
+                      >
                         {t("nav.home.title")}
                       </p>
                     </Link>
                   </li>
                   <li className="border-t border-gray-300 pt-2">
                     <Link href="/project">
-                      <p className="font-semibold text-[20px] text-white hover:text-[#FFC92B]">
+                      <p
+                       className={`
+                        font-semibold text-[20px] px-8
+                        ${isHomePage 
+                          ? (isScrolled 
+                              ? "text-white hover:text-[#5f66de]" 
+                              : "text-gray-800 hover:text-gray-600")
+                          : "text-white hover:text-[#5f66de]"
+                        }
+                        transition-colors duration-300
+                      `}
+                      >
                         {t("nav.project.title")}
                       </p>
                     </Link>
                   </li>
                   <li className="border-t border-gray-300 pt-2 flex items-center justify-between">
                     <Link href="/listblog" className="flex-1">
-                      <p className="font-semibold text-[20px] text-white hover:text-[#FFC92B]">
+                      <p
+                        className={`
+                          font-semibold text-[20px] px-8
+                          ${isHomePage 
+                            ? (isScrolled 
+                                ? "text-white hover:text-[#5f66de]" 
+                                : "text-gray-800 hover:text-gray-600")
+                            : "text-white hover:text-[#5f66de]"
+                          }
+                          transition-colors duration-300
+                        `}
+                      >
                         {t("nav.blog.title")}
                       </p>
                     </Link>
                   </li>
                   <li className="flex justify-center border-t border-gray-300 pt-5">
                     <MdGTranslate
-                      className="text-white text-4xl hover:text-[#FFC92B]"
+                      className="text-white text-4xl hover:text-[#5f66de]"
                       onClick={toggleLanguage}
                     />
                   </li>

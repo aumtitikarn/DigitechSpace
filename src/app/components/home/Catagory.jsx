@@ -41,7 +41,7 @@ function Catagory() {
           </p>
         </div>
         <div className="mt-[20px]">
-          <div className="grid gap-4 grid-cols-3 lg:grid-cols-4 xl:grid-cols-10">
+          <div className="grid gap-4 grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
             {buttonsData.map((button, index) => (
               <Link
                 key={index}

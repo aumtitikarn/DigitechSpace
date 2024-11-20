@@ -297,7 +297,7 @@ function Page() {
                 />
                 {/* Briefly Input */}
                 <div className="flex flex-row items-center w-full mt-4">
-                  <p>Briefly</p>
+                  <p>{t("nav.profile.editprofile.briefly")}</p>
                 </div>
                 <div className="relative w-full">
                   <textarea
@@ -317,7 +317,7 @@ function Page() {
                     }}
                   />
                   <div className="text-right text-sm text-gray-500  mt-1">
-                    {newbriefly ? newbriefly.length : 0}/200 characters
+                    {newbriefly ? newbriefly.length : 0}/200 {t("nav.profile.editprofile.characters")}
                   </div>
                 </div>
                 <div className="flex flex-row items-center w-full mt-4">

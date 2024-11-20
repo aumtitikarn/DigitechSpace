@@ -197,7 +197,9 @@
       "popskilldes" : "Popular skills of SUT students",
       "search" : "Find accounts with these skills.",
       "desadd" : "The skills you use to complete projects. (insert at least 1 skill)",
-      "addskill" : "Add Skill"
+      "addskill" : "Add Skill",
+      "clear" : "Clear search",
+      "properties" : "The most accurate properties"
     },
     "favorite": "Favorite",
     "signin": "Sign In",
@@ -234,8 +236,11 @@
       "errordes" : "Unable to update information Please try again.",
       "noblog" : "No blogs found.",
       "noproject" : "No projects found.",
+      "allskill" : "All Skills",
       "editprofile" : {
         "name" : "Name",
+        "briefly" : "Briefly",
+        "characters" : "Characters",
         "email" : "Email",
         "pnum" : "Phone Number",
         "facebook" : "Facebook",

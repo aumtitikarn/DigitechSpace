@@ -189,6 +189,8 @@ export default function Page() {
                             alt={val.topic}
                             className="w-full object-cover rounded-lg h-full"
                             style={{ height: "220px" }}
+                            quality={100}  // เพิ่ม quality เป็น 100%
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"  // ปรับ sizes
                           />
                         </div>
                         <div className="ml-2 mt-2">

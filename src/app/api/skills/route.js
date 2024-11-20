@@ -1,6 +1,7 @@
 import { connectMongoDB } from "../../../../lib/mongodb";
 import StudentUser from "../../../../models/StudentUser";
 import { NextResponse } from "next/server";
+export const dynamic = 'force-dynamic'; 
 
 export async function GET(req) {
   try {

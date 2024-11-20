@@ -476,7 +476,8 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                 alt="Project Image"
                 fill
                 className="object-cover"
-                sizes="(max-width: 1200px) 100vw, 1200px"
+                quality={100}  // เพิ่ม quality เป็น 100%
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"  // ปรับ sizes
               />
               {/* Slider Controls */}
               <button

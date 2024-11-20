@@ -608,6 +608,8 @@ function Blog({ params }: BlogProps) {
                   src={`/api/posts/images/${postData.imageUrl[currentIndex]}`}
                   alt={postData.topic || "Blog Image"}
                   className="w-full h-full object-cover rounded-lg"
+                  quality={100}  // เพิ่ม quality เป็น 100%
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"  // ปรับ sizes
                 />
               ) : (
                 <Image

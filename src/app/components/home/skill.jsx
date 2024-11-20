@@ -148,10 +148,7 @@ const PopularSkills = () => {
   useEffect(() => {
     fetchUsersBySkillsOrName();
   }, [selectedSkills, searchTerm]);
-  useEffect(() => {
-    fetchUsersBySkillsOrName();
-    console.log("Users data:", users);
-  }, [selectedSkills, searchTerm]);
+
   const getDisplayedUsers = () => {
     if (typeof window !== "undefined" && window.innerWidth <= 768 && !showAll) {
       return users.slice(0, 30);
@@ -266,7 +263,7 @@ const PopularSkills = () => {
       </div>
 
       <div className="mb-4 flex justify-between items-center">
-        <p className="text-[16px]">คุณสมบัติตรงที่สุด ({users.length})</p>
+        <p className="text-[16px]">{t("nav.skill.properties")} ({users.length})</p>
         <div className="flex items-center gap-4">
           <button
             onClick={() => {
@@ -275,7 +272,7 @@ const PopularSkills = () => {
             }}
             className="text-[16px] text-gray-500 hover:text-gray-700"
           >
-            ล้างการค้นหา
+            {t("nav.skill.clear")}
           </button>
         </div>
       </div>
@@ -351,7 +348,7 @@ const PopularSkills = () => {
                           </h3>
                           <div className="flex flex-wrap items-center gap-2 mt-1">
                             <span className="text-sm text-gray-600">
-                              Skill :
+                            {t("nav.skill.title")} :
                             </span>
                             {user.matchedSkills
                               ?.slice(0, 5)

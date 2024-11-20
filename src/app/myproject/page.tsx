@@ -112,7 +112,7 @@ const MyProject: React.FC = () => {
                 alt="Author Profile"
                 width={30}
                 height={30}
-                className="rounded-full w-[30px] h-[30px] object-cover"
+                className="rounded-full w-[30px] h-[30px] object-cover mr-2"
                 onError={() => {
                   setFailedImages((prev) => [...prev, project._id]);
                 }}

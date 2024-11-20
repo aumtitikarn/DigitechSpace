@@ -210,8 +210,8 @@ function Profile() {
                   {/* Skills Section */}
                   <div className="relative">
                     <div className="flex flex-wrap gap-2 mt-2">
-                    <span className="text-[#5E5E5E] mr-2 font-bold mt-1">
-                      Skill :
+                    <span className="text-[#5E5E5E] mr-2 font-bold mt-1 text-[16px]">
+                      {t("nav.skill.title")} :
                     </span>
                       {/* แสดง 5 skills แรก */}
                       {visibleSkills.map((skill, index) => (
@@ -252,7 +252,7 @@ function Profile() {
                           {/* Popup Header */}
                           <div className="flex justify-between items-center p-6 border-b">
                             <h3 className="text-xl font-bold text-gray-800">
-                              All Skills
+                              {t("nav.profile.allskill")}
                             </h3>
                             <button
                               onClick={() => setShowAllSkills(false)}
@@ -287,13 +287,13 @@ function Profile() {
                     href={`/Profile/EditProfile/${session?.user?.id}`}
                     className="px-6 py-2 text-[#33539B] font-bold border-3 border-[#C1D3E5] rounded-lg hover:bg-blue-50"
                   >
-                    แก้ไขโปรไฟล์
+                    {t("nav.profile.edit")}
                   </Link>
                   <Link
                     href={`/Profile/QRshare/${session?.user?.id}`}
                     className="px-6 py-2 text-[#33539B] font-bold border-3 border-[#C1D3E5] rounded-lg hover:bg-blue-50"
                   >
-                    แชร์โปรไฟล์
+                    {t("nav.profile.share")}
                   </Link>
                 </div>
               </div>
@@ -309,7 +309,7 @@ function Profile() {
                   : "text-gray-500 hover:bg-gray-50"
               }`}
             >
-              Project
+              {t("nav.profile.project")}
             </button>
             <button
               onClick={() => setActiveButton("button2")}
@@ -319,7 +319,7 @@ function Profile() {
                   : "text-gray-500 hover:bg-gray-50"
               }`}
             >
-              Blog
+              {t("nav.profile.blog")}
             </button>
           </div>
 
