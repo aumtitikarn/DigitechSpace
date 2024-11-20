@@ -294,7 +294,7 @@ const ProductList: React.FC = () => {
                                   />
                                 ) : (
                                   <span>
-                                    <MdAccountCircle className="text-gray-500 mr-2 text-2xl" />
+                                    <MdAccountCircle className="text-gray-500 mr-2 text-3xl" />
                                   </span>
                                 )}
                                 <p className="text-sm text-gray-600 truncate">
@@ -395,7 +395,7 @@ const ProductList: React.FC = () => {
                                 }}
                               />
                             ) : (
-                              <span className="text-gray-500 mr-2 text-2xl">
+                              <span className="text-gray-500 mr-2 text-3xl">
                                 <MdAccountCircle />
                               </span>
                             )}

@@ -26,7 +26,6 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [failedImages, setFailedImages] = useState([]);
 
-  // Move categories to useMemo to maintain reference
   const categories = useMemo(
     () => [
       { id: 1, category: t("nav.project.all"), categoryEN: "All" },
@@ -65,11 +64,28 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     return counts;
   }, []);
 
-  // Then add calculateRatingCounts to filterProjects dependencies
+  // Enhanced search function that checks multiple fields
+  const searchInProject = (project, term) => {
+    const searchTerm = term.toLowerCase();
+    const projectName = (project.projectname || "").toLowerCase();
+    const description = (project.description || "").toLowerCase();
+    const authorName = (project.authorName || "").toLowerCase();
+    const skill = Array.isArray(project.skill) 
+      ? project.skill.map(skill => skill.toLowerCase()).join(" ")
+      : (project.skill || "").toLowerCase();
+
+    return (
+      projectName.includes(searchTerm) ||
+      description.includes(searchTerm) ||
+      skill.includes(searchTerm) ||
+      authorName.includes(searchTerm)
+    );
+  };
+
   const filterProjects = useCallback(
     (projectsToFilter, term, rating) => {
-      let filtered = projectsToFilter.filter((project) =>
-        project.projectname.toLowerCase().includes(term.toLowerCase())
+      let filtered = projectsToFilter.filter(project => 
+        searchInProject(project, term)
       );
 
       if (rating !== null) {
@@ -107,13 +123,15 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     }
   }, [initialCategory, isProjectPage, searchParams, categories]);
 
-  const debouncedSearch = useCallback(
-    (term) => {
-      filterProjects(projects, term, selectedRating);
-      router.push(`/project?search=${encodeURIComponent(term)}`, {
-        scroll: false,
-      });
-    },
+  // Enhanced debounced search with clear visual feedback
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((term) => {
+        filterProjects(projects, term, selectedRating);
+        router.push(`/project?search=${encodeURIComponent(term)}`, {
+          scroll: false,
+        });
+      }, 300),
     [projects, selectedRating, router, filterProjects]
   );
 
@@ -125,6 +143,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     },
     [debouncedSearch]
   );
+
 
   const fetchProjects = useCallback(async (categoryEN) => {
     setIsLoading(true);
@@ -358,15 +377,15 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
                         <Image
                           src={project.profileImage || ""}
                           alt="Author Profile"
-                          width={20}
-                          height={20}
+                          width={30}
+                          height={30}
                           className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                           onError={() => {
                             setFailedImages((prev) => [...prev, project._id]);
                           }}
                         />
                       ) : (
-                        <span className="text-gray-500 mr-2 text-2xl">
+                        <span className="text-gray-500 mr-2 text-3xl">
                           <MdAccountCircle />
                         </span>
                       )}

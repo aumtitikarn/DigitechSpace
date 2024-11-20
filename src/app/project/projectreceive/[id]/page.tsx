@@ -773,8 +773,8 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                                   <Image
                                     src={product.profileImage || ""}
                                     alt="Author Profile"
-                                    width={20}
-                                    height={20}
+                                    width={30}
+                                    height={30}
                                     className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                                     onError={() => {
                                       setFailedImages((prev) => [
@@ -784,7 +784,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
                                     }}
                                   />
                                 ) : (
-                                  <span className="text-gray-500 mr-2 text-2xl">
+                                  <span className="text-gray-500 mr-2 text-3xl">
                                     <MdAccountCircle />
                                   </span>
                                 )}

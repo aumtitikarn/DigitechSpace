@@ -50,14 +50,14 @@ export default function Page() {
           method: "GET",
           cache: "no-store",
         });
-  
+
         if (!res.ok) {
           throw new Error("Failed to fetch a post");
         }
-  
+
         const data = await res.json();
         console.log("Show Blog image: ", data);
-  
+
         const post = data.combinedData;
         setPostData(post);
         setProfileUserT(post.imageUrl);
@@ -68,10 +68,9 @@ export default function Page() {
         console.log(error);
       }
     };
-  
+
     getPostByIdprofile();
   }, [session?.user?.id]);
-  
 
   const handleDelete = (index) => {
     setImg((prevImg) => prevImg.filter((_, i) => i !== index));
@@ -170,17 +169,27 @@ export default function Page() {
 
   console.log(topic);
 
-  
   if (status === "loading") {
-    return <div style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      textAlign: "center",
-    }}>
-    <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" text="" textColor="" />
-  </div>;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+          text=""
+          textColor=""
+        />
+      </div>
+    );
   }
   return (
     <Container>
@@ -203,9 +212,9 @@ export default function Page() {
                   key={index}
                   src={image}
                   alt={`Uploaded ${index}`}
-                  width={160} // กำหนดขนาดภาพแทนที่ตัวอย่างนี้
-                  height={160}
-                  className="object-cover rounded-md"
+                  width={160} // 40 * 4 (เพราะ tailwind w-40 = 10rem = 160px)
+                  height={160} // 40 * 4
+                  className="w-40 h-40 object-cover rounded-md"
                 />
                 <button
                   type="button"

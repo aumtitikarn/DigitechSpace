@@ -522,7 +522,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                           />
                         ) : (
                           <span>
-                            <MdAccountCircle className="text-gray-500 text-2xl" />
+                            <MdAccountCircle className="text-gray-500 text-3xl" />
                           </span>
                         )}
                       </span>
@@ -795,7 +795,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                                     }}
                                   />
                                 ) : (
-                                  <span className="text-gray-500 mr-2 text-2xl">
+                                  <span className="text-gray-500 mr-2 text-3xl">
                                     <MdAccountCircle />
                                   </span>
                                 )}

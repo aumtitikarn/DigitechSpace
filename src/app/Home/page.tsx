@@ -73,10 +73,10 @@ export default function Home() {
             <Trend session={session} />
           </div>
           <div className="mb-10">
-            <Skill />
-          </div>
-          <div className="mb-10">
             <Catagory />
+          </div>
+          <div className="mb-8">
+            <Skill />
           </div>
           <AiGenProduct />
           <div className="mb-10">

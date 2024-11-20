@@ -64,58 +64,51 @@ function Profile() {
   };
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/signin");
-    }
-
-    if (status === "authenticated" && session) {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      if (status === "authenticated" && session) {
         try {
-          const publishedResponse = await fetch(
-            "/api/project/getProjects/user",
-            {
-              method: "GET",
-            }
-          );
-          if (publishedResponse.ok) {
-            const publishedData = await publishedResponse.json();
-            setPublishedProjects(publishedData);
-          } else {
-            console.error("Failed to fetch published projects");
-          }
-
-          const blogResponse = await fetch("/api/posts/getposts/user", {
-            cache: "no-store",
-          });
-          if (blogResponse.ok) {
-            const blogData = await blogResponse.json();
-            setPostDataBlog(blogData);
-          } else {
-            console.error("Failed to fetch blog posts");
-          }
-
-          const profileResponse = await fetch(
-            `/api/editprofile/${session.user.id}`,
-            {
-              method: "GET",
-              cache: "no-store",
-            }
-          );
+          // Fetch profile data first
+          const profileResponse = await fetch(`/api/editprofile/${id}`);
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
-            setPostData(profileData.post);
+            setPostData(profileData.post || profileData.posts);
             setPostDataS(profileData.posts);
-          } else {
-            console.error("Failed to fetch user profile");
+            
+            // Store author name from profile data
+            const authorName = profileData.post?.name || profileData.posts?.name;
+
+            // Fetch projects with author data
+            const publishedResponse = await fetch(`/api/project/getProjects/${id}`);
+            if (publishedResponse.ok) {
+              const publishedData = await publishedResponse.json();
+              // Add author name to each project
+              const projectsWithAuthor = publishedData.map(project => ({
+                ...project,
+                authorName: authorName // Add author name from profile
+              }));
+              setPublishedProjects(projectsWithAuthor);
+            }
+
+          // Fetch blog posts with author data
+          const blogResponse = await fetch(`/api/posts/getposts/${id}`);
+          if (blogResponse.ok) {
+            const blogData = await blogResponse.json();
+            // Add author name to each blog post
+            const blogsWithAuthor = blogData.map(blog => ({
+              ...blog,
+              authorName: authorName // Add author name from profile
+            }));
+            setPostDataBlog(blogsWithAuthor);
+          }
           }
         } catch (error) {
           console.error("Error fetching data:", error);
         }
-      };
+      }
+    };
 
-      fetchData();
-    }
-  }, [status, session, router]);
+    fetchData();
+  }, [id, status, session]);
 
   if (status === "loading") {
     return (
@@ -350,8 +343,8 @@ function Profile() {
                               <Image
                                 src={project.profileImage || ""}
                                 alt="Author Profile"
-                                width={20}
-                                height={20}
+                                width={30}
+                                height={30}
                                 className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                                 onError={() => {
                                   setFailedImages((prev) => [
@@ -361,7 +354,7 @@ function Profile() {
                                 }}
                               />
                             ) : (
-                              <span className="text-gray-500 mr-2 text-2xl">
+                              <span className="text-gray-500 mr-2 text-3xl">
                                 <MdAccountCircle />
                               </span>
                             )}

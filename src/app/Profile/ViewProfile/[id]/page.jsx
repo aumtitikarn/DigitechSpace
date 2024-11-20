@@ -40,30 +40,39 @@ function Page({ params }) {
     const fetchData = async () => {
       if (status === "authenticated" && session) {
         try {
-          // Fetch projects
-          const publishedResponse = await fetch(
-            `/api/project/getProjects/${id}`
-          );
-          if (publishedResponse.ok) {
-            const publishedData = await publishedResponse.json();
-            setPublishedProjects(publishedData);
-          }
-
-          // Fetch profile data
+          // Fetch profile data first
           const profileResponse = await fetch(`/api/editprofile/${id}`);
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
             setPostData(profileData.post || profileData.posts);
             setPostDataS(profileData.posts);
-          }
+            
+            // Store author name from profile data
+            const authorName = profileData.post?.name || profileData.posts?.name;
 
-          // Fetch blog posts
-          const blogResponse = await fetch(`/api/posts/getposts/${id}`, {
-            cache: "no-store",
-          });
+            // Fetch projects with author data
+            const publishedResponse = await fetch(`/api/project/getProjects/${id}`);
+            if (publishedResponse.ok) {
+              const publishedData = await publishedResponse.json();
+              // Add author name to each project
+              const projectsWithAuthor = publishedData.map(project => ({
+                ...project,
+                authorName: authorName // Add author name from profile
+              }));
+              setPublishedProjects(projectsWithAuthor);
+            }
+
+          // Fetch blog posts with author data
+          const blogResponse = await fetch(`/api/posts/getposts/${id}`);
           if (blogResponse.ok) {
             const blogData = await blogResponse.json();
-            setPostDataBlog(blogData);
+            // Add author name to each blog post
+            const blogsWithAuthor = blogData.map(blog => ({
+              ...blog,
+              authorName: authorName // Add author name from profile
+            }));
+            setPostDataBlog(blogsWithAuthor);
+          }
           }
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -272,8 +281,8 @@ function Page({ params }) {
                                 <Image
                                   src={project.profileImage || ""}
                                   alt="Author Profile"
-                                  width={20}
-                                  height={20}
+                                  width={30}
+                                  height={30}
                                   className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                                   onError={() => {
                                     setFailedImages((prev) => [
@@ -283,7 +292,7 @@ function Page({ params }) {
                                   }}
                                 />
                               ) : (
-                                <span className="text-gray-500 mr-2 text-2xl">
+                                <span className="text-gray-500 mr-2 text-3xl">
                                   <MdAccountCircle />
                                 </span>
                               )}
@@ -313,70 +322,6 @@ function Page({ params }) {
                   )}
                 </div>
               )}
-
-              {/* {activeButton === "button2" && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center mt-10 w-full">
-              {postDataBlog.length > 0 ? (
-                postDataBlog.map((blog, index) => (
-                  <Link key={index} href={`/blog/${blog._id}`}>
-                    <div className="w-[150px] sm:w-[180px] md:w-[200px] h-auto flex flex-col">
-                      <div
-                        className="rounded w-full relative"
-                        style={{ height: "200px" }}
-                      >
-                        <Image
-                          width={100}
-                          height={400}
-                          src={`/api/posts/images/${blog.imageUrl}`}
-                          alt={blog.topic}
-                          className="w-full object-cover rounded-lg h-full"
-                        />
-                        <div className="flex flex-col justify-between h-full">
-                          <p className="text-lg font-semibold mb-2 truncate">
-                            {project.projectname}
-                          </p>
-                          <div className="flex items-center mb-2">
-                            {project.profileImage ? (
-                              <Image
-                                src={project.profileImage}
-                                alt="Author Profile"
-                                width={20}
-                                height={20}
-                                className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
-                              />
-                            ) : (
-                              <span className="text-gray-500 mr-2 text-2xl">
-                                <MdAccountCircle />
-                              </span>
-                            )}
-                            <p className="text-sm text-gray-600 truncate">
-                              {project.authorName}
-                            </p>
-                          </div>
-                          <div className="flex items-center mb-2">
-                            <span className="text-yellow-500 mr-2">
-                              <IoIosStar />
-                            </span>
-                            <span className="lg:text-sm text-gray-600 text-[12px] truncate">
-                              {project.rathing || "N/A"} ({project.review}) |{" "}
-                              {t("nav.project.projectdetail.sold")}{" "}
-                              {project.sold}
-                            </span>
-                          </div>
-                          <p className="text-lg font-bold text-[#33529B]">
-                            {project.price} THB
-                          </p>
-                        </div>
-                      </div>
-                      </div>
-                    </Link>
-                  ))
-                ) : (
-                  <p>{t("nav.profile.noproject")}</p>
-                )}
-              </div>
-            )} */}
-
               {activeButton === "button2" && (
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center mt-10 w-full">
                   {postDataBlog.length > 0 ? (
