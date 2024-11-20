@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { IoIosStar } from "react-icons/io";
 import { CiHeart } from "react-icons/ci";
 import Image from "next/image";
@@ -81,15 +81,15 @@ function Profile() {
     };
 
     if (showAllSkills) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "unset";
     };
   }, [showAllSkills]);
   // คงไว้ซึ่ง useEffect และ functions อื่นๆ เหมือนเดิม...
@@ -100,9 +100,12 @@ function Profile() {
     if (status === "authenticated" && session) {
       const fetchData = async () => {
         try {
-          const publishedResponse = await fetch("/api/project/getProjects/user", {
-            method: "GET",
-          });
+          const publishedResponse = await fetch(
+            "/api/project/getProjects/user",
+            {
+              method: "GET",
+            }
+          );
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
             setPublishedProjects(publishedData);
@@ -184,7 +187,9 @@ function Profile() {
                   width={128}
                   height={128}
                   className="w-full h-full object-cover"
-                  onError={() => setFailedImages(prev => [...prev, imageSource])}
+                  onError={() =>
+                    setFailedImages((prev) => [...prev, imageSource])
+                  }
                 />
               ) : (
                 <MdAccountCircle className="w-full h-full text-gray-500" />
@@ -196,80 +201,86 @@ function Profile() {
               <div className="flex justify-between items-start">
                 <div>
                   <h1 className="text-3xl font-bold mb-1">
-                    {session?.user?.role !== "NormalUser" ? postDataS.name : postData.name}
+                    {session?.user?.role !== "NormalUser"
+                      ? postDataS.name
+                      : postData.name}
                   </h1>
                   <p className="text-gray-600 mb-4">{postDataS.briefly}</p>
-                  
-                {/* Skills Section */}
-          <div className="relative">
-            <span className="text-gray-700 mr-2 font-bold">Skill :</span>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {/* แสดง 5 skills แรก */}
-              {visibleSkills.map((skill, index) => (
-                <span 
-                  key={index} 
-                  className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
-                >
-                  {skill}
-                </span>
-              ))}
-              
-              {/* ปุ่มแสดง skills ที่เหลือ */}
-              {remainingSkills.length > 0 && (
-                <button
-                  onClick={() => setShowAllSkills(true)}
-                  className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
-                >
-                  +{remainingSkills.length}
-                </button>
-              )}
-            </div>
 
-            {/* Modern Popup with Backdrop */}
-            {showAllSkills && (
-              <>
-                {/* Backdrop with blur effect */}
-                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
-                
-                {/* Popup */}
-                <div 
-                  ref={popupRef}
-                  className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[600px] bg-white rounded-2xl shadow-2xl z-50 transition-all duration-300 ease-out"
-                  style={{
-                    transform: `translate(-50%, -50%) scale(${showAllSkills ? '1' : '0.9'})`,
-                    opacity: showAllSkills ? 1 : 0
-                  }}
-                >
-                  {/* Popup Header */}
-                  <div className="flex justify-between items-center p-6 border-b">
-                    <h3 className="text-xl font-bold text-gray-800">All Skills</h3>
-                    <button 
-                      onClick={() => setShowAllSkills(false)}
-                      className="p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                      aria-label="Close popup"
-                    >
-                      <MdClose className="w-6 h-6 text-gray-500" />
-                    </button>
-                  </div>
-
-                  {/* Popup Content */}
-                  <div className="p-6">
-                    <div className="flex flex-wrap gap-3">
-                      {skills.map((skill, index) => (
-                        <span 
+                  {/* Skills Section */}
+                  <div className="relative">
+                    <div className="flex flex-wrap gap-2 mt-2">
+                    <span className="text-[#5E5E5E] mr-2 font-bold mt-1">
+                      Skill :
+                    </span>
+                      {/* แสดง 5 skills แรก */}
+                      {visibleSkills.map((skill, index) => (
+                        <span
                           key={index}
                           className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
                         >
                           {skill}
                         </span>
                       ))}
+
+                      {/* ปุ่มแสดง skills ที่เหลือ */}
+                      {remainingSkills.length > 0 && (
+                        <button
+                          onClick={() => setShowAllSkills(true)}
+                          className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
+                        >
+                          +{remainingSkills.length}
+                        </button>
+                      )}
                     </div>
+
+                    {/* Modern Popup with Backdrop */}
+                    {showAllSkills && (
+                      <>
+                        {/* Backdrop with blur effect */}
+                        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
+
+                        {/* Popup */}
+                        <div
+                          ref={popupRef}
+                          className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[600px] bg-white rounded-2xl shadow-2xl z-50 transition-all duration-300 ease-out"
+                          style={{
+                            transform: `translate(-50%, -50%) scale(${showAllSkills ? "1" : "0.9"})`,
+                            opacity: showAllSkills ? 1 : 0,
+                          }}
+                        >
+                          {/* Popup Header */}
+                          <div className="flex justify-between items-center p-6 border-b">
+                            <h3 className="text-xl font-bold text-gray-800">
+                              All Skills
+                            </h3>
+                            <button
+                              onClick={() => setShowAllSkills(false)}
+                              className="p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                              aria-label="Close popup"
+                            >
+                              <MdClose className="w-6 h-6 text-gray-500" />
+                            </button>
+                          </div>
+
+                          {/* Popup Content */}
+                          <div className="p-6">
+                            <div className="flex flex-wrap gap-3">
+                              {skills.map((skill, index) => (
+                                <span
+                                  key={index}
+                                  className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
-              </>
-            )}
-          </div>
-          </div>
                 {/* Action Buttons */}
                 <div className="flex gap-4">
                   <Link
@@ -293,9 +304,9 @@ function Profile() {
             <button
               onClick={() => setActiveButton("button1")}
               className={`py-4 text-xl font-bold ${
-                activeButton === "button1" 
-                ? "bg-[#E6ECFF] text-black" 
-                : "text-gray-500 hover:bg-gray-50"
+                activeButton === "button1"
+                  ? "bg-[#E6ECFF] text-black"
+                  : "text-gray-500 hover:bg-gray-50"
               }`}
             >
               Project
@@ -303,142 +314,141 @@ function Profile() {
             <button
               onClick={() => setActiveButton("button2")}
               className={`py-4 text-xl font-bold ${
-                activeButton === "button2" 
-                ? "bg-[#E6ECFF] text-black" 
-                : "text-gray-500 hover:bg-gray-50"
+                activeButton === "button2"
+                  ? "bg-[#E6ECFF] text-black"
+                  : "text-gray-500 hover:bg-gray-50"
               }`}
             >
               Blog
             </button>
           </div>
-        
 
-            {/* Projects Grid */}
-            {activeButton === "button1" && (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-x-[10px] gap-y-[20px] lg:gap-x-[30px] md:gap-x-[40px] md:gap-y-[40px] mt-5">
-                {publishedProject && publishedProject.length > 0 ? (
-                  publishedProject.map((project, index) => (
-                    <Link
-                      key={index}
-                      href={`/project/projectdetail/${project._id}`}
-                    >
-                      <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
-                        <div className="relative w-full h-[150px] mb-4">
-                          <Image
-                            src={`/api/project/images/${project.imageUrl[0]}`}
-                            alt="Project Image"
-                            fill
-                            className="rounded-md object-cover"
-                            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          />
-                        </div>
-                        <div className="flex flex-col justify-between h-full">
-                          <p className="text-lg font-semibold mb-2 truncate">
-                            {project.projectname}
-                          </p>
-                          <div className="flex items-center mb-2">
-                            {project.profileImage &&
-                            !failedImages.includes(project._id) ? (
-                              <Image
-                                src={project.profileImage}
-                                alt="Author Profile"
-                                width={30}
-                                height={30}
-                                className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
-                                onError={() => {
-                                  setFailedImages((prev) => [
-                                    ...prev,
-                                    project._id,
-                                  ]);
-                                }}
-                              />
-                            ) : (
-                              <MdAccountCircle className="w-[30px] h-[30px] text-gray-500 mr-2" />
-                            )}
-                            <p className="text-sm text-gray-600 truncate">
-                              {project.authorName}
-                            </p>
-                          </div>
-                          <div className="flex items-center mb-2">
-                            <IoIosStar className="text-yellow-500 mr-2" />
-                            <span className="lg:text-sm text-gray-600 text-[12px] truncate">
-                              {project.rathing || "N/A"} ({project.review}) |{" "}
-                              {t("nav.project.projectdetail.sold")} {project.sold}
-                            </span>
-                          </div>
-                          <p className="text-lg font-bold text-[#33529B]">
-                            {project.price} THB
-                          </p>
-                        </div>
+          {/* Projects Grid */}
+          {activeButton === "button1" && (
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-x-[10px] gap-y-[20px] lg:gap-x-[30px] md:gap-x-[40px] md:gap-y-[40px] mt-5">
+              {publishedProject && publishedProject.length > 0 ? (
+                publishedProject.map((project, index) => (
+                  <Link
+                    key={index}
+                    href={`/project/projectdetail/${project._id}`}
+                  >
+                    <div className="relative rounded-[10px] border border-[#BEBEBE] bg-white p-4 w-auto h-auto">
+                      <div className="relative w-full h-[150px] mb-4">
+                        <Image
+                          src={`/api/project/images/${project.imageUrl[0]}`}
+                          alt="Project Image"
+                          fill
+                          className="rounded-md object-cover"
+                          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        />
                       </div>
-                    </Link>
-                  ))
-                ) : (
-                  <p className="text-gray-500">{t("nav.profile.noproject")}</p>
-                )}
-              </div>
-            )}
-
-            {/* Blogs Grid */}
-            {activeButton === "button2" && (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center mt-10 w-full">
-                {postDataBlog && postDataBlog.length > 0 ? (
-                  postDataBlog.map((blog, index) => (
-                    <Link key={index} href={`/blog/${blog._id}`}>
-                      <div className="w-[150px] sm:w-[180px] md:w-[200px] h-auto flex flex-col">
-                        <div
-                          className="rounded w-full relative"
-                          style={{ height: "200px" }}
-                        >
-                          <Image
-                            src={`/api/posts/images/${blog.imageUrl}`}
-                            alt={blog.topic || "Blog Image"}
-                            fill
-                            className="w-full object-cover rounded-lg"
-                          />
+                      <div className="flex flex-col justify-between h-full">
+                        <p className="text-lg font-semibold mb-2 truncate">
+                          {project.projectname}
+                        </p>
+                        <div className="flex items-center mb-2">
+                          {project.profileImage &&
+                          !failedImages.includes(project._id) ? (
+                            <Image
+                              src={project.profileImage}
+                              alt="Author Profile"
+                              width={30}
+                              height={30}
+                              className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
+                              onError={() => {
+                                setFailedImages((prev) => [
+                                  ...prev,
+                                  project._id,
+                                ]);
+                              }}
+                            />
+                          ) : (
+                            <MdAccountCircle className="w-[30px] h-[30px] text-gray-500 mr-2" />
+                          )}
+                          <p className="text-sm text-gray-600 truncate">
+                            {project.authorName}
+                          </p>
                         </div>
-                        <div className="ml-2 mt-2">
-                          <div className="flex flex-col mt-1 justify-center">
-                            <div className="flex flex-row">
-                              <p className="truncate mt-1 text-sm font-bold w-full">
-                                {blog.topic || "Untitled Blog"}
+                        <div className="flex items-center mb-2">
+                          <IoIosStar className="text-yellow-500 mr-2" />
+                          <span className="lg:text-sm text-gray-600 text-[12px] truncate">
+                            {project.rathing || "N/A"} ({project.review}) |{" "}
+                            {t("nav.project.projectdetail.sold")} {project.sold}
+                          </span>
+                        </div>
+                        <p className="text-lg font-bold text-[#33529B]">
+                          {project.price} THB
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <p className="text-gray-500">{t("nav.profile.noproject")}</p>
+              )}
+            </div>
+          )}
+
+          {/* Blogs Grid */}
+          {activeButton === "button2" && (
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center mt-10 w-full">
+              {postDataBlog && postDataBlog.length > 0 ? (
+                postDataBlog.map((blog, index) => (
+                  <Link key={index} href={`/blog/${blog._id}`}>
+                    <div className="w-[150px] sm:w-[180px] md:w-[200px] h-auto flex flex-col">
+                      <div
+                        className="rounded w-full relative"
+                        style={{ height: "200px" }}
+                      >
+                        <Image
+                          src={`/api/posts/images/${blog.imageUrl}`}
+                          alt={blog.topic || "Blog Image"}
+                          fill
+                          className="w-full object-cover rounded-lg"
+                        />
+                      </div>
+                      <div className="ml-2 mt-2">
+                        <div className="flex flex-col mt-1 justify-center">
+                          <div className="flex flex-row">
+                            <p className="truncate mt-1 text-sm font-bold w-full">
+                              {blog.topic || "Untitled Blog"}
+                            </p>
+                            <div className="flex items-center">
+                              <CiHeart className="text-xl" />
+                              <p className="text-gray-500 text-sm">
+                                {blog.heart || 0}
                               </p>
-                              <div className="flex items-center">
-                                <CiHeart className="text-xl" />
-                                <p className="text-gray-500 text-sm">
-                                  {blog.heart || 0}
-                                </p>
-                              </div>
                             </div>
                           </div>
-                          <div className="flex flex-row mb-3">
-                            {imageSource && !failedImages.includes(blog._id) ? (
-                              <Image
-                                src={imageSource}
-                                alt="Profile"
-                                width={24}
-                                height={24}
-                                className="rounded-full mr-2 mt-1"
-                                onError={() => {
-                                  setFailedImages((prev) => [...prev, blog._id]);
-                                }}
-                              />
-                            ) : (
-                              <MdAccountCircle className="w-6 h-6 text-gray-500 mr-2 mt-1" />
-                            )}
-                            <p className="mt-2 truncate text-gray-500 text-xs">
-                              {blog.authorName || "Unknown Author"}
-                            </p>
-                          </div>
+                        </div>
+                        <div className="flex flex-row mb-3">
+                          {imageSource && !failedImages.includes(blog._id) ? (
+                            <Image
+                              src={imageSource}
+                              alt="Profile"
+                              width={24}
+                              height={24}
+                              className="rounded-full mr-2 mt-1"
+                              onError={() => {
+                                setFailedImages((prev) => [...prev, blog._id]);
+                              }}
+                            />
+                          ) : (
+                            <MdAccountCircle className="w-6 h-6 text-gray-500 mr-2 mt-1" />
+                          )}
+                          <p className="mt-2 truncate text-gray-500 text-xs">
+                            {blog.authorName || "Unknown Author"}
+                          </p>
                         </div>
                       </div>
-                    </Link>
-                  ))
-                ) : (
-                  <p className="text-gray-500">{t("nav.profile.noblog")}</p>
-                )}
-              </div>
-            )}
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <p className="text-gray-500">{t("nav.profile.noblog")}</p>
+              )}
+            </div>
+          )}
         </div>
       </main>
       <Footer />

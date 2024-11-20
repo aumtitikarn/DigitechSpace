@@ -130,14 +130,14 @@ function Page() {
     const file = e.target.files[0];
     if (file) {
       // ตรวจสอบประเภทไฟล์
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
         return;
       }
-      
+
       // ตรวจสอบขนาดไฟล์ (ตัวอย่าง: จำกัดที่ 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('File size should not exceed 5MB');
+        alert("File size should not exceed 5MB");
         return;
       }
 
@@ -219,7 +219,7 @@ function Page() {
       <Navbar />
       <main className="flex flex-col md:flex-row w-full justify-center p-4 my-[50px]">
         <div className="flex flex-col items-center w-full max-w-lg">
-        {session?.user?.role === "StudentUser" ? (
+          {session?.user?.role === "StudentUser" ? (
             <>
               <div
                 className="flex flex-row justify-center relative w-24 h-24"
@@ -295,17 +295,31 @@ function Page() {
                   placeholder={postData?.name || "กำลังโหลด..."}
                   className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
-                {/* briefly สังเขป */}
+                {/* Briefly Input */}
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>Briefly</p>
                 </div>
-                <input
-                  type="text"
-                  value={newbriefly}
-                  onChange={(e) => setNewbriefly(e.target.value)}
-                  placeholder="Enter briefly"
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
+                <div className="relative w-full">
+                  <textarea
+                    value={newbriefly}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 200) {
+                        setNewbriefly(e.target.value);
+                      }
+                    }}
+                    placeholder="Enter briefly"
+                    className="w-full h-20 p-2 border border-gray-300 rounded resize-none overflow-hidden"
+                    maxLength={200}
+                    style={{
+                      lineHeight: "1.5rem",
+                      paddingTop: "0.25rem",
+                      paddingBottom: "0.25rem",
+                    }}
+                  />
+                  <div className="text-right text-sm text-gray-500  mt-1">
+                    {newbriefly ? newbriefly.length : 0}/200 characters
+                  </div>
+                </div>
                 <div className="flex flex-row items-center w-full mt-4">
                   <p>{t("nav.profile.editprofile.email")}</p>
                 </div>
@@ -351,8 +365,8 @@ function Page() {
                 </button>
               </div>
             </>
-        ) : (
-          <>
+          ) : (
+            <>
               <div
                 className="flex flex-row justify-center relative w-24 h-24"
                 style={{
