@@ -199,7 +199,9 @@
       "desadd" : "The skills you use to complete projects. (insert at least 1 skill)",
       "addskill" : "Add Skill",
       "clear" : "Clear search",
-      "properties" : "The most accurate properties"
+      "properties" : "The most accurate properties",
+      "noskill" : "There are no skills on our website yet.",
+      "nouser" : "No users found with the selected skill."
     },
     "favorite": "Favorite",
     "signin": "Sign In",

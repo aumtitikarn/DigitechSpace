@@ -28,76 +28,60 @@ const PopularSkills = () => {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [failedImages, setFailedImages] = useState([]);
-  const [error, setError] = useState(null);
   const [showAll, setShowAll] = useState(false);
 
   const fetchPopularSkills = async () => {
     try {
       setIsLoading(true);
-      setError(null);
+      // ลบ setError(null);
       const response = await fetch("/api/skills?mode=skills");
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to fetch skills");
-      }
-
+  
       if (data.success && Array.isArray(data.skills)) {
         setSkills(data.skills);
-      } else {
-        console.error("Unexpected data format:", data);
-        setError("Invalid data format received");
-      }
+      } 
+      // ลบส่วน else ที่แสดง error ออก
     } catch (error) {
-      console.error("Error fetching skills:", error);
-      setError(error.message);
+      console.error("Error fetching skills:", error); // เก็บไว้สำหรับ debug
+      // ลบ setError(error.message);
     } finally {
       setIsLoading(false);
     }
   };
+ // 2. แก้ไขส่วน fetchUsersBySkillsOrName เช่นเดียวกัน
+const fetchUsersBySkillsOrName = async () => {
+  if (selectedSkills.length === 0 && !searchTerm) {
+    setUsers([]);
+    return;
+  }
 
-  const fetchUsersBySkillsOrName = async () => {
-    if (selectedSkills.length === 0 && !searchTerm) {
-      setUsers([]);
-      return;
+  try {
+    setIsLoading(true);
+    // ลบ setError(null);
+
+    let url = "/api/skills?mode=users";
+    if (selectedSkills.length > 0) {
+      const skillsParam = selectedSkills.join(",");
+      url += `&skills=${encodeURIComponent(skillsParam)}`;
+    }
+    if (searchTerm) {
+      url += `&name=${encodeURIComponent(searchTerm)}`;
     }
 
-    try {
-      setIsLoading(true);
-      setError(null);
+    const response = await fetch(url);
+    const data = await response.json();
 
-      let url = "/api/skills?mode=users";
-
-      // Add skills parameter if there are selected skills
-      if (selectedSkills.length > 0) {
-        const skillsParam = selectedSkills.join(",");
-        url += `&skills=${encodeURIComponent(skillsParam)}`;
-      }
-
-      // Add name parameter if there is a search term
-      if (searchTerm) {
-        url += `&name=${encodeURIComponent(searchTerm)}`;
-      }
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to fetch users");
-      }
-
-      if (data.success && Array.isArray(data.users)) {
-        setUsers(data.users);
-      } else {
-        setError("Invalid user data format received");
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
+    if (data.success && Array.isArray(data.users)) {
+      setUsers(data.users);
     }
-  };
+    // ลบส่วน else ที่แสดง error
+  } catch (error) {
+    console.error("Error fetching users:", error); // เก็บไว้สำหรับ debug
+    // ลบ setError(error.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const removeSkill = (skillToRemove) => {
     setSelectedSkills(
@@ -196,7 +180,7 @@ const PopularSkills = () => {
             ))
           ) : (
             <div className="w-full text-center text-gray-500">
-              No skills available
+              {t("nav.skill.noskill")}
             </div>
           )}
         </div>
@@ -371,7 +355,7 @@ const PopularSkills = () => {
                 ))
               ) : (
                 <div className="w-full text-center py-4 text-gray-500">
-                  ไม่พบผู้ใช้ที่มีทักษะที่เลือก
+                  {t("nav.skill.nouser")}
                 </div>
               )}
             </div>
@@ -387,7 +371,7 @@ const PopularSkills = () => {
                   onClick={() => setShowAll(true)}
                   className="px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
                 >
-                  ดูเพิ่มเติม ({users.length - 10})
+                  {t("nav.home.seemore")} ({users.length - 10})
                 </button>
               )}
             </div>
