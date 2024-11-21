@@ -39,57 +39,74 @@ function Page({ params }) {
   const [publishedProject, setPublishedProjects] = useState([]);
   const [failedImages, setFailedImages] = useState([]);
   const [showAllSkills, setShowAllSkills] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const popupRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       if (status === "authenticated" && session) {
+        setIsLoading(true);
+        if (id === session.user.id) {
+          router.push('/Profile');
+          return;
+        }
+
         try {
-          // Fetch profile data first
           const profileResponse = await fetch(`/api/editprofile/${id}`);
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
             setPostData(profileData.post || profileData.posts);
             setPostDataS(profileData.posts);
 
-            // Store author name from profile data
-            const authorName =
-              profileData.post?.name || profileData.posts?.name;
+            const authorName = profileData.post?.name || profileData.posts?.name;
 
-            // Fetch projects with author data
-            const publishedResponse = await fetch(
-              `/api/project/getProjects/${id}`
-            );
+            const [publishedResponse, blogResponse] = await Promise.all([
+              fetch(`/api/project/getProjects/${id}`),
+              fetch(`/api/posts/getposts/${id}`)
+            ]);
+
             if (publishedResponse.ok) {
               const publishedData = await publishedResponse.json();
-              // Add author name to each project
-              const projectsWithAuthor = publishedData.map((project) => ({
+              const projectsWithAuthor = publishedData.map(project => ({
                 ...project,
-                authorName: authorName, // Add author name from profile
+                authorName
               }));
               setPublishedProjects(projectsWithAuthor);
             }
 
-            // Fetch blog posts with author data
-            const blogResponse = await fetch(`/api/posts/getposts/${id}`);
             if (blogResponse.ok) {
               const blogData = await blogResponse.json();
-              // Add author name to each blog post
-              const blogsWithAuthor = blogData.map((blog) => ({
+              const blogsWithAuthor = blogData.map(blog => ({
                 ...blog,
-                authorName: authorName, // Add author name from profile
+                authorName
               }));
               setPostDataBlog(blogsWithAuthor);
             }
           }
         } catch (error) {
           console.error("Error fetching data:", error);
+        } finally {
+          setIsLoading(false);
         }
       }
     };
 
     fetchData();
-  }, [id, status, session]); // Added 'id' to dependencies
+  }, [id, status, session, router]);
+
+  if (status === "loading" || isLoading) {
+    return (
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+        />
+      </div>
+    );
+  } // Added 'id' to dependencies
   const getSkills = () => {
     if (session?.user?.role !== "NormalUser") {
       return postDataS?.skills || [];
@@ -140,18 +157,6 @@ function Page({ params }) {
     setActiveButton(button === activeButton ? null : button);
   };
 
-  if (status === "loading") {
-    return (
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-        <OrbitProgress
-          variant="track-disc"
-          dense
-          color="#33539B"
-          size="medium"
-        />
-      </div>
-    );
-  }
 
   const imageSource = getImageSource();
 
@@ -160,10 +165,10 @@ function Page({ params }) {
       <Navbar session={session} />
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
-          {/* Profile Section - ปรับให้เหมือนต้นฉบับ */}
-          <div className="flex items-start mb-8">
+          {/* Profile Section - Mobile Responsive */}
+          <div className="flex flex-col md:flex-row items-center md:items-start mb-8 gap-4 md:gap-6">
             {/* Profile Image */}
-            <div className="w-32 h-32 rounded-full overflow-hidden mr-6">
+            <div className="w-32 h-32 rounded-full overflow-hidden">
               {imageSource && !failedImages.includes(imageSource) ? (
                 <Image
                   src={imageSource}
@@ -171,9 +176,7 @@ function Page({ params }) {
                   width={128}
                   height={128}
                   className="w-full h-full object-cover"
-                  onError={() =>
-                    setFailedImages((prev) => [...prev, imageSource])
-                  }
+                  onError={() => setFailedImages((prev) => [...prev, imageSource])}
                 />
               ) : (
                 <MdAccountCircle className="w-full h-full text-gray-500" />
@@ -181,105 +184,50 @@ function Page({ params }) {
             </div>
 
             {/* Profile Info */}
-            <div className="flex-grow">
-              <div className="flex justify-between items-start">
-                <div
-                  className={`${!postDataS.briefly ? "flex flex-col justify-center mt-7" : ""}`}
-                >
-                  <h1
-                    className={`text-3xl font-bold ${!postDataS.briefly ? "mb-2" : "mb-1"}`}
-                  >
-                    {session?.user?.role !== "NormalUser"
-                      ? postDataS.name
-                      : postData.name}
+            <div className="flex-grow w-full">
+              <div className="flex flex-col items-center md:items-start">
+                <div className={`w-full text-center md:text-left ${!postDataS.briefly ? "md:mt-7" : ""}`}>
+                  <h1 className={`text-2xl md:text-3xl font-bold ${!postDataS.briefly ? "mb-2" : "mb-1"}`}>
+                    {session?.user?.role !== "NormalUser" ? postDataS.name : postData.name}
                   </h1>
-                  {/* แสดง briefly ถ้ามี */}
                   {postDataS.briefly && (
                     <p className="text-gray-600 mb-4">{postDataS.briefly}</p>
                   )}
 
                   {/* Skills Section */}
-                  <div className="relative">
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <span className="text-[#5E5E5E] mr-2 font-bold mt-1">
-                      {t("nav.skill.title")} :
+                  <div className="relative mb-4">
+                    <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
+                      <span className="text-[#5E5E5E] w-full md:w-auto text-center md:text-left font-bold mt-1">
+                        {t("nav.skill.title")} :
                       </span>
-                      {/* แสดง 5 skills แรก */}
                       {visibleSkills.map((skill, index) => (
                         <span
                           key={index}
-                          className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
+                          className="px-3 md:px-4 py-1 text-sm md:text-base text-white rounded-full bg-blue-500"
                         >
                           {skill}
                         </span>
                       ))}
-
-                      {/* ปุ่มแสดง skills ที่เหลือ */}
                       {remainingSkills.length > 0 && (
                         <button
                           onClick={() => setShowAllSkills(true)}
-                          className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
+                          className="px-3 md:px-4 py-1 text-sm md:text-base text-white rounded-full bg-blue-500"
                         >
                           +{remainingSkills.length}
                         </button>
                       )}
                     </div>
-
-                    {/* Modern Popup with Backdrop */}
-                    {showAllSkills && (
-                      <>
-                        {/* Backdrop with blur effect */}
-                        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
-
-                        {/* Popup */}
-                        <div
-                          ref={popupRef}
-                          className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[600px] bg-white rounded-2xl shadow-2xl z-50 transition-all duration-300 ease-out"
-                          style={{
-                            transform: `translate(-50%, -50%) scale(${showAllSkills ? "1" : "0.9"})`,
-                            opacity: showAllSkills ? 1 : 0,
-                          }}
-                        >
-                          {/* Popup Header */}
-                          <div className="flex justify-between items-center p-6 border-b">
-                            <h3 className="text-xl font-bold text-gray-800">
-                            {t("nav.profile.allskill")}
-                            </h3>
-                            <button
-                              onClick={() => setShowAllSkills(false)}
-                              className="p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                              aria-label="Close popup"
-                            >
-                              <MdClose className="w-6 h-6 text-gray-500" />
-                            </button>
-                          </div>
-
-                          {/* Popup Content */}
-                          <div className="p-6">
-                            <div className="flex flex-wrap gap-3">
-                              {skills.map((skill, index) => (
-                                <span
-                                  key={index}
-                                  className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
-                                >
-                                  {skill}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    )}
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 w-full mt-16 mb-8">
+          {/* Tab Buttons */}
+          <div className="grid grid-cols-2 w-full mt-8 md:mt-16 mb-8">
             <button
               onClick={() => setActiveButton("button1")}
-              className={`py-4 text-xl font-bold ${
+              className={`py-3 md:py-4 text-base md:text-xl font-bold ${
                 activeButton === "button1"
                   ? "bg-[#E6ECFF] text-black"
                   : "text-gray-500 hover:bg-gray-50"
@@ -289,7 +237,7 @@ function Page({ params }) {
             </button>
             <button
               onClick={() => setActiveButton("button2")}
-              className={`py-4 text-xl font-bold ${
+              className={`py-3 md:py-4 text-base md:text-xl font-bold ${
                 activeButton === "button2"
                   ? "bg-[#E6ECFF] text-black"
                   : "text-gray-500 hover:bg-gray-50"
@@ -299,8 +247,8 @@ function Page({ params }) {
             </button>
           </div>
 
-          {/* Projects Grid */}
-          {activeButton === "button1" && (
+           {/* Projects Grid */}
+           {activeButton === "button1" && (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-x-[10px] gap-y-[20px] lg:gap-x-[30px] md:gap-x-[40px] md:gap-y-[40px] mt-5">
               {publishedProject && publishedProject.length > 0 ? (
                 publishedProject.map((project, index) => (
@@ -365,54 +313,48 @@ function Page({ params }) {
             </div>
           )}
 
+
           {/* Blogs Grid */}
           {activeButton === "button2" && (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 justify-items-center mt-10 w-full">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 mt-6 md:mt-10">
               {postDataBlog && postDataBlog.length > 0 ? (
                 postDataBlog.map((blog, index) => (
-                  <Link key={index} href={`/blog/${blog._id}`}>
-                    <div className="w-[150px] sm:w-[180px] md:w-[200px] h-auto flex flex-col">
-                      <div
-                        className="rounded w-full relative"
-                        style={{ height: "200px" }}
-                      >
+                  <Link key={index} href={`/blog/${blog._id}`} className="block w-full">
+                    <div className="flex flex-col h-full">
+                      <div className="relative w-full pb-[100%]">
                         <Image
-                          src={`/api/posts/images/${blog.imageUrl}`}
+                          src={`/api/posts/images/${blog.imageUrl[0]}`}
                           alt={blog.topic || "Blog Image"}
                           fill
-                          className="w-full object-cover rounded-lg"
+                          className="absolute inset-0 object-cover rounded-lg"
                         />
                       </div>
-                      <div className="ml-2 mt-2">
-                        <div className="flex flex-col mt-1 justify-center">
-                          <div className="flex flex-row">
-                            <p className="truncate mt-1 text-sm font-bold w-full">
-                              {blog.topic || "Untitled Blog"}
+                      <div className="mt-2 px-2">
+                        <div className="flex items-center justify-between">
+                          <p className="truncate text-xs md:text-sm font-bold flex-grow">
+                            {blog.topic || "Untitled Blog"}
+                          </p>
+                          <div className="flex items-center ml-2">
+                            <CiHeart className="text-lg md:text-xl" />
+                            <p className="text-gray-500 text-xs md:text-sm ml-1">
+                              {blog.heart || 0}
                             </p>
-                            <div className="flex items-center">
-                              <CiHeart className="text-xl" />
-                              <p className="text-gray-500 text-sm">
-                                {blog.heart || 0}
-                              </p>
-                            </div>
                           </div>
                         </div>
-                        <div className="flex flex-row mb-3">
+                        <div className="flex items-center mt-2">
                           {imageSource && !failedImages.includes(blog._id) ? (
                             <Image
                               src={imageSource}
                               alt="Profile"
-                              width={24}
-                              height={24}
-                              className="rounded-full mr-2 mt-1"
-                              onError={() => {
-                                setFailedImages((prev) => [...prev, blog._id]);
-                              }}
+                              width={20}
+                              height={20}
+                              className="rounded-full mr-2"
+                              onError={() => setFailedImages((prev) => [...prev, blog._id])}
                             />
                           ) : (
-                            <MdAccountCircle className="w-6 h-6 text-gray-500 mr-2 mt-1" />
+                            <MdAccountCircle className="w-5 h-5 text-gray-500 mr-2" />
                           )}
-                          <p className="mt-2 truncate text-gray-500 text-xs">
+                          <p className="truncate text-gray-500 text-xs">
                             {blog.authorName || "Unknown Author"}
                           </p>
                         </div>
@@ -421,7 +363,7 @@ function Page({ params }) {
                   </Link>
                 ))
               ) : (
-                <p className="text-gray-500">{t("nav.profile.noblog")}</p>
+                <p className="text-gray-500 col-span-full text-center">{t("nav.profile.noblog")}</p>
               )}
             </div>
           )}

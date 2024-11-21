@@ -1201,7 +1201,7 @@ function CustomNavbar() {
                           ${isHomePage 
                             ? (isScrolled 
                                 ? "text-white hover:text-[#5f66de]" 
-                                : "text-gray-800 hover:text-gray-600")
+                                : "text-white hover:text-gray-600")
                             : "text-white hover:text-[#5f66de]"
                           }
                           transition-colors duration-300
@@ -1219,7 +1219,7 @@ function CustomNavbar() {
                         ${isHomePage 
                           ? (isScrolled 
                               ? "text-white hover:text-[#5f66de]" 
-                              : "text-gray-800 hover:text-gray-600")
+                              : "text-white hover:text-gray-600")
                           : "text-white hover:text-[#5f66de]"
                         }
                         transition-colors duration-300
@@ -1237,7 +1237,7 @@ function CustomNavbar() {
                           ${isHomePage 
                             ? (isScrolled 
                                 ? "text-white hover:text-[#5f66de]" 
-                                : "text-gray-800 hover:text-gray-600")
+                                : "text-white hover:text-gray-600")
                             : "text-white hover:text-[#5f66de]"
                           }
                           transition-colors duration-300
