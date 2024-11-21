@@ -39,7 +39,7 @@ function SignUp() {
   
           if (sessionData.user?.roleaii) {
             if (sessionData.user?.interests) {
-              router.replace("/Home");
+              router.replace("/");
             } else {
               router.replace("/Ai/interest");
             }
@@ -84,7 +84,7 @@ function SignUp() {
       
       if (sessionData.user?.roleaii) {
         if (sessionData.user?.interests) {
-          router.replace("/Home");
+          router.replace("/");
         } else {
           router.replace("/Ai/interest");
         }

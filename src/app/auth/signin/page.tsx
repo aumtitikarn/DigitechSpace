@@ -27,7 +27,7 @@ export default function SignIn() {
 
           if (sessionData.user?.roleaii) {
             if (sessionData.user?.interests) {
-              router.replace("/Home");
+              router.replace("/");
             } else {
               router.replace("/Ai/interest");
             }
@@ -86,7 +86,7 @@ export default function SignIn() {
       console.log("interests : ", sessionData.user?.interests);
       if (sessionData.user?.roleaii) {
         if (sessionData.user?.interests) {
-          router.replace("/Home");
+          router.replace("/");
         } else {
           router.replace("/Ai/interest");
         }
