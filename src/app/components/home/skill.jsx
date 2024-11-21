@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaSearch } from "react-icons/fa";
 import { MdAccountCircle } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
@@ -30,58 +30,59 @@ const PopularSkills = () => {
   const [failedImages, setFailedImages] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
-  const fetchPopularSkills = async () => {
+  const fetchPopularSkills = useCallback(async () => {
     try {
       setIsLoading(true);
-      // ลบ setError(null);
       const response = await fetch("/api/skills?mode=skills");
       const data = await response.json();
-  
+      
       if (data.success && Array.isArray(data.skills)) {
         setSkills(data.skills);
-      } 
-      // ลบส่วน else ที่แสดง error ออก
+      }
     } catch (error) {
-      console.error("Error fetching skills:", error); // เก็บไว้สำหรับ debug
-      // ลบ setError(error.message);
+      console.error("Error fetching skills:", error);
     } finally {
       setIsLoading(false);
     }
-  };
- // 2. แก้ไขส่วน fetchUsersBySkillsOrName เช่นเดียวกัน
-const fetchUsersBySkillsOrName = async () => {
-  if (selectedSkills.length === 0 && !searchTerm) {
-    setUsers([]);
-    return;
-  }
-
-  try {
-    setIsLoading(true);
-    // ลบ setError(null);
-
-    let url = "/api/skills?mode=users";
-    if (selectedSkills.length > 0) {
-      const skillsParam = selectedSkills.join(",");
-      url += `&skills=${encodeURIComponent(skillsParam)}`;
+  }, []); // ไม่มี dependencies เพราะไม่ได้ใช้ state ใดๆ ในฟังก์ชัน
+  
+  const fetchUsersBySkillsOrName = useCallback(async () => {
+    if (selectedSkills.length === 0 && !searchTerm) {
+      setUsers([]);
+      return;
     }
-    if (searchTerm) {
-      url += `&name=${encodeURIComponent(searchTerm)}`;
+  
+    try {
+      setIsLoading(true);
+      let url = "/api/skills?mode=users";
+      if (selectedSkills.length > 0) {
+        const skillsParam = selectedSkills.join(",");
+        url += `&skills=${encodeURIComponent(skillsParam)}`;
+      }
+      if (searchTerm) {
+        url += `&name=${encodeURIComponent(searchTerm)}`;
+      }
+  
+      const response = await fetch(url);
+      const data = await response.json();
+  
+      if (data.success && Array.isArray(data.users)) {
+        setUsers(data.users);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsLoading(false);
     }
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.success && Array.isArray(data.users)) {
-      setUsers(data.users);
-    }
-    // ลบส่วน else ที่แสดง error
-  } catch (error) {
-    console.error("Error fetching users:", error); // เก็บไว้สำหรับ debug
-    // ลบ setError(error.message);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  }, [selectedSkills, searchTerm]);
+  
+  useEffect(() => {
+    fetchPopularSkills();
+  }, [fetchPopularSkills]);
+  
+  useEffect(() => {
+    fetchUsersBySkillsOrName();
+  }, [fetchUsersBySkillsOrName]);
 
   const removeSkill = (skillToRemove) => {
     setSelectedSkills(
@@ -125,13 +126,7 @@ const fetchUsersBySkillsOrName = async () => {
     debouncedSearch(value);
   };
 
-  useEffect(() => {
-    fetchPopularSkills();
-  }, []);
 
-  useEffect(() => {
-    fetchUsersBySkillsOrName();
-  }, [selectedSkills, searchTerm]);
 
   const getDisplayedUsers = () => {
     if (typeof window !== "undefined" && window.innerWidth <= 768 && !showAll) {

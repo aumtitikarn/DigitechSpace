@@ -44,6 +44,26 @@ function Page({ params }) {
   const router = useRouter();
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowAllSkills(false);
+      }
+    };
+
+    if (showAllSkills) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "unset";
+    };
+  }, [showAllSkills]);
+
+  useEffect(() => {
     const fetchData = async () => {
       if (status === "authenticated" && session) {
         setIsLoading(true);
@@ -95,18 +115,6 @@ function Page({ params }) {
     fetchData();
   }, [id, status, session, router]);
 
-  if (status === "loading" || isLoading) {
-    return (
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-        <OrbitProgress
-          variant="track-disc"
-          dense
-          color="#33539B"
-          size="medium"
-        />
-      </div>
-    );
-  } // Added 'id' to dependencies
   const getSkills = () => {
     if (session?.user?.role !== "NormalUser") {
       return postDataS?.skills || [];
@@ -118,25 +126,6 @@ function Page({ params }) {
   const visibleSkills = skills.slice(0, 5);
   const remainingSkills = skills.length > 5 ? skills.slice(5) : [];
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
-        setShowAllSkills(false);
-      }
-    };
-
-    if (showAllSkills) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "unset";
-    };
-  }, [showAllSkills]);
   const getImageSource = () => {
     if (postData?.imageUrl?.[0]) {
       const imageUrl = postData.imageUrl[0];
@@ -157,8 +146,20 @@ function Page({ params }) {
     setActiveButton(button === activeButton ? null : button);
   };
 
-
   const imageSource = getImageSource();
+
+  if (status === "loading" || isLoading) {
+    return (
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
