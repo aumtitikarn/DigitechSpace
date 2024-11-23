@@ -183,7 +183,7 @@ const ProductList: React.FC = () => {
         Swal.fire({
           icon: "info",
           title: "Information",
-          text: "User does not have Seller Information",
+          text: t("nav.sell.seller"),
         });
       }
     } catch (error) {

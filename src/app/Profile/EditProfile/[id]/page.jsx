@@ -127,7 +127,7 @@ function Page() {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
       // ตรวจสอบประเภทไฟล์
       if (!file.type.startsWith("image/")) {
@@ -135,15 +135,48 @@ function Page() {
         return;
       }
 
-      // ตรวจสอบขนาดไฟล์ (ตัวอย่าง: จำกัดที่ 5MB)
+      // ตรวจสอบขนาดไฟล์ (จำกัดที่ 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert("File size should not exceed 5MB");
         return;
       }
 
-      setImageFile(file);
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+      // สร้าง canvas เพื่อปรับขนาดรูปภาพ
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // กำหนดขนาด canvas เป็น 95x95
+        canvas.width = 95;
+        canvas.height = 95;
+
+        if (ctx) {
+          // คำนวณขนาดและตำแหน่งเพื่อให้รูปภาพอยู่ตรงกลางและเต็มพื้นที่
+          const scale = Math.max(
+            canvas.width / img.width,
+            canvas.height / img.height
+          );
+          const x = (canvas.width - img.width * scale) / 2;
+          const y = (canvas.height - img.height * scale) / 2;
+
+          // วาดรูปภาพลงบน canvas
+          ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+          // แปลง canvas เป็น Blob
+          canvas.toBlob((blob) => {
+            if (blob) {
+              // สร้าง URL สำหรับรูปภาพที่ปรับขนาดแล้ว
+              const resizedImageUrl = URL.createObjectURL(blob);
+              setImageFile(blob);
+              setProfileImage(resizedImageUrl);
+            }
+          }, file.type);
+        }
+      };
+
+      // อ่านไฟล์เป็น URL สำหรับ Image object
+      img.src = URL.createObjectURL(file);
     }
   };
 
@@ -221,51 +254,50 @@ function Page() {
         <div className="flex flex-col items-center w-full max-w-lg">
           {session?.user?.role === "StudentUser" ? (
             <>
-              <div
-                className="flex flex-row justify-center relative w-24 h-24"
-                style={{
-                  width: "95px",
-                  height: "95px",
-                  margin: "-10px",
-                  objectFit: "cover",
-                  borderRadius: "50%",
-                }}
-              >
-                {imageSource &&
-                Array.isArray(failedImages) &&
-                !failedImages.includes(imageSource) ? (
-                  <Image
-                    width={95}
-                    height={95}
-                    src={profileImage || imageSource || ""}
-                    alt="Profile Image"
-                    unoptimized={true}
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                      width: "95px",
-                      height: "95px",
-                      margin: "15px",
-                    }}
-                    onError={() => {
-                      setFailedImages((prev) => [...prev, imageSource]);
-                    }}
-                  />
-                ) : (
-                  <MdAccountCircle
-                    className="rounded-full text-gray-500"
-                    style={{ width: "95px", height: "95px", margin: "15px" }}
-                  />
-                )}
+              <div className="relative inline-block">
+                {/* ส่วนแสดงรูปภาพ */}
+                <div className="w-[95px] h-[95px] relative">
+                  {imageSource &&
+                  Array.isArray(failedImages) &&
+                  !failedImages.includes(imageSource) ? (
+                    <Image
+                      width={95}
+                      height={95}
+                      src={profileImage || imageSource || ""}
+                      alt="Profile Image"
+                      unoptimized={true}
+                      style={{
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                        width: "95px",
+                        height: "95px",
+                      }}
+                      className="rounded-full"
+                      onError={() => {
+                        setFailedImages((prev) => [...prev, imageSource]);
+                      }}
+                    />
+                  ) : (
+                    <MdAccountCircle
+                      className="rounded-full text-gray-500"
+                      style={{
+                        width: "95px",
+                        height: "95px",
+                      }}
+                    />
+                  )}
+                </div>
 
+                {/* Input file ซ่อนไว้ */}
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  style={{ display: "none" }}
+                  className="hidden"
                   id="imageUpload"
                 />
 
+                {/* ปุ่มเพิ่มรูปภาพ */}
                 <label
                   htmlFor="imageUpload"
                   className="absolute right-0 bottom-0 bg-white rounded-full p-1 border-2 border-black cursor-pointer"
@@ -317,7 +349,8 @@ function Page() {
                     }}
                   />
                   <div className="text-right text-sm text-gray-500  mt-1">
-                    {newbriefly ? newbriefly.length : 0}/200 {t("nav.profile.editprofile.characters")}
+                    {newbriefly ? newbriefly.length : 0}/200{" "}
+                    {t("nav.profile.editprofile.characters")}
                   </div>
                 </div>
                 <div className="flex flex-row items-center w-full mt-4">
@@ -367,51 +400,50 @@ function Page() {
             </>
           ) : (
             <>
-              <div
-                className="flex flex-row justify-center relative w-24 h-24"
-                style={{
-                  width: "95px",
-                  height: "95px",
-                  margin: "-10px",
-                  objectFit: "cover",
-                  borderRadius: "50%",
-                }}
-              >
-                {imageSource &&
-                Array.isArray(failedImages) &&
-                !failedImages.includes(imageSource) ? (
-                  <Image
-                    width={95}
-                    height={95}
-                    src={profileImage || imageSource || ""}
-                    alt="Profile Image"
-                    unoptimized={true}
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                      width: "95px",
-                      height: "95px",
-                      margin: "15px",
-                    }}
-                    onError={() => {
-                      setFailedImages((prev) => [...prev, imageSource]);
-                    }}
-                  />
-                ) : (
-                  <MdAccountCircle
-                    className="rounded-full text-gray-500"
-                    style={{ width: "95px", height: "95px", margin: "15px" }}
-                  />
-                )}
+              <div className="relative inline-block">
+                {/* ส่วนแสดงรูปภาพ */}
+                <div className="w-[95px] h-[95px] relative">
+                  {imageSource &&
+                  Array.isArray(failedImages) &&
+                  !failedImages.includes(imageSource) ? (
+                    <Image
+                      width={95}
+                      height={95}
+                      src={profileImage || imageSource || ""}
+                      alt="Profile Image"
+                      unoptimized={true}
+                      style={{
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                        width: "95px",
+                        height: "95px",
+                      }}
+                      className="rounded-full"
+                      onError={() => {
+                        setFailedImages((prev) => [...prev, imageSource]);
+                      }}
+                    />
+                  ) : (
+                    <MdAccountCircle
+                      className="rounded-full text-gray-500"
+                      style={{
+                        width: "95px",
+                        height: "95px",
+                      }}
+                    />
+                  )}
+                </div>
 
+                {/* Input file ซ่อนไว้ */}
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  style={{ display: "none" }}
+                  className="hidden"
                   id="imageUpload"
                 />
 
+                {/* ปุ่มเพิ่มรูปภาพ */}
                 <label
                   htmlFor="imageUpload"
                   className="absolute right-0 bottom-0 bg-white rounded-full p-1 border-2 border-black cursor-pointer"

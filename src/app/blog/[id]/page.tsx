@@ -678,12 +678,15 @@ function Blog({ params }: BlogProps) {
 
               <div className="ml-[500px] relative flex justify-end">
                 {/* Dropdown Toggle */}
+                {session?.user?.email === postData.email && (
+
                 <button
                   className="p-2 rounded-full hover:bg-gray-200 transition"
                   onClick={handleMoreClick}
                 >
                   <BsThreeDots size={20} />
                 </button>
+                )}
 
                 {/* Dropdown Menu */}
                 {isPopupOpenMore && (
@@ -693,14 +696,14 @@ function Blog({ params }: BlogProps) {
                       className="w-36 flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
                     >
                       <FaEdit className="mr-2 text-blue-600" />
-                      แก้ไขบล็อก
+                      {t("nav.blog.edit")}
                     </Link>
                     <button
                       onClick={handleDelete}
                       className="w-36 flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100 transition"
                     >
                       <FaTrash className="mr-2" />
-                      ลบบล็อก
+                      {t("nav.blog.delete")}
                     </button>
                   </div>
                 )}
@@ -828,6 +831,8 @@ function Blog({ params }: BlogProps) {
                             style={{
                               objectFit: "cover",
                               borderRadius: "50%",
+                              width: "30px",
+                              height: "30px",
                               marginRight: "10px",
                             }}
                             className=" rounded-full mr-2 mt-1 text-gray-500"
@@ -904,6 +909,8 @@ function Blog({ params }: BlogProps) {
                                   style={{
                                     objectFit: "cover",
                                     borderRadius: "50%",
+                                    width: "30px",
+                                    height: "30px",
                                     marginRight: "10px",
                                   }}
                                   className=" rounded-full mr-2 mt-1 text-gray-500"

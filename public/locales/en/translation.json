@@ -95,6 +95,8 @@
       "reply" : "Reply",
       "cancel" : "Cancel",
       "noblog" : "There are no blogs at this time.",
+      "edit" : " Edit",
+      "delete" : "Delete",
       "addblog" : {
         "title" : "Add Blog",
         "topic" : "Topic",
@@ -150,6 +152,7 @@
       "edit" : "Edit your project",
       "noproject" : "No projects to display",
       "noreview" : "No reviews available",
+      "seller" : "The user has no seller information. Please add seller information first.",
       "status" : {
         "submitted" : "Submitted",
         "pending" : "Pending",
