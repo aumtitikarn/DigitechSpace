@@ -134,23 +134,23 @@ function Page() {
         alert("Please select an image file");
         return;
       }
-
+  
       // ตรวจสอบขนาดไฟล์ (จำกัดที่ 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert("File size should not exceed 5MB");
         return;
       }
-
-      // สร้าง canvas เพื่อปรับขนาดรูปภาพ
-      const img = new Image();
+  
+      // สร้าง HTML Image element แทนการใช้ new Image()
+      const img = document.createElement('img');
       img.onload = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
+  
         // กำหนดขนาด canvas เป็น 95x95
         canvas.width = 95;
         canvas.height = 95;
-
+  
         if (ctx) {
           // คำนวณขนาดและตำแหน่งเพื่อให้รูปภาพอยู่ตรงกลางและเต็มพื้นที่
           const scale = Math.max(
@@ -159,10 +159,10 @@ function Page() {
           );
           const x = (canvas.width - img.width * scale) / 2;
           const y = (canvas.height - img.height * scale) / 2;
-
+  
           // วาดรูปภาพลงบน canvas
           ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-
+  
           // แปลง canvas เป็น Blob
           canvas.toBlob((blob) => {
             if (blob) {
@@ -174,7 +174,7 @@ function Page() {
           }, file.type);
         }
       };
-
+  
       // อ่านไฟล์เป็น URL สำหรับ Image object
       img.src = URL.createObjectURL(file);
     }
@@ -216,7 +216,11 @@ function Page() {
           confirmButtonText: "OK",
         });
         // Always redirect to the profile page after successful save
-        router.push("/Profile");
+        if (session.user.role === "NormalUser") {
+          router.push("/");
+        } else if (session.user.role === "StudentUser") {
+          router.push("/Profile");
+        }
       } else {
         throw new Error("Failed to update profile");
       }
