@@ -1,9 +1,9 @@
 import { connectMongoDB } from "../../../../lib/mongodb";
-import PostBlog from "../../../../models/blogreport"
-import { NextResponse } from "next/server"
+import PostBlog from "../../../../models/blogreport";
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
-try {
+  try {
     await connectMongoDB();
     const formData = await req.formData();
 
@@ -12,52 +12,57 @@ try {
     let selectedReason = "";
     let author = "";
     let blogid = "";
-    let blogEmail="";
-
+    let blogEmail = "";
 
     for (const [key, value] of formData.entries()) {
       switch (key) {
         case "blogname":
-            blogname = value.toString();
+          blogname = value.toString();
           break;
         case "report":
-            report = value.toString();
+          report = value.toString();
           break;
         case "selectedReason":
-            selectedReason = value.toString();
-        break;
+          selectedReason = value.toString();
+          break;
         case "author":
           author = value.toString();
-        break;
+          break;
         case "blogid":
-            blogid = value.toString();
-        break;
+          blogid = value.toString();
+          break;
         case "blogEmail":
           blogEmail = value.toString();
-        break;
+          break;
       }
     }
 
     if (!report || !selectedReason) {
-      throw new Error("Missing required fields");
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
     }
 
     const newItem = new PostBlog({
-        blogname,
+      blogname,
       report,
       selectedReason,
       author,
       blogid,
-      blogEmail
+      blogEmail,
     });
 
     const savedProject = await newItem.save();
 
-    return NextResponse.json({ message: "Post created" }, { status: 201 });
+    return NextResponse.json(
+      { message: "Post created successfully" },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error in POST handler:", error);
     return NextResponse.json(
-      { msg: "Error creating post" },
+      { error: "Error creating post" },
       { status: 500 }
     );
   }
