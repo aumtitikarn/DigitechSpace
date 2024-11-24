@@ -531,7 +531,7 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         const heart = isLiked ? postData.heart - 1 : postData.heart + 1;
 
         const blogRes = await fetch(
-          `http://localhost:3000/api/posts/${postData._id}`,
+          `http://digiproj.sut.ac.th:3001/api/posts/${postData._id}`,
           {
             method: "PUT",
             headers: {
