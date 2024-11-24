@@ -5,45 +5,28 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     await connectMongoDB();
-    const formData = await req.formData();
+    const data = await req.json();
 
-    let blogname = "";
-    let report = "";
-    let selectedReason = "";
-    let author = "";
-    let blogid = "";
-    let blogEmail = "";
+    console.log("Received data:", data); // For debugging
 
-    for (const [key, value] of formData.entries()) {
-      switch (key) {
-        case "blogname":
-          blogname = value.toString();
-          break;
-        case "report":
-          report = value.toString();
-          break;
-        case "selectedReason":
-          selectedReason = value.toString();
-          break;
-        case "author":
-          author = value.toString();
-          break;
-        case "blogid":
-          blogid = value.toString();
-          break;
-        case "blogEmail":
-          blogEmail = value.toString();
-          break;
-      }
-    }
+    const { blogname, report, selectedReason, author, blogid, blogEmail } = data;
 
-    if (!report || !selectedReason) {
+    // Validate required fields
+    if (!report || !selectedReason || !author) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { 
+          error: "กรุณากรอกข้อมูลให้ครบถ้วน",
+          details: {
+            report: !report ? "กรุณากรอกรายละเอียด" : null,
+            selectedReason: !selectedReason ? "กรุณาเลือกเหตุผล" : null,
+            author: !author ? "ไม่พบข้อมูลผู้รายงาน" : null
+          }
+        },
         { status: 400 }
       );
     }
 
+    // Create new report
     const newItem = new PostBlog({
       blogname,
       report,
@@ -51,19 +34,40 @@ export async function POST(req) {
       author,
       blogid,
       blogEmail,
+      createdAt: new Date()
     });
 
     const savedProject = await newItem.save();
 
     return NextResponse.json(
-      { message: "Post created successfully" },
+      { 
+        message: "รายงานถูกสร้างเรียบร้อยแล้ว",
+        reportId: savedProject._id 
+      },
       { status: 201 }
     );
+
   } catch (error) {
     console.error("Error in POST handler:", error);
+
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      return NextResponse.json(
+        { 
+          error: "ข้อมูลไม่ถูกต้อง",
+          details: error.message
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Error creating post" },
+      { 
+        error: "เกิดข้อผิดพลาดในการสร้างรายงาน",
+        details: error.message 
+      },
       { status: 500 }
     );
   }
 }
+

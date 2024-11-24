@@ -24,26 +24,40 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
   };
 
   const handleSubmit = async () => {
-    if (!session) return;
-
-    // Ensure all required fields are populated
-    if (!project || !report || !review ) {
-      console.error("All fields are required");
-      return; // Prevent submission if fields are missing
+    if (!session) {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: t("report.blog.login"),
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
     }
-
+  
+    // Validate required data
+    if (!project || !report || !review) {
+      Swal.fire({
+        icon: "warning",
+        title: t("report.blog.found"),
+        text: t("report.blog.fdes"),
+        showConfirmButton: true,
+      });
+      return;
+    }
+  
     const data = {
       name: project.projectname,
       projectId: project._id,
       email: project.email,
-      report: report, // Ensure this is a valid enum value
+      report: report,
       more: review,
       username: session.user?.name,
       author: project.authorName,
     };
-
-    console.log("Data to be sent:", data); // Log data to check its correctness
-
+  
+    console.log("Data to be sent:", data);
+  
     try {
       const response = await fetch("/api/reportproject", {
         method: "POST",
@@ -52,12 +66,13 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
         },
         body: JSON.stringify(data),
       });
-
+  
       if (response.ok) {
         setSubmissionStatus("success");
         Swal.fire({
           icon: 'success',
-          title: t("report.successMessage"),
+          title: t("report.blog.thank"),
+          text: t("report.blog.thankdes"),
           showConfirmButton: false,
           timer: 1500
         }).then(() => {
@@ -66,19 +81,11 @@ const Report: React.FC<ReportProps> = ({ project, onClose }) => {
       } else {
         const responseData = await response.json();
         console.error("Error response data:", responseData);
-        setSubmissionStatus("error");
-        Swal.fire({
-          icon: 'error',
-          title: t("report.errorMessage"),
-          text: responseData.message || 'An unexpected error occurred',
-        });
       }
     } catch (error) {
-      console.error("Fetch error:", error);
-      setSubmissionStatus("error");
     }
   };
-
+  
   const handleReasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedReason(event.target.value);
   };

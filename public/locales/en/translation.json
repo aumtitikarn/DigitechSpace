@@ -325,6 +325,11 @@
     "blog" : {
       "topic" : "Blog",
       "reason" : "Reason",
+      "login": "Please login",
+      "found": "Please complete all fields",
+      "fdes": "Please enter details and select a reason for reporting",
+      "thank": "Report submitted successfully",
+      "thankdes": "Thank you for your report",
       "r1" : "Contains impolite or vulgar words",
       "r2" : "The content doesn't match the topic.",
       "r3" : "There is advertising of illegal things.",

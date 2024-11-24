@@ -408,60 +408,69 @@ function Blog({ params }: BlogProps) {
     setSelectedReason(event.target.value);
   };
 
-  const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault();
 
-    if (!postData) return; // Add a guard clause
+  if (!session) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: t("report.blog.login"),
+      showConfirmButton: false,
+      timer: 3000,
+    });
+    return;
+  }
 
-    setBlogname(postData.topic);
-    setBlogEmail(postData.email);
-    setBlogid(postData._id);
+  // Validate required data
+  if (!postData || !report || !selectedReason) {
+    Swal.fire({
+      icon: "warning",
+      title: t("report.blog.found"),
+      text: t("report.blog.fdes"),
+      showConfirmButton: true,
+    });
+    return;
+  }
 
-    console.log("Blog name:", postData.topic);
-    console.log("Blog Email:", postData.email);
-    console.log("Blog ID:", postData._id);
-    // console.log("authorName:", comments.authorName);
-
-    const formData = new FormData();
-
-    if (!session || !session.user || !session.user.name) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: "User is not authenticated",
-        showConfirmButton: false,
-        timer: 3000,
-      });
-      return;
-    }
-
-    if (!report || !selectedReason) {
-      alert("Please complete all inputs");
-      return;
-    }
-
-    formData.append("selectedReason", selectedReason);
-    formData.append("report", report);
-    formData.append("author", session.user.name);
-    formData.append("blogname", blogname || "");
-    formData.append("blogEmail", blogEmail || "");
-    formData.append("blogid", blogid || "");
-    try {
-      const res = await fetch("http://localhost:3000/api/reportblog", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (res.ok) {
-        router.push(`/blog/${postData._id}`);
-        setIsPopupOpen(false);
-      } else {
-        console.error("Error:", res.statusText);
-      }
-    } catch (error) {
-      console.error("Error submitting the form:", error);
-    }
+  // Prepare data object
+  const data = {
+    blogname: postData.topic,
+    blogEmail: postData.email,
+    blogid: postData._id,
+    report: report,
+    selectedReason: selectedReason,
+    author: session.user?.name
   };
+
+  console.log("Data to be sent:", data); // For debugging
+
+  try {
+    const response = await fetch("/api/reportblog", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      Swal.fire({
+        icon: 'success',
+        title: t("report.blog.thank"),
+        text: t("report.blog.thankdes"),
+        showConfirmButton: false,
+        timer: 1500
+      }).then(() => {
+        setIsPopupOpen(false);
+        router.push(`/blog/${postData._id}`);
+      });
+    } else {
+      const responseData = await response.json();
+    }
+  } catch (error) {
+  }
+};
 
   const togglePopup = () => {
     if (session) {
