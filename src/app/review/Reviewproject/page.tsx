@@ -22,6 +22,8 @@ interface PageProps {
 const ProjectReview = () => {
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isNavigating, setIsNavigating] = useState<boolean>(false);
   const { t } = useTranslation("translation");
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -71,7 +73,7 @@ const ProjectReview = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          rating,
+          rathing: rating, // เปลี่ยนชื่อ field ให้ตรงกับ backend
           review,
           projectId,
           username,
@@ -90,8 +92,12 @@ const ProjectReview = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-  
-      router.push(`/project/projectdetail/${projectId}`);
+  // เริ่ม loading state สำหรับการนำทาง
+  setIsNavigating(true);
+  // รอสักครู่ให้ SweetAlert2 ปิดตัวลง
+  setTimeout(() => {
+    router.push(`/project/projectdetail/${projectId}`);
+  }, 1000);
     } catch (error) {
       console.error("Error submitting review:", error);
       Swal.fire({
@@ -102,20 +108,18 @@ const ProjectReview = () => {
     }
   };
 
-  if (status === "loading") {
-    return (
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+  const LoadingOverlay = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
         <OrbitProgress 
           variant="track-disc" 
           dense 
           color="#33539B" 
-          size="medium" 
-          text="" 
-          textColor="" 
+          size="large" 
         />
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">

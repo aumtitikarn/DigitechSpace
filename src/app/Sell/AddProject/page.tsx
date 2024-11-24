@@ -213,7 +213,7 @@ const Project: React.FC = () => {
         });
       
         // Redirect first, then close the alert
-        router.push(`/project/projectdetail/${data._id}`);
+        router.push(`/Sell`);
         setTimeout(() => {
           Swal.close();
         }, 1000); // Close alert 1 second after navigation

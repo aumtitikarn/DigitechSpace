@@ -1,7 +1,8 @@
 import { connectMongoDB } from "../../../../lib/mongodb";
 import StudentUser from "../../../../models/StudentUser";
 import { NextResponse } from "next/server";
-export const dynamic = 'force-dynamic'; 
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req) {
   try {
@@ -16,86 +17,127 @@ export async function GET(req) {
       // Return all unique skills
       const allUsers = await StudentUser.find({});
       const allSkills = [...new Set(allUsers.flatMap(user => user.skills || []))];
-      return NextResponse.json({ 
+      return NextResponse.json({
         success: true,
-        skills: allSkills 
+        skills: allSkills
       });
     }
 
     if (mode === 'users') {
       let query = {};
       
+      // Name search condition
       if (name) {
-        query.name = { $regex: name, $options: 'i' };
+        // Create an OR condition for name and skills
+        query.$or = [
+          { name: { $regex: name, $options: 'i' } },
+          { skills: { $regex: name, $options: 'i' } }
+        ];
+
+        // Special handling for "React" variations
+        if (name.toLowerCase().includes('react')) {
+          query.$or.push(
+            { skills: { $regex: 'ReactJS', $options: 'i' } },
+            { skills: { $regex: 'React.js', $options: 'i' } },
+            { skills: { $regex: 'React Native', $options: 'i' } }
+          );
+        }
       }
 
-      // Fetch users
+      // Skills search condition
+      if (skillsParam) {
+        const searchSkills = skillsParam.split(',');
+        const skillQueries = searchSkills.map(skill => {
+          const skillRegex = new RegExp(skill, 'i');
+          if (skill.toLowerCase().includes('react')) {
+            return {
+              $or: [
+                { skills: skillRegex },
+                { skills: /ReactJS/i },
+                { skills: /React\.js/i },
+                { skills: /React Native/i }
+              ]
+            };
+          }
+          return { skills: skillRegex };
+        });
+
+        if (query.$or) {
+          // Combine with existing name search
+          query = {
+            $and: [
+              { $or: query.$or },
+              { $or: skillQueries }
+            ]
+          };
+        } else {
+          query.$or = skillQueries;
+        }
+      }
+
+      // Fetch users based on the query
       const users = await StudentUser.find(query);
 
-      if (!skillsParam) {
-        // If no skills specified, return all users
-        return NextResponse.json({ 
-          success: true,
-          users: users.map(user => ({
-            _id: user._id,
-            name: user.name,
-            imageUrl: user.imageUrl,
-            skills: user.skills,
-            matchPercentage: 100,
-            matchedSkills: user.skills
-          }))
-        });
-      }
-
-      const searchSkills = skillsParam.split(',');
-      const searchSkillsLower = searchSkills.map(s => s.toLowerCase());
-
-      // Calculate match percentage for each user
-      const usersWithMatch = users.map(user => {
+      // Calculate match percentage and format response
+      const processedUsers = users.map(user => {
         const userSkills = user.skills || [];
-        const userSkillsLower = userSkills.map(s => s.toLowerCase());
-        
-        // Find matching skills
-        const matchedSkills = userSkills.filter(skill => 
-          searchSkillsLower.includes(skill.toLowerCase())
-        );
+        let matchedSkills = [];
+        let matchPercentage = 100;
 
-        // Calculate percentage
-        const matchPercentage = searchSkills.length > 0
-          ? (matchedSkills.length / searchSkills.length) * 100
-          : 0;
+        if (skillsParam) {
+          const searchSkills = skillsParam.split(',');
+          const searchSkillsLower = searchSkills.map(s => s.toLowerCase());
+
+          // Find matching skills including React variations
+          matchedSkills = userSkills.filter(skill => {
+            const skillLower = skill.toLowerCase();
+            return searchSkillsLower.some(searchSkill => {
+              if (searchSkill.toLowerCase().includes('react')) {
+                return skillLower.includes('react') || 
+                       skillLower.includes('reactjs') || 
+                       skillLower.includes('react.js') || 
+                       skillLower.includes('react native');
+              }
+              return skillLower.includes(searchSkill.toLowerCase());
+            });
+          });
+
+          matchPercentage = searchSkills.length > 0
+            ? Math.round((matchedSkills.length / searchSkills.length) * 100)
+            : 100;
+        }
 
         return {
           _id: user._id,
           name: user.name,
           imageUrl: user.imageUrl,
-          skills: user.skills,
+          skills: userSkills,
           matchedSkills: matchedSkills,
-          matchPercentage: Math.round(matchPercentage)
+          matchPercentage: matchPercentage
         };
       });
 
-      // Filter users with match percentage > 0 and sort by percentage
-      const filteredAndSorted = usersWithMatch
+      // Sort by match percentage and filter out 0% matches
+      const filteredAndSorted = processedUsers
         .filter(user => user.matchPercentage > 0)
         .sort((a, b) => b.matchPercentage - a.matchPercentage);
 
-      return NextResponse.json({ 
+      return NextResponse.json({
         success: true,
         users: filteredAndSorted
       });
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: false,
-      error: "Invalid mode specified" 
+      error: "Invalid mode specified"
     });
 
   } catch (error) {
     console.error('API Error:', error);
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: false,
-      error: error.message 
+      error: error.message
     });
   }
 }

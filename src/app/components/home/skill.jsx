@@ -254,8 +254,7 @@ const PopularSkills = () => {
         </div>
       </div>
 
-{/* แก้ไขส่วนการแสดงผล Users */}
-<div className="flex flex-col">
+      <div className="flex flex-col">
   <div className="relative flex-grow">
     <div className="md:overflow-x-auto md:whitespace-nowrap scrollbar-none">
       <div className="flex flex-col md:flex-row gap-4 md:w-max">
@@ -273,8 +272,8 @@ const PopularSkills = () => {
               >
                 <div className="flex items-center gap-3">
                   <div className="relative">
+                    {/* Profile image section - unchanged */}
                     <div className="relative w-[64px] h-[64px]">
-                      {/* Border สีเหลือง */}
                       <div className="absolute inset-0">
                         <svg viewBox="0 0 100 100" className="w-[64px] h-[64px]">
                           <circle
@@ -288,7 +287,6 @@ const PopularSkills = () => {
                         </svg>
                       </div>
 
-                      {/* รูปโปรไฟล์ */}
                       {user.imageUrl && !failedImages.includes(user._id) ? (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Image
@@ -296,7 +294,7 @@ const PopularSkills = () => {
                             alt={user.name || "Profile"}
                             width={54}
                             height={54}
-                            className="rounded-full object-cover "
+                            className="rounded-full object-cover"
                             onError={() => {
                               setFailedImages((prev) => [...prev, user._id]);
                             }}
@@ -307,55 +305,78 @@ const PopularSkills = () => {
                       )}
                     </div>
 
-                          {/* แถบเปอร์เซ็นต์ */}
-                          <div
-                            className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-[#FFE495] rounded-full w-10 h-5 flex items-center justify-center"
-                            style={{
-                              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                            }}
-                          >
-                            <p className="text-[#4D4D4D] text-xs font-medium">
-                              {user.matchPercentage}%
-                            </p>
-                          </div>
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-gray-900 font-extrabold">
-                            {user.name}
-                          </h3>
-                          <div className="flex flex-wrap items-center gap-2 mt-1">
-                            <span className="text-sm text-gray-600">
-                            {t("nav.skill.title")} :
-                            </span>
-                            {user.matchedSkills
-                              ?.slice(0, 5)
-                              .map((skill, index) => (
-                                <span
-                                  key={index}
-                                  className="px-3 py-1 bg-blue-500 text-white text-sm rounded-full"
-                                >
-                                  {skill}
-                                </span>
-                              ))}
-                            {user.matchedSkills?.length > 5 && (
-                              <span className="text-sm text-gray-500">
-                                +{user.matchedSkills.length - 5}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
+                    {/* Match percentage indicator */}
+                    <div
+                      className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-[#FFE495] rounded-full w-10 h-5 flex items-center justify-center"
+                      style={{
+                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                      }}
+                    >
+                      <p className="text-[#4D4D4D] text-xs font-medium">
+                        {user.matchPercentage}%
+                      </p>
+                    </div>
                   </div>
-                ))
-              ) : (
-                <div className="w-full text-center py-4 text-gray-500">
-                  {t("nav.skill.nouser")}
+
+                  {/* User info and skills section */}
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 font-extrabold">
+                      {user.name}
+                    </h3>
+                    {/* Skills section */}
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-600 mb-1">
+                        {t("nav.skill.title")}:
+                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {/* Show matched skills first */}
+                        {user.matchedSkills && user.matchedSkills.length > 0 ? (
+                          user.matchedSkills.slice(0, 3).map((skill, index) => (
+                            <span
+                              key={`matched-${index}`}
+                              className="px-2 py-1 bg-blue-500 text-white text-xs rounded-full"
+                            >
+                              {skill}
+                            </span>
+                          ))
+                        ) : user.skills && user.skills.length > 0 ? (
+                          // If no matched skills, show all skills
+                          user.skills.slice(0, 3).map((skill, index) => (
+                            <span
+                              key={`skill-${index}`}
+                              className="px-2 py-1 bg-blue-500 text-white text-xs rounded-full"
+                            >
+                              {skill}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-gray-500">
+                            {t("nav.skill.noskill")}
+                          </span>
+                        )}
+                        
+                        {/* Show remaining skills count */}
+                        {user.skills && user.skills.length > 3 && (
+                          <span className="text-xs text-gray-500 mt-1">
+                            +{user.skills.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
+              </Link>
             </div>
+          ))
+        ) : (
+          <div className="w-full text-center py-4 text-gray-500">
+            {t("nav.skill.nouser")}
           </div>
-        </div>
+        )}
+      </div>
+    </div>
+  </div>
+
 
         {typeof window !== "undefined" &&
           window.innerWidth <= 768 &&
