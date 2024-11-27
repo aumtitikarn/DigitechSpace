@@ -26,7 +26,7 @@ function Footer() {
                 href="mailto:DigitechSpace@gmail.com"
                 className="text-[16px] text-white"
               >
-                : DigitechSpace@gmail.com
+                : digitechspace65@gmail.com
               </a>
             </li>
           </ul>

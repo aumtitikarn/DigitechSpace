@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
-import { AiFillPlusCircle } from "react-icons/ai";
+import { LuImagePlus } from "react-icons/lu";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { OrbitProgress } from "react-loading-indicators";
 
@@ -162,7 +162,7 @@ export default function Page({ params }) {
                   alt={`Existing ${index}`}
                   width={160}
                   height={160}
-                  className="object-cover rounded-md"
+                  className="w-40 h-40 object-cover rounded-md"
                   unoptimized
                 />
                 <button
@@ -181,9 +181,9 @@ export default function Page({ params }) {
                 <Image
                   src={image}
                   alt={`Uploaded ${index}`}
-                  width={160}
-                  height={160}
-                  className="object-cover rounded-md"
+                  width={160} // 40 * 4 (เพราะ tailwind w-40 = 10rem = 160px)
+                  height={160} // 40 * 4
+                  className="w-40 h-40 object-cover rounded-md"
                 />
                 <button
                   type="button"
@@ -202,7 +202,7 @@ export default function Page({ params }) {
                 activeButton === "button1" ? "border-b-indigo-700 border-b-4" : ""
               }`}
             >
-              <AiFillPlusCircle size={50} className="text-[#38B6FF]" />
+              <LuImagePlus size={50} className="text-[#38B6FF]" />
             </button>
           </div>
 

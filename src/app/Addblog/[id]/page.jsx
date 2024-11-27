@@ -6,12 +6,13 @@ import { useSession } from "next-auth/react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Container from "../../components/Container";
-import { AiFillPlusCircle } from "react-icons/ai";
+import { LuImagePlus } from "react-icons/lu";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { OrbitProgress } from "react-loading-indicators";
+import Swal from "sweetalert2";
 
 export default function Page() {
   const [activeButton, setActiveButton] = useState(null);
@@ -32,6 +33,7 @@ export default function Page() {
   const [profileUserT, setProfileUserT] = useState("");
   const [profileUserId, setProfileUserId] = useState("");
   const [profileUsername, setProfileUsername] = useState("");
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -56,7 +58,6 @@ export default function Page() {
         }
 
         const data = await res.json();
-        console.log("Show Blog image: ", data);
 
         const post = data.combinedData;
         setPostData(post);
@@ -65,7 +66,6 @@ export default function Page() {
         setProfileUserId(post._id);
         setEmail(post.email);
       } catch (error) {
-        console.log(error);
       }
     };
 
@@ -112,18 +112,17 @@ export default function Page() {
     }
   };
 
-  console.log("อันนี้set" + setProfileUserT);
-  console.log("อันนี้p" + profileUserT);
-
-  console.log("อันนี้setid" + setProfileUserId);
-  console.log("อันนี้userid" + profileUserId);
-
-  console.log("อันนี้setname" + setProfileUsername);
-  console.log("อันนี้username" + profileUsername);
 
   const handleSudmit = async (e) => {
-    console.log(file);
-
+    Swal.fire({
+      icon: "info",
+      title: "Processing...",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     const formData = new FormData();
 
     if (!session || !session.user || !session.user.name) {
@@ -160,14 +159,36 @@ export default function Page() {
       });
 
       if (res.ok) {
+        setShowSuccessAlert(true);
+        
+        // Show success alert
+        await Swal.fire({
+          position: "center",
+          icon: "success",
+          title: t("authen.signup.status.success"),
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      
+        // Show processing alert
+        Swal.fire({
+          icon: "info",
+          title: "Processing...",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
         router.push("/listblog");
+        setTimeout(() => {
+          Swal.close();
+        }, 1000);
       }
     } catch (error) {
-      console.log(error);
     }
   };
 
-  console.log(topic);
 
   if (status === "loading") {
     return (
@@ -235,7 +256,7 @@ export default function Page() {
               }`}
             >
               <div className="flex items-center justify-center w-10 h-10">
-                <AiFillPlusCircle size={50} className="text-[#38B6FF]" />
+                <LuImagePlus size={50} className="text-[#38B6FF]" />
               </div>
             </button>
           </div>

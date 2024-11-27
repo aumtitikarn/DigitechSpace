@@ -52,7 +52,9 @@ export default function ForgotPassword() {
         Swal.fire({
           icon: 'success',
           title: t("authen.signup.status.send"),
-        });
+      }).then(() => {
+        router.push('/auth/forgot/waitemail');
+      });
       } else {
         setError(data.message || 'An error occurred. Please try again.');
       }

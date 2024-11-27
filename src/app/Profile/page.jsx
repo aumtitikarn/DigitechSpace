@@ -15,6 +15,7 @@ import { FaPlus } from "react-icons/fa6";
 import { OrbitProgress } from "react-loading-indicators";
 import { useRouter } from "next/navigation";
 import { MdClose } from "react-icons/md";
+import SkillsSelector from "../components/SkillsSelector";
 
 const getProxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
@@ -29,7 +30,10 @@ const isValidHttpUrl = (string) => {
 };
 function Profile() {
   const [activeButton, setActiveButton] = useState("button1");
+  const [localSkills, setLocalSkills] = useState([]);
   const [showAllSkills, setShowAllSkills] = useState(false);
+  const [showSkillsEdit, setShowSkillsEdit] = useState(false);
+  const [displaySkills, setDisplaySkills] = useState([]);
   const popupRef = useRef(null);
   const { t, i18n } = useTranslation("translation");
   const router = useRouter();
@@ -68,7 +72,15 @@ function Profile() {
     }
     return postData?.skills || [];
   };
+  useEffect(() => {
+    const currentSkills = getSkills();
+    setDisplaySkills(currentSkills);
+  }, [postData, postDataS]);
 
+  // function สำหรับอัพเดท skills แบบ optimistic
+  const handleSkillsChange = (newSkills) => {
+    setDisplaySkills(newSkills);
+  };
   const skills = getSkills();
   const visibleSkills = skills.slice(0, 5);
   const remainingSkills = skills.length > 5 ? skills.slice(5) : [];
@@ -101,11 +113,15 @@ function Profile() {
       const fetchData = async () => {
         setIsLoading(true);
         try {
-          const [publishedResponse, blogResponse, profileResponse] = await Promise.all([
-            fetch("/api/project/getProjects/user", { method: "GET" }),
-            fetch("/api/posts/getposts/user", { cache: "no-store" }),
-            fetch(`/api/editprofile/${session.user.id}`, { method: "GET", cache: "no-store" })
-          ]);
+          const [publishedResponse, blogResponse, profileResponse] =
+            await Promise.all([
+              fetch("/api/project/getProjects/user", { method: "GET" }),
+              fetch("/api/posts/getposts/user", { cache: "no-store" }),
+              fetch(`/api/editprofile/${session.user.id}`, {
+                method: "GET",
+                cache: "no-store",
+              }),
+            ]);
 
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
@@ -122,9 +138,7 @@ function Profile() {
             setPostData(profileData.post);
             setPostDataS(profileData.posts);
           }
-
         } catch (error) {
-          console.error("Error fetching data:", error);
         } finally {
           setIsLoading(false);
         }
@@ -137,17 +151,28 @@ function Profile() {
   if (status === "loading" || isLoading) {
     return (
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-        <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" />
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+        />
       </div>
     );
   }
-
+  const handleSkillsUpdate = (updatedSkills) => {
+    if (session?.user?.role !== "NormalUser") {
+      setPostDataS((prev) => ({ ...prev, skills: updatedSkills }));
+    } else {
+      setPostData((prev) => ({ ...prev, skills: updatedSkills }));
+    }
+  };
   const imageSource = getImageSource();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen ">
       <Navbar session={session} />
-      <main className="flex-grow">
+      <main className="flex-grow lg:mx-20">
         <div className="container mx-auto px-4 py-8">
           {/* Profile Section - Modified for responsiveness */}
           <div className="flex flex-col md:flex-row items-start mb-8">
@@ -159,8 +184,10 @@ function Profile() {
                   alt="Profile"
                   width={128}
                   height={128}
-                  className="w-full h-full object-cover"
-                  onError={() => setFailedImages((prev) => [...prev, imageSource])}
+                  className="rounded-full w-full h-full object-cover"
+                  onError={() =>
+                    setFailedImages((prev) => [...prev, imageSource])
+                  }
                 />
               ) : (
                 <MdAccountCircle className="w-full h-full text-gray-500" />
@@ -168,58 +195,62 @@ function Profile() {
             </div>
 
             {/* Profile Info */}
-<div className="flex-grow w-full">
-  <div className="flex flex-col md:flex-row justify-between items-start">
-    <div className="w-full md:w-auto">
-      <h1 className="text-3xl font-bold mb-1 text-center md:text-left">
-        {session?.user?.role !== "NormalUser" ? postDataS.name : postData.name}
-      </h1>
-      <p className="text-gray-600 mb-4 text-center md:text-left">{postDataS.briefly}</p>
+            <div className="flex-grow w-full">
+              <div className="flex flex-col md:flex-row justify-between items-start">
+                <div className="w-full md:w-auto">
+                  <h1 className="text-3xl font-bold mb-1 text-center md:text-left">
+                    {session?.user?.role !== "NormalUser"
+                      ? postDataS.name
+                      : postData.name}
+                  </h1>
+                  <p className="text-gray-600 mb-4 text-center md:text-left">
+                    {postDataS.briefly}
+                  </p>
 
-      {/* Skills Section */}
-      <div className="relative mb-4 md:mb-0">
-        <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
-          <span className="text-[#5E5E5E] mr-2 font-bold mt-1 text-[16px] w-full md:w-auto text-center md:text-left">
-            {t("nav.skill.title")} :
-          </span>
-          {visibleSkills.map((skill, index) => (
-            <span
-              key={index}
-              className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
-            >
-              {skill}
-            </span>
-          ))}
-          {remainingSkills.length > 0 && (
-            <button
-              onClick={() => setShowAllSkills(true)}
-              className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
-            >
-              +{remainingSkills.length}
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
+                  {/* Skills Section */}
+                  <div className="relative mb-4 md:mb-0">
+                    <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
+                      <span className="text-[#5E5E5E] mr-2 font-bold mt-1 text-[16px] w-full md:w-auto text-center md:text-left">
+                        {t("nav.skill.title")} :
+                      </span>
+                      {visibleSkills.map((skill, index) => (
+                        <span
+                          key={index}
+                          className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                      {remainingSkills.length > 0 && (
+                        <button
+                          onClick={() => setShowAllSkills(true)}
+                          className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
+                        >
+                          +{remainingSkills.length}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
-    {/* Action Buttons */}
-    <div className="flex gap-4 w-full md:w-auto justify-center md:justify-start mt-4 md:mt-0">
-      <Link
-        href={`/Profile/EditProfile/${session?.user?.id}`}
-        className="px-6 py-2 text-[#33539B] font-bold border-3 border-[#C1D3E5] rounded-lg hover:bg-blue-50"
-      >
-        {t("nav.profile.edit")}
-      </Link>
-      <Link
-        href={`/Profile/QRshare/${session?.user?.id}`}
-        className="px-6 py-2 text-[#33539B] font-bold border-3 border-[#C1D3E5] rounded-lg hover:bg-blue-50"
-      >
-        {t("nav.profile.share")}
-      </Link>
-    </div>
-  </div>
-</div>
-</div>
+                {/* Action Buttons */}
+                <div className="flex gap-4 w-full md:w-auto justify-center md:justify-start mt-4 md:mt-0">
+                  <Link
+                    href={`/Profile/EditProfile/${session?.user?.id}`}
+                    className="px-6 py-2 text-[#33539B] font-bold border-3 border-[#C1D3E5] rounded-lg hover:bg-blue-50"
+                  >
+                    {t("nav.profile.edit")}
+                  </Link>
+                  <Link
+                    href={`/Profile/QRshare/${session?.user?.id}`}
+                    className="px-6 py-2 text-[#33539B] font-bold border-3 border-[#C1D3E5] rounded-lg hover:bg-blue-50"
+                  >
+                    {t("nav.profile.share")}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="grid grid-cols-2 w-full mt-16 mb-8">
             <button
@@ -349,7 +380,7 @@ function Profile() {
                               alt="Profile"
                               width={24}
                               height={24}
-                              className="rounded-full mr-2 mt-1"
+                              className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                               onError={() => {
                                 setFailedImages((prev) => [...prev, blog._id]);
                               }}
@@ -368,53 +399,20 @@ function Profile() {
               ) : (
                 <p className="text-gray-500">{t("nav.profile.noblog")}</p>
               )}
-              
             </div>
           )}
-          {showAllSkills && (
-  <>
-    {/* Backdrop with blur effect */}
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
-
-    {/* Popup */}
-    <div
-      ref={popupRef}
-      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[600px] bg-white rounded-2xl shadow-2xl z-50 transition-all duration-300 ease-out"
-      style={{
-        transform: `translate(-50%, -50%) scale(${showAllSkills ? "1" : "0.9"})`,
-        opacity: showAllSkills ? 1 : 0,
-      }}
-    >
-      {/* Popup Header */}
-      <div className="flex justify-between items-center p-6 border-b">
-        <h3 className="text-xl font-bold text-gray-800">
-          {t("nav.profile.allskill")}
-        </h3>
-        <button
-          onClick={() => setShowAllSkills(false)}
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
-          aria-label="Close popup"
-        >
-          <MdClose className="w-6 h-6 text-gray-500" />
-        </button>
-      </div>
-
-      {/* Popup Content */}
-      <div className="p-6">
-        <div className="flex flex-wrap gap-3">
-          {skills.map((skill, index) => (
-            <span
-              key={index}
-              className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
-            >
-              {skill}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  </>
-)}
+          <SkillsSelector
+            skills={displaySkills}
+            showAllSkills={showAllSkills}
+            setShowAllSkills={setShowAllSkills}
+            t={t}
+            session={session}
+            onRefresh={() => {
+              // เมื่อมีการเปลี่ยนแปลงใน SkillsSelector จะเรียก API เพื่อดึงข้อมูลใหม่
+              fetchData();
+            }}
+            onSkillsChange={handleSkillsChange} // เพิ่ม prop นี้
+          />
         </div>
       </main>
       <Footer />

@@ -7,7 +7,7 @@ import Upload from "./upload";
 import { useSession } from "next-auth/react";
 import { MdDeleteOutline } from "react-icons/md";
 import { useTranslation } from "react-i18next";
-import { AiFillPlusCircle } from "react-icons/ai";
+import { LuImagePlus } from "react-icons/lu";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { IoCloseCircleOutline } from "react-icons/io5";
@@ -278,7 +278,7 @@ const Project: React.FC = () => {
                 className="flex items-center justify-center w-40 h-40 rounded-md p-2 bg-white border-2"
               >
                 <div className="flex items-center justify-center w-10 h-10">
-                  <AiFillPlusCircle size={50} className="text-[#38B6FF]" />
+                  <LuImagePlus size={50} className="text-[#38B6FF]" />
                 </div>
               </button>
             </div>

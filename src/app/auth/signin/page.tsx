@@ -16,6 +16,7 @@ export default function SignIn() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const { t, i18n } = useTranslation("translation");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -78,7 +79,7 @@ export default function SignIn() {
       });
 
       if (res?.error) {
-        setError("Invalid credentials");
+        setError(t("authen.signin.invalid"));
         return;
       }
       const sessionResponse = await fetch("/api/auth/session");
@@ -98,6 +99,8 @@ export default function SignIn() {
       setError(t("authen.signin.error"));
     }
   };
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
   return (
     <div>
       <Navbar />
@@ -133,6 +136,7 @@ export default function SignIn() {
             onSubmit={handleSubmit}
           >
             <div>
+            {error && <p className="text-red-500">{error}</p>}
               <div className="mt-3">
                 <input
                   id="email"
@@ -144,16 +148,30 @@ export default function SignIn() {
                   required
                   className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                 />
+                <div className="relative mt-3">
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
                   placeholder={t("authen.signin.password")}
                   required
                   className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm mt-3 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                 />
+                <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-0 flex items-center pr-3"
+            >
+              <Image
+                width={20}
+                height={20}
+                src={showPassword ? "/hide.png" : "/hide.png"}
+                alt="Toggle visibility"
+              />
+            </button>
+            </div>
                 <div className="text-sm mt-3">
                   <Link
                     href="/auth/forgot"
@@ -172,7 +190,7 @@ export default function SignIn() {
               >
                 {t("authen.signin.title")}
               </button>
-              {error && <p className="text-red-500">{error}</p>}
+              
             </div>
           </form>
           <div className="flex items-center my-3">

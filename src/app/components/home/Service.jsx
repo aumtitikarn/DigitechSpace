@@ -90,7 +90,7 @@ function Service() {
           onClick={handleClick}
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
-          <div className="flex flex-col justify-center w-auto h-10">
+          <div className="flex flex-col justify-center w-auto h-10 font-semibold">
             {t("nav.home.faq.q1")}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
@@ -98,7 +98,7 @@ function Service() {
           </div>
         </button>
         {showtext && (
-          <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className="w-full p-2 mt-4 border border-gray-300 rounded">
+          <div style={{backgroundPosition: "0px 0px", backgroundImage: "linear-gradient(180deg, #FFFFFFFF 0%, #E3F8FF 100%)"}} className=" w-full p-2 mt-4 border border-gray-300 rounded">
            {t("nav.home.faq.a1")}
           </div>
         )}
@@ -107,7 +107,7 @@ function Service() {
           onClick={handleClick1}
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
-          <div className="flex flex-col justify-center w-auto h-10">
+          <div className="font-semibold flex flex-col justify-center w-auto h-10">
           {t("nav.home.faq.q2")}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
@@ -124,7 +124,7 @@ function Service() {
           onClick={handleClick2}
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
-          <div className="flex flex-col justify-center w-auto h-10">
+          <div className="font-semibold flex flex-col justify-center w-auto h-10">
           {t("nav.home.faq.q3")}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">
@@ -141,7 +141,7 @@ function Service() {
           onClick={handleClick3}
           className="flex flex-row justify-between w-full p-4 mt-4 bg-white border border-gray-300 rounded"
         >
-          <div className="flex flex-col justify-center w-auto h-10">
+          <div className="font-semibold flex flex-col justify-center w-auto h-10">
           {t("nav.home.faq.q4")}
           </div>
           <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full">

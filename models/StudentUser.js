@@ -29,7 +29,7 @@ const studentUserSchema = new mongoose.Schema({
         type: String, 
         default: '' 
     },
-    skill: [String],
+    skills: [String],
     amount: { 
         type: Number, 
         get: (v) => parseFloat(v.toFixed(2))

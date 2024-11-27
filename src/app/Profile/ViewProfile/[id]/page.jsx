@@ -15,16 +15,16 @@ import { FaPlus } from "react-icons/fa6";
 import { OrbitProgress } from "react-loading-indicators";
 import { useRouter } from "next/navigation";
 import { MdClose } from "react-icons/md";
-
-const proxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
+const getProxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
 const isValidHttpUrl = (string) => {
+  let url;
   try {
-    const url = new URL(string);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
+    url = new URL(string);
+  } catch (_) {
     return false;
   }
+  return url.protocol === "http:" || url.protocol === "https:";
 };
 
 function Page({ params }) {
@@ -105,7 +105,6 @@ function Page({ params }) {
             }
           }
         } catch (error) {
-          console.error("Error fetching data:", error);
         } finally {
           setIsLoading(false);
         }
@@ -127,17 +126,19 @@ function Page({ params }) {
   const remainingSkills = skills.length > 5 ? skills.slice(5) : [];
 
   const getImageSource = () => {
-    if (postData?.imageUrl?.[0]) {
+    if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
       const imageUrl = postData.imageUrl[0];
-      return isValidHttpUrl(imageUrl)
-        ? proxyUrl(imageUrl)
-        : `/api/editprofile/images/${imageUrl}`;
+      if (isValidHttpUrl(imageUrl)) {
+        return getProxyUrl(imageUrl);
+      } else {
+        return `/api/editprofile/images/${imageUrl}`;
+      }
     }
-    if (postDataS?.imageUrl) {
+    if (postDataS && postDataS.imageUrl) {
       return `/api/editprofile/images/${postDataS.imageUrl}`;
     }
     if (session?.user?.image) {
-      return proxyUrl(session.user.image);
+      return getProxyUrl(session.user.image);
     }
     return null;
   };
@@ -164,7 +165,7 @@ function Page({ params }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar session={session} />
-      <main className="flex-grow">
+      <main className="flex-grow lg:mx-20">
         <div className="container mx-auto px-4 py-8">
           {/* Profile Section - Mobile Responsive */}
           <div className="flex flex-col md:flex-row items-center md:items-start mb-8 gap-4 md:gap-6">
@@ -176,7 +177,7 @@ function Page({ params }) {
                   alt="Profile"
                   width={128}
                   height={128}
-                  className="w-full h-full object-cover"
+                  className="rounded-full w-full h-full object-cover"
                   onError={() => setFailedImages((prev) => [...prev, imageSource])}
                 />
               ) : (
@@ -272,10 +273,10 @@ function Page({ params }) {
                           {project.projectname}
                         </p>
                         <div className="flex items-center mb-2">
-                          {project.profileImage &&
+                          {imageSource &&
                           !failedImages.includes(project._id) ? (
                             <Image
-                              src={project.profileImage}
+                              src={imageSource}
                               alt="Author Profile"
                               width={30}
                               height={30}
@@ -314,7 +315,6 @@ function Page({ params }) {
             </div>
           )}
 
-
           {/* Blogs Grid */}
           {activeButton === "button2" && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 mt-6 md:mt-10">
@@ -349,7 +349,7 @@ function Page({ params }) {
                               alt="Profile"
                               width={20}
                               height={20}
-                              className="rounded-full mr-2"
+                              className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
                               onError={() => setFailedImages((prev) => [...prev, blog._id])}
                             />
                           ) : (

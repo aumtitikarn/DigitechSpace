@@ -10,8 +10,10 @@ import Link from "next/link";
 import { FaPlus, FaSearch } from "react-icons/fa";
 import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import BlogSearchAutocomplete from "../components/BlogSearchAutocomplete";
 import Image from "next/image";
 import { OrbitProgress } from "react-loading-indicators";
+import { PenLine } from "lucide-react";
 
 interface PostData {
   _id: string;
@@ -25,6 +27,7 @@ interface PostData {
   profileImage: string;
   description: string;
   userprofile?: string[];
+  createdAt: string; // เพิ่มฟิลด์ createdAt
 }
 export default function Page() {
   const [postData, setPostData] = useState<PostData[]>([]);
@@ -47,35 +50,18 @@ export default function Page() {
       }
 
       const data = await res.json();
-      console.log("Fetched Data: ", data);
-      setPostData(data.posts);
-      setFilteredPosts(data.posts);
-      setPostData(data.posts);
+
+      // เรียงลำดับโพสต์จากใหม่ไปเก่า
+      const sortedPosts = data.posts.sort((a: PostData, b: PostData) => {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      });
+
+      setPostData(sortedPosts);
+      setFilteredPosts(sortedPosts);
     } catch (error) {
-      console.log("Error loading posts: ", error);
-    }
-  };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      setIsSearching(true);
-      const value = searchTerm.toLowerCase();
-
-      const filtered = postData.filter(
-        (post) =>
-          post.topic.toLowerCase().includes(value) ||
-          post.course.toLowerCase().includes(value) ||
-          post.selectedCategory.toLowerCase().includes(value) ||
-          post.description.toLowerCase().includes(value) ||
-          post.author.toLowerCase().includes(value)
-      );
-
-      setFilteredPosts(filtered);
-      setIsSearching(false);
+      console.error("Error loading posts:", error);
     }
   };
 
@@ -143,21 +129,44 @@ export default function Page() {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
-        <div className="w-full max-w-screen-lg p-4 mx-auto">
-          <div className="flex flex-col">
-            <p className="mt-3 text-2xl font-bold">{t("nav.blog.title")}</p>
-            <div className="mt-4 w-full max-w-screen-lg flex justify-center relative">
-              <input
-                type="text"
+        <div className="mx-5 lg:mx-20">
+          <div>
+            <p className="mt-10 text-2xl font-bold">{t("nav.blog.title")}</p>
+            {/* Search Input Container */}
+            <div className="mt-4 w-full flex justify-center relative">
+              <BlogSearchAutocomplete
+                posts={postData}
+                isSearching={isSearching}
                 placeholder={t("nav.home.search")}
-                className="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onKeyPress={handleSearch}
+                onSearch={(searchValue: any) => {
+                  setSearchTerm(searchValue);
+                  if (searchValue.trim()) {
+                    const value = searchValue.toLowerCase();
+                    const filtered = postData.filter((post) => {
+                      const topic = post.topic?.toLowerCase() || "";
+                      const course = post.course?.toLowerCase() || "";
+                      const category =
+                        post.selectedCategory?.toLowerCase() || "";
+                      const description = post.description?.toLowerCase() || "";
+                      const author = post.author?.toLowerCase() || "";
+
+                      return (
+                        topic.includes(value) ||
+                        course.includes(value) ||
+                        category.includes(value) ||
+                        description.includes(value) ||
+                        author.includes(value)
+                      );
+                    });
+                    setFilteredPosts(filtered);
+                  } else {
+                    setFilteredPosts(postData); // Reset to show all posts when search is empty
+                  }
+                }}
               />
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
+            {/* Loading State */}
             {isSearching ? (
               <div className="flex justify-center items-center mt-10">
                 <OrbitProgress
@@ -170,7 +179,8 @@ export default function Page() {
                 />
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center mt-10 w-full">
+              /* Grid Container */
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6  justify-items-center mt-10">
                 {filteredPosts.length > 0 ? (
                   filteredPosts.map((val) => (
                     <Link href={`/blog/${val._id}`} key={val._id}>
@@ -189,11 +199,11 @@ export default function Page() {
                             alt={val.topic}
                             className="w-full object-cover rounded-lg h-full"
                             style={{ height: "220px" }}
-                            quality={100}  // เพิ่ม quality เป็น 100%
-                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"  // ปรับ sizes
+                            quality={100}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
                           />
                         </div>
-                        <div className="ml-2 mt-2">
+                        <div className=" mt-2">
                           <div className="flex flex-col mt-1 justify-center">
                             <div className="flex flex-row">
                               <p className="truncate mt-1 w-full text-sm font-bold">
@@ -210,7 +220,8 @@ export default function Page() {
                             </div>
                           </div>
                           <div className="flex flex-row mb-3">
-                            {val.profileImage && !failedImages.includes(val._id) ? (
+                            {val.profileImage &&
+                            !failedImages.includes(val._id) ? (
                               <Image
                                 width={30}
                                 height={30}
@@ -247,14 +258,19 @@ export default function Page() {
               </div>
             )}
 
-            <div className="sticky bottom-8 w-full max-w-screen-lg mx-auto px-4 mt-8">
+            {/* Add Blog Button Container */}
+            <div className="sticky bottom-8 w-full mx-auto px-4 mt-8">
               {session?.user?.role !== "NormalUser" && (
                 <div className="flex justify-end">
                   {session && (
                     <Link href={`/Addblog/${session?.user?.id}`}>
-                      {/* <Link href={`/Addblog`}> */}
-                      <div className="w-14 h-14 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110">
-                        <FaPlus size={24} />
+                      <div className="group relative inline-block">
+                        <div className="mb-5 w-14 h-14 flex items-center justify-center bg-blue-500 text-white rounded-full hover:bg-blue-600 shadow-lg transition-all duration-300 ease-in-out transform hover:scale-110">
+                          <PenLine size={24} strokeWidth={2.5} />
+                        </div>
+                        <span className="absolute w-[94px] left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-900 text-white text-sm text-center py-2 rounded">
+                          {t("nav.blog.addblog.title")}
+                        </span>
                       </div>
                     </Link>
                   )}

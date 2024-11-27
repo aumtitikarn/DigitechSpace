@@ -10,6 +10,7 @@ import Navbar from "./../../../components/Navbar";
 import Footer from "./../../../components/Footer";
 import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
+import PasswordRequirements from "./../../../components/PasswordRequirements";
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center h-screen">
@@ -69,7 +70,6 @@ const ChangePassword = () => {
       return;
     }
 
-    console.log('Sending reset request with token:', token);
 
     try {
       const response = await fetch('/api/forgot/resetpassword', {
@@ -159,6 +159,7 @@ const ChangePassword = () => {
                       />
                     </button>
                   </div>
+                  <PasswordRequirements password={password} />
                   <div className="relative mt-3">
                     <input
                       id="confirmpassword"

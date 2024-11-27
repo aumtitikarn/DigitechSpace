@@ -1,12 +1,9 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { CiHeart } from "react-icons/ci";
 import { MdAccountCircle } from "react-icons/md";
 import { useTranslation } from "react-i18next";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
 function Blog() {
   const { t } = useTranslation("translation");
@@ -24,7 +21,11 @@ function Blog() {
       }
 
       const data = await res.json();
-      setPostData(data.posts);
+      // Sort by heart count and limit to 20 posts
+      const sortedPosts = data.posts
+        .sort((a, b) => b.heart - a.heart)
+        .slice(0, 20);
+      setPostData(sortedPosts);
     } catch (error) {
       console.log("Error loading posts: ", error);
     }
@@ -43,7 +44,6 @@ function Blog() {
     return `/api/posts/images/${imageUrl}`;
   };
 
-  // If there are no posts, return minimal content
   if (!postData || postData.length === 0) {
     return (
       <main className="flex flex-col items-center justify-center px-4 w-full">
@@ -61,7 +61,6 @@ function Blog() {
     );
   }
 
-  // Regular render with posts
   return (
     <main className="flex flex-col items-center justify-center px-4 w-full">
       <div className="flex flex-col justify-center w-full h-auto">
@@ -78,19 +77,24 @@ function Blog() {
                 style={{ height: "300px", width: "180px" }}
               >
                 <div
-                  className="rounded w-full relative"
+                  className="rounded w-full relative overflow-hidden group"
                   style={{ height: "250px" }}
                 >
-                  <Image
-                    width={300}
-                    height={300}
-                    src={getImageUrl(val.imageUrl)}
-                    alt={val.topic}
-                    className="w-full object-cover rounded-lg h-full"
-                    style={{ height: "220px" }}
-                    quality={100}  // เพิ่ม quality เป็น 100%
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"  // ปรับ sizes
-                  />
+                  <div className="relative h-[220px] transform transition-transform duration-300 group-hover:scale-[1.02]">
+                    <Image
+                      width={300}
+                      height={300}
+                      src={getImageUrl(val.imageUrl)}
+                      alt={val.topic}
+                      className="w-full object-cover rounded-lg h-full shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:brightness-105"
+                      style={{ 
+                        height: "220px",
+                        filter: "drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06))"
+                      }}
+                      quality={100}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
+                    />
+                  </div>
                 </div>
                 <div className="ml-2 mt-2">
                   <div className="flex flex-col mt-1 justify-center">

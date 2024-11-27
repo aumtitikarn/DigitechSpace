@@ -78,18 +78,12 @@ export default function Home() {
       {/* Hero Section - ปรับให้พอดีกับหน้าจอ */}
       <section className="relative w-full h-[calc(100vh-0px)] overflow-hidden">
         <Header />
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-[80px] left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-8 h-12 border-2 border-white rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white rounded-full mt-2 animate-scrollDown"></div>
-          </div>
-        </div>
       </section>
 
       {/* Content Sections */}
       <section className="relative w-full">
         <Container>
-          <div className="lg:mx-60 pt-10">
+          <div className="lg:mx-20 pt-10">
             <div className="mb-10">
               <Trend session={session} />
             </div>

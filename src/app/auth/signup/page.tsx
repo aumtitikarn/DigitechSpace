@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from 'react-i18next';
 import Navbar from "./../../components/Navbar";
 import Footer from "./../../components/Footer";
+import PasswordRequirements from "./../../components/PasswordRequirements";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { OrbitProgress } from "react-loading-indicators";
 import Link from "next/link";
@@ -25,6 +26,7 @@ function SignUp() {
     confirmpassword: "",
   });
   const [error, setError] = useState<string | null>(null);
+  
   const router = useRouter();
   const { t, i18n } = useTranslation('translation');
   const { data: session, status } = useSession();
@@ -294,6 +296,7 @@ function SignUp() {
               />
             </button>
           </div>
+          <PasswordRequirements password={formData.password} />
           <div className="relative mt-3">
             <input
               id="confirmpassword"
@@ -322,7 +325,7 @@ function SignUp() {
             type="submit"
             className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#33539B]"
           >
-            {t("Sign Up")}
+            {t("authen.signup.title")}
           </button>
         </form>
         <div className="flex items-center my-3">

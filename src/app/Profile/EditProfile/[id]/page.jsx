@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { MdAccountCircle } from "react-icons/md";
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaEnvelope, FaPhone, FaFacebook, FaLine } from 'react-icons/fa';
 import { OrbitProgress } from "react-loading-indicators";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
@@ -10,6 +10,7 @@ import Container from "../../../components/Container";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
+import { BsPencilSquare } from 'react-icons/bs';
 import Image from "next/image";
 import Swal from "sweetalert2";
 const isValidHttpUrl = (string) => {
@@ -254,276 +255,160 @@ function Page() {
   return (
     <Container>
       <Navbar />
-      <main className="flex flex-col md:flex-row w-full justify-center p-4 my-[50px]">
-        <div className="flex flex-col items-center w-full max-w-lg">
-          {session?.user?.role === "StudentUser" ? (
-            <>
-              <div className="relative inline-block">
-                {/* ส่วนแสดงรูปภาพ */}
-                <div className="w-[95px] h-[95px] relative">
-                  {imageSource &&
-                  Array.isArray(failedImages) &&
-                  !failedImages.includes(imageSource) ? (
-                    <Image
-                      width={95}
-                      height={95}
-                      src={profileImage || imageSource || ""}
-                      alt="Profile Image"
-                      unoptimized={true}
-                      style={{
-                        objectFit: "cover",
-                        borderRadius: "50%",
-                        width: "95px",
-                        height: "95px",
-                      }}
-                      className="rounded-full"
-                      onError={() => {
-                        setFailedImages((prev) => [...prev, imageSource]);
-                      }}
-                    />
-                  ) : (
-                    <MdAccountCircle
-                      className="rounded-full text-gray-500"
-                      style={{
-                        width: "95px",
-                        height: "95px",
-                      }}
-                    />
-                  )}
-                </div>
+      <main className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            {/* Header Section */}
+            <div className="bg-gradient-to-r from-[#0B1E48] to-[#1E3A8A] p-8 text-white relative">
+              <h1 className="text-2xl font-bold mb-2">{t("nav.profile.editprofile.title")}</h1>
+              <p className="text-blue-100 text-sm">{t("nav.profile.editprofile.subtitle")}</p>
+            </div>
 
-                {/* Input file ซ่อนไว้ */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                  id="imageUpload"
-                />
-
-                {/* ปุ่มเพิ่มรูปภาพ */}
-                <label
-                  htmlFor="imageUpload"
-                  className="absolute right-0 bottom-0 bg-white rounded-full p-1 border-2 border-black cursor-pointer"
-                  style={{ transform: "translate(25%, 25%)" }}
-                >
-                  <FaPlus size={18} className="text-black" />
-                </label>
-              </div>
-
-              <div className="flex flex-row justify-center mb-4">
-                <p
-                  style={{ fontSize: "24px", fontWeight: "bold" }}
-                  className="mt-6"
-                >
-                  {postDataS?.name || postData?.name}
-                </p>
-              </div>
-
-              <div className="flex flex-col items-center w-full mt-4">
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.name")}</p>
-                </div>
-                <input
-                  type="text"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  placeholder={postData?.name || "กำลังโหลด..."}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
-                {/* Briefly Input */}
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.briefly")}</p>
-                </div>
-                <div className="relative w-full">
-                  <textarea
-                    value={newbriefly}
-                    onChange={(e) => {
-                      if (e.target.value.length <= 200) {
-                        setNewbriefly(e.target.value);
-                      }
-                    }}
-                    placeholder="Enter briefly"
-                    className="w-full h-20 p-2 border border-gray-300 rounded resize-none overflow-hidden"
-                    maxLength={200}
-                    style={{
-                      lineHeight: "1.5rem",
-                      paddingTop: "0.25rem",
-                      paddingBottom: "0.25rem",
-                    }}
+            {/* Profile Content */}
+            <div className="p-8">
+              {/* Profile Image Section */}
+              <div className="flex flex-col items-center -mt-20 mb-8">
+                <div className="relative inline-block">
+                  <div className="w-32 h-32 relative bg-white rounded-full p-1 shadow-lg">
+                    {imageSource && Array.isArray(failedImages) && !failedImages.includes(imageSource) ? (
+                      <Image
+                        width={128}
+                        height={128}
+                        src={profileImage || imageSource}
+                        alt="Profile"
+                        className="rounded-full w-full h-full object-cover"
+                        onError={() => setFailedImages(prev => [...prev, imageSource])}
+                      />
+                    ) : (
+                      <MdAccountCircle className="w-full h-full text-gray-400" />
+                    )}
+                  </div>
+                  <label
+                    htmlFor="imageUpload"
+                    className="absolute bottom-0 right-0 bg-blue-600 rounded-full p-2.5 cursor-pointer shadow-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <FaPlus className="text-white w-4 h-4" />
+                  </label>
+                  <input
+                    type="file"
+                    id="imageUpload"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
                   />
-                  <div className="text-right text-sm text-gray-500  mt-1">
-                    {newbriefly ? newbriefly.length : 0}/200{" "}
-                    {t("nav.profile.editprofile.characters")}
+                </div>
+                <h2 className="text-2xl font-semibold mt-4">{postDataS?.name || postData?.name}</h2>
+                <p className="text-gray-500">{session?.user?.email}</p>
+              </div>
+
+              {/* Form Fields */}
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Name Field */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t("nav.profile.editprofile.name")}
+                  </label>
+                  <div className="relative">
+                    <BsPencilSquare className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      className="pl-10 w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder={t("nav.profile.editprofile.enter.name")}
+                    />
                   </div>
                 </div>
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.email")}</p>
+
+                {/* Phone Number Field */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t("nav.profile.editprofile.pnum")}
+                  </label>
+                  <div className="relative">
+                    <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={newPhonenumber}
+                      onChange={(e) => setNewPhonenumber(e.target.value)}
+                      className="pl-10 w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder={t("nav.profile.editprofile.enter.pnum")}
+                    />
+                  </div>
                 </div>
-                <div className="w-full p-2 mb-4 text-zinc-400">
-                  {session?.user?.email}
+
+                {/* Facebook Field */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t("nav.profile.editprofile.facebook")}
+                  </label>
+                  <div className="relative">
+                    <FaFacebook className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={newFacebook}
+                      onChange={(e) => setNewFacebook(e.target.value)}
+                      className="pl-10 w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder={t("nav.profile.editprofile.enter.facebook")}
+                    />
+                  </div>
                 </div>
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.pnum")}</p>
+
+                {/* Line Field */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t("nav.profile.editprofile.line")}
+                  </label>
+                  <div className="relative">
+                    <FaLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={newLine}
+                      onChange={(e) => setNewLine(e.target.value)}
+                      className="pl-10 w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder={t("nav.profile.editprofile.enter.line")}
+                    />
+                  </div>
                 </div>
-                <input
-                  type="text"
-                  value={newPhonenumber}
-                  onChange={(e) => setNewPhonenumber(e.target.value)}
-                  placeholder="Enter phone number"
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.facebook")}</p>
-                </div>
-                <input
-                  type="text"
-                  value={newFacebook}
-                  onChange={(e) => setNewFacebook(e.target.value)}
-                  placeholder="Enter your facebook"
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.line")}</p>
-                </div>
-                <input
-                  type="text"
-                  value={newLine}
-                  onChange={(e) => setNewLine(e.target.value)}
-                  placeholder="Enter your ID"
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
+
+                {/* Briefly Field - For StudentUser only */}
+                {session?.user?.role === "StudentUser" && (
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      {t("nav.profile.editprofile.briefly")}
+                    </label>
+                    <div className="relative">
+                      <textarea
+                        value={newbriefly}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 200) {
+                            setNewbriefly(e.target.value);
+                          }
+                        }}
+                        className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                        rows={4}
+                        placeholder={t("nav.profile.editprofile.enter.briefly")}
+                        maxLength={200}
+                      />
+                      <div className="absolute bottom-2 right-2 text-sm text-gray-500">
+                        {newbriefly?.length || 0}/200
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Save Button */}
+              <div className="mt-8">
                 <button
                   onClick={handleSave}
-                  className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
-                  style={{ backgroundColor: "#33539B" }}
+                  className="w-full bg-gradient-to-r from-[#33539B] to-[#38B6FF] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-all transform hover:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   {t("nav.profile.editprofile.save")}
                 </button>
               </div>
-            </>
-          ) : (
-            <>
-              <div className="relative inline-block">
-                {/* ส่วนแสดงรูปภาพ */}
-                <div className="w-[95px] h-[95px] relative">
-                  {imageSource &&
-                  Array.isArray(failedImages) &&
-                  !failedImages.includes(imageSource) ? (
-                    <Image
-                      width={95}
-                      height={95}
-                      src={profileImage || imageSource || ""}
-                      alt="Profile Image"
-                      unoptimized={true}
-                      style={{
-                        objectFit: "cover",
-                        borderRadius: "50%",
-                        width: "95px",
-                        height: "95px",
-                      }}
-                      className="rounded-full"
-                      onError={() => {
-                        setFailedImages((prev) => [...prev, imageSource]);
-                      }}
-                    />
-                  ) : (
-                    <MdAccountCircle
-                      className="rounded-full text-gray-500"
-                      style={{
-                        width: "95px",
-                        height: "95px",
-                      }}
-                    />
-                  )}
-                </div>
-
-                {/* Input file ซ่อนไว้ */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                  id="imageUpload"
-                />
-
-                {/* ปุ่มเพิ่มรูปภาพ */}
-                <label
-                  htmlFor="imageUpload"
-                  className="absolute right-0 bottom-0 bg-white rounded-full p-1 border-2 border-black cursor-pointer"
-                  style={{ transform: "translate(25%, 25%)" }}
-                >
-                  <FaPlus size={18} className="text-black" />
-                </label>
-              </div>
-
-              <div className="flex flex-row justify-center mb-4">
-                <p
-                  style={{ fontSize: "24px", fontWeight: "bold" }}
-                  className="mt-6"
-                >
-                  {postDataS?.name || postData?.name}
-                </p>
-              </div>
-
-              <div className="flex flex-col items-center w-full mt-4">
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.name")}</p>
-                </div>
-
-                <input
-                  type="text"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  placeholder={postDataS?.name || "กำลังโหลด..."}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.email")}</p>
-                </div>
-                <div className="w-full p-2 mb-4 text-zinc-400">
-                  {session?.user?.email}
-                </div>
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.pnum")}</p>
-                </div>
-                <input
-                  type="text"
-                  value={newPhonenumber}
-                  onChange={(e) => setNewPhonenumber(e.target.value)}
-                  placeholder="Enter phone number"
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.facebook")}</p>
-                </div>
-                <input
-                  type="text"
-                  value={newFacebook}
-                  onChange={(e) => setNewFacebook(e.target.value)}
-                  placeholder="Enter your facebook"
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
-                <div className="flex flex-row items-center w-full mt-4">
-                  <p>{t("nav.profile.editprofile.line")}</p>
-                </div>
-                <input
-                  type="text"
-                  value={newLine}
-                  onChange={(e) => setNewLine(e.target.value)}
-                  placeholder="Enter your ID"
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
-                />
-                <button
-                  onClick={handleSave}
-                  className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
-                  style={{ backgroundColor: "#33539B" }}
-                >
-                  {t("nav.profile.editprofile.save")}
-                </button>
-              </div>
-            </>
-          )}
+            </div>
+          </div>
         </div>
       </main>
       <Footer />

@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { t } from "i18next";
 import Image from "next/image";
+import { CiLock } from "react-icons/ci";
 
 // Define the Product type
 type Product = {
@@ -77,6 +78,24 @@ const ProductList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [failedImages, setFailedImages] = useState<string[]>([]);
+  const [hasSellInfo, setHasSellInfo] = useState(false);
+  const [isCheckingSellInfo, setIsCheckingSellInfo] = useState(true);
+
+  useEffect(() => {
+    const checkInitialSellInfo = async () => {
+      try {
+        const response = await fetch("/api/Seller/check");
+        const data = await response.json();
+        setHasSellInfo(data.hasSellInfo);
+      } catch (error) {
+        console.error("Error checking SellInfo:", error);
+      } finally {
+        setIsCheckingSellInfo(false);
+      }
+    };
+
+    checkInitialSellInfo();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,7 +110,6 @@ const ProductList: React.FC = () => {
           );
           if (statusResponse.ok) {
             const statusData = await statusResponse.json();
-            console.log("Fetched projects by status:", statusData);
             setFilteredProjects(statusData);
           } else {
             console.error("Failed to fetch projects by status");
@@ -106,7 +124,6 @@ const ProductList: React.FC = () => {
           );
           if (publishedResponse.ok) {
             const publishedData = await publishedResponse.json();
-            console.log("Published Data:", publishedData);
             setPublishedProjects(publishedData);
           } else {
             console.error("Failed to fetch published projects");
@@ -132,7 +149,6 @@ const ProductList: React.FC = () => {
 
   const handleConfirmDelete = async () => {
     if (projectToDelete) {
-      console.log("Attempting to delete project:", projectToDelete._id);
       try {
         const response = await fetch(
           `/api/project/delete/${projectToDelete._id}`,
@@ -143,7 +159,6 @@ const ProductList: React.FC = () => {
         const data = await response.json();
 
         if (response.ok) {
-          console.log(data.message);
           setPublishedProjects((prevProjects) =>
             prevProjects.filter(
               (project) => project._id !== projectToDelete._id
@@ -167,32 +182,16 @@ const ProductList: React.FC = () => {
     }
   };
 
-  async function checkSellInfo() {
-    try {
-      const response = await fetch("/api/Seller/check");
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.hasSellInfo) {
-        router.push("/Sell/AddProject");
-      } else {
-        Swal.fire({
-          icon: "info",
-          title: "Information",
-          text: t("nav.sell.seller"),
-        });
-      }
-    } catch (error) {
+  async function handleAddProject() {
+    if (!hasSellInfo) {
       Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: `Error checking SellInfo`,
+        icon: "info",
+        text: t("nav.sell.seller"),
+        showConfirmButton: true,
       });
+      return;
     }
+    router.push("/Sell/AddProject");
   }
 
   const handleStatusChange = (newStatus: string) => {
@@ -224,17 +223,35 @@ const ProductList: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <style jsx global>{`
+        @keyframes shake {
+          0% { transform: translateX(0); }
+          25% { transform: translateX(-2px) rotate(-1deg); }
+          50% { transform: translateX(2px) rotate(1deg); }
+          75% { transform: translateX(-2px) rotate(-1deg); }
+          100% { transform: translateX(0); }
+        }
+        .button-with-lock:hover .lock-icon {
+          animation: shake 0.5s ease-in-out;
+        }
+      `}</style>
       <Navbar />
       <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
         <h1 className="text-[24px] font-bold">{t("nav.sell.title")}</h1>
         <div>
           <div className="mt-5">
-            <button
+          <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={checkSellInfo}
-              disabled={isLoading}
+              className={`button-with-lock flex w-full justify-center items-center rounded-md px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm ${
+                hasSellInfo ? "bg-[#33539B] hover:bg-sky-600" : "bg-[#33539B]"
+              } focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+              onClick={handleAddProject}
             >
+              {!hasSellInfo && (
+                <div className="lock-icon">
+                  <CiLock className="mr-2 text-2xl" />
+                </div>
+              )}
               <p className="text-[18px]">{t("nav.sell.buttAdd")}</p>
             </button>
             <Link href="/Sell/SellerInfo">
@@ -246,6 +263,7 @@ const ProductList: React.FC = () => {
               </button>
             </Link>
           </div>
+          <p className="mt-3 text-gray-500">{t("nav.sell.noseller")}</p>
           <h1 className="text-[24px] font-bold mt-10">{t("nav.sell.wait")}</h1>
           <StatusStepper
             initialStatus={currentStatus}

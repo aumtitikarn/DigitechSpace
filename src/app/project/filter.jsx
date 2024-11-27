@@ -25,6 +25,9 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [failedImages, setFailedImages] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState(
+    new Set(["All"])
+  );
 
   const categories = useMemo(
     () => [
@@ -70,8 +73,8 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     const projectName = (project.projectname || "").toLowerCase();
     const description = (project.description || "").toLowerCase();
     const authorName = (project.authorName || "").toLowerCase();
-    const skill = Array.isArray(project.skill) 
-      ? project.skill.map(skill => skill.toLowerCase()).join(" ")
+    const skill = Array.isArray(project.skill)
+      ? project.skill.map((skill) => skill.toLowerCase()).join(" ")
       : (project.skill || "").toLowerCase();
 
     return (
@@ -84,22 +87,37 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
 
   const filterProjects = useCallback(
     (projectsToFilter, term, rating) => {
-      let filtered = projectsToFilter.filter(project => 
+      let filtered = projectsToFilter;
+  
+      // กรองตามการค้นหา
+      filtered = filtered.filter(project => 
         searchInProject(project, term)
       );
-
+  
+      // กรองตามหมวดหมู่ที่เลือก
+      if (!selectedCategories.has("All") && selectedCategories.size > 0) {
+        filtered = filtered.filter(project => 
+          // เช็คว่าหมวดหมู่ของโครงงานตรงกับหมวดหมู่ใดๆ ที่เลือก
+          Array.from(selectedCategories).some(selectedCat => 
+            project.category.toLowerCase() === selectedCat.toLowerCase()
+          )
+        );
+      }
+  
+      // กรองตามคะแนน
       if (rating !== null) {
         filtered = filtered.filter((project) => {
           const projectRating = parseFloat(project.rathing) || 0;
           return projectRating >= rating && projectRating < rating + 1;
         });
       }
-
+  
       setFilteredProjects(filtered);
       return calculateRatingCounts(filtered);
     },
-    [calculateRatingCounts]
+    [calculateRatingCounts, selectedCategories]
   );
+  
 
   useEffect(() => {
     const search = searchParams.get("search");
@@ -112,14 +130,12 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
         (c) => c.categoryEN.toLowerCase() === initialCategory.toLowerCase()
       );
       if (categoryItem) {
-        setSelectedCategory(categoryItem.categoryEN);
-      } else {
-        setSelectedCategory(undefined);
+        setSelectedCategories(new Set([categoryItem.categoryEN]));
       }
     } else if (isProjectPage) {
-      setSelectedCategory("All");
+      setSelectedCategories(new Set(["All"]));
     } else {
-      setSelectedCategory(undefined);
+      setSelectedCategories(new Set());
     }
   }, [initialCategory, isProjectPage, searchParams, categories]);
 
@@ -144,53 +160,90 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     [debouncedSearch]
   );
 
-
-  const fetchProjects = useCallback(async (categoryEN) => {
+  const fetchProjects = useCallback(async () => {
     setIsLoading(true);
     try {
-      const normalizedCategory = categoryEN.toLowerCase();
-      const response = await fetch(
-        `/api/project/getProjects${
-          normalizedCategory !== "all"
-            ? `?category=${encodeURIComponent(normalizedCategory)}`
-            : ""
-        }`
-      );
-      const data = await response.json();
-      return data;
+      // ถ้าเลือก All หรือเลือกหลายหมวดหมู่ ให้ดึงข้อมูลทั้งหมด
+      if (selectedCategories.has("All") || selectedCategories.size > 1) {
+        const response = await fetch('/api/project/getProjects');
+        const data = await response.json();
+        return data;
+      }
+      
+      // ถ้าเลือกหมวดหมู่เดียว ใช้ API เดิม
+      if (selectedCategories.size === 1) {
+        const category = Array.from(selectedCategories)[0];
+        if (category === "All") {
+          const response = await fetch('/api/project/getProjects');
+          const data = await response.json();
+          return data;
+        } else {
+          const response = await fetch(
+            `/api/project/getProjects?category=${encodeURIComponent(category.toLowerCase())}`
+          );
+          const data = await response.json();
+          return data;
+        }
+      }
+  
+      return [];
     } catch (error) {
       console.error("Error fetching projects:", error);
       return [];
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [selectedCategories]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
-      const fetchedProjects = await fetchProjects(selectedCategory);
+      const fetchedProjects = await fetchProjects();
       setProjects(fetchedProjects);
       filterProjects(fetchedProjects, searchTerm, selectedRating);
-      setIsLoading(false);
     };
     fetchData();
   }, [
-    selectedCategory,
+    selectedCategories,  // เปลี่ยนจาก selectedCategory
     selectedRating,
     fetchProjects,
     filterProjects,
     searchTerm,
   ]);
 
+
+  // แก้ไข handleCategoryChange
   const handleCategoryChange = (e) => {
     const selectedTranslatedCategory = e.target.value;
     const categoryItem = categories.find(
       (c) => c.category === selectedTranslatedCategory
     );
-    if (categoryItem) {
-      setSelectedCategory(categoryItem.categoryEN);
+    if (!categoryItem) return;
+
+    const categoryEN = categoryItem.categoryEN;
+
+    if (categoryEN === "All") {
+      setSelectedCategories(new Set(["All"]));
+      return;
     }
+
+    setSelectedCategories((prev) => {
+      const newCategories = new Set(prev);
+      if (prev.has("All")) {
+        newCategories.clear();
+      }
+
+      if (prev.has(categoryEN)) {
+        newCategories.delete(categoryEN);
+        if (newCategories.size === 0) {
+          return new Set(["All"]);
+        }
+      } else {
+        newCategories.add(categoryEN);
+      }
+
+      return newCategories;
+    });
   };
 
   const handleRatingChange = (rating) => {
@@ -289,7 +342,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
                         className="mr-2 accent-[#33539B]"
                         value={c.category}
                         onChange={handleCategoryChange}
-                        checked={selectedCategory === c.categoryEN}
+                        checked={selectedCategories.has(c.categoryEN)}
                       />
                       <label htmlFor={`cat-list-${c.id}`}>{c.category}</label>
                     </li>

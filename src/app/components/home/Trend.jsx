@@ -5,6 +5,7 @@ import { FaSearch, FaFire } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Swal from "sweetalert2";
 
 function Trend({ session }) {
   const { t, i18n } = useTranslation("translation");
@@ -33,9 +34,21 @@ function Trend({ session }) {
   };
 
   const handleSearchSubmit = async (e) => {
+    Swal.fire({
+      icon: "info",
+      title: "Processing...",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     e.preventDefault();
     if (searchTerm.trim()) {
       router.push(`/project?search=${encodeURIComponent(searchTerm.trim())}`);
+      setTimeout(() => {
+        Swal.close();
+      }, 1000);
 
       try {
         await fetch("/api/search/", {

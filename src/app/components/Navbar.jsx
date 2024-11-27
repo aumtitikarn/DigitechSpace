@@ -173,7 +173,7 @@ function CustomNavbar() {
 
   const getLogo = () => {
     if (isHomePage) {
-      return isScrolled ? 'https://m1r.ai/W8p5i.png' : 'https://m1r.ai/7ttM.png';
+      return isScrolled ? 'https://m1r.ai/W8p5i.png' : 'https://m1r.ai/W8p5i.png';
     }
     return 'https://m1r.ai/W8p5i.png';
   };
@@ -191,7 +191,8 @@ function CustomNavbar() {
     }
   `}
 >
-      <div className="flex items-center justify-between lg:mx-[50px]">
+
+  <div className="flex items-center justify-between lg:mx-20">
         {/* ปุ่มเมนูสำหรับหน้าจอมือถือ */}
         <div className="block lg:hidden">
           <button
@@ -201,14 +202,14 @@ function CustomNavbar() {
               ${isHomePage 
                 ? (isScrolled 
                     ? 'text-white hover:text-[#FFC92B]'
-                    : 'text-gray-800 hover:text-gray-600')
+                    : 'text-white hover:text-gray-600')
                 : 'text-white hover:text-[#FFC92B]'
               }
               w-[35px] h-[35px]
             `}
           >
             <svg
-              className="w-6 h-6 mt-5"
+              className="w-6 h-6 mt-5 "
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -248,6 +249,7 @@ function CustomNavbar() {
                 className="text-white focus:outline-none"
               >
                 {imageSource && !failedImages.has(imageSource._id) ? (
+                  <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
                   <Image
                     width={35}
                     height={35}
@@ -259,8 +261,9 @@ function CustomNavbar() {
                         (prev) => new Set([...prev, imageSource._id])
                       );
                     }}
-                    className="rounded-full w-[35px] h-[35px] object-cover ml-2"
+                    className="rounded-full w-[35px] h-[35px] object-cover "
                   />
+                  </div>
                 ) : (
                   <MdAccountCircle
                   className={`
@@ -268,7 +271,7 @@ function CustomNavbar() {
                     ${isHomePage 
                       ? (isScrolled 
                           ? 'text-white hover:text-[#5f66de]'
-                          : 'text-gray-800 hover:text-gray-600')
+                          : 'text-white hover:text-gray-600')
                       : 'text-white hover:text-[#5f66de]'
                     }
                     w-[35px] h-[35px]
@@ -287,6 +290,7 @@ function CustomNavbar() {
                     <div className="">
                       <div className="flex items-center ">
                         {imageSource && !failedImages.has(imageSource._id) ? (
+                          <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
                           <Image
                             width={55}
                             height={55}
@@ -300,6 +304,7 @@ function CustomNavbar() {
                             }}
                             className="rounded-full w-[55px] h-[55px] object-cover "
                           />
+                          </div>
                         ) : (
                           <MdAccountCircle
                           className="rounded-full text-gray-600"
@@ -309,7 +314,6 @@ function CustomNavbar() {
                           }}
                         />
                         )}
-
                         <span>
                           <p className="text-[20px] mt-3 text-semibold ml-3">
                             {postData?.name || postDataS?.name || "Unknown"}
@@ -413,7 +417,7 @@ function CustomNavbar() {
 
         {/* โลโก้, เมนู, และปุ่มบัญชีสำหรับเดสทอป */}
         {session ? (
-          <div className="hidden lg:flex flex-1 items-center justify-center space-x-8 mx-[180px]">
+          <div className="hidden lg:flex flex-1 items-center justify-center space-x-8 ">
             {/* โลโก้สำหรับเดสทอป */}
             <div className="flex-none">
               <Link href="/">
@@ -440,7 +444,7 @@ function CustomNavbar() {
                           ${isHomePage 
                             ? (isScrolled 
                                 ? "text-white hover:text-[#5f66de]" 
-                                : "text-gray-800 hover:text-gray-600")
+                                : "text-white hover:text-gray-600")
                             : "text-white hover:text-[#5f66de]"
                           }
                           transition-colors duration-300
@@ -458,7 +462,7 @@ function CustomNavbar() {
                           ${isHomePage 
                             ? (isScrolled 
                                 ? "text-white hover:text-[#5f66de]" 
-                                : "text-gray-800 hover:text-gray-600")
+                                : "text-white hover:text-gray-600")
                             : "text-white hover:text-[#5f66de]"
                           }
                           transition-colors duration-300
@@ -476,7 +480,7 @@ function CustomNavbar() {
                           ${isHomePage 
                             ? (isScrolled 
                                 ? "text-white hover:text-[#5f66de]" 
-                                : "text-gray-800 hover:text-gray-600")
+                                : "text-white hover:text-gray-600")
                             : "text-white hover:text-[#5f66de]"
                           }
                           transition-colors duration-300
@@ -500,7 +504,7 @@ function CustomNavbar() {
                             ${isHomePage 
                               ? (isScrolled 
                                   ? "text-white hover:text-[#5f66de]" 
-                                  : "text-gray-800 hover:text-gray-600")
+                                  : "text-white hover:text-gray-600")
                               : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
@@ -518,7 +522,7 @@ function CustomNavbar() {
                             ${isHomePage 
                               ? (isScrolled 
                                   ? "text-white hover:text-[#5f66de]" 
-                                  : "text-gray-800 hover:text-gray-600")
+                                  : "text-white hover:text-gray-600")
                               : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
@@ -536,7 +540,7 @@ function CustomNavbar() {
                             ${isHomePage 
                               ? (isScrolled 
                                   ? "text-white hover:text-[#5f66de]" 
-                                  : "text-gray-800 hover:text-gray-600")
+                                  : "text-white hover:text-gray-600")
                               : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
@@ -564,7 +568,7 @@ function CustomNavbar() {
               ${isHomePage 
                 ? (isScrolled 
                     ? 'text-white hover:text-[#5f66de]'
-                    : 'text-gray-800 hover:text-gray-600')
+                    : 'text-white hover:text-gray-600')
                 : 'text-white hover:text-[#5f66de]'
               }
               w-[35px] h-[35px]
@@ -584,6 +588,7 @@ function CustomNavbar() {
                       `}
                     >
                       {imageSource && !failedImages.has(imageSource._id) ? (
+                         <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
                         <Image
                           width={35}
                           height={35}
@@ -597,6 +602,7 @@ function CustomNavbar() {
                           }}
                           className="rounded-full w-[35px] h-[35px] object-cover "
                         />
+                        </div>
                       ) : (
                         <MdAccountCircle
                         className={`
@@ -604,7 +610,7 @@ function CustomNavbar() {
                           ${isHomePage 
                             ? (isScrolled 
                                 ? 'text-white hover:text-[#5f66de]'
-                                : 'text-gray-800 hover:text-gray-600')
+                                : 'text-white hover:text-gray-600')
                             : 'text-white hover:text-[#5f66de]'
                           }
                           w-[35px] h-[35px]
@@ -615,6 +621,7 @@ function CustomNavbar() {
                           }}
                         />
                       )}
+                      
                     </button>
                   </div>
                   {isAccountBoxVisible && (
@@ -625,7 +632,9 @@ function CustomNavbar() {
                     >
                       <div className="">
                         <div className="flex items-center">
+                        
                           {imageSource && !failedImages.has(imageSource._id) ? (
+                            <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
                             <Image
                               width={55}
                               height={55}
@@ -639,6 +648,7 @@ function CustomNavbar() {
                               }}
                               className="rounded-full w-[55px] h-[55px] object-cover "
                             />
+                            </div>
                           ) : (
                             <MdAccountCircle
                             className="rounded-full text-gray-600"
@@ -648,6 +658,7 @@ function CustomNavbar() {
                             }}
                           />
                           )}
+                          
                           <span>
                             <p className="text-[20px] mt-3 text-semibold ml-3">
                               {postData?.name || postDataS?.name || "Unknown"}
@@ -806,7 +817,7 @@ function CustomNavbar() {
                             ${isHomePage 
                               ? (isScrolled 
                                   ? "text-white hover:text-[#5f66de]" 
-                                  : "text-gray-800 hover:text-gray-600")
+                                  : "text-white hover:text-gray-600")
                               : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
@@ -824,7 +835,7 @@ function CustomNavbar() {
                             ${isHomePage 
                               ? (isScrolled 
                                   ? "text-white hover:text-[#5f66de]" 
-                                  : "text-gray-800 hover:text-gray-600")
+                                  : "text-white hover:text-gray-600")
                               : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
@@ -842,7 +853,7 @@ function CustomNavbar() {
                             ${isHomePage 
                               ? (isScrolled 
                                   ? "text-white hover:text-[#5f66de]" 
-                                  : "text-gray-800 hover:text-gray-600")
+                                  : "text-white hover:text-gray-600")
                               : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
@@ -866,7 +877,7 @@ function CustomNavbar() {
                               ${isHomePage 
                                 ? (isScrolled 
                                     ? "text-white hover:text-[#5f66de]" 
-                                    : "text-gray-800 hover:text-gray-600")
+                                    : "text-white hover:text-gray-600")
                                 : "text-white hover:text-[#5f66de]"
                               }
                               transition-colors duration-300
@@ -884,7 +895,7 @@ function CustomNavbar() {
                               ${isHomePage 
                                 ? (isScrolled 
                                     ? "text-white hover:text-[#5f66de]" 
-                                    : "text-gray-800 hover:text-gray-600")
+                                    : "text-white hover:text-gray-600")
                                 : "text-white hover:text-[#5f66de]"
                               }
                               transition-colors duration-300
@@ -902,7 +913,7 @@ function CustomNavbar() {
                               ${isHomePage 
                                 ? (isScrolled 
                                     ? "text-white hover:text-[#5f66de]" 
-                                    : "text-gray-800 hover:text-gray-600")
+                                    : "text-white hover:text-gray-600")
                                 : "text-white hover:text-[#5f66de]"
                               }
                               transition-colors duration-300
@@ -942,6 +953,7 @@ function CustomNavbar() {
                         <div className="px-3 py-3">
                           <div className="flex items-center">
                             {imageSource ? (
+                              <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
                               <Image
                                 width={60}
                                 height={60}
@@ -953,6 +965,7 @@ function CustomNavbar() {
                                 }}
                                 className="rounded-full w-[60px] h-[60px] object-cover mr-2"
                               />
+                              </div>
                             ) : (
                               <MdAccountCircle
                               className={`
@@ -960,7 +973,7 @@ function CustomNavbar() {
                                 ${isHomePage 
                                   ? (isScrolled 
                                       ? 'text-white hover:text-[#5f66de]'
-                                      : 'text-gray-800 hover:text-gray-600')
+                                      : 'text-white hover:text-gray-600')
                                   : 'text-white hover:text-[#5f66de]'
                                 }
                                 w-[35px] h-[35px]
@@ -971,6 +984,7 @@ function CustomNavbar() {
                                 }}
                               />
                             )}
+                            
                             <span>
                               <p className="text-[20px] mt-3 text-semibold ml-3">
                                 {session?.user?.name || "Unknown"}
@@ -1110,7 +1124,7 @@ function CustomNavbar() {
                 `}
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-6 h-6 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

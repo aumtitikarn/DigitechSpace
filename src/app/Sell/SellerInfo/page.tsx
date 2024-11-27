@@ -8,21 +8,35 @@ import { redirect } from "next/navigation";
 import Swal from "sweetalert2";
 import { useTranslation } from "react-i18next";
 import { OrbitProgress } from "react-loading-indicators";
-import { useRouter } from 'next/navigation';
+import {
+  FaUser,
+  FaPhone,
+  FaIdCard,
+  FaUniversity,
+  FaCreditCard,
+  FaHome,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import {
+  PhoneNumberInput,
+  usePhoneInput,
+} from "../../components/PhoneNumberInput";
+import { useRouter } from "next/navigation";
+import BankFormField from "../../components/BankFormField";
 
 const SellInfo = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { t } = useTranslation("translation");
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-
+  const { phoneNumber, setPhoneNumber, getRawPhoneNumber } = usePhoneInput();
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
     }
   }, [status, router]);
-  
+
   const [formData, setFormData] = useState({
     fullname: "",
     phonenumber: "",
@@ -45,17 +59,17 @@ const SellInfo = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+    const rawPhoneNumber = getRawPhoneNumber();
     if (!session?.user?.id) return;
-  
+
     const res = await fetch(`/api/Seller/update/${session.user.id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
-  
+
     if (res.ok) {
       setShowSuccessAlert(true);
       setTimeout(() => setShowSuccessAlert(false), 3000);
@@ -66,8 +80,8 @@ const SellInfo = () => {
         showConfirmButton: false,
         timer: 3000,
       });
-  
-      router.push('/Sell');
+
+      router.push("/Sell");
     } else {
       Swal.fire({
         position: "center",
@@ -78,16 +92,15 @@ const SellInfo = () => {
       });
     }
   };
-  
 
   useEffect(() => {
     const fetchExistingData = async () => {
       if (!session?.user?.id) return; // ใช้ session เพื่อดึง id ของผู้ใช้
-  
+
       try {
         const response = await fetch(`/api/Seller/${session.user.id}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch data');
+          throw new Error("Failed to fetch data");
         }
 
         const data = await response.json();
@@ -105,11 +118,9 @@ const SellInfo = () => {
           province: data.SellInfo.province || "",
           postalnumber: data.SellInfo.postalnumber || "",
         });
-      } catch (error) {
-
-      }
+      } catch (error) {}
     };
-  
+
     fetchExistingData();
   }, [session?.user?.id]);
 
@@ -137,141 +148,213 @@ const SellInfo = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
-      <main className="flex-grow">
-        <Navbar />
-        <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
-          <div className="container mt-3 ">
-            <h1 className="text-[24px] font-bold">{t("nav.sell.sellinfo.title")}</h1>
-          </div>
-          <form onSubmit={handleSubmit}>
-            <div className="mt-3">
-              <input
-                id="fullname"
-                name="fullname"
-                type="text"
-                autoComplete="fullname"
-                value={formData.fullname}
-                placeholder={formData.fullname || t("nav.sell.sellinfo.fullname")}
-                required
-                onChange={handleChange}
-                className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-              <input
-                id="phonenumber"
-                name="phonenumber"
-                type="text"
-                autoComplete="phonenumber"
-                value={formData.phonenumber}
-                placeholder={formData.phonenumber || t("nav.sell.sellinfo.phonenum")}
-                required
-                onChange={handleChange}
-                className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-              <input
-                id="nationalid"
-                name="nationalid"
-                type="text"
-                autoComplete="nationalid"
-                value={formData.nationalid}
-                placeholder={formData.nationalid || t("nav.sell.sellinfo.id")}
-                required
-                onChange={handleChange}
-                className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-              <input
-                id="namebank"
-                name="namebank"
-                type="text"
-                autoComplete="namebank"
-                value={formData.namebank}
-                placeholder={formData.namebank || t("nav.sell.sellinfo.namebank")}
-                required
-                onChange={handleChange}
-                className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-              <input
-                id="numberbankacc"
-                name="numberbankacc"
-                type="text"
-                autoComplete="numberbankacc"
-                value={formData.numberbankacc}
-                placeholder={formData.numberbankacc || t("nav.sell.sellinfo.numbankacc")}
-                required
-                onChange={handleChange}
-                className="mt-3 mb-10 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-            </div>
-            <div className="border-t border-gray-300 mb-5"></div>
-            <div className="container mt-3 ">
-              <h1 className="text-[24px] font-bold">
-                {t("nav.sell.sellinfo.address")}
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <Navbar />
+      <main className="flex-grow py-10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
+            {/* Header Section */}
+            <div className="bg-gradient-to-r from-[#0B1E48] to-[#1E3A8A] px-6 py-4">
+              <h1 className="text-2xl font-bold text-white">
+                {t("nav.sell.sellinfo.title")}
               </h1>
+              <p className="text-white/80 text-sm mt-1">
+                {t("nav.sell.sellinfo.des")}
+              </p>
             </div>
-            <div className="mt-3">
-              <input
-                id="housenum"
-                name="housenum"
-                type="text"
-                autoComplete="housenum"
-                value={formData.housenum}
-                placeholder={formData.housenum || t("nav.sell.sellinfo.housenum")}
-                required
-                onChange={handleChange}
-                className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-              <input
-                id="subdistrict"
-                name="subdistrict"
-                type="text"
-                autoComplete="subdistrict"
-                value={formData.subdistrict}
-                placeholder={formData.subdistrict || t("nav.sell.sellinfo.subdistrict")}
-                required
-                onChange={handleChange}
-                className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-              <input
-                id="district"
-                name="district"
-                type="text"
-                autoComplete="district"
-                value={formData.district}
-                placeholder={formData.district || t("nav.sell.sellinfo.district")}
-                required
-                onChange={handleChange}
-                className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-              <input
-                id="province"
-                name="province"
-                type="text"
-                autoComplete="province"
-                value={formData.province}
-                placeholder={formData.province || t("nav.sell.sellinfo.province")}
-                required
-                onChange={handleChange}
-                className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-              <input
-                id="postalnumber"
-                name="postalnumber"
-                type="text"
-                autoComplete="postalnumber"
-                value={formData.postalnumber}
-                placeholder={formData.postalnumber || t("nav.sell.sellinfo.postalnumber")}
-                required
-                onChange={handleChange}
-                className="mt-3 block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-              />
-            </div>
-            <button
-              type="submit"
-              className="mt-3 flex w-full justify-center rounded-md bg-[#33539B] px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              {t("nav.sell.sellinfo.save")}
-            </button>
-          </form>
+
+            <form onSubmit={handleSubmit} className="p-6 space-y-8">
+              {/* Personal Information Section */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                  {t("nav.sell.sellinfo.personal")}
+                </h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaUser className="text-gray-400" />
+                    </div>
+                    <input
+                      id="fullname"
+                      name="fullname"
+                      type="text"
+                      value={formData.fullname}
+                      placeholder={
+                        formData.fullname || t("nav.sell.sellinfo.fullname")
+                      }
+                      required
+                      onChange={handleChange}
+                      className="pl-10 block w-full rounded-lg border-gray-200 border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all py-2.5"
+                    />
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaPhone className="text-gray-400" />
+                    </div>
+                    <PhoneNumberInput
+                      value={phoneNumber}
+                      onChange={setPhoneNumber}
+                      placeholder={t("nav.sell.sellinfo.phonenum")}
+                    />
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaIdCard className="text-gray-400" />
+                    </div>
+                    <input
+                      id="nationalid"
+                      name="nationalid"
+                      type="text"
+                      value={formData.nationalid}
+                      placeholder={
+                        formData.nationalid || t("nav.sell.sellinfo.id")
+                      }
+                      required
+                      onChange={handleChange}
+                      className="pl-10 block w-full rounded-lg border-gray-200 border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all py-2.5"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Bank Information Section */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                  {t("nav.sell.sellinfo.bankde")}
+                </h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaUniversity className="text-gray-400" />
+                    </div>
+                    <BankFormField />
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaCreditCard className="text-gray-400" />
+                    </div>
+                    <input
+                      id="numberbankacc"
+                      name="numberbankacc"
+                      type="text"
+                      value={formData.numberbankacc}
+                      placeholder={
+                        formData.numberbankacc ||
+                        t("nav.sell.sellinfo.numbankacc")
+                      }
+                      required
+                      onChange={handleChange}
+                      className="pl-10 block w-full rounded-lg border-gray-200 border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all py-2.5"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Address Section */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                  {t("nav.sell.sellinfo.address")}
+                </h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaHome className="text-gray-400" />
+                    </div>
+                    <input
+                      id="housenum"
+                      name="housenum"
+                      type="text"
+                      value={formData.housenum}
+                      placeholder={
+                        formData.housenum || t("nav.sell.sellinfo.housenum")
+                      }
+                      required
+                      onChange={handleChange}
+                      className="pl-10 block w-full rounded-lg border-gray-200 border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all py-2.5"
+                    />
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaMapMarkerAlt className="text-gray-400" />
+                    </div>
+                    <input
+                      id="subdistrict"
+                      name="subdistrict"
+                      type="text"
+                      value={formData.subdistrict}
+                      placeholder={
+                        formData.subdistrict ||
+                        t("nav.sell.sellinfo.subdistrict")
+                      }
+                      required
+                      onChange={handleChange}
+                      className="pl-10 block w-full rounded-lg border-gray-200 border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all py-2.5"
+                    />
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaMapMarkerAlt className="text-gray-400" />
+                    </div>
+                    <input
+                      id="district"
+                      name="district"
+                      type="text"
+                      value={formData.district}
+                      placeholder={
+                        formData.district || t("nav.sell.sellinfo.district")
+                      }
+                      required
+                      onChange={handleChange}
+                      className="pl-10 block w-full rounded-lg border-gray-200 border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all py-2.5"
+                    />
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaMapMarkerAlt className="text-gray-400" />
+                    </div>
+                    <input
+                      id="province"
+                      name="province"
+                      type="text"
+                      value={formData.province}
+                      placeholder={
+                        formData.province || t("nav.sell.sellinfo.province")
+                      }
+                      required
+                      onChange={handleChange}
+                      className="pl-10 block w-full rounded-lg border-gray-200 border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all py-2.5"
+                    />
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaMapMarkerAlt className="text-gray-400" />
+                    </div>
+                    <input
+                      id="postalnumber"
+                      name="postalnumber"
+                      type="text"
+                      value={formData.postalnumber}
+                      placeholder={
+                        formData.postalnumber ||
+                        t("nav.sell.sellinfo.postalnumber")
+                      }
+                      required
+                      onChange={handleChange}
+                      className="pl-10 block w-full rounded-lg border-gray-200 border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all py-2.5"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-[#0B1E48] to-[#38B6FF] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-all transform hover:scale-[0.99] active:scale-[0.97]"
+              >
+                {t("nav.sell.sellinfo.save")}
+              </button>
+            </form>
+          </div>
         </div>
       </main>
       <Footer />
