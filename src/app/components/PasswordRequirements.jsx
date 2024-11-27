@@ -3,7 +3,7 @@ import { Check, X, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const PasswordRequirements = ({ password }) => {
-    const { t, i18n } = useTranslation('translation');
+    const { t } = useTranslation('translation');
   const [requirements, setRequirements] = useState({
     length: false,
     uppercase: false,
@@ -53,7 +53,7 @@ const PasswordRequirements = ({ password }) => {
     }
 
     setStrength({ score, label, color });
-  }, [password]);
+  }, [password, t]);
 
   const RequirementItem = ({ met, text }) => (
     <div className="flex items-center gap-2 text-sm">

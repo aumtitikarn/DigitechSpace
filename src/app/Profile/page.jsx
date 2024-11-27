@@ -75,7 +75,7 @@ function Profile() {
   useEffect(() => {
     const currentSkills = getSkills();
     setDisplaySkills(currentSkills);
-  }, [postData, postDataS]);
+  }, [postData, postDataS, getSkills]);
 
   // function สำหรับอัพเดท skills แบบ optimistic
   const handleSkillsChange = (newSkills) => {
