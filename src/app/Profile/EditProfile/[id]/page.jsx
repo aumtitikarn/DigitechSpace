@@ -512,7 +512,7 @@ function Page() {
               <div className="mt-8">
                 <button
                   onClick={handleSave}
-                  className="w-full bg-gradient-to-r from-[#33539B] to-[#38B6FF] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-all transform hover:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="w-full bg-gradient-to-r from-[#0B1E48] to-[#1E3A8A] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-all transform hover:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   {t("nav.profile.editprofile.save")}
                 </button>

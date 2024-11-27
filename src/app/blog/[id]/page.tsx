@@ -217,49 +217,16 @@ function Blog({ params }: BlogProps) {
     setIsPopupOpenMore(!isPopupOpenMore);
   };
 
-  const handleDelete2 = async () => {
-    const result = await Swal.fire({
-      title: "คุณต้องการลบบล็อกนี้ใช่หรือไม่?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "ใช่, ลบเลย!",
-      cancelButtonText: "ยกเลิก",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const res = await fetch(`/api/posts/delete/${postData?._id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id }),
-        });
-        if (res.ok) {
-          Swal.fire("Deleted!", "โครงงานและบล็อกถูกลบเรียบร้อยแล้ว", "success");
-          router.push("/listblog");
-        } else {
-          const data = await res.json();
-          Swal.fire("Error", `${data.message || "ลบไม่สำเร็จ"}`, "error");
-        }
-      } catch (error) {
-        console.error("Error deleting post:", error);
-        Swal.fire("Error", "มีข้อผิดพลาดในการลบโครงงาน/บล็อก", "error");
-      }
-    }
-  };
 
   const handleDelete = async () => {
     const result = await Swal.fire({
-      title: "คุณต้องการลบบล็อกนี้ใช่หรือไม่?",
+      title: t("report.blog.sure"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ใช่, ลบเลย!",
-      cancelButtonText: "ยกเลิก",
+      confirmButtonText: t("nav.wallet.yes"),
+      cancelButtonText: t("nav.wallet.no"),
     });
 
     if (result.isConfirmed) {
@@ -272,71 +239,16 @@ function Blog({ params }: BlogProps) {
           body: JSON.stringify({ id }),
         });
         if (res.ok) {
-          Swal.fire("Deleted!", "โครงงานและบล็อกถูกลบเรียบร้อยแล้ว", "success");
+          Swal.fire(t("status.success"), "success");
           router.push("/listblog");
         } else {
           const data = await res.json();
-          Swal.fire("Error", `${data.message || "ลบไม่สำเร็จ"}`, "error");
         }
       } catch (error) {
         console.error("Error deleting post:", error);
-        Swal.fire("Error", "มีข้อผิดพลาดในการลบโครงงาน/บล็อก", "error");
       }
     }
   };
-
-// const handleDelete = async () => {
-//   const result = await Swal.fire({
-//     title: "คุณต้องการลบบล็อกนี้ใช่หรือไม่?",
-//     icon: "warning",
-//     showCancelButton: true,
-//     confirmButtonColor: "#3085d6",
-//     cancelButtonColor: "#d33",
-//     confirmButtonText: "ใช่, ลบเลย!",
-//     cancelButtonText: "ยกเลิก",
-//   });
-
-//   if (result.isConfirmed) {
-//     try {
-//       const delete1 = fetch(`/api/posts/delete/${postData?._id}`, {
-//         method: "DELETE",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ id }),
-//       });
-
-//       const delete2 = fetch(`/api/posts/${postData?._id}`, {
-//         method: "DELETE",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ id }),
-//       });
-
-//       const responses = await Promise.all([delete1, delete2]);
-
-//       const allOk = responses.every((res) => res.ok);
-
-//       if (allOk) {
-//         Swal.fire("Deleted!", "โครงงานและบล็อกถูกลบเรียบร้อยแล้ว", "success");
-//         router.push("/listblog");
-//       } else {
-//         const messages = await Promise.all(
-//           responses.map(async (res) => (res.ok ? null : await res.json()))
-//         );
-//         const errorMessage = messages
-//           .filter((msg) => msg?.message)
-//           .map((msg) => msg.message)
-//           .join(", ") || "ลบไม่สำเร็จ";
-//         Swal.fire("Error", errorMessage, "error");
-//       }
-//     } catch (error) {
-//       console.error("Error deleting posts:", error);
-//       Swal.fire("Error", "มีข้อผิดพลาดในการลบโครงงาน/บล็อก", "error");
-//     }
-//   }
-// };
 
   const formatDate = (timestamp: any): string => {
     try {
@@ -564,7 +476,13 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
       setIsPopupOpen(!isPopupOpen);
     } else {
       // alert("Please log in to save favorites");
-      Swal.fire("Error", "Please log in to report.", "error");
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: t("report.blog.login"),
+        showConfirmButton: false,
+        timer: 3000,
+      });
     }
   };
 
@@ -577,7 +495,6 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         alert("URL copied to clipboard!");
       })
       .catch((err) => {
-        console.error("Failed to copy URL: ", err);
       });
   };
 
@@ -604,8 +521,6 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
   };
 
   const UserId = session?.user?.id ?? "";
-
-  console.log("UserId :", UserId);
 
   const handleSubmitCiHeart = async (e: React.MouseEvent<SVGElement>) => {
     if (session) {

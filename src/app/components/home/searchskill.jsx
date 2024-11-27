@@ -77,23 +77,6 @@ const SkillSearchAutocomplete = ({
         <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       </div>
 
-      {/* Selected Skills */}
-      <div className="flex flex-wrap gap-2 mt-2">
-        {selectedSkills.map((skill, index) => (
-          <div
-            key={index}
-            className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-full"
-          >
-            {skill}
-            <button
-              onClick={() => onSkillRemove(skill)}
-              className="hover:text-blue-200"
-            >
-              <IoClose />
-            </button>
-          </div>
-        ))}
-      </div>
 
       {/* Dropdown */}
       {showDropdown && filteredSkills.length > 0 && (
