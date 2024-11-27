@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { IoIosStar } from "react-icons/io";
 import { CiHeart } from "react-icons/ci";
 import Image from "next/image";
@@ -49,14 +49,13 @@ function Profile() {
     setActiveButton(button === activeButton ? null : button);
   };
 
-  const getImageSource = () => {
+  const getImageSource = useCallback(() => {
     if (postData && postData.imageUrl && postData.imageUrl.length > 0) {
       const imageUrl = postData.imageUrl[0];
       if (isValidHttpUrl(imageUrl)) {
         return getProxyUrl(imageUrl);
-      } else {
-        return `/api/editprofile/images/${imageUrl}`;
       }
+      return `/api/editprofile/images/${imageUrl}`;
     }
     if (postDataS && postDataS.imageUrl) {
       return `/api/editprofile/images/${postDataS.imageUrl}`;
@@ -65,22 +64,24 @@ function Profile() {
       return getProxyUrl(session.user.image);
     }
     return null;
-  };
-  const getSkills = () => {
+  }, [postData, postDataS, session]);
+
+  const getSkills = useCallback(() => {
     if (session?.user?.role !== "NormalUser") {
       return postDataS?.skills || [];
     }
     return postData?.skills || [];
-  };
+  }, [session, postData, postDataS]);
+
   useEffect(() => {
     const currentSkills = getSkills();
     setDisplaySkills(currentSkills);
-  }, [postData, postDataS, getSkills]);
+  }, [getSkills]);
 
-  // function สำหรับอัพเดท skills แบบ optimistic
   const handleSkillsChange = (newSkills) => {
     setDisplaySkills(newSkills);
   };
+
   const skills = getSkills();
   const visibleSkills = skills.slice(0, 5);
   const remainingSkills = skills.length > 5 ? skills.slice(5) : [];
@@ -104,69 +105,66 @@ function Profile() {
       document.body.style.overflow = "unset";
     };
   }, [showAllSkills]);
-  // คงไว้ซึ่ง useEffect และ functions อื่นๆ เหมือนเดิม...
+
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [publishedResponse, blogResponse, profileResponse] = await Promise.all([
+        fetch("/api/project/getProjects/user", { method: "GET" }),
+        fetch("/api/posts/getposts/user", { cache: "no-store" }),
+        fetch(`/api/editprofile/${session.user.id}`, {
+          method: "GET",
+          cache: "no-store",
+        }),
+      ]);
+
+      if (publishedResponse.ok) {
+        const publishedData = await publishedResponse.json();
+        setPublishedProjects(publishedData);
+      }
+
+      if (blogResponse.ok) {
+        const blogData = await blogResponse.json();
+        setPostDataBlog(blogData);
+      }
+
+      if (profileResponse.ok) {
+        const profileData = await profileResponse.json();
+        setPostData(profileData.post);
+        setPostDataS(profileData.posts);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [session]);
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
     }
     if (status === "authenticated" && session) {
-      const fetchData = async () => {
-        setIsLoading(true);
-        try {
-          const [publishedResponse, blogResponse, profileResponse] =
-            await Promise.all([
-              fetch("/api/project/getProjects/user", { method: "GET" }),
-              fetch("/api/posts/getposts/user", { cache: "no-store" }),
-              fetch(`/api/editprofile/${session.user.id}`, {
-                method: "GET",
-                cache: "no-store",
-              }),
-            ]);
-
-          if (publishedResponse.ok) {
-            const publishedData = await publishedResponse.json();
-            setPublishedProjects(publishedData);
-          }
-
-          if (blogResponse.ok) {
-            const blogData = await blogResponse.json();
-            setPostDataBlog(blogData);
-          }
-
-          if (profileResponse.ok) {
-            const profileData = await profileResponse.json();
-            setPostData(profileData.post);
-            setPostDataS(profileData.posts);
-          }
-        } catch (error) {
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
       fetchData();
     }
-  }, [status, session, router]);
+  }, [status, session, router, fetchData]);
 
-  if (status === "loading" || isLoading) {
+  if (status === "loading") {
     return (
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-        <OrbitProgress
-          variant="track-disc"
-          dense
-          color="#33539B"
-          size="medium"
-        />
+        <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" />
       </div>
     );
   }
+
   const handleSkillsUpdate = (updatedSkills) => {
     if (session?.user?.role !== "NormalUser") {
-      setPostDataS((prev) => ({ ...prev, skills: updatedSkills }));
+      setPostDataS(prev => ({ ...prev, skills: updatedSkills }));
     } else {
-      setPostData((prev) => ({ ...prev, skills: updatedSkills }));
+      setPostData(prev => ({ ...prev, skills: updatedSkills }));
     }
   };
+
   const imageSource = getImageSource();
 
   return (
