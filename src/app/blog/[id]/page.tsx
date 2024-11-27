@@ -217,6 +217,40 @@ function Blog({ params }: BlogProps) {
     setIsPopupOpenMore(!isPopupOpenMore);
   };
 
+  const handleDelete2 = async () => {
+    const result = await Swal.fire({
+      title: "คุณต้องการลบบล็อกนี้ใช่หรือไม่?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`/api/posts/delete/${postData?._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        });
+        if (res.ok) {
+          Swal.fire("Deleted!", "โครงงานและบล็อกถูกลบเรียบร้อยแล้ว", "success");
+          router.push("/listblog");
+        } else {
+          const data = await res.json();
+          Swal.fire("Error", `${data.message || "ลบไม่สำเร็จ"}`, "error");
+        }
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        Swal.fire("Error", "มีข้อผิดพลาดในการลบโครงงาน/บล็อก", "error");
+      }
+    }
+  };
+
   const handleDelete = async () => {
     const result = await Swal.fire({
       title: "คุณต้องการลบบล็อกนี้ใช่หรือไม่?",
@@ -250,6 +284,59 @@ function Blog({ params }: BlogProps) {
       }
     }
   };
+
+// const handleDelete = async () => {
+//   const result = await Swal.fire({
+//     title: "คุณต้องการลบบล็อกนี้ใช่หรือไม่?",
+//     icon: "warning",
+//     showCancelButton: true,
+//     confirmButtonColor: "#3085d6",
+//     cancelButtonColor: "#d33",
+//     confirmButtonText: "ใช่, ลบเลย!",
+//     cancelButtonText: "ยกเลิก",
+//   });
+
+//   if (result.isConfirmed) {
+//     try {
+//       const delete1 = fetch(`/api/posts/delete/${postData?._id}`, {
+//         method: "DELETE",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ id }),
+//       });
+
+//       const delete2 = fetch(`/api/posts/${postData?._id}`, {
+//         method: "DELETE",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ id }),
+//       });
+
+//       const responses = await Promise.all([delete1, delete2]);
+
+//       const allOk = responses.every((res) => res.ok);
+
+//       if (allOk) {
+//         Swal.fire("Deleted!", "โครงงานและบล็อกถูกลบเรียบร้อยแล้ว", "success");
+//         router.push("/listblog");
+//       } else {
+//         const messages = await Promise.all(
+//           responses.map(async (res) => (res.ok ? null : await res.json()))
+//         );
+//         const errorMessage = messages
+//           .filter((msg) => msg?.message)
+//           .map((msg) => msg.message)
+//           .join(", ") || "ลบไม่สำเร็จ";
+//         Swal.fire("Error", errorMessage, "error");
+//       }
+//     } catch (error) {
+//       console.error("Error deleting posts:", error);
+//       Swal.fire("Error", "มีข้อผิดพลาดในการลบโครงงาน/บล็อก", "error");
+//     }
+//   }
+// };
 
   const formatDate = (timestamp: any): string => {
     try {
@@ -447,7 +534,7 @@ function Blog({ params }: BlogProps) {
     formData.append("blogEmail", blogEmail || "");
     formData.append("blogid", blogid || "");
     try {
-      const res = await fetch("http://localhost:3000/api/reportblog", {
+      const res = await fetch(`/api/reportblog`, {
         method: "POST",
         body: formData,
       });
@@ -522,7 +609,7 @@ function Blog({ params }: BlogProps) {
         const heart = isLiked ? postData.heart - 1 : postData.heart + 1;
 
         const blogRes = await fetch(
-          `http://localhost:3000/api/posts/${postData._id}`,
+          `/api/posts/${postData._id}`,
           {
             method: "PUT",
             headers: {

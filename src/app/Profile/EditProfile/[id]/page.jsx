@@ -147,7 +147,7 @@ function Page() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave1 = async () => {
     if (!session?.user?.id) {
       await Swal.fire({
         title: t("nav.profile.error"),
@@ -195,6 +195,116 @@ function Page() {
         icon: "error",
         confirmButtonText: "OK",
       });
+    }
+  };
+
+  const handleDelete = async () => {
+    const result = await Swal.fire({
+      title: "คุณต้องการลบบล็อกนี้ใช่หรือไม่?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`/api/posts/${postData?._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        });
+        if (res.ok) {
+          Swal.fire("Deleted!", "โครงงานและบล็อกถูกลบเรียบร้อยแล้ว", "success");
+          router.push("/listblog");
+        } else {
+          const data = await res.json();
+          Swal.fire("Error", `${data.message || "ลบไม่สำเร็จ"}`, "error");
+        }
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        Swal.fire("Error", "มีข้อผิดพลาดในการลบโครงงาน/บล็อก", "error");
+      }
+    }
+  };
+
+  const handleSave = async () => {
+    const result = await Swal.fire({
+      title: "คุณต้องการลบบล็อกนี้และบันทึกข้อมูลใหม่ใช่หรือไม่?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ใช่, ดำเนินการเลย!",
+      cancelButtonText: "ยกเลิก",
+    });
+
+    const id = session.user.id;
+  
+    if (result.isConfirmed) {
+      try {
+        // เรียก handleDelete และ handleSave พร้อมกัน
+        const deletePromise = fetch(`/api/editprofile/${session.user.id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({id}),
+        });
+  
+        const formData = new FormData();
+        formData.append("name", newName);
+        formData.append("briefly", newbriefly);
+        formData.append("email", newEmail);
+        formData.append("line", newLine);
+        formData.append("facebook", newFacebook);
+        formData.append("phonenumber", newPhonenumber);
+  
+        if (imageFile) {
+          formData.append("imageUrl", imageFile);
+        }
+  
+        const savePromise = fetch(`/api/editprofile/${session.user.id}`, {
+          method: "PUT",
+          body: formData,
+        });
+  
+        // ใช้ Promise.all เพื่อรอให้ทั้งสองคำสั่งเสร็จสิ้น
+        const [deleteResponse, saveResponse] = await Promise.all([deletePromise, savePromise]);
+  
+        if (deleteResponse.ok && saveResponse.ok) {
+          await Swal.fire({
+            title: "สำเร็จ!",
+            text: "การลบและบันทึกข้อมูลเสร็จสมบูรณ์",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+          router.push("/Profile"); // เปลี่ยนเส้นทางไปยังหน้าโปรไฟล์
+        } else {
+          const errorMessage = `
+            ${!deleteResponse.ok ? "ลบข้อมูลไม่สำเร็จ" : ""}
+            ${!saveResponse.ok ? "บันทึกข้อมูลไม่สำเร็จ" : ""}
+          `;
+          await Swal.fire({
+            title: "Error",
+            text: errorMessage.trim(),
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        }
+      } catch (error) {
+        console.error("Error during delete and save:", error);
+        await Swal.fire({
+          title: "Error",
+          text: "เกิดข้อผิดพลาดในระบบ",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
     }
   };
 

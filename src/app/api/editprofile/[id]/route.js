@@ -5,6 +5,56 @@ import NormalUser from "../../../../../models/NormalUser";
 import StudentUser from "../../../../../models/StudentUser";
 import { NextResponse } from "next/server";
 
+export async function DELETE(req) {
+  try {
+    await connectMongoDB();
+    const { id } = await req.json(); // Assume the id of the report is sent in the request body
+    const { client, imgbucket, filebucket } = await connectMongoDB();
+        // ค้นหาข้อมูลผู้ใช้จาก NormalUser
+        const normalUser = await NormalUser.findOne({ _id: id });
+        // ค้นหาข้อมูลผู้ใช้จาก StudentUser
+        const studentUser = await StudentUser.findOne({ _id: id });
+
+        const combinedData = {
+          ...(normalUser ? normalUser._doc : {}),
+          ...(studentUser ? studentUser._doc : {}),
+        };
+    
+
+    if (!id) {
+      return NextResponse.json({ msg: "ID is required" }, { status: 400 });
+    }
+
+    console.log("Delete id :",id)
+
+    if (combinedData.imageUrl && combinedData.imageUrl.length > 0) {
+      for (const imageName of combinedData.imageUrl) {
+        const image = await imgbucket.find({ filename: imageName }).toArray();
+        
+        if (image.length > 0) {
+          const imageId = image[0]._id;
+
+          // Delete image from images and chunks collection
+          await imgbucket.delete(imageId);
+          await client.collection('images.chunks').deleteMany({ files_id: imageId });
+        }
+      }
+    }
+
+    if (!combinedData) {
+      return NextResponse.json({ msg: "Report not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Report deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error in DELETE handler:", error);
+    return NextResponse.json(
+      { msg: "Error deleting report" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(req, { params }) {
   try {
     const { id } = params;

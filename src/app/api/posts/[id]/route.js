@@ -346,12 +346,27 @@ export async function DELETE(req) {
   try {
     await connectMongoDB();
     const { id } = await req.json(); // Assume the id of the report is sent in the request body
+    const { client, imgbucket, filebucket } = await connectMongoDB();
 
     if (!id) {
       return NextResponse.json({ msg: "ID is required" }, { status: 400 });
     }
 
     const deletedpost = await Post.findByIdAndDelete(id);
+
+    if (deletedpost.imageUrl && deletedpost.imageUrl.length > 0) {
+      for (const imageName of deletedpost.imageUrl) {
+        const image = await imgbucket.find({ filename: imageName }).toArray();
+        
+        if (image.length > 0) {
+          const imageId = image[0]._id;
+
+          // Delete image from images and chunks collection
+          await imgbucket.delete(imageId);
+          await client.collection('images.chunks').deleteMany({ files_id: imageId });
+        }
+      }
+    }
 
     if (!deletedpost) {
       return NextResponse.json({ msg: "Report not found" }, { status: 404 });
