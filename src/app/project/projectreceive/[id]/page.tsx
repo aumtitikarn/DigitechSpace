@@ -470,6 +470,7 @@ const ProjectRecieve: React.FC<{ params: { id: string } }> = ({ params }) => {
             <div className="w-full mt-4">
               <div className="flex items-start justify-between">
                 <div className="mt-5">
+                <p className="text-gray-500">{t("nav.project.catagory")} : {t(`nav.project.${project.category}`)}</p>
                   <p className="text-xl font-bold text-[28px] mt-3">
                     {project.projectname}
                   </p>

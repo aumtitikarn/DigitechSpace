@@ -85,12 +85,7 @@ const ProjectEdit = () => {
         }
       } else {
         setIsLoading(false);
-        console.error("No project ID provided in URL");
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "No project ID provided in URL.",
-        });
+
       }
     };
 
@@ -170,23 +165,14 @@ const ProjectEdit = () => {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: "User is not authenticated",
+        title: t("status.login"),
         showConfirmButton: false,
         timer: 3000,
       });
       return;
     }
 
-    if (!projectId) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: "Project ID is missing",
-        showConfirmButton: false,
-        timer: 3000,
-      });
-      return;
-    }
+    
 
     const formData = new FormData();
     formData.append("projectname", projectname);
@@ -226,7 +212,7 @@ const ProjectEdit = () => {
         Swal.fire({
           position: "center",
           icon: "success",
-          title: "Project updated successfully",
+          title: t("status.success"),
           showConfirmButton: false,
           timer: 3000,
         });
@@ -239,7 +225,7 @@ const ProjectEdit = () => {
         Swal.fire({
           position: "center",
           icon: "error",
-          title: "Failed to update project",
+          title: "error",
           showConfirmButton: false,
           timer: 3000,
         });
@@ -249,7 +235,7 @@ const ProjectEdit = () => {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: "Error updating project",
+        title: "Error",
         text:
           error instanceof Error ? error.message : "An unknown error occurred",
         showConfirmButton: false,

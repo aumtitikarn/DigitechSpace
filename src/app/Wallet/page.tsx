@@ -254,8 +254,7 @@ const Wallet = () => {
     if (withdrawableAmount <= 0) {
       Swal.fire({
         icon: "error",
-        title: "No Funds Available",
-        text: "You don't have any funds available for withdrawal.",
+        title: t("nav.wallet.nomoney"),
       });
       return;
     }
@@ -319,7 +318,7 @@ const Wallet = () => {
         }
         Swal.fire({
           icon: "error",
-          title: "Withdrawal Failed",
+          title: "error",
           text: errorMessage,
         });
       }

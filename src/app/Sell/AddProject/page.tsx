@@ -114,33 +114,14 @@ const Project: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    if (!session?.user?.email || !session?.user?.id) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: "User is not authenticated",
-        showConfirmButton: false,
-        timer: 3000,
-      });
-      return;
-    }
-     // Validate required fields and skills
-  if (skillinputs.length < 1 || !skillinputs[0].value) {
-    Swal.fire({
-      icon: "error",
-      title: "Validation Error",
-      text: "Please add at least one skill",
-      timer: 3000,
-    });
-    return;
-  }
+   
+
 
   // Validate other required fields
   if (!projectname || !description || !category || !price || !inputs[0].value || img.length === 0 || files.length === 0) {
     Swal.fire({
       icon: "error",
-      title: "Validation Error",
-      text: "Please fill in all required fields",
+      title: t("status.ensure"),
       timer: 3000,
     });
     return;
@@ -183,8 +164,8 @@ const Project: React.FC = () => {
         // Show success alert
         await Swal.fire({
           position: "center",
-          icon: "success",
-          title: t("authen.signup.status.success"),
+          icon: t("status.success"),
+          title: t("status.success"),
           showConfirmButton: false,
           timer: 3000,
         });
@@ -192,7 +173,7 @@ const Project: React.FC = () => {
         // Show processing alert
         Swal.fire({
           icon: "info",
-          title: "Processing...",
+          title: t("status.process"),
           allowOutsideClick: false,
           allowEscapeKey: false,
           didOpen: () => {
@@ -218,13 +199,6 @@ const Project: React.FC = () => {
           Swal.close();
         }, 1000); // Close alert 1 second after navigation
       } else {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: "Failed to submit project",
-          showConfirmButton: false,
-          timer: 3000,
-        });
       }
     } catch (error) {
       Swal.fire({

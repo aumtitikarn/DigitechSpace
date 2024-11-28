@@ -442,7 +442,6 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     author: session.user?.name
   };
 
-  console.log("Data to be sent:", data); // For debugging
 
   try {
     const response = await fetch("/api/reportblog", {
@@ -523,53 +522,65 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
   const UserId = session?.user?.id ?? "";
 
   const handleSubmitCiHeart = async (e: React.MouseEvent<SVGElement>) => {
-    if (session) {
-      const isLiked =
-        Array.isArray(postData?.likedByUsers) &&
-        postData.likedByUsers.includes(UserId);
-
-      try {
-        const actionheart = isLiked ? "unlike" : "like";
-        const heart = isLiked ? postData.heart - 1 : postData.heart + 1;
-
-        const blogRes = await fetch(
-          `http://digiproj.sut.ac.th:3001/api/posts/${postData._id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              userId: UserId,
-              actionheart,
-              setheart: heart,
-            }),
-          }
-        );
-
-        if (!blogRes.ok) {
-          throw new Error("Failed to update blog post");
-        }
-
-        // อัปเดต state
-        setHeart(heart); // อัปเดตค่าของ heart ใน state
-        setIsHeartClicked(!isLiked); // เปลี่ยนสถานะของ isHeartClicked ตามค่า isLiked
-
-        // ดึงข้อมูลโพสต์ใหม่
-        await getPostById(postData._id);
-      } catch (error) {
-        console.error("Error updating:", error);
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: "An error occurred",
-          text: "error.message",
-          showConfirmButton: true,
-        });
+    if (!session) {
+      Swal.fire(t("status.error"), t("status.login"), "error");
+      return;
+    }
+  
+    if (!postData?._id || !UserId) return;
+  
+    const isLiked =
+      Array.isArray(postData?.likedByUsers) && 
+      postData.likedByUsers.includes(UserId);
+  
+    try {
+      const actionheart = isLiked ? "unlike" : "like";
+      const heart = isLiked ? postData.heart - 1 : postData.heart + 1;
+  
+      console.log('Sending request with:', {
+        postId: postData._id,
+        userId: UserId,
+        actionheart,
+        heart
+      });
+  
+      const response = await fetch(`/api/posts/${postData._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: UserId,
+          actionheart,
+          setheart: heart
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Response error:', errorData);
+        throw new Error(errorData.message || "Failed to update post");
       }
-    } else {
-      // alert("Please log in to save favorites");
-      Swal.fire("Error", "Please log in to save favorites.", "error");
+  
+      const updatedData = await response.json();
+      console.log('Received response:', updatedData);
+      
+      // อัปเดต state
+      setHeart(heart);
+      setIsHeartClicked(!isLiked);
+  
+      // ดึงข้อมูลโพสต์ใหม่
+      await getPostById(postData._id);
+  
+    } catch (error) {
+      console.error("Error updating:", error);
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: t("status.error"),
+        text: error instanceof Error ? error.message : t("status.error"),
+        showConfirmButton: true,
+      });
     }
   };
 
@@ -739,7 +750,7 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
                 style={{ backgroundColor: "#33529B" }}
               >
                 {postData && postData.selectedCategory ? (
-                  postData.selectedCategory
+                  t(`nav.project.${postData.selectedCategory}`)
                 ) : (
                   <h1 className="font-bold">No Category Available</h1>
                 )}

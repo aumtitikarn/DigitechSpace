@@ -76,7 +76,7 @@ const SellInfo = () => {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Success",
+        title: t("status.success"),
         showConfirmButton: false,
         timer: 3000,
       });

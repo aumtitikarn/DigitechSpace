@@ -61,3 +61,34 @@ export async function GET(req) {
         return new NextResponse(JSON.stringify({ error: 'Failed to fetch notifications' }), { status: 500 });
     }
 }
+// DELETE a single notification
+export async function DELETE(req) {
+    try {
+        await connectMongoDB();
+        const { email, messageIndex } = await req.json();
+
+        const notification = await Notification.findOne({ email });
+
+        if (!notification) {
+            return NextResponse.json({ error: "Notification not found" }, { status: 404 });
+        }
+
+        // Remove the notification at the specified index
+        notification.notifications.message.splice(messageIndex, 1);
+        notification.notifications.times.splice(messageIndex, 1);
+        notification.updatedAt = new Date();
+
+        await notification.save();
+
+        return NextResponse.json({
+            notifications: {
+                message: notification.notifications.message,
+                times: notification.notifications.times
+            },
+            updatedAt: notification.updatedAt
+        }, { status: 200 });
+    } catch (error) {
+        console.error("Error deleting notification:", error.message);
+        return NextResponse.json({ error: "Failed to delete notification" }, { status: 500 });
+    }
+}

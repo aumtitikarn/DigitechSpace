@@ -116,7 +116,7 @@ export default function Page() {
   const handleSudmit = async (e) => {
     Swal.fire({
       icon: "info",
-      title: "Processing...",
+      title:  t("status.process"),
       allowOutsideClick: false,
       allowEscapeKey: false,
       didOpen: () => {
@@ -129,7 +129,7 @@ export default function Page() {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: "User is not authenticated",
+        title:  t("status.login"),
         showConfirmButton: false,
         timer: 3000,
       });
@@ -173,7 +173,7 @@ export default function Page() {
         // Show processing alert
         Swal.fire({
           icon: "info",
-          title: "Processing...",
+          title: t("status.process"),
           allowOutsideClick: false,
           allowEscapeKey: false,
           didOpen: () => {
@@ -295,16 +295,18 @@ export default function Page() {
                 <option value="" disabled>
                   {t("nav.blog.addblog.select")}
                 </option>
-                <option value="Document">{t("nav.project.document")}</option>
-                <option value="Model/3D">{t("nav.project.model")}</option>
-                <option value="Website">{t("nav.project.website")}</option>
-                <option value="MobileApp">{t("nav.project.mobileapp")}</option>
-                <option value="Datasets">{t("nav.project.ai")}</option>
-                <option value="AI">{t("nav.project.datasets")}</option>
-                <option value="IOT">{t("nav.project.iot")}</option>
-                <option value="Program">{t("nav.project.program")}</option>
-                <option value="Photo/Art">{t("nav.project.photo")}</option>
-                <option value="Other">{t("nav.project.other")}</option>
+                <option value="academic">{t("nav.project.academic")}</option>
+                <option value="social">{t("nav.project.social")}</option>
+                <option value="finance">{t("nav.project.finance")}</option>
+                <option value="accommodation">{t("nav.project.accommodation")}</option>
+                <option value="foodHealth">{t("nav.project.foodHealth")}</option>
+                <option value="events">{t("nav.project.events")}</option>
+                <option value="relationships">{t("nav.project.relationships")}</option>
+                <option value="technology">{t("nav.project.technology")}</option>
+                <option value="lifestyle">{t("nav.project.lifestyle")}</option>
+                <option value="career">{t("nav.project.career")}</option>
+                <option value="portfolio">{t("nav.project.portfolio")}</option>
+                <option value="other">{t("nav.project.other")}</option>
               </select>
             </div>
             <textarea
