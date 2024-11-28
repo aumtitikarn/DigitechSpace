@@ -206,9 +206,12 @@ const NotificationPage: React.FC = () => {
                 color="danger"
                 variant="flat"
                 size="sm"
-                startContent={<Trash size={18} />}
+                startContent={<Trash size={18} className="transition-transform group-hover:-rotate-12" />}
                 onClick={handleDeleteAll}
-                className="font-medium"
+                className="group relative flex items-center gap-2 rounded-lg bg-red-100 px-4 py-2 font-medium text-red-600 shadow-sm 
+                 transition-all duration-200 hover:bg-red-200 hover:shadow-md 
+                 active:translate-y-0.5 active:shadow-none
+                 disabled:opacity-50 disabled:hover:bg-red-100 disabled:hover:shadow-none"
               >
                 {t("button.deleteAll")}
               </Button>

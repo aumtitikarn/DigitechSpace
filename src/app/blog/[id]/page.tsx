@@ -737,12 +737,10 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
                 className="text-white rounded-md p-2 m-1"
                 style={{ backgroundColor: "#33529B" }}
               >
-                {postData && postData.course ? (
+               
                   <h1 className="font-bold">{postData.course}</h1>
-                ) : (
-                  <h1 className="font-bold">No Course Available</h1> // กรณีที่ไม่มีข้อมูลคอร์ส
-                )}
-                {/* {t("nav.blog.code")} {postData.course} */}
+               
+            
               </Link>
               <Link
                 href=""
@@ -750,7 +748,7 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
                 style={{ backgroundColor: "#33529B" }}
               >
                 {postData && postData.selectedCategory ? (
-                  <h1 className="font-bold">t(`nav.project.${postData.selectedCategory}`)</h1>
+                  <h1 className="font-bold">{t(`nav.project.${postData.selectedCategory}`)}</h1>
                 ) : (
                   <h1 className="font-bold">No Category Available</h1>
                 )}
@@ -758,21 +756,13 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
             </div>
 
             <div className="mt-5 mb-3">
-              {postData && postData.topic ? (
                 <h1 className="text-2xl">
                   <strong>{postData.topic}</strong>
                 </h1>
-              ) : (
-                <h1>No Topic Available</h1>
-              )}
             </div>
 
             <div className="mb-5">
-              {postData && postData.description ? (
                 <p>{postData.description}</p>
-              ) : (
-                <p>No Description Available</p>
-              )}
             </div>
 
             <div className="flex justify-between items-center border-b-2 border-t-2 border-gray-200 py-3 mt-4 mb-3">
@@ -787,11 +777,9 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
                     }`}
                     onClick={handleSubmitCiHeart}
                   />
-                  {postData && postData.heart !== undefined ? (
+                 
                     <p>{postData.heart}</p>
-                  ) : (
-                    <p>No Heart Data Available</p>
-                  )}
+                
                 </div>
                 <div className="flex items-center">
                   <BsChatDots className="text-2xl" />
