@@ -34,17 +34,25 @@ const ProjectReview = () => {
     }
   }, [status, router]);
 
-  const handleRatingChange = (newRating:any) => {
+  const handleRatingChange = (newRating: number) => {
     setRating(newRating);
   };
 
-  const handleReviewChange = (event:any) => {
+  const handleReviewChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReview(event.target.value);
   };
 
   const handleSubmit = async () => {
+    if (!session) {
+      Swal.fire({
+        icon: "error",
+        title: t("status.error"),
+        text: t("status.login"),
+      });
+      return;
+    }
 
-    const username = session.user.name || session.user.email;
+    const username = session.user?.name || session.user?.email;
 
     if (!rating || !review || !projectId || !username) {
       Swal.fire({

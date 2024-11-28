@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Card, CardBody, Button } from "@nextui-org/react";
@@ -63,9 +63,10 @@ const NotificationPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     if (session?.user?.email) {
       try {
+        setLoading(true);
         const response = await fetch("/api/notification", {
           method: "POST",
           headers: {
@@ -73,7 +74,7 @@ const NotificationPage: React.FC = () => {
           },
           body: JSON.stringify({ email: session.user.email }),
         });
-
+  
         const data = await response.json();
         if (response.ok) {
           setNotificationData(data);
@@ -86,11 +87,11 @@ const NotificationPage: React.FC = () => {
         setLoading(false);
       }
     }
-  };
-
+  }, [session]);
+  
   useEffect(() => {
     fetchNotifications();
-  }, [session]);
+  }, [fetchNotifications]);
 
   const handleDeleteSingle = async (index: number) => {
     if (!session?.user?.email) return;
