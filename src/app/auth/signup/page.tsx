@@ -197,7 +197,6 @@ function SignUp() {
 
   return (
     <div>
-    <Navbar/>
     <div
       style={{ backgroundColor: "#FBFBFB" }}
       className="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 overflow-y-auto"

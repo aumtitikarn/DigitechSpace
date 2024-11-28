@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import {AuthProvider} from "./Provider"
+import NotificationProvider from "./components/NotificationProvider"
 
 
 const notoSansThai = Noto_Sans_Thai({
@@ -18,11 +19,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="en">
       <body className={notoSansThai.className}>
         <AuthProvider>
+        <NotificationProvider>
         {children}
+        </NotificationProvider>
         </AuthProvider>
         </body>
     </html>

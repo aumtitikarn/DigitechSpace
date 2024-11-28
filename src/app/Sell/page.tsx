@@ -235,7 +235,6 @@ const ProductList: React.FC = () => {
           animation: shake 0.5s ease-in-out;
         }
       `}</style>
-      <Navbar />
       <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
         <h1 className="text-[24px] font-bold">{t("nav.sell.title")}</h1>
         <div>

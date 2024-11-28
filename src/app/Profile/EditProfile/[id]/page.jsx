@@ -364,7 +364,7 @@ function Page() {
   // console.log(session?.user?.role);
   return (
     <Container>
-      <Navbar />
+
       <main className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">

@@ -12,9 +12,10 @@ import { useTranslation } from "react-i18next";
 import i18n from "./../i18n";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { usePathname } from 'next/navigation';
+import { usePathname } from "next/navigation";
+import NotificationIcon from './NotificationIcon'; 
 
-function CustomNavbar() {
+function CustomNavbar({ notificationCount = 0 }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAccountBoxVisible, setAccountBoxVisible] = useState(false);
   const { t, i18n } = useTranslation("translation");
@@ -24,8 +25,8 @@ function CustomNavbar() {
   const [profileImage, setProfileImage] = useState(null);
   const [failedImages, setFailedImages] = useState(new Set());
   const [isScrolled, setIsScrolled] = useState(false);
-  const pathname = usePathname(); 
-  const isHomePage = pathname === '/';
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -173,39 +174,53 @@ function CustomNavbar() {
 
   const getLogo = () => {
     if (isHomePage) {
-      return isScrolled ? 'https://m1r.ai/W8p5i.png' : 'https://m1r.ai/W8p5i.png';
+      return isScrolled
+        ? "https://m1r.ai/W8p5i.png"
+        : "https://m1r.ai/W8p5i.png";
     }
-    return 'https://m1r.ai/W8p5i.png';
+    return "https://m1r.ai/W8p5i.png";
+  };
+  const commonStyles = {
+    width: "48px",
+    height: "48px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   };
 
+  const iconStyles = {
+    fontSize: "35px",
+  };
   return (
     <nav
-  className={`
-    ${isHomePage
-      ? `fixed top-0 w-full z-50 transition-all duration-300 p-5
-         ${isScrolled 
-           ? 'bg-[#0B1E48]' 
-           : 'bg-gradient-to-b from-black/65 to-transparent backdrop-blur-[1px]'
+      className={`
+    ${
+      isHomePage
+        ? `fixed top-0 w-full z-50 transition-all duration-300 p-5
+         ${
+           isScrolled
+             ? "bg-[#0B1E48]"
+             : "bg-gradient-to-b from-black/65 to-transparent backdrop-blur-[1px]"
          }`
-      : 'bg-[#0B1E48] shadow-md p-5 relative z-50 sticky top-0'
+        : "bg-[#0B1E48] shadow-md p-5 relative z-50 sticky top-0"
     }
   `}
->
-
-  <div className="flex items-center justify-between lg:mx-20">
+    >
+      <div className="flex items-center justify-between lg:mx-20">
         {/* ปุ่มเมนูสำหรับหน้าจอมือถือ */}
         <div className="block lg:hidden">
           <button
             onClick={toggleMobileMenu}
             className={`
               ml-2 text-xl focus:outline-none transition-colors duration-300
-              ${isHomePage 
-                ? (isScrolled 
-                    ? 'text-white hover:text-[#FFC92B]'
-                    : 'text-white hover:text-gray-600')
-                : 'text-white hover:text-[#FFC92B]'
+              ${
+                isHomePage
+                  ? isScrolled
+                    ? "text-white hover:text-[#b2b0d4]"
+                    : "text-white hover:text-[#b2b0d4]"
+                  : "text-white hover:text-[#b2b0d4]"
               }
-              w-[35px] h-[35px]
+              text-4xl
             `}
           >
             <svg
@@ -227,10 +242,8 @@ function CustomNavbar() {
         {/* โลโก้สำหรับมือถือ */}
         <div className="flex-1 flex justify-center lg:hidden">
           <Link href="/">
-            <Image 
-              src={
-                getLogo()
-              }
+            <Image
+              src={getLogo()}
               alt="Digitech Space logo"
               width={100}
               height={100}
@@ -241,38 +254,45 @@ function CustomNavbar() {
           </Link>
         </div>
         {/* Account Button for Mobile */}
-        <div className="flex items-center lg:hidden">
+        <div className="flex-none flex items-center relative lg:hidden">
           {session ? (
             <>
+            <div className="mr-5">
+             <Link href="/notification">
+                     
+                      <NotificationIcon notificationCount={notificationCount} />
+                    </Link>
+                    </div>
               <button
                 onClick={toggleAccountBox}
                 className="text-white focus:outline-none"
               >
                 {imageSource && !failedImages.has(imageSource._id) ? (
                   <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
-                  <Image
-                    width={35}
-                    height={35}
-                    src={imageSource}
-                    alt="Profile Image"
-                    unoptimized={true}
-                    onError={() => {
-                      setFailedImages(
-                        (prev) => new Set([...prev, imageSource._id])
-                      );
-                    }}
-                    className="rounded-full w-[35px] h-[35px] object-cover "
-                  />
+                    <Image
+                      width={35}
+                      height={35}
+                      src={imageSource}
+                      alt="Profile Image"
+                      unoptimized={true}
+                      onError={() => {
+                        setFailedImages(
+                          (prev) => new Set([...prev, imageSource._id])
+                        );
+                      }}
+                      className="rounded-full w-[35px] h-[35px] object-cover  "
+                    />
                   </div>
                 ) : (
                   <MdAccountCircle
-                  className={`
-                    ml-8 text-xl focus:outline-none transition-colors duration-300
-                    ${isHomePage 
-                      ? (isScrolled 
-                          ? 'text-white hover:text-[#5f66de]'
-                          : 'text-white hover:text-gray-600')
-                      : 'text-white hover:text-[#5f66de]'
+                    className={`
+                     text-xl focus:outline-none transition-colors duration-300
+                    ${
+                      isHomePage
+                        ? isScrolled
+                          ? "text-white hover:text-[#5f66de]"
+                          : "text-white hover:text-gray-600"
+                        : "text-white hover:text-[#5f66de]"
                     }
                     w-[35px] h-[35px]
                   `}
@@ -285,34 +305,34 @@ function CustomNavbar() {
               </button>
               {isAccountBoxVisible && (
                 <div className="">
-                  <div className="p-4 absolute right-0 top-full mr-5 border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] shadow-lg z-50">
+                  <div className="p-4 absolute right-0 top-full mt-7  border-2 border-white bg-gradient-to-b from-white to-[#E8F9FD] w-[373px] shadow-lg z-50">
                     {/* Account Box Content */}
                     <div className="">
                       <div className="flex items-center ">
                         {imageSource && !failedImages.has(imageSource._id) ? (
                           <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
-                          <Image
-                            width={55}
-                            height={55}
-                            src={imageSource}
-                            alt="Profile Image"
-                            unoptimized={true}
-                            onError={() => {
-                              setFailedImages(
-                                (prev) => new Set([...prev, imageSource._id])
-                              );
-                            }}
-                            className="rounded-full w-[55px] h-[55px] object-cover "
-                          />
+                            <Image
+                              width={55}
+                              height={55}
+                              src={imageSource}
+                              alt="Profile Image"
+                              unoptimized={true}
+                              onError={() => {
+                                setFailedImages(
+                                  (prev) => new Set([...prev, imageSource._id])
+                                );
+                              }}
+                              className="rounded-full w-[55px] h-[55px] object-cover "
+                            />
                           </div>
                         ) : (
                           <MdAccountCircle
-                          className="rounded-full text-gray-600"
-                          style={{
-                            width: "55px",
-                            height: "55px",
-                          }}
-                        />
+                            className="rounded-full text-gray-600"
+                            style={{
+                              width: "55px",
+                              height: "55px",
+                            }}
+                          />
                         )}
                         <span>
                           <p className="text-[20px] mt-3 text-semibold ml-3">
@@ -367,14 +387,6 @@ function CustomNavbar() {
                               <FaHeart className="mr-5 text-2xl text-gray-600" />
                               <span className="text-[18px]">
                                 {t("nav.favorite")}
-                              </span>
-                            </li>
-                          </Link>
-                          <Link href="/notification">
-                            <li className="flex items-center mt-2 hover:text-gray-300">
-                              <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
-                              <span className="text-[18px]">
-                                {t("nav.notification")}
                               </span>
                             </li>
                           </Link>
@@ -440,12 +452,13 @@ function CustomNavbar() {
                     <Link href="/">
                       <p
                         className={`
-                          font-semibold text-[20px] px-8
-                          ${isHomePage 
-                            ? (isScrolled 
-                                ? "text-white hover:text-[#5f66de]" 
-                                : "text-white hover:text-gray-600")
-                            : "text-white hover:text-[#5f66de]"
+                          font-semibold text-[20px] px-8 
+                          ${
+                            isHomePage
+                              ? isScrolled
+                                ? "text-white hover:text-[#b2b0d4] "
+                                : "text-white hover:text-[#b2b0d4] "
+                              : "text-white hover:text-[#b2b0d4]"
                           }
                           transition-colors duration-300
                         `}
@@ -459,11 +472,12 @@ function CustomNavbar() {
                       <p
                         className={`
                           font-semibold text-[20px] px-8
-                          ${isHomePage 
-                            ? (isScrolled 
-                                ? "text-white hover:text-[#5f66de]" 
-                                : "text-white hover:text-gray-600")
-                            : "text-white hover:text-[#5f66de]"
+                          ${
+                            isHomePage
+                              ? isScrolled
+                                ? "text-white hover:text-[#b2b0d4] "
+                                : "text-white hover:text-[#b2b0d4] "
+                              : "text-white hover:text-[#b2b0d4] "
                           }
                           transition-colors duration-300
                         `}
@@ -477,11 +491,12 @@ function CustomNavbar() {
                       <p
                         className={`
                           font-semibold text-[20px] px-8
-                          ${isHomePage 
-                            ? (isScrolled 
-                                ? "text-white hover:text-[#5f66de]" 
-                                : "text-white hover:text-gray-600")
-                            : "text-white hover:text-[#5f66de]"
+                          ${
+                            isHomePage
+                              ? isScrolled
+                                ? "text-white hover:text-[#b2b0d4] "
+                                : "text-white hover:text-[#b2b0d4] "
+                              : "text-white hover:text-[#b2b0d4] "
                           }
                           transition-colors duration-300
                         `}
@@ -501,11 +516,12 @@ function CustomNavbar() {
                         <p
                           className={`
                             font-semibold text-[20px] px-8
-                            ${isHomePage 
-                              ? (isScrolled 
-                                  ? "text-white hover:text-[#5f66de]" 
-                                  : "text-white hover:text-gray-600")
-                              : "text-white hover:text-[#5f66de]"
+                            ${
+                              isHomePage
+                                ? isScrolled
+                                  ? "text-white hover:text-[#5f66de]"
+                                  : "text-white hover:text-gray-600"
+                                : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
                           `}
@@ -519,11 +535,12 @@ function CustomNavbar() {
                         <p
                           className={`
                             font-semibold text-[20px] px-8
-                            ${isHomePage 
-                              ? (isScrolled 
-                                  ? "text-white hover:text-[#5f66de]" 
-                                  : "text-white hover:text-gray-600")
-                              : "text-white hover:text-[#5f66de]"
+                            ${
+                              isHomePage
+                                ? isScrolled
+                                  ? "text-white hover:text-[#5f66de]"
+                                  : "text-white hover:text-gray-600"
+                                : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
                           `}
@@ -537,11 +554,12 @@ function CustomNavbar() {
                         <p
                           className={`
                             font-semibold text-[20px] px-8
-                            ${isHomePage 
-                              ? (isScrolled 
-                                  ? "text-white hover:text-[#5f66de]" 
-                                  : "text-white hover:text-gray-600")
-                              : "text-white hover:text-[#5f66de]"
+                            ${
+                              isHomePage
+                                ? isScrolled
+                                  ? "text-white hover:text-[#5f66de]"
+                                  : "text-white hover:text-gray-600"
+                                : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
                           `}
@@ -559,69 +577,67 @@ function CustomNavbar() {
             <div className="flex-none flex items-center relative">
               {session ? (
                 <>
-                  {/* ปุ่มเปลี่ยนภาษา */}
-                  <div className="space-x-5">
-                  <button
-            onClick={toggleLanguage}
-            className={`
-               text-xl focus:outline-none transition-colors duration-300
-              ${isHomePage 
-                ? (isScrolled 
-                    ? 'text-white hover:text-[#5f66de]'
-                    : 'text-white hover:text-gray-600')
-                : 'text-white hover:text-[#5f66de]'
-              }
-              w-[35px] h-[35px]
-            `}
-          >
-            <MdGTranslate className="text-3xl" />
-                    </button>
+                  {/* แจ้งเตือนเดสทอป */}
+                  <div >
+                    <Link href="/notification">
+                      <NotificationIcon notificationCount={notificationCount} />
+                    </Link>
+                  </div>
 
+                  {/* ปุ่มเปลี่ยนภาษา */}
+                  <div style={commonStyles} className="mx-5"> 
+                    <button
+                      onClick={toggleLanguage}
+                      className={`
+                focus:outline-none transition-colors duration-300   hover:text-[#b2b0d4] hover:shadow-xl hover:scale-105
+                ${
+                  isHomePage
+                    ? isScrolled
+                      ? "text-white hover:text-[#b2b0d4]"
+                      : "text-white hover:text-[#b2b0d4]"
+                    : "text-white hover:text-[#b2b0d4]"
+                }
+              `}
+                    >
+                      <MdGTranslate style={iconStyles} />
+                    </button>
+                  </div>
+                  <div style={commonStyles}>
                     <button
                       onClick={toggleAccountBox}
-                      className={`
-                        ml-8 text-xl focus:outline-none
-                        ${isScrolled 
-                          ? 'text-white hover:text-[#FFC92B]'
-                          : 'text-gray-800 hover:text-gray-600'
-                        }
-                      `}
+                      className="focus:outline-none"
                     >
                       {imageSource && !failedImages.has(imageSource._id) ? (
-                         <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
-                        <Image
-                          width={35}
-                          height={35}
-                          src={imageSource}
-                          alt="Profile Image"
-                          unoptimized={true}
-                          onError={() => {
-                            setFailedImages(
-                              (prev) => new Set([...prev, imageSource._id])
-                            );
-                          }}
-                          className="rounded-full w-[35px] h-[35px] object-cover "
-                        />
+                        <div className="bg-white rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 p-1">
+                          <Image
+                            width={35}
+                            height={35}
+                            src={imageSource}
+                            alt="Profile"
+                            unoptimized={true}
+                            onError={() => {
+                              setFailedImages(
+                                (prev) => new Set([...prev, imageSource._id])
+                              );
+                            }}
+                            className="rounded-full object-cover"
+                          />
                         </div>
                       ) : (
                         <MdAccountCircle
-                        className={`
-                           text-xl focus:outline-none transition-colors duration-300
-                          ${isHomePage 
-                            ? (isScrolled 
-                                ? 'text-white hover:text-[#5f66de]'
-                                : 'text-white hover:text-gray-600')
-                            : 'text-white hover:text-[#5f66de]'
-                          }
-                          w-[35px] h-[35px]
-                        `}
-                          style={{
-                            width: "35px",
-                            height: "35px",
-                          }}
+                          style={iconStyles}
+                          className={`
+                    transition-colors duration-300
+                    ${
+                      isHomePage
+                        ? isScrolled
+                          ? "text-white hover:text-[#5f66de]"
+                          : "text-white hover:text-gray-600"
+                        : "text-white hover:text-[#5f66de]"
+                    }
+                  `}
                         />
                       )}
-                      
                     </button>
                   </div>
                   {isAccountBoxVisible && (
@@ -632,33 +648,33 @@ function CustomNavbar() {
                     >
                       <div className="">
                         <div className="flex items-center">
-                        
                           {imageSource && !failedImages.has(imageSource._id) ? (
                             <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
-                            <Image
-                              width={55}
-                              height={55}
-                              src={imageSource}
-                              alt="Profile Image"
-                              unoptimized={true}
-                              onError={() => {
-                                setFailedImages(
-                                  (prev) => new Set([...prev, imageSource._id])
-                                );
-                              }}
-                              className="rounded-full w-[55px] h-[55px] object-cover "
-                            />
+                              <Image
+                                width={55}
+                                height={55}
+                                src={imageSource}
+                                alt="Profile Image"
+                                unoptimized={true}
+                                onError={() => {
+                                  setFailedImages(
+                                    (prev) =>
+                                      new Set([...prev, imageSource._id])
+                                  );
+                                }}
+                                className="rounded-full w-[55px] h-[55px] object-cover "
+                              />
                             </div>
                           ) : (
                             <MdAccountCircle
-                            className="rounded-full text-gray-600"
-                            style={{
-                              width: "55px",
-                              height: "55px",
-                            }}
-                          />
+                              className="rounded-full text-gray-600"
+                              style={{
+                                width: "55px",
+                                height: "55px",
+                              }}
+                            />
                           )}
-                          
+
                           <span>
                             <p className="text-[20px] mt-3 text-semibold ml-3">
                               {postData?.name || postDataS?.name || "Unknown"}
@@ -716,14 +732,7 @@ function CustomNavbar() {
                                 </span>
                               </li>
                             </Link>
-                            <Link href="/notification">
-                              <li className="flex items-center mt-2 hover:text-gray-300">
-                                <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
-                                <span className="text-[18px]">
-                                  {t("nav.notification")}
-                                </span>
-                              </li>
-                            </Link>
+
                             <Link href="/myproject">
                               <li className="flex items-center mt-2 hover:text-gray-300">
                                 <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
@@ -763,11 +772,12 @@ function CustomNavbar() {
                     onClick={toggleLanguage}
                     className={`
                       ml-8 text-xl focus:outline-none transition-colors duration-300
-                      ${isHomePage 
-                        ? (isScrolled 
-                            ? 'text-white hover:text-[#FFC92B]'
-                            : 'text-gray-800 hover:text-gray-600')
-                        : 'text-white hover:text-[#FFC92B]'
+                      ${
+                        isHomePage
+                          ? isScrolled
+                            ? "text-white hover:text-[#b2b0d4]"
+                            : "text-gray-800 hover:text-[#b2b0d4]"
+                          : "text-white hover:text-[#b2b0d4]"
                       }
                       w-[35px] h-[35px]
                     `}
@@ -814,11 +824,12 @@ function CustomNavbar() {
                         <p
                           className={`
                             font-semibold text-[20px] px-8
-                            ${isHomePage 
-                              ? (isScrolled 
-                                  ? "text-white hover:text-[#5f66de]" 
-                                  : "text-white hover:text-gray-600")
-                              : "text-white hover:text-[#5f66de]"
+                            ${
+                              isHomePage
+                                ? isScrolled
+                                  ? "text-white hover:text-[#5f66de]"
+                                  : "text-white hover:text-gray-600"
+                                : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
                           `}
@@ -832,11 +843,12 @@ function CustomNavbar() {
                         <p
                           className={`
                             font-semibold text-[20px] px-8
-                            ${isHomePage 
-                              ? (isScrolled 
-                                  ? "text-white hover:text-[#5f66de]" 
-                                  : "text-white hover:text-gray-600")
-                              : "text-white hover:text-[#5f66de]"
+                            ${
+                              isHomePage
+                                ? isScrolled
+                                  ? "text-white hover:text-[#5f66de]"
+                                  : "text-white hover:text-gray-600"
+                                : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
                           `}
@@ -850,11 +862,12 @@ function CustomNavbar() {
                         <p
                           className={`
                             font-semibold text-[20px] px-8
-                            ${isHomePage 
-                              ? (isScrolled 
-                                  ? "text-white hover:text-[#5f66de]" 
-                                  : "text-white hover:text-gray-600")
-                              : "text-white hover:text-[#5f66de]"
+                            ${
+                              isHomePage
+                                ? isScrolled
+                                  ? "text-white hover:text-[#5f66de]"
+                                  : "text-white hover:text-gray-600"
+                                : "text-white hover:text-[#5f66de]"
                             }
                             transition-colors duration-300
                           `}
@@ -874,11 +887,12 @@ function CustomNavbar() {
                           <p
                             className={`
                               font-semibold text-[20px] px-8
-                              ${isHomePage 
-                                ? (isScrolled 
-                                    ? "text-white hover:text-[#5f66de]" 
-                                    : "text-white hover:text-gray-600")
-                                : "text-white hover:text-[#5f66de]"
+                              ${
+                                isHomePage
+                                  ? isScrolled
+                                    ? "text-white hover:text-[#5f66de]"
+                                    : "text-white hover:text-gray-600"
+                                  : "text-white hover:text-[#5f66de]"
                               }
                               transition-colors duration-300
                             `}
@@ -892,11 +906,12 @@ function CustomNavbar() {
                           <p
                             className={`
                               font-semibold text-[20px] px-8
-                              ${isHomePage 
-                                ? (isScrolled 
-                                    ? "text-white hover:text-[#5f66de]" 
-                                    : "text-white hover:text-gray-600")
-                                : "text-white hover:text-[#5f66de]"
+                              ${
+                                isHomePage
+                                  ? isScrolled
+                                    ? "text-white hover:text-[#5f66de]"
+                                    : "text-white hover:text-gray-600"
+                                  : "text-white hover:text-[#5f66de]"
                               }
                               transition-colors duration-300
                             `}
@@ -910,11 +925,12 @@ function CustomNavbar() {
                           <p
                             className={`
                               font-semibold text-[20px] px-8
-                              ${isHomePage 
-                                ? (isScrolled 
-                                    ? "text-white hover:text-[#5f66de]" 
-                                    : "text-white hover:text-gray-600")
-                                : "text-white hover:text-[#5f66de]"
+                              ${
+                                isHomePage
+                                  ? isScrolled
+                                    ? "text-white hover:text-[#5f66de]"
+                                    : "text-white hover:text-gray-600"
+                                  : "text-white hover:text-[#5f66de]"
                               }
                               transition-colors duration-300
                             `}
@@ -936,7 +952,7 @@ function CustomNavbar() {
                     <div className="space-x-5">
                       <button
                         onClick={toggleLanguage}
-                        className="ml-8 text-white text-xl hover:text-[#5f66de] focus:outline-none"
+                        className="ml-8 text-white text-xl hover:text-[#b2b0d4] focus:outline-none"
                       >
                         <MdGTranslate className="text-3xl" />
                       </button>
@@ -954,27 +970,28 @@ function CustomNavbar() {
                           <div className="flex items-center">
                             {imageSource ? (
                               <div className="relative bg-white rounded-full p-1 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer">
-                              <Image
-                                width={60}
-                                height={60}
-                                src={imageSource}
-                                alt="Profile Image"
-                                unoptimized={true}
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                }}
-                                className="rounded-full w-[60px] h-[60px] object-cover mr-2"
-                              />
+                                <Image
+                                  width={60}
+                                  height={60}
+                                  src={imageSource}
+                                  alt="Profile Image"
+                                  unoptimized={true}
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                  }}
+                                  className="rounded-full w-[60px] h-[60px] object-cover mr-2"
+                                />
                               </div>
                             ) : (
                               <MdAccountCircle
-                              className={`
+                                className={`
                                 ml-8 text-xl focus:outline-none transition-colors duration-300
-                                ${isHomePage 
-                                  ? (isScrolled 
-                                      ? 'text-white hover:text-[#5f66de]'
-                                      : 'text-white hover:text-gray-600')
-                                  : 'text-white hover:text-[#5f66de]'
+                                ${
+                                  isHomePage
+                                    ? isScrolled
+                                      ? "text-white hover:text-[#5f66de]"
+                                      : "text-white hover:text-gray-600"
+                                    : "text-white hover:text-[#5f66de]"
                                 }
                                 w-[35px] h-[35px]
                               `}
@@ -984,7 +1001,7 @@ function CustomNavbar() {
                                 }}
                               />
                             )}
-                            
+
                             <span>
                               <p className="text-[20px] mt-3 text-semibold ml-3">
                                 {session?.user?.name || "Unknown"}
@@ -1030,14 +1047,7 @@ function CustomNavbar() {
                                   </span>
                                 </li>
                               </Link>
-                              <Link href="/notification">
-                                <li className="flex items-center mt-2 hover:text-gray-300">
-                                  <IoIosNotifications className="mr-5 text-2xl text-gray-600" />
-                                  <span className="text-[18px]">
-                                    {t("nav.notification")}
-                                  </span>
-                                </li>
-                              </Link>
+
                               <Link href="/myproject">
                                 <li className="flex items-center mt-2 hover:text-gray-300">
                                   <FaBoxOpen className="mr-5 text-2xl text-gray-600" />
@@ -1075,7 +1085,7 @@ function CustomNavbar() {
                     {/* ปุ่มเปลี่ยนภาษา */}
                     <button
                       onClick={toggleLanguage}
-                      className="ml-8 text-white text-xl hover:text-[#5f66de] focus:outline-none"
+                      className="ml-8 text-white text-xl hover:text-[#b2b0d4] focus:outline-none"
                     >
                       <MdGTranslate className="text-3xl" />
                     </button>
@@ -1114,11 +1124,12 @@ function CustomNavbar() {
                 onClick={toggleMobileMenu}
                 className={`
                   ml-8 text-xl focus:outline-none transition-colors duration-300
-                  ${isHomePage 
-                    ? (isScrolled 
-                        ? 'text-white hover:text-[#5f66de]'
-                        : 'text-gray-800 hover:text-gray-600')
-                    : 'text-white hover:text-[#5f66de]'
+                  ${
+                    isHomePage
+                      ? isScrolled
+                        ? "text-white hover:text-[#b2b0d4]"
+                        : "text-gray-800 hover:text-[#b2b0d4]"
+                      : "text-white hover:text-[#b2b0d4]"
                   }
                   w-[35px] h-[35px]
                 `}
@@ -1147,11 +1158,12 @@ function CustomNavbar() {
                       <p
                         className={`
                           font-semibold text-[20px] px-8
-                          ${isHomePage 
-                            ? (isScrolled 
-                                ? "text-white hover:text-[#5f66de]" 
-                                : "text-white hover:text-gray-600")
-                            : "text-white hover:text-[#5f66de]"
+                          ${
+                            isHomePage
+                              ? isScrolled
+                                ? "text-white hover:text-[#b2b0d4] "
+                                : "text-white hover:text-[#b2b0d4] "
+                              : "text-white hover:text-[#b2b0d4] "
                           }
                           transition-colors duration-300
                         `}
@@ -1165,11 +1177,12 @@ function CustomNavbar() {
                       <p
                         className={`
                           font-semibold text-[20px] px-8
-                          ${isHomePage 
-                            ? (isScrolled 
-                                ? "text-white hover:text-[#5f66de]" 
-                                : "text-white hover:text-gray-600")
-                            : "text-white hover:text-[#5f66de]"
+                          ${
+                            isHomePage
+                              ? isScrolled
+                                ? "text-white hover:text-[#b2b0d4] "
+                                : "text-white hover:text-[#b2b0d4] "
+                              : "text-white hover:text-[#b2b0d4] "
                           }
                           transition-colors duration-300
                         `}
@@ -1183,11 +1196,12 @@ function CustomNavbar() {
                       <p
                         className={`
                           font-semibold text-[20px] px-8
-                          ${isHomePage 
-                            ? (isScrolled 
-                                ? "text-white hover:text-[#5f66de]" 
-                                : "text-white hover:text-gray-600")
-                            : "text-white hover:text-[#5f66de]"
+                          ${
+                            isHomePage
+                              ? isScrolled
+                                ? "text-white hover:text-[#b2b0d4] "
+                                : "text-white hover:text-[#b2b0d4] "
+                              : "text-white hover:text-[#b2b0d4] "
                           }
                           transition-colors duration-300
                         `}
@@ -1198,7 +1212,7 @@ function CustomNavbar() {
                   </li>
                   <li className="flex justify-center border-t border-gray-300 pt-5 ">
                     <MdGTranslate
-                      className="text-white text-4xl hover:text-[#5f66de]"
+                      className="text-white text-4xl hover:text-[#b2b0d4]"
                       onClick={toggleLanguage}
                     />
                   </li>
@@ -1212,11 +1226,12 @@ function CustomNavbar() {
                       <p
                         className={`
                           font-semibold text-[20px] px-8
-                          ${isHomePage 
-                            ? (isScrolled 
-                                ? "text-white hover:text-[#5f66de]" 
-                                : "text-white hover:text-gray-600")
-                            : "text-white hover:text-[#5f66de]"
+                          ${
+                            isHomePage
+                              ? isScrolled
+                                ? "text-white hover:text-[#5f66de]"
+                                : "text-white hover:text-gray-600"
+                              : "text-white hover:text-[#5f66de]"
                           }
                           transition-colors duration-300
                         `}
@@ -1228,13 +1243,14 @@ function CustomNavbar() {
                   <li className="border-t border-gray-300 pt-2">
                     <Link href="/project">
                       <p
-                       className={`
+                        className={`
                         font-semibold text-[20px] px-8
-                        ${isHomePage 
-                          ? (isScrolled 
-                              ? "text-white hover:text-[#5f66de]" 
-                              : "text-white hover:text-gray-600")
-                          : "text-white hover:text-[#5f66de]"
+                        ${
+                          isHomePage
+                            ? isScrolled
+                              ? "text-white hover:text-[#5f66de]"
+                              : "text-white hover:text-gray-600"
+                            : "text-white hover:text-[#5f66de]"
                         }
                         transition-colors duration-300
                       `}
@@ -1248,11 +1264,12 @@ function CustomNavbar() {
                       <p
                         className={`
                           font-semibold text-[20px] px-8
-                          ${isHomePage 
-                            ? (isScrolled 
-                                ? "text-white hover:text-[#5f66de]" 
-                                : "text-white hover:text-gray-600")
-                            : "text-white hover:text-[#5f66de]"
+                          ${
+                            isHomePage
+                              ? isScrolled
+                                ? "text-white hover:text-[#5f66de]"
+                                : "text-white hover:text-gray-600"
+                              : "text-white hover:text-[#5f66de]"
                           }
                           transition-colors duration-300
                         `}

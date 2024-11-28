@@ -258,6 +258,14 @@ const Wallet = () => {
       });
       return;
     }
+    if (!billData?.fullname) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Fullname is required",
+      });
+      return;
+    }
 
     const amountToWithdraw = withdrawableAmount;
 
@@ -379,7 +387,6 @@ const Wallet = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
-      <Navbar />
       <main className="flex-grow p-6 lg:mx-[90px] lg:my-[90px]">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left Side */}

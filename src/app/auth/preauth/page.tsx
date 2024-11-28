@@ -30,7 +30,6 @@ export default function PreAuth() {
 
   return (
     <div className='bg-[#FBFBFB]'>
-      <Navbar />
       <div className="flex min-h-screen flex-col justify-center lg:mx-[500px] mx-10 my-[120px]">
         <div className="mx-auto w-full max-w-sm">
           <div className="relative w-[244px] h-[116px] mx-auto mb-20">

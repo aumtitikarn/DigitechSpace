@@ -31,7 +31,6 @@ const CheckEmail = () => {
 
   return (
     <div>
-      <Navbar />
       <div className="bg-[#FBFBFB] flex flex-col items-center justify-center py-20 mx-5 ">
         <div className="border border-blue-400 rounded-lg shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-10">
           {/* Icon Wrapper - Added flex justify-center */}

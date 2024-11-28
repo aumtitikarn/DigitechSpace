@@ -9,13 +9,17 @@ const notificationSchema = new mongoose.Schema(
     },
     notifications: {
       message: {
-        type: [String], // เปลี่ยนเป็น Array ของ String
+        type: [String],
         required: true,
       },
       times: {
-        type: [String], // เปลี่ยนเป็น Array ของ Date
-        required: true,
+        type: [String],
+        required: true, 
       },
+      read: {
+        type: [Boolean], // เพิ่มฟิลด์เก็บสถานะการอ่าน
+        default: [],
+      }
     },
   },
   {

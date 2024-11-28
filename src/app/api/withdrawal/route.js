@@ -2,37 +2,40 @@ import { connectMongoDB } from '../../../../lib/mongodb';
 import Withdrawal from '../../../../models/withdrawal';
 import StudentUser from '../../../../models/StudentUser';
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 
 export async function POST(request) {
-  await connectMongoDB();
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
+    await connectMongoDB();
+    
     const { userId, amount, fullname, date, email, net } = await request.json();
 
-    // Validate input
     if (!userId || !amount || isNaN(amount) || amount <= 0) {
       return NextResponse.json({ message: 'Invalid input' }, { status: 400 });
     }
 
-    // Find the user
-    const user = await StudentUser.findById(userId);
-
+    const user = await StudentUser.findById(userId).session(session);
+    
     if (!user) {
+      await session.abortTransaction();
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    // Check if user has sufficient balance
     if (user.withdrawable < amount) {
+      await session.abortTransaction();
       return NextResponse.json({ message: 'Insufficient balance' }, { status: 400 });
     }
 
-    // Store original values for receipt
+    // Store original values
     const originalAmount = user.amount;
     const originalWithdrawable = user.withdrawable;
     const originalServiceFee = user.servicefee;
     const originalNet = user.net;
 
-    // Update user balance and withdrawable amount
+    // Update user balance
     const updatedUser = await StudentUser.findByIdAndUpdate(
       userId,
       {
@@ -43,10 +46,10 @@ export async function POST(request) {
           net: 0.0
         }
       },
-      { new: true, runValidators: false }
+      { new: true, runValidators: false, session }
     );
 
-    // Create withdrawal record with original values
+    // Create withdrawal record
     const withdrawal = new Withdrawal({
       userId,
       date,
@@ -63,7 +66,8 @@ export async function POST(request) {
       }
     });
 
-    await withdrawal.save();
+    await withdrawal.save({ session });
+    await session.commitTransaction();
 
     return NextResponse.json({
       message: 'Withdrawal successful',
@@ -73,8 +77,15 @@ export async function POST(request) {
       updatedNet: updatedUser.net,
       updatedServiceFee: updatedUser.servicefee
     }, { status: 200 });
+
   } catch (error) {
+    await session.abortTransaction();
     console.error('Withdrawal error:', error);
-    return NextResponse.json({ message: 'Internal server error', error: error.message }, { status: 500 });
+    return NextResponse.json({ 
+      message: 'Transaction failed', 
+      error: error.message 
+    }, { status: 500 });
+  } finally {
+    session.endSession();
   }
 }

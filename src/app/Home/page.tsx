@@ -73,7 +73,7 @@ export default function Home() {
 
   return (
     <main className="relative bg-[#FBFBFB] scroll-smooth overflow-x-hidden">
-      <Navbar />
+
 
       {/* Hero Section - ปรับให้พอดีกับหน้าจอ */}
       <section className="relative w-full h-[calc(100vh-0px)] overflow-hidden">

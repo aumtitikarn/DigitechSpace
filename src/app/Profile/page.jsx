@@ -169,7 +169,6 @@ function Profile() {
 
   return (
     <div className="flex flex-col min-h-screen ">
-      <Navbar session={session} />
       <main className="flex-grow lg:mx-20">
         <div className="container mx-auto px-4 py-8">
           {/* Profile Section - Modified for responsiveness */}

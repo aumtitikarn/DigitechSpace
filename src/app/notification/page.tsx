@@ -13,6 +13,7 @@ interface NotificationData {
   notifications: {
     message: string[];
     times: string[];
+    read: boolean[];
   };
   updatedAt: string | null;
 }
@@ -56,7 +57,8 @@ const NotificationPage: React.FC = () => {
   const [notificationData, setNotificationData] = useState<NotificationData>({
     notifications: {
       message: [],
-      times: []
+      times: [],
+      read: []
     },
     updatedAt: null
   });
@@ -74,10 +76,18 @@ const NotificationPage: React.FC = () => {
           },
           body: JSON.stringify({ email: session.user.email }),
         });
-  
+
         const data = await response.json();
         if (response.ok) {
           setNotificationData(data);
+          // Mark all as read
+          await fetch("/api/notification/mark-read", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: session.user.email }),
+          });
         } else {
           setError(data.message || "Failed to fetch notifications.");
         }
@@ -196,7 +206,6 @@ const NotificationPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
-      <Navbar />
       <main className="flex-grow">
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <div className="flex justify-between items-center mb-6">

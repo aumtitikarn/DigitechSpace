@@ -465,7 +465,6 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
   };
   return (
     <main className="bg-[#FBFBFB]">
-      <Navbar />
       <div className="lg:mx-60 lg:mt-20 lg:mb-20 mt-10 mb-10 ">
         <div className="flex flex-col min-h-screen mt-5">
           {/* Slider Section */}

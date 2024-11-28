@@ -59,20 +59,26 @@ const SellInfo = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Get raw phone number
     const rawPhoneNumber = getRawPhoneNumber();
     if (!session?.user?.id) return;
-
+  
+    // Create submission data with phone number
+    const submissionData = {
+      ...formData,
+      phonenumber: rawPhoneNumber // Use the raw phone number
+    };
+  
     const res = await fetch(`/api/Seller/update/${session.user.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(submissionData),
     });
-
+  
     if (res.ok) {
-      setShowSuccessAlert(true);
-      setTimeout(() => setShowSuccessAlert(false), 3000);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -80,13 +86,13 @@ const SellInfo = () => {
         showConfirmButton: false,
         timer: 3000,
       });
-
       router.push("/Sell");
     } else {
+      const errorData = await res.json();
       Swal.fire({
         position: "center",
         icon: "error",
-        title: "Error",
+        title: errorData.message || "Error",
         showConfirmButton: false,
         timer: 3000,
       });
@@ -149,7 +155,6 @@ const SellInfo = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Navbar />
       <main className="flex-grow py-10">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
@@ -227,7 +232,13 @@ const SellInfo = () => {
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FaUniversity className="text-gray-400" />
                     </div>
-                    <BankFormField />
+                    <BankFormField
+                      value={formData.namebank}
+                      onChange={(value:any) =>
+                        setFormData((prev) => ({ ...prev, namebank: value }))
+                      }
+                      placeholder={t("nav.sell.sellinfo.namebank")}
+                    />
                   </div>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -338,6 +349,7 @@ const SellInfo = () => {
                         formData.postalnumber ||
                         t("nav.sell.sellinfo.postalnumber")
                       }
+                      maxLength={5}
                       required
                       onChange={handleChange}
                       className="pl-10 block w-full rounded-lg border-gray-200 border focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all py-2.5"

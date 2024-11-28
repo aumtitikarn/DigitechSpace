@@ -71,7 +71,6 @@ const PolicyPage = () => {
 
   return (
     <main className="bg-[#FBFBFB]">
-      <Navbar />
       <div className="lg:mx-20 mx-5 mt-10 mb-10">
         <div className="policy-content">
           <div className="rounded-[10px] border border-[#BEBEBE] bg-white p-4 shadow-2xl">

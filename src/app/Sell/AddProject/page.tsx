@@ -229,7 +229,6 @@ const handleSubmit = async (e: React.FormEvent) => {
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
       <main className="flex-grow">
-        <Navbar />
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h1 className="text-[24px] font-bold">{t("nav.sell.buttAdd")}</h1>
           <form onSubmit={handleSubmit}>

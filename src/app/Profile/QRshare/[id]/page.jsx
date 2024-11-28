@@ -61,7 +61,6 @@ function Page() {
 
   return (
     <Container>
-      <Navbar />
       <main className="flex flex-col md:flex-row w-full justify-center p-4 mb-20 mt-10">
         <div className="flex flex-col items-center w-full max-w-lg">
           <p className="text-2xl font-bold mt-6 text-center my-10">

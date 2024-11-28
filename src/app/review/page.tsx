@@ -103,7 +103,6 @@ const Review = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">
-      <Navbar />
       <main className="flex-grow">
         <div className="lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h1 className="font-bold mb-4 text-[24px]">

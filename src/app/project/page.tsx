@@ -39,7 +39,6 @@ const Project = ({ searchParams }: Props) => {
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
     <main className="flex-grow ">
-     <Navbar  />
      <div className=" lg:mt-20 lg:mb-20 mt-10 mb-10 mx-5 lg:mx-20 ">
       <Filter initialCategory={category} isProjectPage={true}/>
       </div>

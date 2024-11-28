@@ -148,7 +148,7 @@ export default function Page({ params }) {
 
   return (
     <Container>
-      <Navbar session={session} />
+
       <main className="flex flex-col items-center w-full">
         <div className="max-w-screen-lg w-full p-4">
           <h1 className="text-2xl font-bold mt-3 mb-5">Edit Blog</h1>

@@ -42,6 +42,13 @@ const BankInput = ({ value, onChange, placeholder }) => {
   const { i18n } = useTranslation();
   const language = i18n.language === 'th' ? 'th' : 'en';
 
+  // Initialize searchTerm from value prop
+  useEffect(() => {
+    if (value) {
+      setSearchTerm(value);
+    }
+  }, [value]);
+
   const filteredBanks = banks.filter(bank => {
     const searchLower = searchTerm.toLowerCase();
     return bank[language].toLowerCase().includes(searchLower) ||
@@ -60,15 +67,17 @@ const BankInput = ({ value, onChange, placeholder }) => {
   }, []);
 
   const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);
-    onChange(e.target.value);
+    const newValue = e.target.value;
+    setSearchTerm(newValue);
+    onChange(newValue);
     setIsOpen(true);
     setHighlightedIndex(-1);
   };
 
   const handleSelectBank = (bank) => {
-    onChange(bank[language]);
-    setSearchTerm('');
+    const selectedValue = bank[language];
+    onChange(selectedValue);
+    setSearchTerm(selectedValue);
     setIsOpen(false);
   };
 
@@ -98,6 +107,7 @@ const BankInput = ({ value, onChange, placeholder }) => {
         <input
           ref={inputRef}
           type="text"
+          name="namebank"
           value={value}
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
@@ -140,16 +150,14 @@ const BankInput = ({ value, onChange, placeholder }) => {
   );
 };
 
-// Example usage in the form:
-const BankFormField = () => {
-  const [bankName, setBankName] = useState('');
+const BankFormField = ({ value, onChange, placeholder }) => {
   const { t } = useTranslation();
   
   return (
     <BankInput
-      value={bankName}
-      onChange={setBankName}
-      placeholder={t("nav.sell.sellinfo.namebank")}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder || t("nav.sell.sellinfo.namebank")}
     />
   );
 };
