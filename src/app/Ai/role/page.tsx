@@ -62,7 +62,7 @@ export default function Role() {
       <Container>
         <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <div className="text-center">
-            <h3 className="text-3xl">{t("nav.ai.role.title")}</h3>
+            <h3 className="text-3xl font-bold">{t("nav.ai.role.title")}</h3>
           </div>
           <div className="">
             <div className="mt-10 grid grid-cols-2 md:grid-cols-2  md:gap-[30px]  lg:grid-cols-4 ">
