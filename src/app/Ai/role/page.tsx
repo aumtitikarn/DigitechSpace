@@ -58,7 +58,6 @@ export default function Role() {
   
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB] overflow-hidden">
-      <Navbar />
     <main>
       <Container>
         <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">

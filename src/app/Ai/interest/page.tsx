@@ -85,7 +85,6 @@ export default function Interest() {
   return (
     <main>
       <Container>
-        <Navbar  />
         <div className="flex-grow lg:mx-64 lg:mt-10 lg:mb-10 mt-10 mb-10 mx-5">
           <h3 className="text-center text-3xl mb-10">
             {t("nav.ai.interest.des")}
