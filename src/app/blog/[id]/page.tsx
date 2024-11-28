@@ -746,11 +746,11 @@ const handlePopupSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
               </Link>
               <Link
                 href=""
-                className="text-white rounded-md p-2 m-1"
+                className="text-white rounded-md p-2 m-1 "
                 style={{ backgroundColor: "#33529B" }}
               >
                 {postData && postData.selectedCategory ? (
-                  t(`nav.project.${postData.selectedCategory}`)
+                  <h1 className="font-bold">t(`nav.project.${postData.selectedCategory}`)</h1>
                 ) : (
                   <h1 className="font-bold">No Category Available</h1>
                 )}
