@@ -187,104 +187,18 @@ function Page() {
     }
   };
 
-  const handleSave1 = async () => {
-    if (!session?.user?.id) {
-      await Swal.fire({
-        title: t("nav.profile.error"),
-        text: t("nav.profile.errordes"),
-        icon: "error",
-        confirmButtonText: "OK",
-      });
-      return;
-    }
+ 
 
-    const formData = new FormData();
-    formData.append("name", newName);
-    formData.append("briefly", newbriefly);
-    formData.append("email", newEmail);
-    formData.append("line", newLine);
-    formData.append("facebook", newFacebook);
-    formData.append("phonenumber", newPhonenumber);
-
-    if (imageFile) {
-      formData.append("imageUrl", imageFile);
-    }
-
-    try {
-      const response = await fetch(`/api/editprofile/${session.user.id}`, {
-        method: "PUT",
-        body: formData,
-      });
-
-      if (response.ok) {
-        await Swal.fire({
-          title: t("nav.profile.success"),
-          icon: "success",
-          confirmButtonText: "OK",
-        });
-        // Always redirect to the profile page after successful save
-        if (session.user.role === "NormalUser") {
-          router.push("/");
-        } else if (session.user.role === "StudentUser") {
-          router.push("/Profile");
-        }
-      } else {
-        throw new Error("Failed to update profile");
-      }
-    } catch (error) {
-      console.error("Error during save:", error);
-      await Swal.fire({
-        title: t("nav.profile.error"),
-        text: t("nav.profile.errordes"),
-        icon: "error",
-        confirmButtonText: "OK",
-      });
-    }
-  };
-
-  const handleDelete = async () => {
-    const result = await Swal.fire({
-      title: "คุณต้องการลบบล็อกนี้ใช่หรือไม่?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "ใช่, ลบเลย!",
-      cancelButtonText: "ยกเลิก",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const res = await fetch(`/api/posts/${postData?._id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id }),
-        });
-        if (res.ok) {
-          Swal.fire("Deleted!", "โครงงานและบล็อกถูกลบเรียบร้อยแล้ว", "success");
-          router.push("/listblog");
-        } else {
-          const data = await res.json();
-          Swal.fire("Error", `${data.message || "ลบไม่สำเร็จ"}`, "error");
-        }
-      } catch (error) {
-        console.error("Error deleting post:", error);
-        Swal.fire("Error", "มีข้อผิดพลาดในการลบโครงงาน/บล็อก", "error");
-      }
-    }
-  };
-
+  
   const handleSave = async () => {
     const result = await Swal.fire({
-      title: "คุณต้องการลบบล็อกนี้และบันทึกข้อมูลใหม่ใช่หรือไม่?",
+      title: t("nav.profile.updates"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "ใช่, ดำเนินการเลย!",
-      cancelButtonText: "ยกเลิก",
+      confirmButtonText: t("status.yes"),
+      cancelButtonText: t("status.no"),
     });
 
     const id = session.user.id;

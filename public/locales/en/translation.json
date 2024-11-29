@@ -261,6 +261,7 @@
       "noproject": "No projects found.",
       "allskill": "All Skills",
       "addskill": "Add new skill",
+      "updates" : "Do you want to update your profile information?",
       "d": "Deleting...",
       "delete": "Delete",
       "selected": "Selected",
@@ -416,7 +417,9 @@
     "deleteSuccess": "Notification deleted successfully",
     "deleteAllSuccess": "All notifications deleted successfully",
     "errorDelete": "Error deleting notification",
-    "errorDeleteAll": "Error deleting all notifications"
+    "errorDeleteAll": "Error deleting all notifications",
+    "yes" : "Yes, go ahead.",
+    "no" : "No"
   },
   "button": {
       "deleteAll": "Delete All",
