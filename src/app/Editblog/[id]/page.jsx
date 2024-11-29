@@ -9,6 +9,7 @@ import Image from "next/image";
 import { LuImagePlus } from "react-icons/lu";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { OrbitProgress } from "react-loading-indicators";
+import Swal from "sweetalert2";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
