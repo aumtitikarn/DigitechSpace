@@ -244,7 +244,11 @@ function Page() {
             icon: "success",
             confirmButtonText: "OK",
           });
-          router.push("/Profile"); // เปลี่ยนเส้นทางไปยังหน้าโปรไฟล์
+          if (session.user.role == "StudentUser") {
+            router.push("/Profile"); 
+          } else {
+            router.push("/");
+          }
         } else {
           const errorMessage = `
             ${!deleteResponse.ok ? "ลบข้อมูลไม่สำเร็จ" : ""}
