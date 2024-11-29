@@ -214,7 +214,6 @@ export default function Page() {
   }
   return (
     <Container>
-      <Navbar session={session} />
       <main className="flex flex-col items-center w-full">
         <div className="max-w-screen-lg w-full p-4">
           <div className="flex flex-row justify-start">
