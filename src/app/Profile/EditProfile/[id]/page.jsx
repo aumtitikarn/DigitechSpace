@@ -386,6 +386,7 @@ function Page() {
                         height={128}
                         src={profileImage || imageSource}
                         alt="Profile"
+                        quality={100}
                         className="rounded-full w-full h-full object-cover"
                         onError={() => setFailedImages(prev => [...prev, imageSource])}
                       />
