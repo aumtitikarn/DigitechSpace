@@ -400,6 +400,7 @@ function Page() {
                         height={256}
                         src={profileImage || imageSource}
                         alt="Profile"
+                        quality={100}
                         className="rounded-full w-full h-full object-cover"
                         quality={100}
                         priority={true}
