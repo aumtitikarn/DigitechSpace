@@ -177,6 +177,7 @@ function Page({ params }) {
                   alt="Profile"
                   width={128}
                   height={128}
+                  quality={100}
                   className="rounded-full w-full h-full object-cover"
                   onError={() => setFailedImages((prev) => [...prev, imageSource])}
                 />
