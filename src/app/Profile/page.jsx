@@ -16,6 +16,7 @@ import { OrbitProgress } from "react-loading-indicators";
 import { useRouter } from "next/navigation";
 import { MdClose } from "react-icons/md";
 import SkillsSelector from "../components/SkillsSelector";
+import { FaEdit } from "react-icons/fa";
 
 const getProxyUrl = (url) => `/api/proxy?url=${encodeURIComponent(url)}`;
 
@@ -44,9 +45,41 @@ function Profile() {
   const { data: session, status } = useSession();
   const [failedImages, setFailedImages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAllSkillsPopup, setShowAllSkillsPopup] = useState(false);
   // คงไว้ซึ่ง functions เดิมทั้งหมด...
   const handleClick = (button) => {
     setActiveButton(button === activeButton ? null : button);
+  };
+
+  const AllSkillsPopup = ({ skills, onClose }) => {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div
+          className="bg-white rounded-lg p-6 w-11/12 max-w-lg"
+          ref={popupRef}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">{t("nav.profile.allskill")}</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <MdClose size={24} />
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2 max-h-[60vh] overflow-y-auto">
+            {skills.map((skill, index) => (
+              <span
+                key={index}
+                className="px-4 py-1 text-white rounded-full bg-blue-500"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const getImageSource = useCallback(() => {
@@ -109,14 +142,15 @@ function Profile() {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [publishedResponse, blogResponse, profileResponse] = await Promise.all([
-        fetch("/api/project/getProjects/user", { method: "GET" }),
-        fetch("/api/posts/getposts/user", { cache: "no-store" }),
-        fetch(`/api/editprofile/${session.user.id}`, {
-          method: "GET",
-          cache: "no-store",
-        }),
-      ]);
+      const [publishedResponse, blogResponse, profileResponse] =
+        await Promise.all([
+          fetch("/api/project/getProjects/user", { method: "GET" }),
+          fetch("/api/posts/getposts/user", { cache: "no-store" }),
+          fetch(`/api/editprofile/${session.user.id}`, {
+            method: "GET",
+            cache: "no-store",
+          }),
+        ]);
 
       if (publishedResponse.ok) {
         const publishedData = await publishedResponse.json();
@@ -134,7 +168,7 @@ function Profile() {
         setPostDataS(profileData.posts);
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -152,16 +186,21 @@ function Profile() {
   if (status === "loading") {
     return (
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-        <OrbitProgress variant="track-disc" dense color="#33539B" size="medium" />
+        <OrbitProgress
+          variant="track-disc"
+          dense
+          color="#33539B"
+          size="medium"
+        />
       </div>
     );
   }
 
   const handleSkillsUpdate = (updatedSkills) => {
     if (session?.user?.role !== "NormalUser") {
-      setPostDataS(prev => ({ ...prev, skills: updatedSkills }));
+      setPostDataS((prev) => ({ ...prev, skills: updatedSkills }));
     } else {
-      setPostData(prev => ({ ...prev, skills: updatedSkills }));
+      setPostData((prev) => ({ ...prev, skills: updatedSkills }));
     }
   };
 
@@ -182,9 +221,17 @@ function Profile() {
                   width={128}
                   height={128}
                   className="rounded-full w-full h-full object-cover"
+                  quality={100}
+                  priority={true}
+                  loading="eager"
+                  sizes="128px"
                   onError={() =>
                     setFailedImages((prev) => [...prev, imageSource])
                   }
+                  style={{
+                    objectFit: "cover",
+                    imageRendering: "-webkit-optimize-contrast",
+                  }}
                 />
               ) : (
                 <MdAccountCircle className="w-full h-full text-gray-500" />
@@ -220,12 +267,19 @@ function Profile() {
                       ))}
                       {remainingSkills.length > 0 && (
                         <button
-                          onClick={() => setShowAllSkills(true)}
+                          onClick={() => setShowAllSkillsPopup(true)}
                           className="px-4 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-600 transition-all duration-200"
                         >
                           +{remainingSkills.length}
                         </button>
                       )}
+                      <button
+                        onClick={() => setShowSkillsEdit(true)}
+                        className="p-2 text-blue-500 hover:text-blue-600 transition-all duration-200"
+                        title="Edit Skills"
+                      >
+                        <FaEdit className="w-5 h-5" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -398,10 +452,17 @@ function Profile() {
               )}
             </div>
           )}
+          {/* Add the view-only popup */}
+          {showAllSkillsPopup && (
+            <AllSkillsPopup
+              skills={skills}
+              onClose={() => setShowAllSkillsPopup(false)}
+            />
+          )}
           <SkillsSelector
             skills={displaySkills}
-            showAllSkills={showAllSkills}
-            setShowAllSkills={setShowAllSkills}
+            showAllSkills={showSkillsEdit}
+            setShowAllSkills={setShowSkillsEdit}
             t={t}
             session={session}
             onRefresh={() => {

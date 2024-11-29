@@ -68,7 +68,7 @@ function Page({ params }) {
       if (status === "authenticated" && session) {
         setIsLoading(true);
         if (id === session.user.id) {
-          router.push('/Profile');
+          router.push("/Profile");
           return;
         }
 
@@ -79,27 +79,28 @@ function Page({ params }) {
             setPostData(profileData.post || profileData.posts);
             setPostDataS(profileData.posts);
 
-            const authorName = profileData.post?.name || profileData.posts?.name;
+            const authorName =
+              profileData.post?.name || profileData.posts?.name;
 
             const [publishedResponse, blogResponse] = await Promise.all([
               fetch(`/api/project/getProjects/${id}`),
-              fetch(`/api/posts/getposts/${id}`)
+              fetch(`/api/posts/getposts/${id}`),
             ]);
 
             if (publishedResponse.ok) {
               const publishedData = await publishedResponse.json();
-              const projectsWithAuthor = publishedData.map(project => ({
+              const projectsWithAuthor = publishedData.map((project) => ({
                 ...project,
-                authorName
+                authorName,
               }));
               setPublishedProjects(projectsWithAuthor);
             }
 
             if (blogResponse.ok) {
               const blogData = await blogResponse.json();
-              const blogsWithAuthor = blogData.map(blog => ({
+              const blogsWithAuthor = blogData.map((blog) => ({
                 ...blog,
-                authorName
+                authorName,
               }));
               setPostDataBlog(blogsWithAuthor);
             }
@@ -164,7 +165,6 @@ function Page({ params }) {
 
   return (
     <div className="flex flex-col min-h-screen">
-
       <main className="flex-grow lg:mx-20">
         <div className="container mx-auto px-4 py-8">
           {/* Profile Section - Mobile Responsive */}
@@ -178,7 +178,17 @@ function Page({ params }) {
                   width={128}
                   height={128}
                   className="rounded-full w-full h-full object-cover"
-                  onError={() => setFailedImages((prev) => [...prev, imageSource])}
+                  quality={100}
+                  priority={true}
+                  loading="eager"
+                  sizes="128px"
+                  onError={() =>
+                    setFailedImages((prev) => [...prev, imageSource])
+                  }
+                  style={{
+                    objectFit: "cover",
+                    imageRendering: "-webkit-optimize-contrast",
+                  }}
                 />
               ) : (
                 <MdAccountCircle className="w-full h-full text-gray-500" />
@@ -188,9 +198,15 @@ function Page({ params }) {
             {/* Profile Info */}
             <div className="flex-grow w-full">
               <div className="flex flex-col items-center md:items-start">
-                <div className={`w-full text-center md:text-left ${!postDataS.briefly ? "md:mt-7" : ""}`}>
-                  <h1 className={`text-2xl md:text-3xl font-bold ${!postDataS.briefly ? "mb-2" : "mb-1"}`}>
-                    {session?.user?.role !== "NormalUser" ? postDataS.name : postData.name}
+                <div
+                  className={`w-full text-center md:text-left ${!postDataS.briefly ? "md:mt-7" : ""}`}
+                >
+                  <h1
+                    className={`text-2xl md:text-3xl font-bold ${!postDataS.briefly ? "mb-2" : "mb-1"}`}
+                  >
+                    {session?.user?.role !== "NormalUser"
+                      ? postDataS.name
+                      : postData.name}
                   </h1>
                   {postDataS.briefly && (
                     <p className="text-gray-600 mb-4">{postDataS.briefly}</p>
@@ -249,8 +265,8 @@ function Page({ params }) {
             </button>
           </div>
 
-           {/* Projects Grid */}
-           {activeButton === "button1" && (
+          {/* Projects Grid */}
+          {activeButton === "button1" && (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-x-[10px] gap-y-[20px] lg:gap-x-[30px] md:gap-x-[40px] md:gap-y-[40px] mt-5">
               {publishedProject && publishedProject.length > 0 ? (
                 publishedProject.map((project, index) => (
@@ -320,7 +336,11 @@ function Page({ params }) {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 mt-6 md:mt-10">
               {postDataBlog && postDataBlog.length > 0 ? (
                 postDataBlog.map((blog, index) => (
-                  <Link key={index} href={`/blog/${blog._id}`} className="block w-full">
+                  <Link
+                    key={index}
+                    href={`/blog/${blog._id}`}
+                    className="block w-full"
+                  >
                     <div className="flex flex-col h-full">
                       <div className="relative w-full pb-[100%]">
                         <Image
@@ -350,7 +370,9 @@ function Page({ params }) {
                               width={20}
                               height={20}
                               className="rounded-full mr-2 w-[30px] h-[30px] object-cover"
-                              onError={() => setFailedImages((prev) => [...prev, blog._id])}
+                              onError={() =>
+                                setFailedImages((prev) => [...prev, blog._id])
+                              }
                             />
                           ) : (
                             <MdAccountCircle className="w-5 h-5 text-gray-500 mr-2" />
@@ -364,7 +386,9 @@ function Page({ params }) {
                   </Link>
                 ))
               ) : (
-                <p className="text-gray-500 col-span-full text-center">{t("nav.profile.noblog")}</p>
+                <p className="text-gray-500 col-span-full text-center">
+                  {t("nav.profile.noblog")}
+                </p>
               )}
             </div>
           )}

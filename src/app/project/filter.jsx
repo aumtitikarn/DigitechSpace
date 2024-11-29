@@ -87,24 +87,30 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
 
   const filterProjects = useCallback(
     (projectsToFilter, term, rating) => {
-      let filtered = projectsToFilter;
-  
-      // กรองตามการค้นหา
+      let filtered = [...projectsToFilter]; // Create a copy to sort
+      
+      // Sort by createdAt in descending order (newest first)
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return dateB - dateA;
+      });
+
+      // Apply search filter
       filtered = filtered.filter(project => 
         searchInProject(project, term)
       );
   
-      // กรองตามหมวดหมู่ที่เลือก
+      // Apply category filter
       if (!selectedCategories.has("All") && selectedCategories.size > 0) {
         filtered = filtered.filter(project => 
-          // เช็คว่าหมวดหมู่ของโครงงานตรงกับหมวดหมู่ใดๆ ที่เลือก
           Array.from(selectedCategories).some(selectedCat => 
             project.category.toLowerCase() === selectedCat.toLowerCase()
           )
         );
       }
   
-      // กรองตามคะแนน
+      // Apply rating filter
       if (rating !== null) {
         filtered = filtered.filter((project) => {
           const projectRating = parseFloat(project.rathing) || 0;
@@ -163,30 +169,23 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
   const fetchProjects = useCallback(async () => {
     setIsLoading(true);
     try {
-      // ถ้าเลือก All หรือเลือกหลายหมวดหมู่ ให้ดึงข้อมูลทั้งหมด
-      if (selectedCategories.has("All") || selectedCategories.size > 1) {
-        const response = await fetch('/api/project/getProjects');
-        const data = await response.json();
-        return data;
+      let endpoint = '/api/project/getProjects';
+      
+      // Add category parameter if needed
+      if (!selectedCategories.has("All") && selectedCategories.size === 1) {
+        const category = Array.from(selectedCategories)[0];
+        endpoint = `/api/project/getProjects?category=${encodeURIComponent(category.toLowerCase())}`;
       }
       
-      // ถ้าเลือกหมวดหมู่เดียว ใช้ API เดิม
-      if (selectedCategories.size === 1) {
-        const category = Array.from(selectedCategories)[0];
-        if (category === "All") {
-          const response = await fetch('/api/project/getProjects');
-          const data = await response.json();
-          return data;
-        } else {
-          const response = await fetch(
-            `/api/project/getProjects?category=${encodeURIComponent(category.toLowerCase())}`
-          );
-          const data = await response.json();
-          return data;
-        }
-      }
-  
-      return [];
+      const response = await fetch(endpoint);
+      const data = await response.json();
+      
+      // Sort projects by createdAt in descending order
+      return data.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return dateB - dateA;
+      });
     } catch (error) {
       console.error("Error fetching projects:", error);
       return [];

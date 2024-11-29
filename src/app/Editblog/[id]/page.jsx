@@ -102,6 +102,15 @@ export default function Page({ params }) {
   };
 
   const onSubmit = async () => {
+    Swal.fire({
+      icon: "info",
+      title: t("status.process"),
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     try {
       const formData = new FormData();
       

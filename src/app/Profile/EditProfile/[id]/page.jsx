@@ -2,7 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { MdAccountCircle } from "react-icons/md";
-import { FaPlus, FaEnvelope, FaPhone, FaFacebook, FaLine } from 'react-icons/fa';
+import {
+  FaPlus,
+  FaEnvelope,
+  FaPhone,
+  FaFacebook,
+  FaLine,
+} from "react-icons/fa";
 import { OrbitProgress } from "react-loading-indicators";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
@@ -10,7 +16,7 @@ import Container from "../../../components/Container";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
-import { BsPencilSquare } from 'react-icons/bs';
+import { BsPencilSquare } from "react-icons/bs";
 import Image from "next/image";
 import Swal from "sweetalert2";
 const isValidHttpUrl = (string) => {
@@ -135,23 +141,23 @@ function Page() {
         alert("Please select an image file");
         return;
       }
-  
+
       // ตรวจสอบขนาดไฟล์ (จำกัดที่ 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert("File size should not exceed 5MB");
         return;
       }
-  
+
       // สร้าง HTML Image element แทนการใช้ new Image()
-      const img = document.createElement('img');
+      const img = document.createElement("img");
       img.onload = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-  
+
         // กำหนดขนาด canvas เป็น 95x95
         canvas.width = 95;
         canvas.height = 95;
-  
+
         if (ctx) {
           // คำนวณขนาดและตำแหน่งเพื่อให้รูปภาพอยู่ตรงกลางและเต็มพื้นที่
           const scale = Math.max(
@@ -160,10 +166,10 @@ function Page() {
           );
           const x = (canvas.width - img.width * scale) / 2;
           const y = (canvas.height - img.height * scale) / 2;
-  
+
           // วาดรูปภาพลงบน canvas
           ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-  
+
           // แปลง canvas เป็น Blob
           canvas.toBlob((blob) => {
             if (blob) {
@@ -175,7 +181,7 @@ function Page() {
           }, file.type);
         }
       };
-  
+
       // อ่านไฟล์เป็น URL สำหรับ Image object
       img.src = URL.createObjectURL(file);
     }
@@ -282,7 +288,7 @@ function Page() {
     });
 
     const id = session.user.id;
-  
+
     if (result.isConfirmed) {
       try {
         // เรียก handleDelete และ handleSave พร้อมกัน
@@ -291,9 +297,9 @@ function Page() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({id}),
+          body: JSON.stringify({ id }),
         });
-  
+
         const formData = new FormData();
         formData.append("name", newName);
         formData.append("briefly", newbriefly);
@@ -301,19 +307,22 @@ function Page() {
         formData.append("line", newLine);
         formData.append("facebook", newFacebook);
         formData.append("phonenumber", newPhonenumber);
-  
+
         if (imageFile) {
           formData.append("imageUrl", imageFile);
         }
-  
+
         const savePromise = fetch(`/api/editprofile/${session.user.id}`, {
           method: "PUT",
           body: formData,
         });
-  
+
         // ใช้ Promise.all เพื่อรอให้ทั้งสองคำสั่งเสร็จสิ้น
-        const [deleteResponse, saveResponse] = await Promise.all([deletePromise, savePromise]);
-  
+        const [deleteResponse, saveResponse] = await Promise.all([
+          deletePromise,
+          savePromise,
+        ]);
+
         if (deleteResponse.ok && saveResponse.ok) {
           await Swal.fire({
             title: "สำเร็จ!",
@@ -364,14 +373,17 @@ function Page() {
   // console.log(session?.user?.role);
   return (
     <Container>
-
       <main className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             {/* Header Section */}
             <div className="bg-gradient-to-r from-[#0B1E48] to-[#1E3A8A] p-8 text-white relative">
-              <h1 className="text-2xl font-bold mb-2">{t("nav.profile.editprofile.title")}</h1>
-              <p className="text-blue-100 text-sm">{t("nav.profile.editprofile.subtitle")}</p>
+              <h1 className="text-2xl font-bold mb-2">
+                {t("nav.profile.editprofile.title")}
+              </h1>
+              <p className="text-blue-100 text-sm">
+                {t("nav.profile.editprofile.subtitle")}
+              </p>
             </div>
 
             {/* Profile Content */}
@@ -380,14 +392,26 @@ function Page() {
               <div className="flex flex-col items-center -mt-20 mb-8">
                 <div className="relative inline-block">
                   <div className="w-32 h-32 relative bg-white rounded-full p-1 shadow-lg">
-                    {imageSource && Array.isArray(failedImages) && !failedImages.includes(imageSource) ? (
+                    {imageSource &&
+                    Array.isArray(failedImages) &&
+                    !failedImages.includes(imageSource) ? (
                       <Image
-                        width={128}
-                        height={128}
+                        width={256} // เพิ่มขนาดเป็น 2 เท่าเพื่อความคมชัด
+                        height={256}
                         src={profileImage || imageSource}
                         alt="Profile"
                         className="rounded-full w-full h-full object-cover"
-                        onError={() => setFailedImages(prev => [...prev, imageSource])}
+                        quality={100}
+                        priority={true}
+                        loading="eager"
+                        sizes="(max-width: 128px) 100vw, 128px"
+                        onError={() =>
+                          setFailedImages((prev) => [...prev, imageSource])
+                        }
+                        style={{
+                          objectFit: "cover",
+                          imageRendering: "-webkit-optimize-contrast",
+                        }}
                       />
                     ) : (
                       <MdAccountCircle className="w-full h-full text-gray-400" />
@@ -402,12 +426,14 @@ function Page() {
                   <input
                     type="file"
                     id="imageUpload"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp" // ระบุประเภทไฟล์ที่ยอมรับอย่างชัดเจน
                     onChange={handleImageChange}
                     className="hidden"
                   />
                 </div>
-                <h2 className="text-2xl font-semibold mt-4">{postDataS?.name || postData?.name}</h2>
+                <h2 className="text-2xl font-semibold mt-4">
+                  {postDataS?.name || postData?.name}
+                </h2>
                 <p className="text-gray-500">{session?.user?.email}</p>
               </div>
 

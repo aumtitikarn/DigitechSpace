@@ -75,6 +75,8 @@ const ProjectSchema = new mongoose.Schema({
     enum: ['submitted', 'pending', 'reviewing', 'approved', 'rejected'],
     default: 'pending'
   }
+}, {
+  timestamps: true // เพิ่ม timestamps option
 });
 
 const Project = mongoose.models.Project || mongoose.model('Project', ProjectSchema);

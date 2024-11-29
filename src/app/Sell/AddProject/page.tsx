@@ -114,7 +114,15 @@ const Project: React.FC = () => {
   // ส่วนของการ handle submit
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-
+  Swal.fire({
+    icon: "info",
+    title: t("status.process"),
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
   if (!session?.user?.email || !session?.user?.id) {
     Swal.fire({
       icon: "error",

@@ -290,7 +290,7 @@ const ProductList: React.FC = () => {
                               />
                             </div>
                             <div className="flex flex-col h-full">
-                              <p className="text-lg font-semibold mb-2 truncate">
+                              <p className="text-lg font-semibold mb-2 truncate" >
                                 {project.projectname}
                               </p>
                               <div className="flex items-center mb-2">
@@ -301,7 +301,7 @@ const ProductList: React.FC = () => {
                                     alt="Author Profile"
                                     width={30}
                                     height={30}
-                                    className="rounded-full w-[30px] h-[30px] object-cover"
+                                    className="rounded-full w-[30px] h-[30px] object-cover mr-2"
                                     onError={() => {
                                       setFailedImages((prev) => [
                                         ...prev,

@@ -124,6 +124,15 @@ export default function Page() {
       },
     });
     const formData = new FormData();
+    Swal.fire({
+    icon: "info",
+    title: t("status.process"),
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
 
     if (!session || !session.user || !session.user.name) {
       Swal.fire({
@@ -214,7 +223,6 @@ export default function Page() {
   }
   return (
     <Container>
-      <Navbar session={session} />
       <main className="flex flex-col items-center w-full">
         <div className="max-w-screen-lg w-full p-4">
           <div className="flex flex-row justify-start">

@@ -155,6 +155,15 @@ const ProjectEdit = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    Swal.fire({
+      icon: "info",
+      title: t("status.process"),
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
     if (
       !session ||
