@@ -402,7 +402,6 @@ function Page() {
                         alt="Profile"
                         quality={100}
                         className="rounded-full w-full h-full object-cover"
-                        quality={100}
                         priority={true}
                         loading="eager"
                         sizes="(max-width: 128px) 100vw, 128px"

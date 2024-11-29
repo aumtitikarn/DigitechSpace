@@ -222,7 +222,6 @@ function Profile() {
                   height={128}
                   quality={100}
                   className="rounded-full w-full h-full object-cover"
-                  quality={100}
                   priority={true}
                   loading="eager"
                   sizes="128px"
