@@ -110,124 +110,145 @@ const Project: React.FC = () => {
     const newImages = files.map((file) => URL.createObjectURL(file));
     setUploadedImages((prevImages) => [...prevImages, ...newImages]);
   };
-
+  const handlePriceChange = (e: any) => {
+    const value = e.target.value;
+    // Allow only numbers and empty string
+    if (value === "" || /^\d+$/.test(value)) {
+      setPrice(value);
+    }
+  };
   // ส่วนของการ handle submit
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  Swal.fire({
-    icon: "info",
-    title: t("status.process"),
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    didOpen: () => {
-      Swal.showLoading();
-    },
-  });
-  if (!session?.user?.email || !session?.user?.id) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     Swal.fire({
-      icon: "error",
-      title: t("status.error"),
-      text: t("status.login"),
-      timer: 3000,
+      icon: "info",
+      title: t("status.process"),
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
     });
-    return;
-  }
+    if (!session?.user?.email || !session?.user?.id) {
+      Swal.fire({
+        icon: "error",
+        title: t("status.error"),
+        text: t("status.login"),
+        timer: 3000,
+      });
+      return;
+    }
 
-  // Validate other required fields
-  if (!projectname || !description || !category || !price || !inputs[0].value || img.length === 0 || files.length === 0) {
-    Swal.fire({
-      icon: "error",
-      title: t("status.ensure"),
-      timer: 3000,
-    });
-    return;
-  }
+    // Validate other required fields
+    if (
+      !projectname ||
+      !description ||
+      !category ||
+      !price ||
+      !inputs[0].value ||
+      img.length === 0 ||
+      files.length === 0
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: t("status.ensure"),
+        timer: 3000,
+      });
+      return;
+    }
 
-  // Initialize form data
-  const rathingValue = parseFloat("0.0");
-  const soldValue = 0;
-  const reviewValue = 0;
-  const formData = new FormData();
+    // Initialize form data
+    const rathingValue = parseFloat("0.0");
+    const soldValue = 0;
+    const reviewValue = 0;
+    const formData = new FormData();
 
-  // Add data to FormData with type checking
-  formData.append("projectname", projectname);
-  formData.append("description", description);
-  formData.append("receive", JSON.stringify(inputs.map((input) => input.value)));
-  formData.append("skill", JSON.stringify(skillinputs.map((input) => input.value)));
-  formData.append("category", category);
-  formData.append("price", price);
-  formData.append("email", session.user.email);
-  formData.append("iduser", session.user.id);
-  formData.append("rathing", rathingValue.toFixed(1));
-  formData.append("sold", soldValue.toString());
-  formData.append("review", reviewValue.toString());
-  formData.append("permission", "false");
-  formData.append("status", "pending");
+    // Add data to FormData with type checking
+    formData.append("projectname", projectname);
+    formData.append("description", description);
+    formData.append(
+      "receive",
+      JSON.stringify(inputs.map((input) => input.value))
+    );
+    formData.append(
+      "skill",
+      JSON.stringify(skillinputs.map((input) => input.value))
+    );
+    formData.append("category", category);
+    formData.append("price", price);
+    formData.append("email", session.user.email);
+    formData.append("iduser", session.user.id);
+    formData.append("rathing", rathingValue.toFixed(1));
+    formData.append("sold", soldValue.toString());
+    formData.append("review", reviewValue.toString());
+    formData.append("permission", "false");
+    formData.append("status", "pending");
 
-  img.forEach((img) => formData.append("imageUrl", img));
-  files.forEach((file) => formData.append("filesUrl", file));
+    img.forEach((img) => formData.append("imageUrl", img));
+    files.forEach((file) => formData.append("filesUrl", file));
 
-  try {
-    const res = await fetch("/api/project", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch("/api/project", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      setShowSuccessAlert(true);
-      
-      // Show success alert
-      await Swal.fire({
+      if (res.ok) {
+        const data = await res.json();
+        setShowSuccessAlert(true);
+
+        // Show success alert
+        await Swal.fire({
+          position: "center",
+          icon: "success", // Fixed SweetAlert icon type
+          title: t("status.success"),
+          showConfirmButton: false,
+          timer: 3000,
+        });
+
+        // Show processing alert
+        Swal.fire({
+          icon: "info",
+          title: t("status.process"),
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        // Send notification
+        if (session.user.email) {
+          await fetch("/api/notification", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: "โปรเจ็คได้ส่งไปยังเว็บไซค์แล้ว รอตตรวจสอบ",
+              email: session.user.email,
+            }),
+          });
+        }
+
+        // Redirect first, then close the alert
+        router.push(`/Sell`);
+        setTimeout(() => {
+          Swal.close();
+        }, 1000);
+      }
+    } catch (error) {
+      Swal.fire({
         position: "center",
-        icon: "success", // Fixed SweetAlert icon type
-        title: t("status.success"),
+        icon: "error",
+        title: "Error submitting project",
+        text:
+          error instanceof Error ? error.message : "An unknown error occurred",
         showConfirmButton: false,
         timer: 3000,
       });
-    
-      // Show processing alert
-      Swal.fire({
-        icon: "info",
-        title: t("status.process"),
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-    
-      // Send notification
-      if (session.user.email) {
-        await fetch("/api/notification", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: "โปรเจ็คได้ส่งไปยังเว็บไซค์แล้ว รอตตรวจสอบ",
-            email: session.user.email,
-          }),
-        });
-      }
-    
-      // Redirect first, then close the alert
-      router.push(`/Sell`);
-      setTimeout(() => {
-        Swal.close();
-      }, 1000);
     }
-  } catch (error) {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Error submitting project",
-      text: error instanceof Error ? error.message : "An unknown error occurred",
-      showConfirmButton: false,
-      timer: 3000,
-    });
-  }
-};
+  };
 
   const handleFilesChange = (newFiles: File[]) => {
     console.log("Files received in main component:", newFiles);
@@ -400,10 +421,10 @@ const handleSubmit = async (e: React.FormEvent) => {
               <input
                 id="price"
                 type="text"
-                placeholder={t("nav.sell.addP.price")}
+                placeholder={t("nav.sell.addP.price")}    
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className=" block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                onChange={handlePriceChange}
+                className="block w-full px-3 py-2 bg-white border border-slate-300 shadow-sm placeholder-slate-400 rounded-md sm:text-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
             </div>
             <button
