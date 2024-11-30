@@ -166,13 +166,31 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     [debouncedSearch]
   );
 
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam) {
+      // Find the matching category and update selected categories
+      const categoryItem = categories.find(
+        (c) => c.categoryEN.toLowerCase() === categoryParam.toLowerCase()
+      );
+      if (categoryItem) {
+        setSelectedCategories(new Set([categoryItem.categoryEN]));
+      }
+    }
+  }, [searchParams, categories]);
+
   const fetchProjects = useCallback(async () => {
     setIsLoading(true);
     try {
       let endpoint = '/api/project/getProjects';
       
-      // Add category parameter if needed
-      if (!selectedCategories.has("All") && selectedCategories.size === 1) {
+      // Get category from URL parameters
+      const categoryParam = searchParams.get("category");
+      if (categoryParam) {
+        endpoint = `/api/project/getProjects?category=${encodeURIComponent(categoryParam.toLowerCase())}`;
+      }
+      // If no URL parameter but categories selected in filter
+      else if (!selectedCategories.has("All") && selectedCategories.size === 1) {
         const category = Array.from(selectedCategories)[0];
         endpoint = `/api/project/getProjects?category=${encodeURIComponent(category.toLowerCase())}`;
       }
@@ -180,7 +198,6 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
       const response = await fetch(endpoint);
       const data = await response.json();
       
-      // Sort projects by createdAt in descending order
       return data.sort((a, b) => {
         const dateA = new Date(a.createdAt);
         const dateB = new Date(b.createdAt);
@@ -192,7 +209,7 @@ const Items_Filter = ({ initialCategory, isProjectPage }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCategories]);
+  }, [selectedCategories, searchParams]);
   
 
   useEffect(() => {
