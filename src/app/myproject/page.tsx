@@ -164,13 +164,16 @@ const MyProject: React.FC = () => {
 
   const renderProjectList = (projects: Project[], showCheckButton: boolean, title: string) => (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {projects.length > 0 ? (
-        projects.map(project => renderProject(project, showCheckButton))
-      ) : (
-        <div className="col-span-full">
-          <p className="text-gray-500">{t("nav.myproject.noproject")}</p>
-        </div>
-      )}
+       {projects.filter(project => project.projectDetails).length > 0 ? (
+  projects
+    .filter(project => project.projectDetails)
+    .map(project => renderProject(project, showCheckButton))
+) : (
+  <div className="col-span-full">
+    <p className="text-gray-500">{t("nav.myproject.noproject")}</p>
+  </div>
+)}
+
     </div>
   );
 

@@ -62,9 +62,12 @@ const Review = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch projects");
         }
-        const data = await response.json();
-        console.log("Fetched projects:", data);
-        setProjects(data);
+        const data: Project[] = await response.json();
+
+        // Filter out reviewed projects
+        const unreviewedProjects = data.filter((project: Project) => !project.projectDetails?.review);
+
+        setProjects(unreviewedProjects); // Set the unreviewed projects
       } catch (error) {
         console.error("Error fetching projects:", error);
         setError("Failed to load projects");
@@ -72,7 +75,6 @@ const Review = () => {
         setLoading(false);
       }
     };
-
     fetchProjects();
   }, [status, router]);
 
@@ -113,7 +115,7 @@ const Review = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {projects
                 .filter(
-                  (project) =>
+                  (project: Project) =>
                     project.projectDetails &&
                     project.projectDetails.projectname &&
                     project.projectDetails.imageUrl.length > 0

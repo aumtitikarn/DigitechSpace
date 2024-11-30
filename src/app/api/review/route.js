@@ -31,6 +31,12 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Missing data' }, { status: 400 });
     }
 
+    // Check if the user has already reviewed this project
+    const existingReview = await Review.findOne({ projectId, userEmail });
+    if (existingReview) {
+      return NextResponse.json({ message: 'You have already reviewed this project' }, { status: 400 });
+    }
+
     // Create a new review
     const newReview = new Review({
       rathing,
@@ -52,9 +58,9 @@ export async function POST(req) {
     // Calculate new average rating
     const reviews = await Review.find({ projectId }); // Fetch all reviews for the project
     const totalRathing = reviews.reduce((sum, r) => sum + r.rathing, 0) + rathing; // Add the new rating
-    const newReviewCount = reviews.length ; // Increment the review count
+    const newReviewCount = reviews.length + 1; // Increment the review count
 
-    const newAverageRating =Math.min(totalRathing / newReviewCount, 5); // Calculate new average rating
+    const newAverageRating = Math.min(totalRathing / newReviewCount, 5); // Calculate new average rating
 
     await Project.findByIdAndUpdate(
       projectId,
@@ -73,6 +79,7 @@ export async function POST(req) {
     return NextResponse.json({ message: 'Failed to save review or update project', error: error.message }, { status: 500 });
   }
 }
+
 
 const isValidHttpUrl = (string) => {
   let url;
