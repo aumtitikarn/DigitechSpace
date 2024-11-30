@@ -196,6 +196,21 @@ const NotificationPage: React.FC = () => {
     }
   };
 
+  // Sort notifications from newest to oldest
+  const getSortedNotifications = () => {
+    const { message, times, read } = notificationData.notifications;
+    const notifications = message.map((msg, index) => ({
+      message: msg,
+      timestamp: times[index],
+      read: read[index],
+      index
+    }));
+
+    return notifications.sort((a, b) => 
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+  };
+
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -203,6 +218,8 @@ const NotificationPage: React.FC = () => {
       </div>
     );
   }
+
+  const sortedNotifications = getSortedNotifications();
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FBFBFB]">
@@ -230,14 +247,14 @@ const NotificationPage: React.FC = () => {
           <div className="flex flex-col lg:items-start space-y-4">
             {error ? (
               <p className="text-red-500">{error}</p>
-            ) : notificationData.notifications.message.length > 0 ? (
-              notificationData.notifications.message.map((message, index) => (
+            ) : sortedNotifications.length > 0 ? (
+              sortedNotifications.map((notification) => (
                 <NotificationCard
-                  key={index}
-                  message={message}
-                  timestamp={notificationData.notifications.times[index]}
+                  key={notification.index}
+                  message={notification.message}
+                  timestamp={notification.timestamp}
                   onDelete={handleDeleteSingle}
-                  index={index}
+                  index={notification.index}
                 />
               ))
             ) : (
