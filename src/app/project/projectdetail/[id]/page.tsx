@@ -450,7 +450,7 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
 
   const handleTwitterShare = () => {
     const text = encodeURIComponent(
-      `Digitech Space project: ${project.projectname} by: ${project.author}`
+      `Digitech Space project: ${project.projectname} by: ${project.authorName}`
     );
     window.open(
       `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${text}`,
