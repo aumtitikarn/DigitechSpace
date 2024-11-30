@@ -166,12 +166,14 @@ function Service() {
           onChange={(e) => setReport(e.target.value)}
           placeholder={t("nav.home.service.problem")}
           className="w-full p-2 mb-2 border border-gray-300 rounded"
+          required
         />
         <input
           type="text"
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t("nav.home.service.email")}
           className="w-full p-2 mb-2 border border-gray-300 rounded"
+          required
         />
         <button
           className="w-full p-2 text-white rounded mt-3"
