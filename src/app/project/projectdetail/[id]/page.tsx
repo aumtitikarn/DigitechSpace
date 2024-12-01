@@ -936,10 +936,26 @@ const ProjectDetail: React.FC<{ params: { id: string } }> = ({ params }) => {
                         {t("nav.project.projectdetail.by")}
                       </p>
                       <span className="text-gray-500 mr-2 text-2xl">
-                        <MdAccountCircle />
+                      {project.profileImage &&
+                        !failedImages.includes(project._id) ? (
+                          <Image
+                            src={project.profileImage}
+                            alt="Author Profile"
+                            width={30}
+                            height={30}
+                            className="rounded-full w-[30px] h-[30px] object-cover"
+                            onError={() => {
+                              setFailedImages((prev) => [...prev, project._id]);
+                            }}
+                          />
+                        ) : (
+                          <span>
+                            <MdAccountCircle className="text-gray-500 text-3xl" />
+                          </span>
+                        )}
                       </span>
                       <p className="text-sm text-gray-600 truncate w-[150px]">
-                        {project.author}
+                        {project.authorName}
                       </p>
                     </div>
                     <div className="flex items-center">
