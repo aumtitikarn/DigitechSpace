@@ -183,8 +183,9 @@
         "buttre": "Add Receive",
         "select": "Select Category",
         "price": "Price",
-        "pricedes": "Please specify the price in just a number such as 1500.",
-        "updes": "If you want to upload as a folder, zip the folder to upload."
+        "pricedes": "Please specify price only as a number and greater than 20 baht such as 1500.",
+        "updes": "If you want to upload as a folder, zip the folder to upload.",
+        "bath" : "The price must not be less than 20 baht."
       },
       "upload": {
         "error": "Total file size exceeds 50MB limit.",

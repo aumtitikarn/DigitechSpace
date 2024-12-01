@@ -117,9 +117,22 @@ const Project: React.FC = () => {
       setPrice(value);
     }
   };
+  
   // ส่วนของการ handle submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+     // Check for minimum price
+  if (parseInt(price) < 20) {
+    Swal.fire({
+      icon: "error",
+      title: t("status.error"),
+      text: t("nav.sell.addP.bath"),
+      timer: 3000,
+    });
+    return;
+  }
+
     Swal.fire({
       icon: "info",
       title: t("status.process"),
