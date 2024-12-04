@@ -41,6 +41,16 @@ interface Project {
     status: string;
   };
 }
+interface Review {
+  _id: string;
+  username: string;
+  userEmail: string;
+  rathing: number;
+  review: string;
+  profileImage: string;
+  authorName: string;
+  projectId: string; // Ensure this matches your database structure
+}
 
 const Review = () => {
   const { data: session, status } = useSession();
@@ -54,20 +64,23 @@ const Review = () => {
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
+      return;
     }
-
+  
     const fetchProjects = async () => {
       try {
-        const response = await fetch("/api/myproject");
+        const response = await fetch("/api/myproject/checkreview");
         if (!response.ok) {
           throw new Error("Failed to fetch projects");
         }
-        const data: Project[] = await response.json();
-
-        // Filter out reviewed projects
-        const unreviewedProjects = data.filter((project: Project) => !project.projectDetails?.review);
-
-        setProjects(unreviewedProjects); // Set the unreviewed projects
+        const projectData = await response.json();
+  
+        // กรองโครงการที่ยังไม่ได้รีวิว (hasReview: false)
+        const filteredProjects = projectData.filter(
+          (project) => !project.hasBeenReviewed // ตรวจสอบว่าค่า hasBeenReviewed เป็น false
+        );
+  
+        setProjects(filteredProjects); // บันทึกโครงการที่กรองแล้ว
       } catch (error) {
         console.error("Error fetching projects:", error);
         setError("Failed to load projects");
@@ -75,8 +88,13 @@ const Review = () => {
         setLoading(false);
       }
     };
+  
     fetchProjects();
-  }, [status, router]);
+  }, [status, router, session]);
+  
+  
+  
+  
 
   if (status === "loading" || loading) {
     return (
