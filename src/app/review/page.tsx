@@ -40,6 +40,7 @@ interface Project {
     filesUrl: string[];
     status: string;
   };
+  hasBeenReviewed?: boolean; 
 }
 interface Review {
   _id: string;
@@ -76,8 +77,8 @@ const Review = () => {
         const projectData = await response.json();
   
         // กรองโครงการที่ยังไม่ได้รีวิว (hasReview: false)
-        const filteredProjects = projectData.filter(
-          (project) => !project.hasBeenReviewed // ตรวจสอบว่าค่า hasBeenReviewed เป็น false
+        const filteredProjects = projectData.filter
+          ((project: Project) => !project.hasBeenReviewed // ตรวจสอบว่าค่า hasBeenReviewed เป็น false
         );
   
         setProjects(filteredProjects); // บันทึกโครงการที่กรองแล้ว
